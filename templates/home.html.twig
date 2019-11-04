@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+Bienvenue sur le site d'analyse qualitative des eaux souterraines !
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="jumbotron">
+            <h1 class="display-3">Bienvenue sur EpuKarst !</h1>
+            <p class="lead">Nous étudions la vulnérabilité et la variabilité des concentrations en nitrates dans les systèmes aquifères karstiques et déterminons leurs impacts sur les ressources en eaux potabilisables de Wallonie.</p>
+            <hr class="my-4">
+            <p>EpuKarst est une base de données collaborative en ligne permettant aux divers partenaires du projet d'encoder leurs observations de terrain, les analyses et les caractéristiques des stations d'observation.</p>
+            <a href="{{ path('system') }}" class="btn btn-primary">Voir les systèmes concernés par l'étude</a>
+        </div>
+
+        <h2>Introduction</h2>
+        <p>Texte...</p>
+
+        <h2>Le cycle du nitrate</h2>
+        <p>Texte...</p>
+
+        <h2>Une investigation hydrologique originale</h2>
+        <p>Texte...</p>
+    
+        <h2>Les objectifs du projet</h2>
+        <p>Texte...</p>
+</div>
+{% endblock %}

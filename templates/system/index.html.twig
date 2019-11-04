@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Systèmes karstiques
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="my-3">Systèmes karstiques étudiés</h1>
+
+        <div class="row">
+            {% for system in systems %}
+                {% set url = path('system_show', { 'slug': system.slug }) %}
+                <div class="col-md-4">
+                    <div class="card bg-light mb-3">
+                        <div class="card-header text-center">
+                            {{system.commune}}
+                            <br>
+                            {{system.basin}}
+                        </div>
+                        <a href="{{url}}">
+                            <img src="http://lorempixel.com/400/200?{{system.id}}" alt="Photo de {{system.name}}" style="height: 200px; width: 100%; display:block"/>
+                        </a>
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                <a href="{{url}}">{{system.name}}</a>
+                            </h4>
+                            <p class="card-text">
+                                {{system.introduction}}
+                            </p>
+                            <a href="{{url}}">En savoir plus&nbsp;!</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

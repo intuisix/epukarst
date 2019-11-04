@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Relevé {{code}}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Relevé {{code}}</h1>
+        <p>Station</p>
+        <p>Bassin</p>
+        <p>Système</p>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        Encodé le XX/XX/XXXX par XXX
+                    </div>
+                    <div class="card-body">
+                        <p>Notes d'observation et d'encodage</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        Validé le XX/XX/XXXX par XXX
+                    </div>
+                    <div class="card-body">
+                        <p>Notes de validation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2>Paramètres mesurés</h2>
+        
+        <table class="table table-bordered table-striped">
+            <tr>
+                <th>Paramètre</th>
+                <th>Valeur</th>
+                <th>Stable</th>
+                <th>Date et heure</th>
+                <th>Instrument</th>
+                <th>Remarque</th>
+            </tr>
+            {# Regrouper par paramètre #}
+            {% for i in 1..1 %}
+                <tr>
+                    <td rowspan="1">NO2</td>
+                    <td>10 mg/l</td>
+                    <td>oui</td>
+                    <td>29/10/2019 10:02</td>
+                    <td>Bandelette test NO2</td>
+                    <td>RAS</td>
+                </tr>
+                <tr>
+                    <td rowspan="2">NO3</td>
+                    <td>13 mg/l</td>
+                    <td>oui</td>
+                    <td>29/10/2019 10:02</td>
+                    <td>Bandelette test NO3</td>
+                    <td>RAS</td>
+                </tr>
+                <tr>
+                    <td>15 mg/l</td>
+                    <td>oui</td>
+                    <td>29/10/2019 10:02</td>
+                    <td>Spectromètre 2</td>
+                    <td>Contrôle en labo</td>
+                </tr>
+                <tr>
+                    <td rowspan="1">TH</td>
+                    <td>28 °F</td>
+                    <td>oui</td>
+                    <td>29/10/2019 10:02</td>
+                    <td>Liquide test TH</td>
+                    <td>RAS</td>
+                </tr>
+                <tr>
+                    <td rowspan="1">pH</td>
+                    <td>8 pH</td>
+                    <td>oui</td>
+                    <td>29/10/2019 10:02</td>
+                    <td>Bandelettes test pH</td>
+                    <td>RAS</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

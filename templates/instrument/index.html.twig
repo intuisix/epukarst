@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Instruments de mesure
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Instruments de mesure</h1>
+
+        <table class="table table-bordered table-striped">
+            <tr>
+                <th>Code</th>
+                <th>Dénomination</th>
+                <th>Modèle</th>
+                <th>Numéro de série</th>
+                <th>Prochain étalonnage</th>
+                <th>Actions</th>
+            </tr>
+            {% for instrument in instruments %}
+                <tr>
+                    <td>{{instrument.code}}</td>
+                    <td>{{instrument.name}}</td>
+                    <td>{{instrument.model}}</td>
+                    <td>{{instrument.serialNumber}}</td>
+                    <td>
+                        {% if loop.index == 2 or loop.index >= 9 and loop.index <= 11 %}
+                            23/10/2019 <span class="badge badge-warning badge-pill">KO</span></td>
+                        {% else %}
+                            23/02/2020 <span class="badge badge-success badge-pill">OK</span></td>
+                        {% endif %}
+                    <td>
+                        <a href="#" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="#" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <a href="#" class="btn btn-primary">
+            Ajouter un instrument
+        </a>
+    </div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Paramètres étudiés
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Paramètres étudiés</h1>
+
+        <table class="table table-bordered table-striped">
+            <tr>
+                <th>Dénomination</th>
+                <th>Titre</th>
+                <th><i class="fas fa-star"></i></th>
+                <th class="text-center">Unité</th>
+                <th class="text-center">Gamme normative</th>
+                <th class="text-center">Gamme physique</th>
+                <th>Actions</th>
+            </tr>
+            {% for parameter in parameters %}
+                <tr>
+                    <td>{{parameter.name}}</td>
+                    <td>{{parameter.title}}</td>
+                    <td>
+                        {% if parameter.favorite %}
+                            <i class="fas fa-star" style="color: goldenrod"></i>
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </td>
+                    <td class="text-center">{{parameter.unit}}</td>
+                    <td class="text-center">{{parameter.normativeMinimum}} - {{parameter.normativeMaximum}}</td>
+                    <td class="text-center">{{parameter.physicalMinimum}} - {{parameter.physicalMaximum}}</td>
+                    <td>
+                        <a href="#" class="btn btn-primary btn-sm">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="#" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <a href="#" class="btn btn-primary">
+            Ajouter un paramètre
+        </a>
+    </div>
+{% endblock %}
