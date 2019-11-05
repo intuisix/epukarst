@@ -87,11 +87,17 @@ class User implements UserInterface
      */
     private $validatedReadings;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Measure", mappedBy="creationAuthor")
+     */
+    private $measures;
+
     public function __construct()
     {
         $this->userRoles = new ArrayCollection();
         $this->readings = new ArrayCollection();
         $this->validatedReadings = new ArrayCollection();
+        $this->measures = new ArrayCollection();
     }
 
     /**
@@ -356,6 +362,37 @@ class User implements UserInterface
             // set the owning side to null (unless already changed)
             if ($validatedReading->getAuditor() === $this) {
                 $validatedReading->setAuditor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Measure[]
+     */
+    public function getMeasures(): Collection
+    {
+        return $this->measures;
+    }
+
+    public function addMeasure(Measure $measure): self
+    {
+        if (!$this->measures->contains($measure)) {
+            $this->measures[] = $measure;
+            $measure->setCreationAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMeasure(Measure $measure): self
+    {
+        if ($this->measures->contains($measure)) {
+            $this->measures->removeElement($measure);
+            // set the owning side to null (unless already changed)
+            if ($measure->getCreationAuthor() === $this) {
+                $measure->setCreationAuthor(null);
             }
         }
 

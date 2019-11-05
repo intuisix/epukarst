@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -58,7 +60,7 @@ class Reading
     /**
      * Remarques ajoutées lors de l'encodage.
      * 
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     private $encodingNotes;
 
@@ -82,6 +84,16 @@ class Reading
      * @ORM\Column(type="text", nullable=true)
      */
     private $validationNotes;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Measure", mappedBy="reading", orphanRemoval=true)
+     */
+    private $measures;
+
+    public function __construct()
+    {
+        $this->measures = new ArrayCollection();
+    }
 
     /**
      * Met à jour les propriétés du relevé avant qu'il ne soit mémorisé dans la
@@ -202,6 +214,37 @@ class Reading
     public function setFieldDateTime(\DateTimeInterface $fieldDateTime): self
     {
         $this->fieldDateTime = $fieldDateTime;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Measure[]
+     */
+    public function getMeasures(): Collection
+    {
+        return $this->measures;
+    }
+
+    public function addMeasure(Measure $measure): self
+    {
+        if (!$this->measures->contains($measure)) {
+            $this->measures[] = $measure;
+            $measure->setReading($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMeasure(Measure $measure): self
+    {
+        if ($this->measures->contains($measure)) {
+            $this->measures->removeElement($measure);
+            // set the owning side to null (unless already changed)
+            if ($measure->getReading() === $this) {
+                $measure->setReading(null);
+            }
+        }
 
         return $this;
     }

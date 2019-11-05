@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -86,6 +88,17 @@ class Parameter
      * @ORM\Column(type="string", length=255)
      */
     private $title;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Measurability", mappedBy="parameter", orphanRemoval=true)
+     */
+    private $measurabilities;
+
+    public function __construct()
+    {
+        $this->measures = new ArrayCollection();
+        $this->measurabilities = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -208,6 +221,37 @@ class Parameter
     public function setTitle(string $title): self
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Measurability[]
+     */
+    public function getMeasurabilities(): Collection
+    {
+        return $this->measurabilities;
+    }
+
+    public function addMeasurability(Measurability $measurability): self
+    {
+        if (!$this->measurabilities->contains($measurability)) {
+            $this->measurabilities[] = $measurability;
+            $measurability->setParameter($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMeasurability(Measurability $measurability): self
+    {
+        if ($this->measurabilities->contains($measurability)) {
+            $this->measurabilities->removeElement($measurability);
+            // set the owning side to null (unless already changed)
+            if ($measurability->getParameter() === $this) {
+                $measurability->setParameter(null);
+            }
+        }
 
         return $this;
     }

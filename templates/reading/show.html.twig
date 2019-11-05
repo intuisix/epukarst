@@ -6,11 +6,16 @@
 
 {% block body %}
     <div class="container">
-        <h1>Relevé {{reading.code}}</h1>
+        <div class="d-flex justify-content-between">
+            <div>
+                <h1>Relevé {{reading.code}}</h1>
+            </div>
+            <div>
+                <a href="{{ path('reading_modify', {'code': reading.code}) }}" class="btn btn-primary">Modifier ce relevé</a>
+            </div>
+        </div>
 
-        <a href="{{ path('reading_modify', {'code': reading.code}) }}" class="btn btn-primary">Modifier ce relevé</a>
-
-        <div class="card my-3">
+        <div class="card mb-3">
             <div class="card-body">
                 <dl class="row">
                     <dt class="col-3">Système :</dt>
@@ -29,10 +34,14 @@
             <div class="col-md-6">
                 <div class="card mb-3">
                     <div class="card-header">
-                        Encodé le {{reading.encodingDateTime|date('d/m/Y H:i')}} par {{reading.encodingAuthor.displayName}}
+                        Encodé le <strong>{{reading.encodingDateTime|date('d/m/Y H:i')}}</strong> par <strong>{{reading.encodingAuthor.displayName}}</strong>
                     </div>
                     <div class="card-body">
-                        {{reading.encodingNotes|nl2br}}
+                        {% if reading.encodingNotes is not empty %}
+                            {{reading.encodingNotes|nl2br}}
+                        {% else %}
+                            <em>Il n'y a pas de commentaire d'encodage.</em>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -40,75 +49,66 @@
                 <div class="card mb-3">
                     <div class="card-header">
                         {% if reading.validationAuthor is not empty %}
-                            Validé le {{reading.validationDateTime|date('d/m/Y H:i')}} par {{reading.validationAuthor.displayName}}
+                            Validé le <strong>{{reading.validationDateTime|date('d/m/Y H:i')}}</strong> par <strong>{{reading.validationAuthor.displayName}}</strong>
                         {% else %}
                             Non validé
                         {% endif %}
                     </div>
                     <div class="card-body">
-                        {% if reading.validationAuthor is not empty %}
+                        {% if reading.validationNotes is not empty %}
                             {{reading.validationNotes|nl2br}}
                         {% else %}
-                            Non validé
+                            <em>Il n'y a pas de commentaire de validation.</em>
                         {% endif %}
                     </div>
                 </div>
             </div>
         </div>
 
-        <h2>Paramètres mesurés</h2>
+        <h2>Mesures</h2>
 
         <table class="table table-bordered table-striped">
-            <tr>
-                <th>Paramètre</th>
-                <th>Valeur</th>
-                <th>Stable</th>
-                <th>Date et heure</th>
-                <th>Instrument</th>
-                <th>Remarque</th>
-            </tr>
-            {# Regrouper par paramètre #}
-            {% for i in 1..1 %}
+            <thead>
                 <tr>
-                    <td rowspan="1">NO2</td>
-                    <td>10 mg/l</td>
-                    <td>oui</td>
-                    <td>29/10/2019 10:02</td>
-                    <td>Bandelette test NO2</td>
-                    <td>RAS</td>
+                    <th>Paramètre</th>
+                    <th>Valeur</th>
+                    <th>Stable</th>
+                    <th>Instrument</th>
+                    <th>Encodée le</th>
+                    <th>Encodée par</th>
+                    <th>Remarque</th>
                 </tr>
-                <tr>
-                    <td rowspan="2">NO3</td>
-                    <td>13 mg/l</td>
-                    <td>oui</td>
-                    <td>29/10/2019 10:02</td>
-                    <td>Bandelette test NO3</td>
-                    <td>RAS</td>
-                </tr>
-                <tr>
-                    <td>15 mg/l</td>
-                    <td>oui</td>
-                    <td>29/10/2019 10:02</td>
-                    <td>Spectromètre 2</td>
-                    <td>Contrôle en labo</td>
-                </tr>
-                <tr>
-                    <td rowspan="1">TH</td>
-                    <td>28 °F</td>
-                    <td>oui</td>
-                    <td>29/10/2019 10:02</td>
-                    <td>Liquide test TH</td>
-                    <td>RAS</td>
-                </tr>
-                <tr>
-                    <td rowspan="1">pH</td>
-                    <td>8 pH</td>
-                    <td>oui</td>
-                    <td>29/10/2019 10:02</td>
-                    <td>Bandelettes test pH</td>
-                    <td>RAS</td>
-                </tr>
-            {% endfor %}
-        </table>
+            </thead>
+            <tbody>
+                {% if reading.measures|length > 0 %}
+                    {# TODO: Regrouper par paramètre #}
+                    {% for measure in reading.measures %}
+                        {% set parameter = measure.measurability.parameter %}
+                        {% set instrument = measure.measurability.instrument %}
+                        <tr>
+                            <td rowspan="1">{{parameter.name}}</td>
+                            <td>{{measure.value}} 
+                                {% if measure.tolerance is not null %}
+                                    &plusmn; {{measure.tolerance}} 
+                                {% endif %}
+                                {{parameter.unit}}</td>
+                            <td>{{measure.stabilized ? 'Oui' : 'Non'}}</td>
+                            <td>
+                                {% if instrument is not null %}
+                                    {{instrument.name}}
+                                {% else %}
+                                    --
+                                {% endif %}
+                            </td>
+                            <td>{{measure.encodingDateTime|date('d/m/Y H:i')}}</td>
+                            <td>{{measure.encodingAuthor.displayName}}</td>
+                            <td>{{measure.notes}}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <td colspan="0"><em>Il n'y a pas de mesures.</em></td>
+                {% endif %}
+            </table>
+        </tbody>
     </div>
 {% endblock %}

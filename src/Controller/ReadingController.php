@@ -23,8 +23,7 @@ class ReadingController extends AbstractController
             ->setPage($page);
 
         return $this->render('reading/index.html.twig', [
-            'pagination' => $pagination
-        ]);
+            'pagination' => $pagination]);
     }
 
     /**
@@ -35,6 +34,7 @@ class ReadingController extends AbstractController
     public function encode(ObjectManager $manager, Request $request) {
         $reading = new Reading();
         $reading
+            ->setEncodingAuthor($this->getUser())
             ->setEncodingDateTime(new \DateTime('now'));
 
         $form = $this->createForm(ReadingType::class, $reading);
