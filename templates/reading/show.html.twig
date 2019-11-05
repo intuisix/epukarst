@@ -1,41 +1,63 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Relevé {{code}}
+    Relevé {{reading.code}}
 {% endblock %}
 
 {% block body %}
     <div class="container">
-        <h1>Relevé {{code}}</h1>
-        <p>Station</p>
-        <p>Bassin</p>
-        <p>Système</p>
+        <h1>Relevé {{reading.code}}</h1>
+
+        <a href="{{ path('reading_modify', {'code': reading.code}) }}" class="btn btn-primary">Modifier ce relevé</a>
+
+        <div class="card my-3">
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-3">Système :</dt>
+                    <dd class="col-9">{{reading.station.basin.system.name}}</dd>
+                    <dt class="col-3">Bassin :</dt>
+                    <dd class="col-9">{{reading.station.basin.name}}</dd>
+                    <dt class="col-3">Station :</dt>
+                    <dd class="col-9">{{reading.station.name}}</dd>
+                    <dt class="col-3">Date de terrain :</dt>
+                    <dd class="col-9">{{reading.fieldDateTime|date('d/m/Y H:i')}}</dd>
+                </dl>
+            </div>
+        </div>
 
         <div class="row">
             <div class="col-md-6">
                 <div class="card mb-3">
                     <div class="card-header">
-                        Encodé le XX/XX/XXXX par XXX
+                        Encodé le {{reading.encodingDateTime|date('d/m/Y H:i')}} par {{reading.encodingAuthor.displayName}}
                     </div>
                     <div class="card-body">
-                        <p>Notes d'observation et d'encodage</p>
+                        {{reading.encodingNotes|nl2br}}
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="card mb-3">
                     <div class="card-header">
-                        Validé le XX/XX/XXXX par XXX
+                        {% if reading.validationAuthor is not empty %}
+                            Validé le {{reading.validationDateTime|date('d/m/Y H:i')}} par {{reading.validationAuthor.displayName}}
+                        {% else %}
+                            Non validé
+                        {% endif %}
                     </div>
                     <div class="card-body">
-                        <p>Notes de validation</p>
+                        {% if reading.validationAuthor is not empty %}
+                            {{reading.validationNotes|nl2br}}
+                        {% else %}
+                            Non validé
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
 
         <h2>Paramètres mesurés</h2>
-        
+
         <table class="table table-bordered table-striped">
             <tr>
                 <th>Paramètre</th>

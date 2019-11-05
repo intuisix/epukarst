@@ -11,8 +11,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * Utilisateur.
  * 
- * La table ne porte pas le nom 'user' parce que cela apporte quelques
- * problèmes en PostgreSQL.
+ * Dans la base de données, la table a dû être renommée en raison de problèmes
+ * rencontrés avec PostgreSQL, pour lequel 'user' est un mot réservé.
  * 
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="user_account")
@@ -72,9 +72,26 @@ class User implements UserInterface
      */
     private $userRoles;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $picture;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Reading", mappedBy="author")
+     */
+    private $encodedReadings;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Reading", mappedBy="auditor")
+     */
+    private $validatedReadings;
+
     public function __construct()
     {
         $this->userRoles = new ArrayCollection();
+        $this->readings = new ArrayCollection();
+        $this->validatedReadings = new ArrayCollection();
     }
 
     /**
@@ -266,5 +283,82 @@ class User implements UserInterface
      * @return void
      */
     public function eraseCredentials() {
+    }
+
+    public function getPicture(): ?string
+    {
+        if (empty($this->picture))
+            return 'https://avatars.io/user';
+
+        return $this->picture;
+    }
+
+    public function setPicture(?string $picture): self
+    {
+        $this->picture = $picture;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Reading[]
+     */
+    public function getEncodedReadings(): Collection
+    {
+        return $this->readings;
+    }
+
+    public function addEncodedReading(Reading $reading): self
+    {
+        if (!$this->readings->contains($reading)) {
+            $this->readings[] = $reading;
+            $reading->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEncodedReading(Reading $reading): self
+    {
+        if ($this->readings->contains($reading)) {
+            $this->readings->removeElement($reading);
+            // set the owning side to null (unless already changed)
+            if ($reading->getAuthor() === $this) {
+                $reading->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Reading[]
+     */
+    public function getValidatedReadings(): Collection
+    {
+        return $this->validatedReadings;
+    }
+
+    public function addValidatedReading(Reading $validatedReading): self
+    {
+        if (!$this->validatedReadings->contains($validatedReading)) {
+            $this->validatedReadings[] = $validatedReading;
+            $validatedReading->setAuditor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeValidatedReading(Reading $validatedReading): self
+    {
+        if ($this->validatedReadings->contains($validatedReading)) {
+            $this->validatedReadings->removeElement($validatedReading);
+            // set the owning side to null (unless already changed)
+            if ($validatedReading->getAuditor() === $this) {
+                $validatedReading->setAuditor(null);
+            }
+        }
+
+        return $this;
     }
 }

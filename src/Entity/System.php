@@ -12,8 +12,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\SystemRepository")
  * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity(fields={"name"}, message="Une autre annonce possède déjà ce titre. Veuillez en choisir un autre.")
- * @UniqueEntity(fields={"code"}, message="Une autre annonce possède déjà ce code. Veuillez en choisir un autre.")
+ * @UniqueEntity(fields={"name"}, message="Un autre système possède déjà ce nom. Veuillez en choisir un autre.")
+ * @UniqueEntity(fields={"code"}, message="Un autre système possède déjà ce code. Veuillez en choisir un autre.")
  */
 class System
 {
@@ -93,7 +93,7 @@ class System
     private $picture;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Picture", mappedBy="system", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\SystemPicture", mappedBy="system", orphanRemoval=true)
      */
     private $pictures;
 
@@ -250,14 +250,14 @@ class System
     }
 
     /**
-     * @return Collection|Picture[]
+     * @return Collection|SystemPicture[]
      */
     public function getPictures(): Collection
     {
         return $this->pictures;
     }
 
-    public function addPicture(Picture $picture): self
+    public function addPicture(SystemPicture $picture): self
     {
         if (!$this->pictures->contains($picture)) {
             $this->pictures[] = $picture;
@@ -267,7 +267,7 @@ class System
         return $this;
     }
 
-    public function removePicture(Picture $picture): self
+    public function removePicture(SystemPicture $picture): self
     {
         if ($this->pictures->contains($picture)) {
             $this->pictures->removeElement($picture);

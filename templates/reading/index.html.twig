@@ -39,29 +39,28 @@
                         <th>Dureté</th>
                         <th>Actions</th>
                     </tr>
-                    {% for i in 1..12 %}
+                    {% for reading in pagination.data %}
                         <tr>
                             <th><input type="checkbox" name="" id=""/></th>
-                            <td>24/02/2018 10:12</td>
-                            <td><a href="{{ path('reading_show', { 'code': '508-11r' }) }}">508-{{loop.index+10}}r</a></td>
-                            <td>Système</td>
-                            <td>Bassin</td>
-                            <td>Station</td>
+                            <td>{{reading.fieldDateTime|date('d/m/Y H:i')}}</td>
+                            <td><a href="{{ path('reading_show', { 'code': reading.code }) }}">{{reading.code}}</a></td>
+                            <td>{{reading.station.basin.system.name}}</td>
+                            <td>{{reading.station.basin.name}}</td>
+                            <td>{{reading.station.name}}</td>
                             <td>--</td>
                             <td>--</td>
                             <td>--</td>
                             <td>
-                                <a href="#" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="#" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i>
-                                </a>
+                                <a href="{{ path('reading_modify', {'code': reading.code}) }}" class="text-primary"><i class="fas fa-edit"></i></a>
+                                <a href="#" class="text-danger"><i class="fas fa-trash"></i></a>
                             </td>
                         </tr>
                     {% endfor %}
                 </table>
-                <a class="btn btn-primary" href="{{ path('reading_add') }}" role="button">Ajouter un relevé</a>
+
+                {{pagination.display}}
+
+                <a class="btn btn-primary" href="{{ path('reading_encode') }}" role="button">Encoder un nouveau relevé</a>
             </div>
         </div>
     </div>

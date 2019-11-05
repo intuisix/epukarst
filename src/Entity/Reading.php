@@ -4,9 +4,11 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ReadingRepository")
+ * @UniqueEntity(fields={"code"}, message="Un autre relevé possède déjà ce code. Veuillez définir un code unique.")
  * @HasLifecycleCallbacks()
  */
 class Reading
@@ -19,11 +21,32 @@ class Reading
     private $id;
 
     /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Station", inversedBy="readings")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $station;
+
+    /**
      * Code attribué au relevé.
      * 
      * @ORM\Column(type="string", length=255)
      */
     private $code;
+
+    /**
+     * Date et heure des mesures sur le terrain.
+     * 
+     * @ORM\Column(type="datetime")
+     */
+    private $fieldDateTime;
+
+    /**
+     * Auteur de l'encodage.
+     * 
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="readings")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $encodingAuthor;
 
     /**
      * Date et heure de l'encodage.
@@ -33,18 +56,25 @@ class Reading
     private $encodingDateTime;
 
     /**
-     * Date et heure de la validation.
-     * 
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $validationDateTime;
-
-    /**
      * Remarques ajoutées lors de l'encodage.
      * 
      * @ORM\Column(type="text")
      */
     private $encodingNotes;
+
+    /**
+     * Auteur de la validation.
+     * 
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="validatedReadings")
+     */
+    private $validationAuthor;
+
+    /**
+     * Date et heure de la validation.
+     * 
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $validationDateTime;
 
     /**
      * Remarques ajoutées lors de la validation.
@@ -124,6 +154,54 @@ class Reading
     public function setValidationNotes(?string $validationNotes): self
     {
         $this->validationNotes = $validationNotes;
+
+        return $this;
+    }
+
+    public function getEncodingAuthor(): ?User
+    {
+        return $this->encodingAuthor;
+    }
+
+    public function setEncodingAuthor(?User $encodingAuthor): self
+    {
+        $this->encodingAuthor = $encodingAuthor;
+
+        return $this;
+    }
+
+    public function getValidationAuthor(): ?User
+    {
+        return $this->validationAuthor;
+    }
+
+    public function setValidationAuthor(?User $validationAuthor): self
+    {
+        $this->validationAuthor = $validationAuthor;
+
+        return $this;
+    }
+
+    public function getStation(): ?Station
+    {
+        return $this->station;
+    }
+
+    public function setStation(?Station $station): self
+    {
+        $this->station = $station;
+
+        return $this;
+    }
+
+    public function getFieldDateTime(): ?\DateTimeInterface
+    {
+        return $this->fieldDateTime;
+    }
+
+    public function setFieldDateTime(\DateTimeInterface $fieldDateTime): self
+    {
+        $this->fieldDateTime = $fieldDateTime;
 
         return $this;
     }

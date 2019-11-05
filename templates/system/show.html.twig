@@ -8,11 +8,11 @@
     {# Image de titre #}
     <div class="ad-title" style="background-image: url(http://lorempixel.com/500/300)">
         <div class="container")>
-            <h1>
+            <h1 class="d-flex align-items-center">
+                <span class="badge badge-secondary mr-2">{{system.code}}</span>
                 {{system.name}}
-                <span class="badge badge-secondary">{{system.code}}</span>
             </h1>
-            <p>{{system.introduction}}</p>
+            <p><big>{{system.introduction}}</big></p>
             <p>{{system.commune}} - {{system.basin}}</p>
         </div>
     </div>
@@ -56,21 +56,22 @@
                 
                 {# Description des bassins du système #}
                 {% for basin in system.basins %}
+                    <hr>
                     {% set basinIndex = loop.index %}
-                    <h2 id="basin_{{basin.code}}">
-                        {{basinIndex}}.
+                    <h2 id="basin_{{basin.code}}" class="d-flex align-items-center">
+                        <!--{{basinIndex}}.-->
+                        <span class="badge badge-secondary mr-2">{{basin.code}}</span>
                         {{basin.name}}
-                        <span class="badge badge-secondary">{{basin.code}}</span>
                     </h2>
                     {{basin.description|raw}}
 
                     {# Description des stations du système #}
                     {% for station in basin.stations %}
                         {% set stationIndex = loop.index %}
-                        <h3 id="station_{{basin.code}}_{{station.code}}">
-                            {{basinIndex}}.{{stationIndex}}.
+                        <h3 id="station_{{station.code}}" class="d-flex align-items-center">
+                            <!--{{basinIndex}}.{{stationIndex}}.-->
+                            <span class="badge badge-secondary mr-2">{{station.code}}</span>
                             {{station.name}}
-                            <span class="badge badge-secondary">{{station.code}}</span>
                         </h3>
                         {{station.description|raw}}
                     {% endfor %}
@@ -80,7 +81,7 @@
 
             {# Colonne de droite #}
             <div class="col alert bg-light">
-                <h2>Bassins d'alimentation</h2>
+                <h2>Bassins et stations</h2>
 
                 {# Pour chaque bassin #}
                 {% for basin in system.basins %}
@@ -91,7 +92,7 @@
                         <ul class="list-group list-group-flush">
                             {% for station in basin.stations %}
                                 <li class="list-group-item">
-                                    <a href="#station_{{basin.code}}_{{station.code}}">{{station.name}}</a>
+                                    <a href="#station_{{station.code}}">{{station.name}}</a>
                                 </li>
                             {% endfor %}
                         </ul>

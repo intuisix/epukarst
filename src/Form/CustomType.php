@@ -16,7 +16,7 @@ class CustomType extends AbstractType {
      */
     protected function getConfig($label, $placeholder, bool $required = false, $options = []) {
         return
-            array_merge(
+            array_merge_recursive(
                 [
                     'label' => $label,
                     'attr' => [

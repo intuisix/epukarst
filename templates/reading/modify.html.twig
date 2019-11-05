@@ -1,20 +1,18 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Ajouter un relevé
+    Modifier le relevé {{reading.code}}
 {% endblock %}
-
-{% form_theme form _self %}
 
 {% block body %}
     <div class="container">
-        <h1>Ajouter un relevé</h1>
+        <h1>Modifier le relevé {{reading.code}}</h1>
 
         {{ form_start(form) }}
 
         {{ form_widget(form) }}
 
-        <button type="submit" class="btn btn-primary">Ajouter le relevé</button>
+        <button type="submit" class="btn btn-primary">Enregistrer la modification</button>
 
         {{ form_end(form) }}
     </div>

@@ -6,6 +6,7 @@ use App\Entity\Role;
 use App\Entity\User;
 use App\Entity\Basin;
 use App\Entity\System;
+use App\Entity\Reading;
 use App\Entity\Station;
 use App\Entity\Parameter;
 use App\Entity\Instrument;
@@ -17,26 +18,73 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class AppFixtures extends Fixture
 {
     private $faker;
-
     private $passwordEncoder;
+    private $users;
 
+    /**
+     * Contruit le générateur de données.
+     *
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     */
     public function __construct(UserPasswordEncoderInterface $passwordEncoder) {
+        $this->faker = FakerFactory::create("fr-BE");
         $this->passwordEncoder = $passwordEncoder;
     }
 
+    /**
+     * Génère les données.
+     *
+     * @param ObjectManager $manager
+     * @return void
+     */
     public function load(ObjectManager $manager)
     {
-        $this->faker = FakerFactory::create("fr-BE");
-
-        $this->loadAdminUser($manager);
-        $this->loadSystems($manager);
+        $this->loadAdminUsers($manager);
+        $this->loadOtherUsers($manager);
         $this->loadParameters($manager);
         $this->loadInstruments($manager);
-
+        $this->loadSystems($manager);
         $manager->flush();
     }
 
-    private function loadAdminUser(ObjectManager $manager) {
+    /**
+     * Retourne une description aléatoire, contenant un nombre aléatoire
+     * de paragraphes formatés en HTML.
+     *
+     * @param integer $minParagraphCount
+     * @param integer $maxParagraphCount
+     * @return void
+     */
+    private function getFakeDescription(int $minParagraphCount, int $maxParagraphCount) {
+        return '<p>' . join('<p></p>', $this->faker->paragraphs(mt_rand($minParagraphCount, $maxParagraphCount))) . '</p>';
+    }
+
+    /**
+     * Retourne un commentaire aléatoire, contenant un nombre aléatoire de
+     * paragraphes séparés un saut de ligne.
+     *
+     * @param integer $minParagraphCount
+     * @param integer $maxParagraphCount
+     * @return void
+     */
+    private function getFakeNote(int $minParagraphCount, int $maxParagraphCount) {
+        return join(PHP_EOL, $this->faker->paragraphs(mt_rand($minParagraphCount, $maxParagraphCount)));
+    }
+
+    /**
+     * Retourne un code aléatoire constitué de quelques lettres et chiffres.
+     */
+    private function getFakeCode() {
+        return $this->faker->regexify('[A-Z0-9]{4}');
+    }
+
+    /**
+     * Génère des utilisateurs ayant le privilège d'administration.
+     *
+     * @param ObjectManager $manager
+     * @return void
+     */
+    private function loadAdminUsers(ObjectManager $manager) {
         /* Créer le rôle d'aministration */
         $role = new Role();
         $role->setRole('ROLE_ADMIN');
@@ -50,126 +98,50 @@ class AppFixtures extends Fixture
             ->setEmail('admin@epukarst.be')
             ->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
         $manager->persist($user);
+        $this->users[] = $user;
+
+        /* Créer un deuxième compte d'administration */
+        $user = new User();
+        $user
+            ->setFirstName('Georges')
+            ->setLastName('Michel')
+            ->setEmail('contact@cwepss.org')
+            ->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
+        $manager->persist($user);
+        $this->users[] = $user;
     }
 
-    private function getFakeDescription(int $minParagraphCount, int $maxParagraphCount) {
-        return '<p>' . join('<p></p>', $this->faker->paragraphs(mt_rand($minParagraphCount, $maxParagraphCount))) . '</p>';
-    }
+    /**
+     * Génère des utilisateurs n'ayant pas le privilège d'administration.
+     *
+     * @param ObjectManager $manager
+     * @return void
+     */
+    private function loadOtherUsers(ObjectManager $manager) {
+        for ($i = 0; $i < 10; $i++) {
+            $gender = $this->faker->randomElement(['male', 'female']);
+            $picture = 'https://randomuser.me/api/portraits/' .
+                ($gender == 'male' ? 'men/' : 'women/') .
+                $this->faker->numberBetween(1, 99) . '.jpg';
 
-    private function getFakeCode() {
-        return $this->faker->regexify('[A-Z0-9]{3,6}');
-    }
-
-    private function loadStations(ObjectManager $manager, Basin $basin) {
-        $namings = [
-            "Perte",
-            "Chantoir",
-            "Gour",
-            "Stalactite",
-            "Rivière",
-            "Regard",
-            "Siphon",
-            "Résurgence",
-        ];
-
-        for ($i = 0; $i < mt_rand(1, 10); $i++) {
-            $kind = $namings[mt_rand(0, count($namings) - 1)];
-            $station = new Station();
-            $station
-                ->setBasin($basin)
-                ->setCode($this->getFakeCode())
-                ->setName($kind . " " . $this->faker->firstName)
-                ->setKind($kind)
-                ->setDescription($this->getFakeDescription(1, 3));
-            $manager->persist($station);
+            $user = new User();
+            $user
+                ->setFirstName($this->faker->firstName($gender))
+                ->setLastName($this->faker->lastName())
+                ->setEmail($this->faker->email())
+                ->setPassword($this->passwordEncoder->encodePassword($user, 'password'))
+                ->setPicture($picture);
+            $manager->persist($user);
+            $this->users[] = $user;
         }
     }
 
-    private function loadBasins(ObjectManager $manager, System $system) {
-        for ($i = 0; $i < mt_rand(1, 5); $i++) {
-            $basin = new Basin();
-            $basin
-                ->setSystem($system)
-                ->setCode($this->getFakeCode())
-                ->setName("Rivière " . $this->faker->lastName())
-                ->setDescription($this->getFakeDescription(1, 5));
-            $this->loadStations($manager, $basin);
-            $manager->persist($basin);
-        }
-    }
-
-    private function loadSystems(ObjectManager $manager) {
-        $system = new System();
-        $system
-            ->setCode("LESV")
-            ->setName("Vallon de Lesve (Vilaine Source)")
-            ->setIntroduction("Système souterrain du vallon de Lesve")
-            ->setBasin("Burnot")
-            ->setCommune("Profondeville")
-            ->setNumber("533-010")
-            ->setWaterMass("M23")
-            ->setDescription("<p>Ce vallon inclut l'abîme de Lesve et la résurgence à la Vilaine Source.</p>" . $this->getFakeDescription(1, 5))
-            ->setPicture("lesve.jpg");
-        $this->loadBasins($manager, $system);
-        $manager->persist($system);
-
-        $system = new System();
-        $system
-            ->setCode("HOTT")
-            ->setName("Système de Hotton")
-            ->setBasin("Ourthe")
-            ->setCommune("Hotton")
-            ->setNumber("555-005")
-            ->setWaterMass("M23")
-            ->setIntroduction("Système souterrain de Hotton")
-            ->setDescription("<p>L'élément principal de ce système est la grotte des Mille-et-Une Nuits.</p>" . $this->getFakeDescription(1, 5))
-            ->setPicture("hotton.jpg");
-        $this->loadBasins($manager, $system);
-        $manager->persist($system);
-
-        $system = new System();
-        $system
-            ->setCode("SPRI")
-            ->setName("Noû Bleû (Synclinal de Sprimont)")
-            ->setBasin("Ourthe")
-            ->setCommune("Sprimont")
-            ->setNumber("492-200")
-            ->setWaterMass("M21")
-            ->setIntroduction("Système souterrain du synclinal de Sprimont")
-            ->setDescription("<p>Description du système dont les éléments principaux sont la grotte du Noû Bleû et le lac Bleû.</p>" . $this->getFakeDescription(1, 5))
-            ->setPicture("nou-bleu.jpg");
-        $this->loadBasins($manager, $system);
-        $manager->persist($system);
-
-        $system = new System();
-        $system
-            ->setCode("CHANT")
-            ->setName("Vallon des Chantoirs (Remouchamps)")
-            ->setBasin("Amblève")
-            ->setCommune("Aywaille")
-            ->setNumber("493-074")
-            ->setWaterMass("M23")
-            ->setIntroduction("Système du vallon des Chantoirs")
-            ->setDescription("<p>Description du système.</p>" . $this->getFakeDescription(1, 5))
-            ->setPicture("vallon-des-chantoirs.jpg");
-        $this->loadBasins($manager, $system);
-        $manager->persist($system);
-    
-        $system = new System();
-        $system
-            ->setCode("FURF")
-            ->setName("Lesse souterraine (Furfooz)")
-            ->setBasin("Lesse")
-            ->setCommune("Dinant")
-            ->setNumber("538-252")
-            ->setWaterMass("M21")
-            ->setIntroduction("Système souterrain de la basse-Lesse")
-            ->setDescription("<p>Description du système dont un élément est la Galerie aux Sources.</p>" . $this->getFakeDescription(1, 5))
-            ->setPicture("galerie-aux-sources.jpg");
-        $this->loadBasins($manager, $system);
-        $manager->persist($system);
-    }
-
+    /**
+     * Génère des paramètres mesurables durant l'étude.
+     *
+     * @param ObjectManager $manager
+     * @return void
+     */
     private function loadParameters(ObjectManager $manager) {
         $parameter = new Parameter();
         $parameter
@@ -314,6 +286,12 @@ class AppFixtures extends Fixture
         */
     }
 
+    /**
+     * Génère des instruments de mesure servant à l'étude.
+     *
+     * @param ObjectManager $manager
+     * @return void
+     */
     private function loadInstruments(ObjectManager $manager) {
         $namings = [
             "Spectromètre",
@@ -333,5 +311,159 @@ class AppFixtures extends Fixture
     
             $manager->persist($instrument);
         }
+    }
+
+    /**
+     * Génère des relevés relatifs à une station.
+     *
+     * @param ObjectManager $manager
+     * @param Station $station
+     * @return void
+     */
+    private function loadReadings(ObjectManager $manager, Station $station) {
+        for ($i = 0; $i < mt_rand(0, 15); $i++) {
+            $fieldDateTime = $this->faker->dateTimeBetween('-9 months');
+            $sleepingDays = mt_rand(0, 20);
+            $reading = new Reading();
+            $reading
+                ->setStation($station)
+                ->setCode($this->getFakeCode())
+                ->setFieldDateTime($fieldDateTime)
+                ->setEncodingAuthor($this->users[mt_rand(0, count($this->users) - 1)])
+                ->setEncodingDateTime((clone $fieldDateTime)->modify("+$sleepingDays day"))
+                ->setEncodingNotes($this->getFakeNote(1, 3));
+            $manager->persist($reading);
+        }
+    }
+
+    /**
+     * Génère des stations relatives à un bassin.
+     *
+     * @param ObjectManager $manager
+     * @param Basin $basin
+     * @return void
+     */
+    private function loadStations(ObjectManager $manager, Basin $basin) {
+        $namings = [
+            "Perte",
+            "Chantoir",
+            "Gour",
+            "Stalactite",
+            "Rivière",
+            "Regard",
+            "Siphon",
+            "Résurgence",
+        ];
+
+        for ($i = 0; $i < mt_rand(1, 10); $i++) {
+            $kind = $namings[mt_rand(0, count($namings) - 1)];
+            $station = new Station();
+            $station
+                ->setBasin($basin)
+                ->setCode($this->getFakeCode())
+                ->setName($kind . " " . $this->faker->firstName)
+                ->setKind($kind)
+                ->setDescription($this->getFakeDescription(1, 3));
+            $this->loadReadings($manager, $station);
+            $manager->persist($station);
+        }
+    }
+
+    /**
+     * Génère des bassins relatifs à un système.
+     *
+     * @param ObjectManager $manager
+     * @param System $system
+     * @return void
+     */
+    private function loadBasins(ObjectManager $manager, System $system) {
+        for ($i = 0; $i < mt_rand(1, 5); $i++) {
+            $basin = new Basin();
+            $basin
+                ->setSystem($system)
+                ->setCode($this->getFakeCode())
+                ->setName("Rivière " . $this->faker->lastName())
+                ->setDescription($this->getFakeDescription(1, 5));
+            $this->loadStations($manager, $basin);
+            $manager->persist($basin);
+        }
+    }
+
+    /**
+     * Génère des systèmes.
+     *
+     * @param ObjectManager $manager
+     * @return void
+     */
+    private function loadSystems(ObjectManager $manager) {
+        $system = new System();
+        $system
+            ->setCode("LESV")
+            ->setName("Vallon de Lesve (Vilaine Source)")
+            ->setIntroduction("Système souterrain du vallon de Lesve")
+            ->setBasin("Burnot")
+            ->setCommune("Profondeville")
+            ->setNumber("533-010")
+            ->setWaterMass("M23")
+            ->setDescription("<p>Ce vallon inclut l'abîme de Lesve et la résurgence à la Vilaine Source.</p>" . $this->getFakeDescription(1, 5))
+            ->setPicture("lesve.jpg");
+        $this->loadBasins($manager, $system);
+        $manager->persist($system);
+
+        $system = new System();
+        $system
+            ->setCode("HOTT")
+            ->setName("Système de Hotton")
+            ->setBasin("Ourthe")
+            ->setCommune("Hotton")
+            ->setNumber("555-005")
+            ->setWaterMass("M23")
+            ->setIntroduction("Système souterrain de Hotton")
+            ->setDescription("<p>L'élément principal de ce système est la grotte des Mille-et-Une Nuits.</p>" . $this->getFakeDescription(1, 5))
+            ->setPicture("hotton.jpg");
+        $this->loadBasins($manager, $system);
+        $manager->persist($system);
+
+        $system = new System();
+        $system
+            ->setCode("SPRI")
+            ->setName("Noû Bleû (Synclinal de Sprimont)")
+            ->setBasin("Ourthe")
+            ->setCommune("Sprimont")
+            ->setNumber("492-200")
+            ->setWaterMass("M21")
+            ->setIntroduction("Système souterrain du synclinal de Sprimont")
+            ->setDescription("<p>Description du système dont les éléments principaux sont la grotte du Noû Bleû et le lac Bleû.</p>" . $this->getFakeDescription(1, 5))
+            ->setPicture("nou-bleu.jpg");
+        $this->loadBasins($manager, $system);
+        $manager->persist($system);
+
+        $system = new System();
+        $system
+            ->setCode("CHANT")
+            ->setName("Vallon des Chantoirs (Remouchamps)")
+            ->setBasin("Amblève")
+            ->setCommune("Aywaille")
+            ->setNumber("493-074")
+            ->setWaterMass("M23")
+            ->setIntroduction("Système du vallon des Chantoirs")
+            ->setDescription("<p>Description du système.</p>" . $this->getFakeDescription(1, 5))
+            ->setPicture("vallon-des-chantoirs.jpg");
+        $this->loadBasins($manager, $system);
+        $manager->persist($system);
+    
+        $system = new System();
+        $system
+            ->setCode("FURF")
+            ->setName("Lesse souterraine (Furfooz)")
+            ->setBasin("Lesse")
+            ->setCommune("Dinant")
+            ->setNumber("538-252")
+            ->setWaterMass("M21")
+            ->setIntroduction("Système souterrain de la basse-Lesse")
+            ->setDescription("<p>Description du système dont un élément est la Galerie aux Sources.</p>" . $this->getFakeDescription(1, 5))
+            ->setPicture("galerie-aux-sources.jpg");
+        $this->loadBasins($manager, $system);
+        $manager->persist($system);
     }
 }

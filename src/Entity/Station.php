@@ -2,12 +2,14 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\StationRepository")
- * @UniqueEntity(fields={"basin", "code"}, message="Une autre station possède déjà ce code pour le même bassin. Veuillez définir un code unique.")
+ * @UniqueEntity(fields={"code"}, message="Une autre station possède déjà ce code. Veuillez définir un code unique.")
  */
 class Station
 {
@@ -43,6 +45,16 @@ class Station
      * @ORM\Column(type="text")
      */
     private $description;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Reading", mappedBy="station")
+     */
+    private $readings;
+
+    public function __construct()
+    {
+        $this->readings = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -105,6 +117,37 @@ class Station
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Reading[]
+     */
+    public function getReadings(): Collection
+    {
+        return $this->readings;
+    }
+
+    public function addReading(Reading $reading): self
+    {
+        if (!$this->readings->contains($reading)) {
+            $this->readings[] = $reading;
+            $reading->setStation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReading(Reading $reading): self
+    {
+        if ($this->readings->contains($reading)) {
+            $this->readings->removeElement($reading);
+            // set the owning side to null (unless already changed)
+            if ($reading->getStation() === $this) {
+                $reading->setStation(null);
+            }
+        }
 
         return $this;
     }
