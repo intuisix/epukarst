@@ -8,6 +8,9 @@
             EpuKarst - {% block title %}Bienvenue !{% endblock %}
         </title>
 
+        {# Viewport pour appareils mobiles #}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
         {# Styles Bootstrap de base #}
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
@@ -19,7 +22,6 @@
 
         {# Pour les styles propres à la page affichée #}
         {% block stylesheets %}{% endblock %}
-
     </head>
     <body>
         {# Barre de navigation #}
@@ -38,6 +40,5 @@
 
         {# Pour les scripts propres à la page affichée #}
         {% block javascripts %}{% endblock %}
-
     </body>
 </html>
