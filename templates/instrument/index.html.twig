@@ -24,11 +24,15 @@
                     <td>{{instrument.model}}</td>
                     <td>{{instrument.serialNumber}}</td>
                     <td>
-                        {% if loop.index == 2 or loop.index >= 9 and loop.index <= 11 %}
-                            23/10/2019 <span class="badge badge-warning badge-pill">KO</span></td>
-                        {% else %}
-                            23/02/2020 <span class="badge badge-success badge-pill">OK</span></td>
-                        {% endif %}
+                        {% for calibration in instrument.calibrations | sort((a,b) => -(a.dueDate <=> b.dueDate)) | slice(0, 1) %}
+                            {{calibration.dueDate|date('d/m/Y')}} 
+                            {% if date(calibration.dueDate) < date() %}
+                                <span class="badge badge-warning badge-pill">KO</span>
+                            {% else %}
+                                <span class="badge badge-success badge-pill">OK</span>
+                            {% endif %}
+                        {% endfor %}
+                    </td>
                     <td>
                         <a href="#" class="text-primary"><i class="fas fa-edit"></i></a>
                         <a href="#" class="text-danger"><i class="fas fa-trash"></i></a>

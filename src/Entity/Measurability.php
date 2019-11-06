@@ -50,6 +50,11 @@ class Measurability
      */
     private $measures;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $notes;
+
     public function __construct()
     {
         $this->measures = new ArrayCollection();
@@ -147,6 +152,18 @@ class Measurability
                 $measure->setMeasurability(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNotes(): ?string
+    {
+        return $this->notes;
+    }
+
+    public function setNotes(?string $notes): self
+    {
+        $this->notes = $notes;
 
         return $this;
     }

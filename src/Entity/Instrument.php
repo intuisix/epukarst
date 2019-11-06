@@ -65,10 +65,16 @@ class Instrument
      */
     private $measurabilities;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Calibration", mappedBy="instrument", orphanRemoval=true)
+     */
+    private $calibrations;
+
     public function __construct()
     {
         $this->measures = new ArrayCollection();
         $this->measurabilities = new ArrayCollection();
+        $this->calibrations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -161,6 +167,37 @@ class Instrument
             // set the owning side to null (unless already changed)
             if ($measurability->getInstrument() === $this) {
                 $measurability->setInstrument(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Calibration[]
+     */
+    public function getCalibrations(): Collection
+    {
+        return $this->calibrations;
+    }
+
+    public function addCalibration(Calibration $calibration): self
+    {
+        if (!$this->calibrations->contains($calibration)) {
+            $this->calibrations[] = $calibration;
+            $calibration->setInstrument($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCalibration(Calibration $calibration): self
+    {
+        if ($this->calibrations->contains($calibration)) {
+            $this->calibrations->removeElement($calibration);
+            // set the owning side to null (unless already changed)
+            if ($calibration->getInstrument() === $this) {
+                $calibration->setInstrument(null);
             }
         }
 

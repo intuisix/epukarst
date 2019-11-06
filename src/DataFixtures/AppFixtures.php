@@ -11,6 +11,7 @@ use App\Entity\Reading;
 use App\Entity\Station;
 use App\Entity\Parameter;
 use App\Entity\Instrument;
+use App\Entity\Calibration;
 use App\Entity\Measurability;
 use Faker\Factory as FakerFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -292,6 +293,8 @@ class AppFixtures extends Fixture
      * @return void
      */
     private function loadInstruments(ObjectManager $manager) {
+        /* Table définissant les instruments que l'on souhaite générer ainsi
+        que les paramètres que sont capables de mesurer */
         $template = [
             "Bandelette NO2" => [ "NO2" ],
             "Bandelette NO3" => [ "NO3" ],
@@ -308,6 +311,7 @@ class AppFixtures extends Fixture
         ];
 
         foreach ($template as $name => $parameters) {
+            /* Générer l'instrument */
             $instrument = new Instrument();
             $instrument
                 ->setCode($this->getFakeCode())
@@ -318,6 +322,7 @@ class AppFixtures extends Fixture
             $manager->persist($instrument);
             $this->instruments[] = $instrument;
 
+            /* Générer les paramètres mesurables par l'instrument */
             foreach ($parameters as $name) {
                 $parameter = $this->parameters[$name];
                 $tolerance = ($parameter->getPhysicalMaximum() - $parameter->getPhysicalMinimum()) * 0.005;
@@ -325,9 +330,24 @@ class AppFixtures extends Fixture
                 $measurability
                     ->setParameter($parameter)
                     ->setInstrument($instrument)
-                    ->setTolerance($tolerance);
+                    ->setTolerance($tolerance)
+                    ->setNotes($this->getFakeNote(0, 1));
                 $manager->persist($measurability);
                 $this->measurabilities[] = $measurability;
+            }
+
+            /* Générer des étalonnages */
+            for ($i = 0; $i < mt_rand(0, 5); $i++) {
+                $doneDate = $this->faker->dateTimeBetween('-2 years');
+                $dueDate = (clone $doneDate)->modify('+1 year');
+                $calibration = new Calibration();
+                $calibration
+                    ->setInstrument($instrument)
+                    ->setDoneDate($doneDate)
+                    ->setDueDate($dueDate)
+                    ->setOperatorName($this->faker->lastName())
+                    ->setNotes($this->getFakeNote(0, 1));
+                $manager->persist($calibration);
             }
         }
     }
