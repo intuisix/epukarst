@@ -253,13 +253,13 @@ class User implements UserInterface
      * Pour UserInterface, retourne les rôles de l'utilisateur.
      */
     public function getRoles() {
-        /* Obtenir les rôles de l'utilisateur */
-/*        $roles = $this->userRoles
-            ->map(function($role) { return $role->getTitle(); })
-            ->toArray();*/
-
-        /* Ajouter le rôle par défaut, parce que tous les utilisateurs connectés doivent aussi avoir le rôle d'utilisateur */
+        /* Tous les utilisateurs connectés ont un premier rôle */
         $roles[] = 'ROLE_USER';
+
+        /* Les autres rôles sont attribués par la base de données */
+        foreach ($this->userRoles as $role) {
+            $roles[] = $role->getLinkedRole()->getRole();
+        }
 
         return $roles;
     }

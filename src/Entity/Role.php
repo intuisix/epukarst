@@ -28,31 +28,6 @@ class Role
      */
     private $userRoles;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $canManageUsers;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $canManageSystems;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $canCoordinateSystem;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $canContributeSystem;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $canObserveSystem;
-
     public function __construct()
     {
         $this->userRoles = new ArrayCollection();
@@ -102,66 +77,6 @@ class Role
                 $userRole->setLinkedRole(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getCanManageUsers(): ?bool
-    {
-        return $this->canManageUsers;
-    }
-
-    public function setCanManageUsers(?bool $canManageUsers): self
-    {
-        $this->canManageUsers = $canManageUsers;
-
-        return $this;
-    }
-
-    public function getCanManageSystems(): ?bool
-    {
-        return $this->canManageSystems;
-    }
-
-    public function setCanManageSystems(?bool $canManageSystems): self
-    {
-        $this->canManageSystems = $canManageSystems;
-
-        return $this;
-    }
-
-    public function getCanCoordinateSystem(): ?bool
-    {
-        return $this->canCoordinateSystem;
-    }
-
-    public function setCanCoordinateSystem(?bool $canCoordinateSystem): self
-    {
-        $this->canCoordinateSystem = $canCoordinateSystem;
-
-        return $this;
-    }
-
-    public function getCanContributeSystem(): ?bool
-    {
-        return $this->canContributeSystem;
-    }
-
-    public function setCanContributeSystem(?bool $canContributeSystem): self
-    {
-        $this->canContributeSystem = $canContributeSystem;
-
-        return $this;
-    }
-
-    public function getCanObserveSystem(): ?bool
-    {
-        return $this->canObserveSystem;
-    }
-
-    public function setCanObserveSystem(?bool $canObserveSystem): self
-    {
-        $this->canObserveSystem = $canObserveSystem;
 
         return $this;
     }

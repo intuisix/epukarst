@@ -9,12 +9,14 @@ use App\Service\PaginationService;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ReadingController extends AbstractController
 {
     /**
      * @Route("/reading/{page<\d+>?1}", name="reading")
+     * @IsGranted("ROLE_USER")
      */
     public function index(int $page, PaginationService $pagination)
     {
@@ -30,6 +32,7 @@ class ReadingController extends AbstractController
      * Gère l'encodage d'un nouveau relevé.
      * 
      * @Route("/reading/encode", name="reading_encode")
+     * @IsGranted("ROLE_USER")
      */
     public function encode(ObjectManager $manager, Request $request) {
         $reading = new Reading();
@@ -58,6 +61,7 @@ class ReadingController extends AbstractController
      * Montre un relevé existant.
      * 
      * @Route("/reading/{code}", name="reading_show")
+     * @IsGranted("ROLE_USER")
      */
     public function show(Reading $reading) {
         return $this->render('reading/show.html.twig', [
@@ -66,6 +70,7 @@ class ReadingController extends AbstractController
 
     /**
      * @Route("/reading/{code}/modify", name="reading_modify")
+     * @IsGranted("ROLE_USER")
      */
     public function modify(Reading $reading, ObjectManager $manager, Request $request) {
         $form = $this->createForm(ReadingType::class, $reading);

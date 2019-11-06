@@ -9,6 +9,7 @@ use App\Entity\System;
 use App\Entity\Measure;
 use App\Entity\Reading;
 use App\Entity\Station;
+use App\Entity\UserRole;
 use App\Entity\Parameter;
 use App\Entity\Instrument;
 use App\Entity\Calibration;
@@ -22,6 +23,7 @@ class AppFixtures extends Fixture
 {
     private $faker;
     private $passwordEncoder;
+    private $manager;
     private $users;
     private $parameters;
     private $instruments;
@@ -45,6 +47,7 @@ class AppFixtures extends Fixture
      */
     public function load(ObjectManager $manager)
     {
+        $this->manager = $manager;
         $this->loadAdminUsers($manager);
         $this->loadOtherUsers($manager);
         $this->loadParameters($manager);
@@ -85,6 +88,17 @@ class AppFixtures extends Fixture
     }
 
     /**
+     * Attribue un rôle à un utilisateur.
+     */
+    public function addUserRole(User $user, Role $role) {
+        $userRole = new UserRole();
+        $userRole
+            ->setLinkedUser($user)
+            ->setLinkedRole($role);
+        $this->manager->persist($userRole);
+    }
+
+    /**
      * Génère des utilisateurs ayant le privilège d'administration.
      *
      * @param ObjectManager $manager
@@ -105,16 +119,18 @@ class AppFixtures extends Fixture
             ->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
         $manager->persist($user);
         $this->users[] = $user;
+        $this->addUserRole($user, $role);
 
-        /* Créer un deuxième compte d'administration */
+        /* Créer un compte de contact, également administrateur */
         $user = new User();
         $user
-            ->setFirstName('Georges')
-            ->setLastName('Michel')
+            ->setFirstName('Contact')
+            ->setLastName('CWEPSS')
             ->setEmail('contact@cwepss.org')
             ->setPassword($this->passwordEncoder->encodePassword($user, 'password'));
         $manager->persist($user);
         $this->users[] = $user;
+        $this->addUserRole($user, $role);
     }
 
     /**
