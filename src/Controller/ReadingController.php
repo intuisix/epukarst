@@ -35,15 +35,27 @@ class ReadingController extends AbstractController
      * @IsGranted("ROLE_USER")
      */
     public function encode(ObjectManager $manager, Request $request) {
+        $encodingAuthor = $this->getUser();
+        $encodingDateTime = new \DateTime('now');
+
         $reading = new Reading();
         $reading
-            ->setEncodingAuthor($this->getUser())
-            ->setEncodingDateTime(new \DateTime('now'));
+            ->setEncodingAuthor($encodingAuthor)
+            ->setEncodingDateTime($encodingDateTime);
 
         $form = $this->createForm(ReadingType::class, $reading);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            foreach ($reading->getMeasures() as $measure) {
+                $measure
+                    ->setReading($reading)
+                    ->setEncodingDateTime($encodingDateTime)
+                    ->setEncodingAuthor($encodingAuthor);
+                $manager->persist($measure);
+            }
+        
             $manager->persist($reading);
             $manager->flush();
             
@@ -58,17 +70,8 @@ class ReadingController extends AbstractController
     }
 
     /**
-     * Montre un relevé existant.
+     * Gère la modification d'un relevé existant.
      * 
-     * @Route("/reading/{code}", name="reading_show")
-     * @IsGranted("ROLE_USER")
-     */
-    public function show(Reading $reading) {
-        return $this->render('reading/show.html.twig', [
-            'reading' => $reading ]);
-    }
-
-    /**
      * @Route("/reading/{code}/modify", name="reading_modify")
      * @IsGranted("ROLE_USER")
      */
@@ -77,6 +80,18 @@ class ReadingController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            foreach ($reading->getMeasures() as $measure) {
+                $measure->setReading($reading);
+                if (empty($measure->getEncodingDateTime())) {
+                    $measure->setEncodingDateTime(new \DateTime());
+                }
+                if (empty($measure->getEncodingAuthor())) {
+                    $measure->setEncodingAuthor($this->getUser());
+                }
+                $manager->persist($measure);
+            }
+
             $manager->persist($reading);
             $manager->flush();
             
@@ -89,5 +104,16 @@ class ReadingController extends AbstractController
         return $this->render('reading/modify.html.twig', [
             'reading' => $reading,
             'form' => $form->createView() ]);
+    }
+
+    /**
+     * Affiche un relevé existant.
+     * 
+     * @Route("/reading/{code}", name="reading_show")
+     * @IsGranted("ROLE_USER")
+     */
+    public function show(Reading $reading) {
+        return $this->render('reading/show.html.twig', [
+            'reading' => $reading ]);
     }
 }

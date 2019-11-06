@@ -1,0 +1,118 @@
+{# Ce template définit une base commune pour les formulaires d'encodage et
+de modification de relevés #}
+
+{% extends 'base.html.twig' %}
+
+{% form_theme form _self %}
+
+{% block body %}
+    <div class="container">
+        <h1>{% block title %}{% endblock %}</h1>
+
+        {{form_start(form)}}
+
+        {# Mettre en forme les informations générales #}
+        <div class="alert bg-light">
+            <h2>Informations générales</h2>
+            {{form_row(form.station)}}
+            {{form_row(form.code)}}
+            {{form_row(form.fieldDateTime)}}
+            {{form_row(form.encodingNotes)}}
+        </div>
+
+        {# Mettre en forme les mesures #}
+        {{form_row(form.measures)}}
+
+        {# Contrôle caché destiné au comptage des mesures par le script #}
+        <input type="hidden" id="measures-counter" value="0">
+
+        <div class="row mb-3">
+            {# Bouton pour ajouter une mesure #}
+            <button type="button" data-action="add-measure" class="btn btn-secondary">
+                <i class="fas fa-plus"></i>
+                Ajouter une mesure
+            </button>
+
+            {# Bouton pour enregistrer le relevé #}
+            <button type="submit" class="btn btn-success ml-3">
+                <i class="fas fa-check"></i>
+                Enregistrer le relevé
+            </button>
+
+            <a href="{{ path('reading') }}" class="btn btn-cancel ml-3">
+                <i class="fas fa-backspace"></i>
+                Annuler
+            </a>
+        </div>
+
+        {{form_end(form)}}
+    </div>
+{% endblock %}
+
+{% block _reading_measures_label %}
+    <h2>
+        {{form_label(form)}}
+    </h2>
+{% endblock %}
+
+{% block _reading_measures_widget %}
+    {# Afficher le widget Twig #}
+    {{ form_widget(form) }}
+{% endblock %}
+
+{% block _reading_measures_entry_row %}
+    {# N'afficher que le widget, sans étiquette ou autre information #}
+    {{form_widget(form)}}
+{% endblock %}
+
+{% block _reading_measures_entry_widget %}
+    <div class="form-group alert bg-light" id="block_{{id}}">
+        <div class="row">
+            <div class="col">
+                {{form_row(form.measurability)}}
+                {{form_row(form.notes)}}
+            </div>
+            <div class="col">
+                {{form_row(form.stabilized)}}
+                {{form_row(form.value)}}
+                {{form_row(form.tolerance)}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {# Bouton pour supprimer la mesure #}
+                <button type="button" data-action="delete-measure" data-target="#block_{{id}}" class="btn btn-danger float-right">Supprimer cette mesure</button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        /* Obtenir le nombre initial de mesures */
+        $('#measures-counter').val(+$('#reading_measures div.form-group').length);
+
+        /* Définir l'action du bouton ajoutant une mesure */
+        function setupAddMeasureButtons() {
+            $('button[data-action="add-measure"]').click(function() {
+                const index = +$('#measures-counter').val();
+                const prototype = $('#reading_measures').data('prototype');
+                $('#reading_measures').append(prototype.replace(/__name__/g, index));
+                $('#measures-counter').val(index + 1);
+                setupDeleteMeasureButtons();
+            });
+        }
+
+        /* Définir l'action du bouton supprimant une mesure */
+        function setupDeleteMeasureButtons() {
+            $('button[data-action="delete-measure"]').click(function() {
+                if (confirm('Etes-vous certain de vouloir supprimer cette mesure ?')) {
+                    $(this.dataset.target).remove();
+                }
+            });
+        }
+
+        setupAddMeasureButtons();
+        setupDeleteMeasureButtons();
+    </script>
+{% endblock %}
