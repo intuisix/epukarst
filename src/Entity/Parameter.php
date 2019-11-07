@@ -10,7 +10,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ParameterRepository")
- * @UniqueEntity(fields={"code"}, message="Un autre paramètre possède déjà ce code. Veuillez en choisir un autre.")
+ * @UniqueEntity(fields={"name"}, message="Un autre paramètre possède déjà ce nom. Veuillez en choisir un autre.")
+ * @UniqueEntity(fields={"title"}, message="Un autre paramètre possède déjà ce titre. Veuillez en choisir un autre.")
  */
 class Parameter
 {
@@ -67,7 +68,7 @@ class Parameter
     /**
      * Unité de mesure et d'encodage.
      * 
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $unit;
 
@@ -182,7 +183,7 @@ class Parameter
         return $this->unit;
     }
 
-    public function setUnit(string $unit): self
+    public function setUnit(?string $unit): self
     {
         $this->unit = $unit;
 

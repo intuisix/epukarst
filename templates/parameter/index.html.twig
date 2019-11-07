@@ -18,7 +18,7 @@
                 <th class="text-center">Gamme physique</th>
                 <th>Actions</th>
             </tr>
-            {% for parameter in parameters %}
+            {% for parameter in parameters|sort((a, b) => (a.name <=> b.name)) %}
                 <tr>
                     <td>{{parameter.name}}</td>
                     <td>{{parameter.title}}</td>
@@ -30,18 +30,34 @@
                         {% endif %}
                     </td>
                     <td class="text-center">{{parameter.unit}}</td>
-                    <td class="text-center">{{parameter.normativeMinimum}} - {{parameter.normativeMaximum}}</td>
-                    <td class="text-center">{{parameter.physicalMinimum}} - {{parameter.physicalMaximum}}</td>
+                    <td class="text-center">
+                        {{parameter.normativeMinimum|number_format(3, ',', ' ')}} -
+                        {{parameter.normativeMaximum|number_format(3, ',', ' ')}}
+                    </td>
+                    <td class="text-center">
+                        {{parameter.physicalMinimum|number_format(3, ',', ' ')}} -
+                        {{parameter.physicalMaximum|number_format(3, ',', ' ')}}
+                    </td>
                     <td>
-                        <a href="#" class="text-primary"><i class="fas fa-edit"></i></a>
-                        <a href="#" class="text-danger"><i class="fas fa-trash"></i></a>
+                        <a href="{{ path('parameter_modify', {'id': parameter.id}) }}" class="text-primary"><i class="fas fa-edit"></i></a>
+                        <a href="{{ path('parameter_delete', {'id': parameter.id}) }}" class="text-danger" data-action="delete"><i class="fas fa-trash"></i></a>
                     </td>
                 </tr>
             {% endfor %}
         </table>
 
-        <a href="#" class="btn btn-primary">
+        <a href="{{ path('parameter_create') }}" class="btn btn-primary">
             Ajouter un paramètre
         </a>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        /* Programme une demande de confirmation chaque fois que l'on clique
+        sur un bouton de suppression de paramètre */
+        $('a[data-action="delete"]').click(function() {
+            return confirm("Etes-vous sûr de vouloir supprimer ce paramètre ?");
+        });
+    </script>
 {% endblock %}

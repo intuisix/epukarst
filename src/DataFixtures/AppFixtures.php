@@ -199,7 +199,7 @@ class AppFixtures extends Fixture
         $parameter
             ->setName("pH")
             ->setTitle("Potentiel hydrogène")
-            ->setUnit("")
+            ->setUnit(null)
             ->setNormativeMinimum(5)
             ->setNormativeMaximum(8)
             ->setPhysicalMinimum(-1.1)
@@ -259,7 +259,7 @@ class AppFixtures extends Fixture
         $parameter
             ->setName("Redox")
             ->setTitle("Potentiel rédox")
-            ->setUnit("")
+            ->setUnit(null)
             ->setNormativeMinimum(0)
             ->setNormativeMaximum(100)
             ->setPhysicalMinimum(0)

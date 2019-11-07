@@ -1,0 +1,47 @@
+{# Ce template définit une base commune pour les formulaires de création et de
+modification de paramètres #}
+
+{% extends 'base.html.twig' %}
+
+{% form_theme form _self %}
+
+{% block body %}
+    <div class="container">
+        <h1>{% block title %}{% endblock %}</h1>
+
+        {{form_start(form)}}
+
+        <div class="row">
+            <div class="col-md-3">
+                {{form_row(form.name)}}
+                {{form_row(form.unit)}}
+                {{form_row(form.normativeMinimum)}}
+                {{form_row(form.normativeMaximum)}}
+                {{form_row(form.physicalMinimum)}}
+                {{form_row(form.physicalMaximum)}}
+            </div>
+            <div class="col-md-9">
+                {{form_row(form.title)}}
+                {{form_row(form.introduction)}}
+                {{form_row(form.description)}}
+                {{form_row(form.favorite)}}
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            {# Bouton pour enregistrer le relevé #}
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-check"></i>
+                Enregistrer le paramètre
+            </button>
+
+            {# Bouton pour revenir à l'index #}
+            <a href="{{ path('parameter') }}" class="btn btn-cancel ml-3">
+                <i class="fas fa-backspace"></i>
+                Annuler
+            </a>
+        </div>
+
+        {{form_end(form)}}
+    </div>
+{% endblock %}
