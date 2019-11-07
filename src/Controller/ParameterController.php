@@ -14,6 +14,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class ParameterController extends AbstractController
 {
     /**
+     * Affiche l'index des paramètres.
+     * 
      * @Route("/parameter", name="parameter")
      * @IsGranted("ROLE_ADMIN")
      */
