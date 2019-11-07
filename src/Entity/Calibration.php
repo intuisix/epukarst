@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CalibrationRepository")
@@ -24,11 +25,14 @@ class Calibration
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\Date(message="La date du contrôle n'est pas au bon format.")
      */
     private $doneDate;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\Date(message="La date du prochain contrôle n'est pas au bon format.")
+     * @Assert\GreaterThanOrEqual(propertyPath="doneDate", message="La date du prochain contrôle doit être ultérieure à la date du contrôle actuel.")
      */
     private $dueDate;
 

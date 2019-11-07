@@ -1,0 +1,190 @@
+{# Ce template définit une base commune pour les formulaires de création et de
+modification de relevés #}
+
+{% extends 'base.html.twig' %}
+
+{% form_theme form _self %}
+
+{% block body %}
+    <div class="container">
+        <h1>{% block title %}{% endblock %}</h1>
+
+        {{form_start(form)}}
+
+        {# Mettre en forme les informations générales #}
+        <div class="alert bg-light">
+            {{form_row(form.code)}}
+            {{form_row(form.name)}}
+            {{form_row(form.model)}}
+            {{form_row(form.serialNumber)}}
+            {{form_row(form.description)}}
+        </div>
+
+        {# Mettre en forme les paramètres mesurables #}
+        {{form_row(form.measurabilities)}}
+
+        {# Mettre en forme les étalonnages #}
+        {{form_row(form.calibrations)}}
+
+        {# Contrôle caché destiné au comptage des paramètres mesurables par le script #}
+        <input type="hidden" id="measurabilities-counter" value="0">
+
+        {# Contrôle caché destiné au comptage des étalonnages par le script #}
+        <input type="hidden" id="calibrations-counter" value="0">
+
+        <div class="row mb-3">
+            <div class="col">
+                {# Bouton pour ajouter un paramètre mesurable #}
+                <button type="button" data-action="add-measurability" class="btn btn-secondary">
+                    <i class="fas fa-plus"></i>
+                    Ajouter un paramètre mesurable
+                </button>
+
+                {# Bouton pour ajouter un étalonnage #}
+                <button type="button" data-action="add-calibration" class="btn btn-secondary">
+                    <i class="fas fa-plus"></i>
+                    Ajouter un étalonnage
+                </button>
+
+                {# Bouton pour enregistrer l'instrument #}
+                <button type="submit" class="btn btn-success ml-3">
+                    <i class="fas fa-check"></i>
+                    Enregistrer l'instrument
+                </button>
+
+                {# Bouton pour revenir à l'index #}
+                <a href="{{ path('instrument') }}" class="btn btn-cancel ml-3">
+                    <i class="fas fa-backspace"></i>
+                    Annuler
+                </a>
+            </div>
+        </div>
+
+        {{form_end(form)}}
+    </div>
+{% endblock %}
+
+{% block _instrument_measurabilities_label %}
+    <h2>
+        {{form_label(form)}}
+    </h2>
+    <div class="alert alert-info">
+        La liste ci-dessous doit définir les différents paramètres qui peuvent être mesurés à l'aide de l'instrument.
+    </div>
+{% endblock %}
+
+{% block _instrument_measurabilities_widget %}
+    {# Afficher le widget Twig #}
+    {{form_widget(form)}}
+{% endblock %}
+
+{% block _instrument_measurabilities_entry_row %}
+    {# N'afficher que le widget, sans étiquette ou autre information #}
+    {{form_widget(form)}}
+{% endblock %}
+
+{% block _instrument_measurabilities_entry_widget %}
+    <div class="form-group alert bg-light" id="measurability_{{id}}">
+        <div class="row">
+            <div class="col">
+                {{form_row(form.parameter)}}
+            </div>
+            <div class="col">
+                {{form_row(form.minimumValue)}}
+            </div>
+            <div class="col">
+                {{form_row(form.maximumValue)}}
+            </div>
+            <div class="col">
+                {{form_row(form.tolerance)}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {{form_row(form.notes)}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {# Bouton pour supprimer le paramètre mesurable #}
+                <button type="button" data-action="delete-measurability" data-target="#measurability_{{id}}" class="btn btn-danger float-right">
+                    <i class="fas fa-trash"></i>
+                    Supprimer ce paramètre mesurable
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block _instrument_calibrations_label %}
+    <h2>
+        {{form_label(form)}}
+    </h2>
+    <div class="alert alert-info">
+        Si l'instrument est un appareil concerné par un suivi métrologique, la liste ci-dessous permet de conserver les dates successives auxquelles l'appareil a été contrôlé et étalonné. Si l'instrument est un consommable individuel ou un lot de consommables, la liste peut définir une date de péremption.
+    </div>
+{% endblock %}
+
+{% block _instrument_calibrations_widget %}
+    {# Afficher le widget Twig #}
+    {{ form_widget(form) }}
+{% endblock %}
+
+{% block _instrument_calibrations_entry_row %}
+    {# N'afficher que le widget, sans étiquette ou autre information #}
+    {{form_widget(form)}}
+{% endblock %}
+
+{% block _instrument_calibrations_entry_widget %}
+    <div class="form-group alert bg-light" id="calibration_{{id}}">
+        <div class="row">
+            <div class="col">
+                {{form_row(form.doneDate)}}
+            </div>
+            <div class="col">
+                {{form_row(form.dueDate)}}
+            </div>
+            <div class="col">
+                {{form_row(form.operatorName)}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {{form_row(form.notes)}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {# Bouton pour supprimer l'étalonnage #}
+                <button type="button" data-action="delete-calibration" data-target="#calibration_{{id}}" class="btn btn-danger float-right">
+                    <i class="fas fa-trash"></i>
+                    Supprimer cet étalonnage
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="/js/collection.js"></script>
+    <script>
+        var calibrationsCollectionResponder =
+            createCollectionResponders(
+                '#calibrations-counter',
+                '#instrument_calibrations',
+                'button[data-action="add-calibration"]',
+                'button[data-action="delete-calibration"]',
+                'Etes-vous sûr de vouloir supprimer cet étalonnage ?'
+            );
+        calibrationsCollectionResponder();
+
+        var measurabilitiesCollectionResponder =
+            createCollectionResponders(
+                '#measurabilities-counter',
+                '#instrument_measurabilities',
+                'button[data-action="add-measurability"]',
+                'button[data-action="delete-measurability"]',
+                'Etes-vous certain de vouloir supprimer ce paramètre ?'
+            );
+        measurabilitiesCollectionResponder();
+    </script>
+{% endblock %}

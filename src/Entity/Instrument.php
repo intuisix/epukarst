@@ -11,6 +11,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InstrumentRepository")
  * @UniqueEntity(fields={"code"}, message="Un autre instrument possède déjà ce code. Veuillez en choisir un autre.")
+ * @UniqueEntity(fields={"name"}, message="Un autre instrument possède déjà cette dénomination. Veuillez en choisir un autre.")
  */
 class Instrument
 {
@@ -40,15 +41,14 @@ class Instrument
     /**
      * Marque et nom ou numéro du modèle de l'instrument.
      * 
-     * @ORM\Column(type="string", length=255)
-     * @Assert\Length(min=5, minMessage="Le nom du modèle doit faire au moins 5 caractères")
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $model;
 
     /**
      * Numéro de série de l'instrument.
      * 
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $serialNumber;
 
@@ -111,7 +111,7 @@ class Instrument
         return $this->model;
     }
 
-    public function setModel(string $model): self
+    public function setModel(?string $model): self
     {
         $this->model = $model;
 
@@ -123,7 +123,7 @@ class Instrument
         return $this->serialNumber;
     }
 
-    public function setSerialNumber(string $serialNumber): self
+    public function setSerialNumber(?string $serialNumber): self
     {
         $this->serialNumber = $serialNumber;
 

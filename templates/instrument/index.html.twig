@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="container mb-3">
         <h1>Instruments de mesure</h1>
 
         <table class="table table-bordered table-striped">
@@ -17,7 +17,7 @@
                 <th>Prochain étalonnage</th>
                 <th>Actions</th>
             </tr>
-            {% for instrument in instruments %}
+            {% for instrument in instruments|sort((a, b) => (a.code <=> b.code)) %}
                 <tr>
                     <td>{{instrument.code}}</td>
                     <td>{{instrument.name}}</td>
@@ -34,15 +34,25 @@
                         {% endfor %}
                     </td>
                     <td>
-                        <a href="#" class="text-primary"><i class="fas fa-edit"></i></a>
-                        <a href="#" class="text-danger"><i class="fas fa-trash"></i></a>
+                        <a href="{{ path('instrument_modify', {'code': instrument.code}) }}" class="text-primary"><i class="fas fa-edit"></i></a>
+                        <a href="{{ path('instrument_delete', {'code': instrument.code}) }}" class="text-danger" data-action="delete"><i class="fas fa-trash"></i></a>
                     </td>
                 </tr>
             {% endfor %}
         </table>
 
-        <a href="#" class="btn btn-primary">
+        <a href="{{ path('instrument_create') }}" class="btn btn-primary">
             Ajouter un instrument
         </a>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        /* Programmer une demande de confirmation chaque fois que l'on clique
+        sur un bouton de suppression d'instrument */
+        $('a[data-action="delete"]').click(function() {
+            return confirm("Etes-vous sûr de vouloir supprimer cet instrument ?");
+        });
+    </script>
 {% endblock %}
