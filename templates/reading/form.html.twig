@@ -81,7 +81,10 @@ de modification de relevés #}
         <div class="row">
             <div class="col">
                 {# Bouton pour supprimer la mesure #}
-                <button type="button" data-action="delete-measure" data-target="#block_{{id}}" class="btn btn-danger float-right">Supprimer cette mesure</button>
+                <button type="button" data-action="delete-measure" data-target="#block_{{id}}" class="btn btn-danger float-right">
+                    <i class="fas fa-trash"></i>
+                    Supprimer cette mesure
+                </button>
             </div>
         </div>
     </div>
@@ -89,11 +92,11 @@ de modification de relevés #}
 
 {% block javascripts %}
     <script>
-        /* Obtenir le nombre initial de mesures */
-        $('#measures-counter').val(+$('#reading_measures div.form-group').length);
-
         /* Définir l'action du bouton ajoutant une mesure */
         function setupAddMeasureButtons() {
+            /* Obtenir le nombre initial de mesures */
+            $('#measures-counter').val(+$('#reading_measures div.form-group').length);
+            /* Ajouter une division en cas de clic */
             $('button[data-action="add-measure"]').click(function() {
                 const index = +$('#measures-counter').val();
                 const prototype = $('#reading_measures').data('prototype');
@@ -105,6 +108,7 @@ de modification de relevés #}
 
         /* Définir l'action du bouton supprimant une mesure */
         function setupDeleteMeasureButtons() {
+            /* Supprimer la division en cas de clic */
             $('button[data-action="delete-measure"]').click(function() {
                 if (confirm('Etes-vous certain de vouloir supprimer cette mesure ?')) {
                     $(this.dataset.target).remove();

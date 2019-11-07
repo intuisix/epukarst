@@ -25,7 +25,8 @@ class ReadingController extends AbstractController
             ->setPage($page);
 
         return $this->render('reading/index.html.twig', [
-            'pagination' => $pagination]);
+            'pagination' => $pagination
+        ]);
     }
 
     /**
@@ -35,6 +36,7 @@ class ReadingController extends AbstractController
      * @IsGranted("ROLE_USER")
      */
     public function encode(ObjectManager $manager, Request $request) {
+        /* Instancier un nouveau relevé */
         $encodingAuthor = $this->getUser();
         $encodingDateTime = new \DateTime('now');
 
@@ -43,17 +45,18 @@ class ReadingController extends AbstractController
             ->setEncodingAuthor($encodingAuthor)
             ->setEncodingDateTime($encodingDateTime);
 
+        /* Créer et traiter le formulaire */
         $form = $this->createForm(ReadingType::class, $reading);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+            /* Associer les mesures au relevé */
             foreach ($reading->getMeasures() as $measure) {
                 $measure
-                    ->setReading($reading)
-                    ->setEncodingDateTime($encodingDateTime)
-                    ->setEncodingAuthor($encodingAuthor);
-                $manager->persist($measure);
+                ->setReading($reading)
+                ->setEncodingDateTime($encodingDateTime)
+                ->setEncodingAuthor($encodingAuthor);
+            $manager->persist($measure);
             }
         
             $manager->persist($reading);
@@ -62,11 +65,13 @@ class ReadingController extends AbstractController
             $this->addFlash('success', "Le relevé <strong>{$reading->getCode()}</strong> a été encodé avec succès.");
     
             return $this->redirectToRoute('reading_show', [
-                'code' => $reading->getCode() ]);
+                'code' => $reading->getCode()
+            ]);
         }
 
         return $this->render('reading/encode.html.twig', [
-            'form' => $form->createView() ]);
+            'form' => $form->createView()
+        ]);
     }
 
     /**
@@ -76,15 +81,19 @@ class ReadingController extends AbstractController
      * @IsGranted("ROLE_USER")
      */
     public function modify(Reading $reading, ObjectManager $manager, Request $request) {
+        /* Créer et traiter le formulaire */
         $form = $this->createForm(ReadingType::class, $reading);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+            /* (Ré-)associer les mesures au relevé. Associer à l'utilisateur
+            actuel les mesures qui viennent d'être ajoutées, et leur attribuer
+            en lot la date courante. */
+            $encodingDateTime = new \DateTime('now');
             foreach ($reading->getMeasures() as $measure) {
                 $measure->setReading($reading);
                 if (empty($measure->getEncodingDateTime())) {
-                    $measure->setEncodingDateTime(new \DateTime());
+                    $measure->setEncodingDateTime($encodingDateTime);
                 }
                 if (empty($measure->getEncodingAuthor())) {
                     $measure->setEncodingAuthor($this->getUser());
@@ -98,12 +107,14 @@ class ReadingController extends AbstractController
             $this->addFlash('success', "Le relevé <strong>{$reading->getCode()}</strong> a été modifié avec succès.");
     
             return $this->redirectToRoute('reading_show', [
-                'code' => $reading->getCode() ]);
+                'code' => $reading->getCode()
+            ]);
         }
 
         return $this->render('reading/modify.html.twig', [
             'reading' => $reading,
-            'form' => $form->createView() ]);
+            'form' => $form->createView()
+        ]);
     }
 
     /**
@@ -114,6 +125,7 @@ class ReadingController extends AbstractController
      */
     public function show(Reading $reading) {
         return $this->render('reading/show.html.twig', [
-            'reading' => $reading ]);
+            'reading' => $reading
+        ]);
     }
 }
