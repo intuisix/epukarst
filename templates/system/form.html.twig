@@ -13,31 +13,30 @@ modification de paramètres #}
 
         <div class="row">
             <div class="col-md-3">
-                {{form_row(form.name)}}
-                {{form_row(form.unit)}}
-                {{form_row(form.normativeMinimum)}}
-                {{form_row(form.normativeMaximum)}}
-                {{form_row(form.physicalMinimum)}}
-                {{form_row(form.physicalMaximum)}}
+                {{form_row(form.code)}}
+                {{form_row(form.basin)}}
+                {{form_row(form.commune)}}
+                {{form_row(form.number)}}
+                {{form_row(form.waterMass)}}
             </div>
             <div class="col-md-9">
-                {{form_row(form.title)}}
+                {{form_row(form.name)}}
+                {{form_row(form.slug)}}
                 {{form_row(form.introduction)}}
                 {{form_row(form.description)}}
-                {{form_row(form.favorite)}}
             </div>
         </div>
 
         <div class="row">
             <div class="col">
-                {# Bouton pour enregistrer le paramètre #}
+                {# Bouton pour enregistrer le système #}
                 <button type="submit" class="btn btn-success">
                     <i class="fas fa-check"></i>
-                    Enregistrer le paramètre
+                    Enregistrer le système
                 </button>
 
                 {# Bouton pour revenir à l'index #}
-                <a href="{{ path('parameter') }}" class="btn btn-cancel ml-3">
+                <a href="{{ path('system') }}" class="btn btn-cancel ml-3">
                     <i class="fas fa-backspace"></i>
                     Annuler
                 </a>

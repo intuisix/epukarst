@@ -101,6 +101,18 @@ class User implements UserInterface
     }
 
     /**
+     * Indique si l'utilisateur est administrateur.
+     */
+    public function isAdmin() : bool {
+        foreach ($this->userRoles as $userRole) {
+            if ($userRole->getLinkedRole()->getRole() === 'ROLE_ADMIN') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Met à jour les propriétés de l'utilisateur avant la mémorisation dans la base de données.
      *
      * @ORM\PrePersist()

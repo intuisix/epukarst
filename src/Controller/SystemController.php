@@ -3,8 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\System;
+use App\Form\SystemType;
 use App\Repository\SystemRepository;
+use Symfony\Component\HttpFoundation\Request;
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SystemController extends AbstractController
@@ -22,7 +26,95 @@ class SystemController extends AbstractController
     }
 
     /**
-     * Affiche l'article d'un système karstique.
+     * Affiche et traite le formulaire de modification d'un système karstique.
+     * 
+     * @Route("/system/create", name="system_create")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function create(ObjectManager $manager, Request $request)
+    {
+        /* Instancier un nouveau système */
+        $system = new System();
+        /* Créer et traiter le formulaire */
+        $form = $this->createForm(SystemType::class, $system);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+/*            foreach ($instrument->getMeasurabilities() as $measurability) {
+                $measurability->setInstrument($instrument);
+                $manager->persist($measurability);
+            }*/
+
+            $manager->persist($system);
+            $manager->flush();
+            
+            $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été créé avec succès.");
+    
+            return $this->redirectToRoute('system_show', [
+                'slug' => $system->getSlug(),
+            ]);
+        }
+
+        return $this->render('system/create.html.twig', [
+            'system' => $system,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * Affiche et traite le formulaire de modification d'un système karstique.
+     * 
+     * @Route("/system/{slug}/modify", name="system_modify")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function modify(System $system, ObjectManager $manager, Request $request)
+    {
+        /* Créer et traiter le formulaire */
+        $form = $this->createForm(SystemType::class, $system);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+/*            foreach ($instrument->getMeasurabilities() as $measurability) {
+                $measurability->setInstrument($instrument);
+                $manager->persist($measurability);
+            }*/
+
+            $manager->persist($system);
+            $manager->flush();
+            
+            $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été modifié avec succès.");
+    
+            return $this->redirectToRoute('system_show', [
+                'slug' => $system->getSlug(),
+            ]);
+        }
+
+        return $this->render('system/modify.html.twig', [
+            'system' => $system,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * Traite la demande de suppression d'un système karstique.
+     * 
+     * @Route("/system/{slug}/delete", name="system_delete")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function delete(System $system, ObjectManager $manager, Request $request)
+    {
+//        $manager->remove($delete);
+//        $manager->flush();
+
+        $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été supprimé avec succès.");
+
+        return $this->redirectToRoute('system');
+    }
+
+    /**
+     * Affiche un système karstique.
      * 
      * @Route("/system/{slug}", name="system_show")
      */

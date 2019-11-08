@@ -14,6 +14,12 @@
             </h1>
             <p><big>{{system.introduction}}</big></p>
             <p>{{system.commune}} - {{system.basin}}</p>
+            {% if app.user and app.user.isAdmin() %}
+                <a href="{{ path('system_modify', {'slug': system.slug}) }}" class="btn btn-primary">Modifier le système</a>
+
+                {# La confirmation ne fonctionne pas avec Firefox #}
+                <a href="{{ path('system_delete', {'slug': system.slug}) }}" class="btn btn-danger" id='delete-button' onclick="return confirm(’Etes-vous sûr de vouloir supprimer ce système ?’)">Supprimer le système</a>
+            {% endif %}
         </div>
     </div>
 
@@ -57,9 +63,7 @@
                 {# Description des bassins du système #}
                 {% for basin in system.basins %}
                     <hr>
-                    {% set basinIndex = loop.index %}
                     <h2 id="basin_{{basin.code}}" class="d-flex align-items-center">
-                        <!--{{basinIndex}}.-->
                         <span class="badge badge-secondary mr-2">{{basin.code}}</span>
                         {{basin.name}}
                     </h2>
@@ -67,9 +71,7 @@
 
                     {# Description des stations du système #}
                     {% for station in basin.stations %}
-                        {% set stationIndex = loop.index %}
                         <h3 id="station_{{station.code}}" class="d-flex align-items-center">
-                            <!--{{basinIndex}}.{{stationIndex}}.-->
                             <span class="badge badge-secondary mr-2">{{station.code}}</span>
                             {{station.name}}
                         </h3>
