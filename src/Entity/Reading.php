@@ -103,6 +103,9 @@ class Reading
      * @ORM\PreUpdate()
      */
     public function update() {
+        if (empty($this->code)) {
+            $this->code = uniqid();
+        }
     }
 
     public function getId(): ?int
@@ -115,7 +118,7 @@ class Reading
         return $this->code;
     }
 
-    public function setCode(string $code): self
+    public function setCode(?string $code): self
     {
         $this->code = $code;
 
