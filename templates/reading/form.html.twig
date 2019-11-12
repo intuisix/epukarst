@@ -23,9 +23,6 @@ de modification de relevés #}
         {# Mettre en forme les mesures #}
         {{form_row(form.measures)}}
 
-        {# Contrôle caché destiné au comptage des mesures par le script #}
-        <input type="hidden" id="measures-counter" value="0">
-
         <div class="row mb-3">
             {# Bouton pour ajouter une mesure #}
             <button type="button" data-action="add-measure" class="btn btn-secondary">
@@ -92,32 +89,15 @@ de modification de relevés #}
 {% endblock %}
 
 {% block javascripts %}
+    <script src="/js/collection.js"></script>
     <script>
-        /* Définir l'action du bouton ajoutant une mesure */
-        function setupAddMeasureButtons() {
-            /* Obtenir le nombre initial de mesures */
-            $('#measures-counter').val(+$('#reading_measures div.form-group').length);
-            /* Ajouter une division en cas de clic */
-            $('button[data-action="add-measure"]').click(function() {
-                const index = +$('#measures-counter').val();
-                const prototype = $('#reading_measures').data('prototype');
-                $('#reading_measures').append(prototype.replace(/__name__/g, index));
-                $('#measures-counter').val(index + 1);
-                setupDeleteMeasureButtons();
-            });
-        }
-
-        /* Définir l'action du bouton supprimant une mesure */
-        function setupDeleteMeasureButtons() {
-            /* Supprimer la division en cas de clic */
-            $('button[data-action="delete-measure"]').click(function() {
-                if (confirm('Etes-vous certain de vouloir supprimer cette mesure ?')) {
-                    $(this.dataset.target).remove();
-                }
-            });
-        }
-
-        setupAddMeasureButtons();
-        setupDeleteMeasureButtons();
+        var measuresCollectionResponders =
+            createCollectionResponders(
+                '#reading_measures',
+                'button[data-action="add-measure"]',
+                'button[data-action="delete-measure"]',
+                'Etes-vous sûr de vouloir supprimer cette mesure ?'
+            );
+        measuresCollectionResponders();
     </script>
 {% endblock %}

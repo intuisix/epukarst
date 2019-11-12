@@ -26,12 +26,6 @@ modification de relevés #}
         {# Mettre en forme les étalonnages #}
         {{form_row(form.calibrations)}}
 
-        {# Contrôle caché destiné au comptage des paramètres mesurables par le script #}
-        <input type="hidden" id="measurabilities-counter" value="0">
-
-        {# Contrôle caché destiné au comptage des étalonnages par le script #}
-        <input type="hidden" id="calibrations-counter" value="0">
-
         <div class="row mb-3">
             <div class="col">
                 {# Bouton pour ajouter un paramètre mesurable #}
@@ -115,6 +109,7 @@ modification de relevés #}
         </div>
     </div>
 {% endblock %}
+
 {% block _instrument_calibrations_label %}
     <h2>
         {{form_label(form)}}
@@ -167,24 +162,22 @@ modification de relevés #}
 {% block javascripts %}
     <script src="/js/collection.js"></script>
     <script>
-        var calibrationsCollectionResponder =
+        var calibrationsCollectionResponders =
             createCollectionResponders(
-                '#calibrations-counter',
                 '#instrument_calibrations',
                 'button[data-action="add-calibration"]',
                 'button[data-action="delete-calibration"]',
                 'Etes-vous sûr de vouloir supprimer cet étalonnage ?'
             );
-        calibrationsCollectionResponder();
+        calibrationsCollectionResponders();
 
-        var measurabilitiesCollectionResponder =
+        var measurabilitiesCollectionResponders =
             createCollectionResponders(
-                '#measurabilities-counter',
                 '#instrument_measurabilities',
                 'button[data-action="add-measurability"]',
                 'button[data-action="delete-measurability"]',
                 'Etes-vous certain de vouloir supprimer ce paramètre ?'
             );
-        measurabilitiesCollectionResponder();
+        measurabilitiesCollectionResponders();
     </script>
 {% endblock %}

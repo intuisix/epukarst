@@ -1,10 +1,13 @@
-function createCollectionResponders(counterSelector, blockSelector, additionSelector, deletionSelector, deletionMessage) {
+function createCollectionResponders(blockSelector, additionSelector, deletionSelector, deletionMessage) {
+
+    /* Obtenir le nombre initial de mesures */
+    var itemCount = +$(blockSelector).length;
 
     /* Définir l'action des boutons de suppression */
     function setupDeleteButtons() {
-        /* Pour éviter plusieurs demandes de confirmation sur un même événement */
+        /* Eviter plusieurs demandes de confirmation sur un même événement */
         $(deletionSelector).off("click");
-        /* Supprimer la division en cas de clic */
+        /* Supprimer le bloc de formulaire en cas de clic */
         $(deletionSelector).on("click", function() {
             if (confirm(deletionMessage)) {
                 $(this.dataset.target).remove();
@@ -15,14 +18,11 @@ function createCollectionResponders(counterSelector, blockSelector, additionSele
     /* Définir l'action des boutons d'ajout */
     function setupAddButtons() {
         setupDeleteButtons();
-        /* Obtenir le nombre initial de mesures */
-        $(counterSelector).val(+$(blockSelector + ' div.form-group').length);
-        /* Ajouter une division en cas de clic */
+        /* Ajouter un bloc de formulaire en cas de clic */
         $(additionSelector).click(function() {
-            const index = +$(counterSelector).val();
+            itemCount++;
             const prototype = $(blockSelector).data('prototype');
-            $(blockSelector).append(prototype.replace(/__name__/g, index));
-            $(counterSelector).val(index + 1);
+            $(blockSelector).append(prototype.replace(/__name__/g, itemCount));
             setupDeleteButtons();
         });
     }
