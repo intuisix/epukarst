@@ -5,60 +5,67 @@
 {% endblock %}
 
 {% block body %}
-    {# Image de titre #}
-    <div class="ad-title" style="background-image: url(http://lorempixel.com/500/300)">
-        <div class="container")>
-            <h1 class="d-flex align-items-center">
-                <span class="badge badge-secondary mr-2">{{system.code}}</span>
-                {{system.name}}
-            </h1>
-            <p><big>{{system.introduction}}</big></p>
-            <p>{{system.commune}} - {{system.basin}}</p>
-            {% if app.user and app.user.isAdmin() %}
-                <a href="{{ path('system_modify', {'slug': system.slug}) }}" class="btn btn-primary">Modifier le système</a>
-
-                {# La confirmation ne fonctionne pas avec Firefox #}
-                <a href="{{ path('system_delete', {'slug': system.slug}) }}" class="btn btn-danger" id='delete-button' onclick="return confirm(’Etes-vous sûr de vouloir supprimer ce système ?’)">Supprimer le système</a>
-            {% endif %}
-        </div>
-    </div>
-
     {# Corps de la page #}
     <div class="container">
-        <div class="row">
 
+        {# Image de titre #}
+        <div class="ad-title py-3 mb-3"
+            {% if system.pictures|length > 0 %}
+                {# Prendre une image au hasard parmi celles du système #}
+                style="background-image: url({{system.pictures[random(0, system.pictures|length - 1)].fileName}}); background-size: cover; background-position: center"
+            {% else %}
+                style="background-color: grey"
+            {% endif %} >
+            <div class="container">
+                <h1 class="d-flex align-items-center">
+                    <span class="badge badge-secondary mr-2">{{system.code}}</span>
+                    {{system.name}}
+                </h1>
+                <p><big>{{system.introduction}}</big></p>
+                <p>{{system.commune}} - {{system.basin}}</p>
+                {% if app.user and app.user.isAdmin() %}
+                    <a href="{{ path('system_modify', {'slug': system.slug}) }}" class="btn btn-primary">Modifier le système</a>
+
+                    <a href="{{ path('system_delete', {'slug': system.slug}) }}" class="btn btn-danger" id='delete-button'>Supprimer le système</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row">
             {# Colonne principale #}
             <div class="col-md-8 mb-3">
                 {# Description détaillée du système #}
                 {{system.description|raw}}
 
                 {# Carousel d'images #}
-                <div id="carouselExampleIndicators" class="carousel slide mb-5" data-ride="carousel">
-                    <ol class="carousel-indicators">
-                        {% for image in 1..4 %}
-                            <li data-target="#carouselExampleIndicators" data-slide-to="{{loop.index0}}" class="{% if loop.first %}active{% endif %}"></li>
-                        {% endfor %}
-                    </ol>
-                    <div class="carousel-inner">
-                        {% for image in 1..4 %}
-                            <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                <img src="http://lorempixel.com/400/200?{{loop.index}}" class="d-block w-100" alt="...">
-                                <div class="carousel-caption d-none-d-md-block">
-                                    <h5>{{system.name}}</h5>
-                                    <p>Légende de l'image {{loop.index}}</p>
+                {% if system.pictures|length > 0 %}
+                    <div id="carouselExampleIndicators" class="carousel slide mb-5" data-ride="carousel">
+                        <ol class="carousel-indicators">
+                            {% for picture in system.pictures %}
+                                <li data-target="#carouselExampleIndicators" data-slide-to="{{loop.index0}}" class="{% if loop.first %}active{% endif %}"></li>
+                            {% endfor %}
+                        </ol>
+                        <div class="carousel-inner">
+                            {% for picture in system.pictures %}
+                                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                    <img src="{{picture.fileName}}" class="d-block w-100" alt="...">
+                                    <div class="carousel-caption d-none-d-md-block">
+                                        <h5>{{system.name}}</h5>
+                                        <p>{{picture.caption}}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        {% endfor %}
+                            {% endfor %}
+                        </div>
+                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
                     </div>
-                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                    </a>
-                </div>
+                {% endif %}
                 
                 {# Description des bassins du système #}
                 {% for basin in system.basins %}
@@ -103,4 +110,12 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $('#delete-button').click(function() {
+            return confirm("Êtes-vous sûr de vouloir supprimer ce système ?");
+        })
+    </script>
 {% endblock %}

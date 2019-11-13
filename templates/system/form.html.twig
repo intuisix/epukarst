@@ -11,21 +11,27 @@ modification de paramètres #}
 
         {{form_start(form)}}
 
-        <div class="row">
-            <div class="col-md-3">
-                {{form_row(form.code)}}
-                {{form_row(form.basin)}}
-                {{form_row(form.commune)}}
-                {{form_row(form.number)}}
-                {{form_row(form.waterMass)}}
-            </div>
-            <div class="col-md-9">
-                {{form_row(form.name)}}
-                {{form_row(form.slug)}}
-                {{form_row(form.introduction)}}
-                {{form_row(form.description)}}
+        <div class="alert bg-light">
+            <div class="row">
+                <div class="col-md-3">
+                    {{form_row(form.code)}}
+                    {{form_row(form.basin)}}
+                    {{form_row(form.commune)}}
+                    {{form_row(form.number)}}
+                    {{form_row(form.waterMass)}}
+                </div>
+                <div class="col-md-9">
+                    {{form_row(form.name)}}
+                    {{form_row(form.slug)}}
+                    {{form_row(form.introduction)}}
+                    {{form_row(form.description)}}
+                </div>
             </div>
         </div>
+
+        {{form_row(form.pictures)}}
+
+        {{form_row(form.newPictures)}}
 
         <div class="row">
             <div class="col">
@@ -45,4 +51,52 @@ modification de paramètres #}
 
         {{form_end(form)}}
     </div>
+{% endblock %}
+
+{% block _system_pictures_label %}
+    <h2>{{form_label(form)}}</h2>
+    <p>Les photos introduites ici seront affichées avec la description du système. Chaque photo est susceptible d'être prise au hasard lors de différents affichages relatifs au système.<p>
+{% endblock %}
+
+{% block _system_pictures_widget %}
+    {{form_widget(form)}}
+{% endblock %}
+
+{% block _system_pictures_entry_row %}
+    {# N'afficher que le widget, sans étiquette ou autre information #}
+    {{form_widget(form)}}
+{% endblock %}
+
+{% block _system_pictures_entry_widget %}
+    <div class="form-group alert bg-light" id="picture_{{id}}">
+        <div class="row">
+            <div class="col md-3">
+                <img src="{{form.fileName.vars.data}}" alt="{{form.caption.vars.data}}" style="max-width: 100%; height: auto;">
+            </div>
+            <div class="col">
+                {{form_row(form.fileName)}}
+                {{form_row(form.caption)}}
+
+                {# Bouton pour supprimer la photo #}
+                <button type="button" data-action="delete-picture" data-target="#picture_{{id}}" class="btn btn-danger float-right">
+                    <i class="fas fa-trash"></i>
+                    Supprimer cette photo
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="/js/collection.js"></script>
+    <script>
+        var picturesCollectionResponder =
+            createCollectionResponders(
+                '#system_pictures',
+                'button[data-action="add-picture"]',
+                'button[data-action="delete-picture"]',
+                'Etes-vous sûr de vouloir supprimer cette photo ?'
+            );
+        picturesCollectionResponder();
+    </script>
 {% endblock %}

@@ -3,11 +3,16 @@
 namespace App\Form;
 
 use App\Entity\System;
+use App\Form\SystemPictureType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\All;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class SystemType extends AbstractType
 {
@@ -71,6 +76,34 @@ class SystemType extends AbstractType
                     'placeholder' => "En utilisant le format HTML, entrez une description détaillée qui permettra aux visiteurs de découvrir les particularités du système et les raisons pour lesquelles il est étudié"
                 ],
                 'help' => "En HTML, chaque paragraphe est commencé par <p> et terminé par </p>. Pour mettre un texte en gras, entourez-le de <b> et </b>. Pour les italiques, c'est <i> et </i>. Les hyperliens sont créés avec <a href=\"url-référencé\"> et </a>.",
+            ])
+            ->add('pictures', CollectionType::class, [
+                'label' => 'Photos',
+                'entry_type' => SystemPictureType::class,
+                'allow_add' => true,
+                'allow_delete' => true
+            ])
+            ->add('newPictures', FileType::class, [
+                'label' => "Ajouter des photos",
+                'help' => "Utilisez ce contrôle pour charger une ou plusieurs photos qui seront ajoutées au système. Ensuite, enregistrez le système, et vous serez amené à introduire les légendes de chacune des photos ajoutées.",
+                'attr' => [
+                    'placeholder' => "Choisissez un ou plusieurs fichiers (JPEG ou PNG, maximum 1 Mo chacun)",
+                ],
+                'multiple' => true,
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new All([
+                        new File([
+                            'maxSize' => '1024k',
+                            'mimeTypes' => [
+                                'image/jpeg',
+                                'image/png',
+                            ],
+                            'mimeTypesMessage' => "Les fichiers doivent être au format JPEG ou PNG"
+                        ])
+                    ])
+                ]
             ])
         ;
     }

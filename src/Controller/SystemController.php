@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\System;
 use App\Form\SystemType;
+use App\Entity\SystemPicture;
 use App\Repository\SystemRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -40,20 +41,36 @@ class SystemController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($system->getPictures() as $picture) {
+                $picture->setSystem($system);
+                $manager->persist($picture);
+            }
 
-/*            foreach ($instrument->getMeasurabilities() as $measurability) {
-                $measurability->setInstrument($instrument);
-                $manager->persist($measurability);
-            }*/
+            $picturesAdded = false;
+            foreach ($form['newPictures']->getData() as $uploadedFile)
+            {
+                $picture = new SystemPicture();
+                $picture->setUploadedFile($uploadedFile);
+                $system->addPicture($picture);
+                $manager->persist($picture);
+                $picturesAdded = true;
+            }
 
             $manager->persist($system);
             $manager->flush();
             
             $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été créé avec succès.");
     
-            return $this->redirectToRoute('system_show', [
-                'slug' => $system->getSlug(),
-            ]);
+            if ($picturesAdded) {
+                $this->addFlash('info', "Veuillez maintenant compléter les légendes des photos.");
+                return $this->redirectToRoute('system_modify', [
+                    'slug' => $system->getSlug(),
+                ]);
+            } else {
+                return $this->redirectToRoute('system_show', [
+                    'slug' => $system->getSlug(),
+                ]);
+            }
         }
 
         return $this->render('system/create.html.twig', [
@@ -75,20 +92,36 @@ class SystemController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($system->getPictures() as $picture) {
+                $picture->setSystem($system);
+                $manager->persist($picture);
+            }
 
-/*            foreach ($instrument->getMeasurabilities() as $measurability) {
-                $measurability->setInstrument($instrument);
-                $manager->persist($measurability);
-            }*/
+            $picturesAdded = false;
+            foreach ($form['newPictures']->getData() as $uploadedFile)
+            {
+                $picture = new SystemPicture();
+                $picture->setUploadedFile($uploadedFile);
+                $system->addPicture($picture);
+                $manager->persist($picture);
+                $picturesAdded = true;
+            }
 
             $manager->persist($system);
             $manager->flush();
-            
+
             $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été modifié avec succès.");
     
-            return $this->redirectToRoute('system_show', [
-                'slug' => $system->getSlug(),
-            ]);
+            if ($picturesAdded) {
+                $this->addFlash('info', "Veuillez maintenant compléter les légendes des photos.");
+                return $this->redirectToRoute('system_modify', [
+                    'slug' => $system->getSlug(),
+                ]);
+            } else {
+                return $this->redirectToRoute('system_show', [
+                    'slug' => $system->getSlug(),
+                ]);
+            }
         }
 
         return $this->render('system/modify.html.twig', [
@@ -105,8 +138,8 @@ class SystemController extends AbstractController
      */
     public function delete(System $system, ObjectManager $manager, Request $request)
     {
-//        $manager->remove($delete);
-//        $manager->flush();
+        $manager->remove($system);
+        $manager->flush();
 
         $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été supprimé avec succès.");
 
