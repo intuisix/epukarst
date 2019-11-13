@@ -148,10 +148,14 @@ class SystemController extends AbstractController
      */
     public function delete(System $system, ObjectManager $manager, Request $request)
     {
-        $manager->remove($system);
-        $manager->flush();
-
-        $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été supprimé avec succès.");
+        if (count($system->getBasins()) > 0) {
+            $this->addFlash('danger', "Vous ne pouvez pas supprimer le système <strong>{$system->getName()}</strong> car il possède des bassins.");
+        } else {
+            $manager->remove($system);
+            $manager->flush();
+    
+            $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été supprimé avec succès.");
+        }
 
         return $this->redirectToRoute('system');
     }
