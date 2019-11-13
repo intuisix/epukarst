@@ -81,7 +81,7 @@ class SystemType extends AbstractType
                 'label' => 'Photos',
                 'entry_type' => SystemPictureType::class,
                 'allow_add' => true,
-                'allow_delete' => true
+                'allow_delete' => true,
             ])
             ->add('newPictures', FileType::class, [
                 'label' => "Ajouter des photos",
@@ -100,10 +100,16 @@ class SystemType extends AbstractType
                                 'image/jpeg',
                                 'image/png',
                             ],
-                            'mimeTypesMessage' => "Les fichiers doivent être au format JPEG ou PNG"
+                            'mimeTypesMessage' => "Les fichiers doivent être au format JPEG ou PNG",
                         ])
                     ])
                 ]
+            ])
+            ->add('basins', CollectionType::class, [
+                'label' => "Bassins d'alimentation",
+                'entry_type' => BasinType::class,
+                'allow_add' => true,
+                'allow_delete' => false,
             ])
         ;
     }

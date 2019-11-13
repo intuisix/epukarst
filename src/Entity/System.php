@@ -88,21 +88,30 @@ class System
     private $slug;
 
     /**
+     * Photos présentant le système.
+     * 
      * @ORM\OneToMany(targetEntity="App\Entity\SystemPicture", mappedBy="system", orphanRemoval=true)
      */
     private $pictures;
 
     /**
+     * Code de masse d'eau.
+     * 
      * @ORM\Column(type="string", length=255)
      */
     private $waterMass;
 
     /**
+     * Bassins constituant le système.
+     * 
      * @ORM\OneToMany(targetEntity="App\Entity\Basin", mappedBy="system")
+     * @ORM\OrderBy({"name": "ASC"})
      */
     private $basins;
 
     /**
+     * Utilisateurs liés au système.
+     * 
      * @ORM\OneToMany(targetEntity="App\Entity\UserRole", mappedBy="linkedSystem")
      */
     private $userRoles;

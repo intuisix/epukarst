@@ -41,6 +41,11 @@ class SystemController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($system->getBasins() as $basin) {
+                $basin->setSystem($system);
+                $manager->persist($basin);
+            }
+
             foreach ($system->getPictures() as $picture) {
                 $picture->setSystem($system);
                 $manager->persist($picture);
@@ -92,6 +97,11 @@ class SystemController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($system->getBasins() as $basin) {
+                $basin->setSystem($system);
+                $manager->persist($basin);
+            }
+
             foreach ($system->getPictures() as $picture) {
                 $picture->setSystem($system);
                 $manager->persist($picture);
