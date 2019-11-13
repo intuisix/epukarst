@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b2d71e5e76923e653636bc61418132f7",
+    "content-hash": "688fada808fcd05b014b98e9ad6fed00",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -5920,6 +5920,59 @@
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
             "time": "2019-09-11T15:41:19+00:00"
+        },
+        {
+            "name": "twig/intl-extra",
+            "version": "v2.12.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twigphp/intl-extra.git",
+                "reference": "8cf9399010993f835057ff8ea553106bcdca5065"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twigphp/intl-extra/zipball/8cf9399010993f835057ff8ea553106bcdca5065",
+                "reference": "8cf9399010993f835057ff8ea553106bcdca5065",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.3",
+                "symfony/intl": "^4.3|^5.0",
+                "twig/twig": "^2.4|^3.0"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "^4.4@dev"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.12-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Twig\\Extra\\Intl\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
+                }
+            ],
+            "description": "A Twig extension for Intl",
+            "homepage": "https://twig.symfony.com",
+            "keywords": [
+                "intl",
+                "twig"
+            ],
+            "time": "2019-10-23T15:53:29+00:00"
         },
         {
             "name": "twig/twig",
