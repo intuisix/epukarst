@@ -251,4 +251,22 @@ class Reading
 
         return $this;
     }
+
+    public function getAverage(Parameter $parameter): ?float
+    {
+        $sum = 0;
+        $count = 0;
+    
+        foreach ($this->measures as $measure) {
+            if ($measure->getParameter() === $parameter) {
+                $value = $measure->getValue();
+                if (!is_null($value)) {
+                    $sum += $value;
+                    $count++;
+                }
+            }
+        }
+    
+        return ($count > 0) ? ($sum / $count) : null;
+    }
 }

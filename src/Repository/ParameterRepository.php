@@ -19,6 +19,17 @@ class ParameterRepository extends ServiceEntityRepository
         parent::__construct($registry, Parameter::class);
     }
 
+    public function findFavorites(bool $favorite = true)
+    {
+        return $this
+            ->createQueryBuilder('p')
+            ->andWhere('p.favorite = :fav')
+            ->setParameter('fav', $favorite)
+            ->orderBy('p.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+        
     // /**
     //  * @return Parameter[] Returns an array of Parameter objects
     //  */

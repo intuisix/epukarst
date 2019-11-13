@@ -171,4 +171,9 @@ class Measure
 
         return $this;
     }
+
+    public function getParameter()
+    {
+        return $this->measurability->getParameter();
+    }
 }

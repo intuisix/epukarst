@@ -6,6 +6,7 @@ use App\Entity\Reading;
 use App\Entity\Station;
 use App\Form\ReadingType;
 use App\Service\PaginationService;
+use App\Repository\ParameterRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,14 +19,15 @@ class ReadingController extends AbstractController
      * @Route("/reading/{page<\d+>?1}", name="reading")
      * @IsGranted("ROLE_USER")
      */
-    public function index(int $page, PaginationService $pagination)
+    public function index(int $page, PaginationService $pagination, ParameterRepository $parameterRepository)
     {
         $pagination
             ->setEntityClass(Reading::class)
             ->setPage($page);
 
         return $this->render('reading/index.html.twig', [
-            'pagination' => $pagination
+            'pagination' => $pagination,
+            'parameters' => $parameterRepository->findFavorites()
         ]);
     }
 

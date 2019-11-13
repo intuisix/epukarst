@@ -18,7 +18,7 @@
                 <p>Ici apparaîtront les filtres</p>
             </div>
         </div>
-        <div class="col-md-10">
+        <div class="col">
             {# Conteneur pour la carte des relevés #}
             <div class="container">
                 <div id="map" style="height: 400px">Ici apparaîtra la carte</div>
@@ -27,35 +27,46 @@
             {# Conteneur pour la liste des relevés #}
             <div class="container">
                 <table width="100%" class="table table-bordered table-striped">
-                    <tr>
-                        <th><input type="checkbox" name="" id=""/></th>
-                        <th>Date et heure</th>
-                        <th>Code</th>
-                        <th>Système</th>
-                        <th>Bassin</th>
-                        <th>Station</th>
-                        <th>NO2</th>
-                        <th>NO3</th>
-                        <th>Dureté</th>
-                        <th>Actions</th>
-                    </tr>
-                    {% for reading in pagination.data %}
+                    <thead>
                         <tr>
                             <th><input type="checkbox" name="" id=""/></th>
-                            <td>{{reading.fieldDateTime|date('d/m/Y H:i')}}</td>
-                            <td><a href="{{ path('reading_show', { 'code': reading.code }) }}">{{reading.code}}</a></td>
-                            <td>{{reading.station.basin.system.name}}</td>
-                            <td>{{reading.station.basin.name}}</td>
-                            <td>{{reading.station.name}}</td>
-                            <td>--</td>
-                            <td>--</td>
-                            <td>--</td>
-                            <td>
-                                <a href="{{ path('reading_modify', {'code': reading.code}) }}" class="text-primary"><i class="fas fa-edit"></i></a>
-                                <a href="#" class="text-danger"><i class="fas fa-trash"></i></a>
-                            </td>
+                            <th>Date et heure</th>
+                            <th>Code</th>
+                            <th>Système</th>
+                            <th>Bassin</th>
+                            <th>Station</th>
+                            {% for parameter in parameters %}
+                                <th style="text-align: center">{{parameter.name}}</th>
+                            {% endfor %}
+                            <th>Actions</th>
                         </tr>
-                    {% endfor %}
+                    </thead>
+                    <tbody>
+                        {% for reading in pagination.data %}
+                            <tr>
+                                <th><input type="checkbox" name="" id=""/></th>
+                                <td>{{reading.fieldDateTime|date('d/m/Y H:i')}}</td>
+                                <td><a href="{{ path('reading_show', { 'code': reading.code }) }}">{{reading.code}}</a></td>
+                                <td>{{reading.station.basin.system.name}}</td>
+                                <td>{{reading.station.basin.name}}</td>
+                                <td>{{reading.station.name}}</td>
+                                {% for parameter in parameters %}
+                                    <td style="text-align: right">
+                                        {% set avg = reading.average(parameter) %}
+                                        {% if avg is not null %}
+                                            {{avg|format_number({fraction_digit: 3})}}
+                                        {% else %}
+                                            --
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                                <td>
+                                    <a href="{{ path('reading_modify', {'code': reading.code}) }}" class="text-primary"><i class="fas fa-edit"></i></a>
+                                    <a href="#" class="text-danger"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
 
                 {{pagination.display}}
