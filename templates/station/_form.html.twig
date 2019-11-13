@@ -1,0 +1,140 @@
+{# Ce template définit une base commune pour les formulaires de création et de
+modification de station #}
+
+{% extends 'base.html.twig' %}
+
+{% form_theme form _self %}
+
+{% block body %}
+    <div class="container mb-3">
+        <h1>{% block title %}{% endblock %}</h1>
+
+        {{form_start(form)}}
+
+        {{form_row(form.basin)}}
+        {{form_row(form.code)}}
+        {{form_row(form.name)}}
+        {{form_row(form.kind)}}
+        {{form_row(form.description)}}
+
+        <div class="row">
+            <div class="col">
+                {# Bouton pour enregistrer la station #}
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-check"></i>
+                    Enregistrer la station
+                </button>
+
+                {# Bouton pour revenir à l'index #}
+                <a href="{{ path('station') }}" class="btn btn-cancel ml-3">
+                    <i class="fas fa-backspace"></i>
+                    Annuler
+                </a>
+            </div>
+        </div>
+
+        {{form_end(form)}}
+    </div>
+{% endblock %}
+
+
+{% block _system_basins_label %}
+    <h2>{{form_label(form)}}</h2>
+    <p>La liste des bassins dont le système est composé permet d'y relier les stations d'observation.</p>
+{% endblock %}
+
+{% block _system_basins_row %}
+    {{form_row(form)}}
+    {# Bouton pour ajouter un bassin #}
+    <button type="button" data-action="add-basin" class="btn btn-secondary">
+        <i class="fas fa-plus"></i>
+        Ajouter un bassin
+    </button>
+{% endblock %}
+
+{% block _system_basins_entry_row %}
+    {# N'afficher que le widget, sans étiquette ou autre information #}
+    {{form_widget(form)}}
+{% endblock %}
+
+{% block _system_basins_entry_widget %}
+    <div class="form-group alert bg-light" id="basin_{{id}}">
+        <div class="row">
+            <div class="col md-3">
+                {{form_row(form.code)}}
+                {{form_row(form.name)}}
+            </div>
+            <div class="col">
+                {{form_row(form.description)}}
+
+                {% if (form.vars.data is null) or (form.vars.data.stations|length == 0) %}
+                    {# Bouton pour supprimer le bassin #}
+                    <button type="button" data-action="delete-basin" data-target="#basin_{{id}}" class="btn btn-danger float-right">
+                        <i class="fas fa-trash"></i>
+                        Supprimer ce bassin
+                    </button>
+                {% else %}
+                    <p class="float-right">Ce bassin contient {{form.vars.data.stations|length}} stations.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block _system_pictures_label %}
+    <h2>{{form_label(form)}}</h2>
+    <p>Les photos introduites ici seront affichées avec la description du système. Chaque photo est susceptible d'être prise au hasard lors de différents affichages relatifs au système.<p>
+{% endblock %}
+
+{% block _system_pictures_widget %}
+    {{form_widget(form)}}
+{% endblock %}
+
+{% block _system_pictures_entry_row %}
+    {# N'afficher que le widget, sans étiquette ou autre information #}
+    {{form_widget(form)}}
+{% endblock %}
+
+{% block _system_pictures_entry_widget %}
+    <div class="form-group alert bg-light" id="picture_{{id}}">
+        <div class="row">
+            <div class="col md-3">
+                <img src="{{form.fileName.vars.data}}" alt="{{form.caption.vars.data}}" style="max-width: 100%; height: auto;">
+            </div>
+            <div class="col">
+                {{form_row(form.fileName)}}
+                {{form_row(form.caption)}}
+
+                {# Bouton pour supprimer la photo #}
+                <button type="button" data-action="delete-picture" data-target="#picture_{{id}}" class="btn btn-danger float-right">
+                    <i class="fas fa-trash"></i>
+                    Supprimer cette photo
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="/js/collection.js"></script>
+    <script>
+        var basinsCollectionResponder =
+            createCollectionResponders(
+                '#system_basins',
+                'button[data-action="add-basin"]',
+                'button[data-action="delete-basin"]',
+                'Etes-vous sûr de vouloir supprimer ce bassin ?'
+            );
+        basinsCollectionResponder();
+
+        var picturesCollectionResponder =
+            createCollectionResponders(
+                '#system_pictures',
+                'button[data-action="add-picture"]',
+                'button[data-action="delete-picture"]',
+                'Etes-vous sûr de vouloir supprimer cette photo ?'
+            );
+        picturesCollectionResponder();
+    </script>
+{% endblock %}
