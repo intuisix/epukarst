@@ -47,10 +47,9 @@ de modification de relevés #}
     </div>
 {% endblock %}
 
+
 {% block _reading_measures_label %}
-    <h2>
-        {{form_label(form)}}
-    </h2>
+    <h2>{{form_label(form)}}</h2>
 {% endblock %}
 
 {% block _reading_measures_widget %}
@@ -62,6 +61,7 @@ de modification de relevés #}
     {# N'afficher que le widget, sans étiquette ou autre information #}
     {{form_widget(form)}}
 {% endblock %}
+
 
 {% block _reading_measures_entry_widget %}
     <div class="form-group alert bg-light" id="block_{{id}}">

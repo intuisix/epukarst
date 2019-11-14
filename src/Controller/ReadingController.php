@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Filter;
 use App\Entity\Reading;
 use App\Entity\Station;
+use App\Form\FilterType;
 use App\Form\ReadingType;
 use App\Service\PaginationService;
 use App\Repository\ParameterRepository;
@@ -19,14 +21,23 @@ class ReadingController extends AbstractController
      * @Route("/reading/{page<\d+>?1}", name="reading")
      * @IsGranted("ROLE_USER")
      */
-    public function index(int $page, PaginationService $pagination, ParameterRepository $parameterRepository)
+    public function index(int $page, PaginationService $pagination, ParameterRepository $parameterRepository, Request $request)
     {
         $pagination
             ->setEntityClass(Reading::class)
             ->setPage($page);
 
+        /* Instancier un filtre */
+        $filter = new Filter();
+        $form = $this->createForm(FilterType::class, $filter);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+        }
+
         return $this->render('reading/index.html.twig', [
             'pagination' => $pagination,
+            'form' => $form->createView(),
             'parameters' => $parameterRepository->findFavorites()
         ]);
     }

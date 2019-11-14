@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% form_theme form _self %}
+
 {% block title %}
     Relevés
 {% endblock %}
@@ -11,17 +13,50 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="col-md-2">
+    <div class="row no-gutters">
+        <div class="col-md-3 no-gutters">
             {# Conteneur pour les filtres #}
             <div class="container">
-                <p>Ici apparaîtront les filtres</p>
+                {{form_start(form)}}
+
+                {{form_row(form.systems)}}
+
+                {{form_row(form.basins)}}
+
+                {# {{form_row(form.stations)}} #}
+
+                <div class="row">
+                    <div class="col">
+                        {{form_label(form.minimumDate)}}
+                        {{form_errors(form.minimumDate)}}
+                        {{form_widget(form.minimumDate)}}
+                        {{form_help(form.minimumDate)}}
+                    </div>
+                    <div class="col">
+                        {{form_label(form.maximumDate)}}
+                        {{form_errors(form.maximumDate)}}
+                        {{form_widget(form.maximumDate)}}
+                        {{form_help(form.maximumDate)}}
+                    </div>
+                </div>
+
+                <div class="row my-3">
+                    <div class="col">
+                        {# Bouton pour appliquer le filtre #}
+                        <button type="submit" class="btn btn-success float-right">
+                            <i class="fas fa-filter"></i>
+                            Filtrer les relevés
+                        </button>
+                    </div>
+                </div>
+
+                {{form_end(form)}}
             </div>
         </div>
-        <div class="col">
+        <div class="col no-gutters">
             {# Conteneur pour la carte des relevés #}
             <div class="container">
-                <div id="map" style="height: 400px">Ici apparaîtra la carte</div>
+                <div id="map" style="height: 400px">Carte</div>
             </div>
 
             {# Conteneur pour la liste des relevés #}
@@ -103,5 +138,32 @@
 		id: 'mapbox.streets'
 	}).addTo(mymap);
 {% endif %}
+    </script>
+
+    <script>
+        /* Find the systems filter */
+        var $systems = $('#filter_systems');
+        /* When a system gets selected or deselected: */
+        $systems.change(function() {
+            /* Find the form which the systems filter belongs to */
+            var $form = $(this).closest('form');
+            /* Simulate form data, but only include the selected systems value */
+            var data = {};
+            data['filter[systems]'] = $systems.find('input[type=checkbox]:checked').map(function(index, item) { return $(item).val() }).get();
+            /* Submit data via AJAX to the form's action path */
+            $.ajax({
+                url: $form.attr('action'),
+                type: $form.attr('method'),
+                data: data,
+                success: function(html) {
+                    /* Replace the current basins field... */
+                    $('#filter_basins').replaceWith(
+                        /* ...with the returned one from the AJAX response */
+                        $(html).find('#filter_basins')
+                    );
+                    /* The basins field now displays the filtered items */
+                }
+            });
+        });
     </script>
 {% endblock %}
