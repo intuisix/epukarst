@@ -23,7 +23,7 @@
 
                 {{form_row(form.basins)}}
 
-                {# {{form_row(form.stations)}} #}
+                {{form_row(form.stations)}}
 
                 <div class="row">
                     <div class="col">
@@ -141,29 +141,34 @@
     </script>
 
     <script>
-        /* Find the systems filter */
-        var $systems = $('#filter_systems');
-        /* When a system gets selected or deselected: */
-        $systems.change(function() {
-            /* Find the form which the systems filter belongs to */
-            var $form = $(this).closest('form');
-            /* Simulate form data, but only include the selected systems value */
-            var data = {};
-            data['filter[systems]'] = $systems.find('input[type=checkbox]:checked').map(function(index, item) { return $(item).val() }).get();
-            /* Submit data via AJAX to the form's action path */
-            $.ajax({
-                url: $form.attr('action'),
-                type: $form.attr('method'),
-                data: data,
-                success: function(html) {
-                    /* Replace the current basins field... */
-                    $('#filter_basins').replaceWith(
-                        /* ...with the returned one from the AJAX response */
-                        $(html).find('#filter_basins')
-                    );
-                    /* The basins field now displays the filtered items */
-                }
+        function setupChangeEvents(selector) {
+            /* Pour les systèmes et les bassins */
+            $(selector).each(function($index) {
+                /* Lorsque l'utilisateur sélectionne ou désélectionne l'élément */
+                $(this).change(function() {
+                    /* Trouver le formulaire auquel l'élément appartient */
+                    var $form = $(this).closest('form');
+                    /* Simuler les données du formulaire, mais en n'y incluant que les valeurs des systèmes et des bassins sélectionnés */
+                    var data = {};
+                    data['filter[systems]'] = $('#filter_systems').find('input[type=checkbox]:checked').map(function(index, item) { return $(item).val() }).get();
+                    data['filter[basins]'] = $('#filter_basins').find('input[type=checkbox]:checked').map(function(index, item) { return $(item).val() }).get();
+                    console.log(data);
+                    /* Soumettre le formulaire en AJAX */
+                    $.ajax({
+                        url: $form.attr('action'),
+                        type: $form.attr('method'),
+                        data: data,
+                        success: function(html) {
+                            /* Replace the current basins field with the returned one from the AJAX response */
+                            $('#filter_basins').replaceWith($(html).find('#filter_basins'));
+                            $('#filter_stations').replaceWith($(html).find('#filter_stations'));
+                            setupChangeEvents('#filter_basins');
+                        }
+                    })
+                })
             });
-        });
+        }
+
+        setupChangeEvents('#filter_systems,#filter_basins');
     </script>
 {% endblock %}
