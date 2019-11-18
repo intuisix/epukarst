@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class PaginationService {
     private $entityClass;
+    private $criteria = [];
     private $limit = 10;
     private $currentPage = 1;
     private $manager;
@@ -39,7 +40,7 @@ class PaginationService {
         
         /* Demander au repository de trouver les éléments */
         $repo = $this->manager->getRepository($this->entityClass);
-        $data = $repo->findBy([], [], $this->limit, $offset);
+        $data = $repo->findBy($this->criteria, [], $this->limit, $offset);
         
         /* Renvoyer les éléments */
         return $data;
@@ -52,7 +53,7 @@ class PaginationService {
         
         /* Total des enregistrements de la page */
         $repo = $this->manager->getRepository($this->entityClass);
-        $total = count($repo->findAll());
+        $total = count($repo->findBy($this->criteria));
         
         $pages = ceil($total / $this->limit);
         return $pages;
@@ -60,6 +61,10 @@ class PaginationService {
     
     public function getEntityClass() {
         return $this->entityClass;
+    }
+
+    public function getCriteria() {
+        return $this->criteria;
     }
     
     public function getLimit() {
@@ -80,6 +85,25 @@ class PaginationService {
     
     public function setEntityClass($entityClass) {
         $this->entityClass = $entityClass;
+        return $this;
+    }
+
+    /**
+     * Définit les critères simples de sélection, sous forme d'un tableau qui
+     * sera transmis à la méthode findBy() de Doctrine au moment d'effectuer
+     * la sélection.
+     *
+     * Exemples:
+     *      setCriteria(['age' => 20]);
+     *      setCriteria(['age' => 20, 'surname' => 'Miller'])
+     *      setCriteria(['phone'] => $number->getId())
+     *      setCriteria(['age' => 20, 30, 40])
+     * 
+     * @param array $criteria.
+     * @return self
+     */
+    public function setCriteria(array $criteria) {
+        $this->criteria = $criteria;
         return $this;
     }
     

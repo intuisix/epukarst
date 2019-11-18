@@ -12,6 +12,7 @@ use App\Repository\ParameterRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -21,18 +22,31 @@ class ReadingController extends AbstractController
      * @Route("/reading/{page<\d+>?1}", name="reading")
      * @IsGranted("ROLE_USER")
      */
-    public function index(int $page, PaginationService $pagination, ParameterRepository $parameterRepository, Request $request)
+    public function index(int $page, PaginationService $pagination, ParameterRepository $parameterRepository, Request $request, SessionInterface $session)
     {
+        $filter = $request->request->get('filter');
+        $systems = $filter['systems'] ?? [];
+        $basins = $filter['basins'] ?? [];
+        $stations = $filter['stations'] ?? [];
+
         $pagination
             ->setEntityClass(Reading::class)
-            ->setPage($page);
+            ->setCriteria([
+                'station' => $stations])
+            ->setPage($page)
+        ;
 
         /* Instancier un filtre */
         $filter = new Filter();
-        $form = $this->createForm(FilterType::class, $filter);
+        $form = $this->createForm(FilterType::class, $filter, [
+            'systems' => $systems,
+            'basins' => $basins,
+            //'filter' => $session->get('reading-filter'),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $session->set('reading-filter', $filter);
         }
 
         return $this->render('reading/index.html.twig', [

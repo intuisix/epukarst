@@ -32,6 +32,12 @@ class FilterType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        //$filter = $options['filter'];
+        //$systems = $filter->getSystems();
+        //$basins = $filter->getBasins();
+        $systems = $options['systems'];
+        $basins = $options['basins'];
+
         $builder
             ->add('minimumDate', DateType::class, [
                 'label' => "Entre",
@@ -51,39 +57,7 @@ class FilterType extends AbstractType
                 'multiple' => true,
                 'placeholder' => "Choisissez un système",
                 'required' => false,
-            ]);
-
-        $builder
-            ->addEventListener(
-                FormEvents::PRE_SET_DATA,
-                function (FormEvent $event) {
-                    $data = $event->getData();
-                    $form = $event->getForm();
-                    $this->addBasinsField($form, $data->getSystems());
-                    $this->addStationsField($form, $data->getBasins());
-                }
-            )
-            ->get('systems')->addEventListener(
-                FormEvents::POST_SUBMIT,
-                function (FormEvent $event) {
-                    $form = $event->getForm();
-                    $parent = $form->getParent();
-                    dump($parent);
-                    $this->addBasinsField($parent, $form->getData());
-                    $this->addStationsField($parent, $parent->get('basins')->getData());
-                }
-            );
-    }
-
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults([
-            'data_class' => Filter::class,
-        ]);
-    }
-
-    private function addBasinsField($form, $systems = null) {
-        $form
+            ])
             ->add('basins', EntityType::class, [
                 'choice_label' => 'name',
                 'class' => Basin::class,
@@ -96,21 +70,12 @@ class FilterType extends AbstractType
                         $qb->where('b.system is null');
                     } else {
                         $qb->where(
-                            $qb->expr()->in(
-                                'b.system',
-                                $systems->map(function($system) {
-                                    return $system->getId();
-                                })->getValues()
-                            )
+                            $qb->expr()->in('b.system', $systems)
                         );
                     }
                     return $qb->orderBy('b.name', 'ASC');
                 }
-            ]);
-    }
-
-    private function addStationsField($form, $basins = null) {
-        $form
+            ])
             ->add('stations', EntityType::class, [
                 'choice_label' => 'name',
                 'class' => Station::class,
@@ -119,23 +84,31 @@ class FilterType extends AbstractType
                 'multiple' => true,
                 'placeholder' => "Choisissez une station",
                 'query_builder' => function(StationRepository $sr) use ($basins) {
-                    dump($basins);
                     $qb = $sr->createQueryBuilder('s');
                     if (count($basins) == 0) {
                         $qb->where('s.basin is null');
                     } else {
-/*                        $qb->where(
-                            $qb->expr()->in(
-                                's.basin',
-                                $basins->map(function($basin) {
-                                    return $basin->getId();
-                                })->getValues()
-                            )
-                        );*/
+                        $qb->where(
+                            $qb->expr()->in('s.basin', $basins)
+                        );
                     }
                     return $qb->orderBy('s.name', 'ASC');
                 },
                 'required' => false,
-            ]);
+            ])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => Filter::class,
+            'systems' => [],
+            'basins' => [],
+            //'filter' => new Filter(),
+        ]);
+        $resolver->setAllowedTypes('systems', 'string[]');
+        $resolver->setAllowedTypes('basins', 'string[]');
+        //$resolver->setAllowedTypes('filter', 'App\Entity\Filter');
     }
 }
