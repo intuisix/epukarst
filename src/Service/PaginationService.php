@@ -23,11 +23,14 @@ class PaginationService {
     }
     
     public function display() {
-        $this->twig->display($this->templatePath, [
-            'page' => $this->currentPage,
-            'pages' => $this->getPages(),
-            'route' => $this->route,
+        $pages = $this->getPages();
+        if ($pages > 0) {
+            $this->twig->display($this->templatePath, [
+                'page' => $this->currentPage,
+                'pages' => $pages,
+                'route' => $this->route,
             ]);
+        }
     }
     
     public function getData() {
