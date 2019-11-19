@@ -76,8 +76,8 @@ class Filter
 
     public function addSystem(System $system): self
     {
-        if (!$this->system->contains($system)) {
-            $this->systems[] = $systems;
+        if (!$this->systems->contains($system)) {
+            $this->systems[] = $system;
         }
 
         return $this;

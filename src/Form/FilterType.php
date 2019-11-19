@@ -32,12 +32,6 @@ class FilterType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        //$filter = $options['filter'];
-        //$systems = $filter->getSystems();
-        //$basins = $filter->getBasins();
-        $systems = $options['systems'];
-        $basins = $options['basins'];
-
         $builder
             ->add('minimumDate', DateType::class, [
                 'label' => "Entre",
@@ -55,46 +49,23 @@ class FilterType extends AbstractType
                 'expanded' => true,
                 'label' => "Systèmes",
                 'multiple' => true,
-                'placeholder' => "Choisissez un système",
-                'required' => false,
+                'required' => true,
             ])
             ->add('basins', EntityType::class, [
                 'choice_label' => 'name',
                 'class' => Basin::class,
+                'label' => "Bassins",
                 'multiple' => true,
-                'required' => false,
+                'required' => true,
                 'expanded' => true,
-                'query_builder' => function(BasinRepository $br) use ($systems) {
-                    $qb = $br->createQueryBuilder('b');
-                    if (count($systems) == 0) {
-                        $qb->where('b.system is null');
-                    } else {
-                        $qb->where(
-                            $qb->expr()->in('b.system', $systems)
-                        );
-                    }
-                    return $qb->orderBy('b.name', 'ASC');
-                }
             ])
             ->add('stations', EntityType::class, [
                 'choice_label' => 'name',
                 'class' => Station::class,
-                'expanded' => true,
                 'label' => "Stations",
+                'expanded' => true,
                 'multiple' => true,
-                'placeholder' => "Choisissez une station",
-                'query_builder' => function(StationRepository $sr) use ($basins) {
-                    $qb = $sr->createQueryBuilder('s');
-                    if (count($basins) == 0) {
-                        $qb->where('s.basin is null');
-                    } else {
-                        $qb->where(
-                            $qb->expr()->in('s.basin', $basins)
-                        );
-                    }
-                    return $qb->orderBy('s.name', 'ASC');
-                },
-                'required' => false,
+                'required' => true,
             ])
         ;
     }
@@ -103,12 +74,6 @@ class FilterType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Filter::class,
-            'systems' => [],
-            'basins' => [],
-            //'filter' => new Filter(),
         ]);
-        $resolver->setAllowedTypes('systems', 'string[]');
-        $resolver->setAllowedTypes('basins', 'string[]');
-        //$resolver->setAllowedTypes('filter', 'App\Entity\Filter');
     }
 }

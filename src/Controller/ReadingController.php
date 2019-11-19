@@ -8,11 +8,13 @@ use App\Entity\Station;
 use App\Form\FilterType;
 use App\Form\ReadingType;
 use App\Service\PaginationService;
+use App\Repository\BasinRepository;
+use App\Repository\SystemRepository;
+use App\Repository\StationRepository;
 use App\Repository\ParameterRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -22,37 +24,63 @@ class ReadingController extends AbstractController
      * @Route("/reading/{page<\d+>?1}", name="reading")
      * @IsGranted("ROLE_USER")
      */
-    public function index(int $page, PaginationService $pagination, ParameterRepository $parameterRepository, Request $request, SessionInterface $session)
+    public function index(int $page, PaginationService $pagination, ParameterRepository $parameterRepository, Request $request, SystemRepository $systemRepository, BasinRepository $basinRepository, StationRepository $stationRepository)
     {
-        $filter = $request->request->get('filter');
-        $systems = $filter['systems'] ?? [];
-        $basins = $filter['basins'] ?? [];
-        $stations = $filter['stations'] ?? [];
-
-        $pagination
-            ->setEntityClass(Reading::class)
-            ->setCriteria([
-                'station' => $stations])
-            ->setPage($page)
-        ;
+        $session = $request->getSession();
 
         /* Instancier un filtre */
         $filter = new Filter();
-        $form = $this->createForm(FilterType::class, $filter, [
-            'systems' => $systems,
-            'basins' => $basins,
-            //'filter' => $session->get('reading-filter'),
-        ]);
+
+        $systemIds = [];
+        if ($session->has('systems')) {
+            $systemIds = $session->get('systems');
+            foreach ($systemIds as $systemId) {
+                $filter->addSystem($systemRepository->findOneById($systemId));
+            }
+        }
+
+        $basinIds = [];
+        if ($session->has('basins')) {
+            $basinIds = $session->get('basins');
+            foreach ($basinIds as $basinId) {
+                $filter->addBasin($basinRepository->findOneById($basinId));
+            }
+        }
+
+        $stationIds = [];
+        if ($session->has('stations')) {
+            $stationIds = $session->get('stations');
+            foreach ($stationIds as $stationId) {
+                $filter->addStation($stationRepository->findOneById($stationId));
+            }
+        }
+
+        $form = $this->createForm(FilterType::class, $filter);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $session->set('reading-filter', $filter);
+            $systemIds = $filter->getSystems()->map(function($system) { return $system->getId(); })->getValues();
+            $session->set('systems', $systemIds);
+
+            $basinIds = $filter->getBasins()->map(function($basin) {
+                return $basin->getId(); })->getValues();
+            $session->set('basins', $basinIds);
+
+            $stationIds = $filter->getStations()->map(function($station) {
+                    return $station->getId(); })->getValues();
+            $session->set('stations', $stationIds);
         }
+
+        $pagination
+            ->setEntityClass(Reading::class)
+            ->setPage($page)
+            ->setCriteria(['station' => $session->get('stations')]);
 
         return $this->render('reading/index.html.twig', [
             'pagination' => $pagination,
             'form' => $form->createView(),
-            'parameters' => $parameterRepository->findFavorites()
+            'systems' => $systemRepository->findAll(),
+            'parameters' => $parameterRepository->findFavorites(),
         ]);
     }
 
