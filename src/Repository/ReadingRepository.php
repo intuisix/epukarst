@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Filter;
 use App\Entity\Reading;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Reading|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +21,41 @@ class ReadingRepository extends ServiceEntityRepository
         parent::__construct($registry, Reading::class);
     }
 
-    // /**
-    //  * @return Reading[] Returns an array of Reading objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * Retourne un constructeur de requêtes, permettant de rechercher tous les
+     * relevés correspondant aux données du filtre spécifié. 
+     *
+     * @param Filter $filter
+     * @return QueryBuilder
+     */
+    public function getQueryBuilder(Filter $filter) : QueryBuilder
     {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('r.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $stations = $filter->getStations();
+        $minimumDateTime = $filter->getMinimumDate();
+        $maximumDateTime = $filter->getMaximumDate();
 
-    /*
-    public function findOneBySomeField($value): ?Reading
-    {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $queryBuilder = $this->createQueryBuilder('r')
+            ->addSelect('r')
+            ->orderBy('r.fieldDateTime', 'DESC')
+            ->setParameter('stations', $filter->getStations());
+
+        if ($stations !== null) {
+            $queryBuilder
+                ->where('r.station IN (:stations)');
+        }
+
+        if ($minimumDateTime !== null) {
+            $queryBuilder
+                ->andWhere('r.fieldDateTime >= :minimumDateTime')
+                ->setParameter('minimumDateTime', $minimumDateTime);
+        }
+
+        if ($maximumDateTime !== null) {
+            $queryBuilder
+                ->andWhere('r.fieldDateTime <= :maximumDateTime')
+                ->setParameter('maximumDateTime', $maximumDateTime);
+        }
+
+        return $queryBuilder;
     }
-    */
 }

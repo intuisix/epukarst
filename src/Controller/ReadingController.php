@@ -10,6 +10,7 @@ use App\Form\ReadingType;
 use App\Service\PaginationService;
 use App\Repository\BasinRepository;
 use App\Repository\SystemRepository;
+use App\Repository\ReadingRepository;
 use App\Repository\StationRepository;
 use App\Repository\ParameterRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,14 +25,13 @@ class ReadingController extends AbstractController
      * @Route("/reading/{page<\d+>?1}", name="reading")
      * @IsGranted("ROLE_USER")
      */
-    public function index(int $page, PaginationService $pagination, ParameterRepository $parameterRepository, Request $request, SystemRepository $systemRepository, BasinRepository $basinRepository, StationRepository $stationRepository)
+    public function index(int $page, PaginationService $pagination, ParameterRepository $parameterRepository, Request $request, SystemRepository $systemRepository, BasinRepository $basinRepository, StationRepository $stationRepository, ReadingRepository $readingRepository)
     {
         $session = $request->getSession();
 
         /* Instancier un filtre */
         $filter = new Filter();
 
-        $systemIds = [];
         if ($session->has('systems')) {
             $systemIds = $session->get('systems');
             foreach ($systemIds as $systemId) {
@@ -39,7 +39,6 @@ class ReadingController extends AbstractController
             }
         }
 
-        $basinIds = [];
         if ($session->has('basins')) {
             $basinIds = $session->get('basins');
             foreach ($basinIds as $basinId) {
@@ -47,12 +46,19 @@ class ReadingController extends AbstractController
             }
         }
 
-        $stationIds = [];
         if ($session->has('stations')) {
             $stationIds = $session->get('stations');
             foreach ($stationIds as $stationId) {
                 $filter->addStation($stationRepository->findOneById($stationId));
             }
+        }
+
+        if ($session->has('minimumDate')) {
+            $filter->setMinimumDate($session->get('minimumDate'));
+        }
+
+        if ($session->has('maximumDate')) {
+            $filter->setMaximumDate($session->get('maximumDate'));
         }
 
         $form = $this->createForm(FilterType::class, $filter);
@@ -69,12 +75,16 @@ class ReadingController extends AbstractController
             $stationIds = $filter->getStations()->map(function($station) {
                     return $station->getId(); })->getValues();
             $session->set('stations', $stationIds);
+
+            $session->set('minimumDate', $filter->getMinimumDate());
+            $session->set('maximumDate', $filter->getMaximumDate());
         }
 
         $pagination
             ->setEntityClass(Reading::class)
+            ->setQueryBuilder($readingRepository->getQueryBuilder($filter))
             ->setPage($page)
-            ->setCriteria(['station' => $session->get('stations')]);
+        ;
 
         return $this->render('reading/index.html.twig', [
             'pagination' => $pagination,
