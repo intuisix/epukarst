@@ -1,9 +1,13 @@
-{% for label, messages in app.flashes %}
-    <div class="container">
-        <div class="alert alert-{{label}}">
-            {% for message in messages %}
-                <p>{{message|raw}}</p>
-            {% endfor %}
+{# Vérifier si l'utilisateur a déjà une session, de ne pas créer inutilement
+une nouvelle session par le simple fait d'en lire le contenu #}
+{% if app.request.hasPreviousSession %}
+    {% for label, messages in app.flashes %}
+        <div class="container">
+            <div class="alert alert-{{label}}">
+                {% for message in messages %}
+                    <p>{{message|raw}}</p>
+                {% endfor %}
+            </div>
         </div>
-    </div>
-{% endfor %}
+    {% endfor %}
+{% endif %}
