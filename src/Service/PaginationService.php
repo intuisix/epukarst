@@ -11,6 +11,7 @@ class PaginationService {
     private $criteria = [];
     private $limit = 10;
     private $currentPage = 1;
+    private $totalPages = 0;
     private $manager;
     private $route;
     private $templatePath;
@@ -23,11 +24,10 @@ class PaginationService {
     }
     
     public function display() {
-        $pages = $this->getPages();
-        if ($pages > 0) {
+        if ($this->totalPages > 0) {
             $this->twig->display($this->templatePath, [
                 'page' => $this->currentPage,
-                'pages' => $pages,
+                'pages' => $this->totalPages,
                 'route' => $this->route,
             ]);
         }
@@ -36,6 +36,13 @@ class PaginationService {
     public function getData() {
         if (empty($this->entityClass)) {
             throw new \Exception("Entité non spécifiée. Utilisez setEntityClass");
+        }
+
+        $this->totalPages = $this->getPages();
+        if ($this->currentPage < 1) {
+            $this->currentPage = 1;
+        } else if ($this->currentPage > $this->totalPages) {
+            $this->currentPage = $this->totalPages;
         }
 
         /* Calculer l'offset */
