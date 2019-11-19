@@ -78,17 +78,17 @@ class User implements UserInterface
     private $picture;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Reading", mappedBy="author")
+     * @ORM\OneToMany(targetEntity="App\Entity\Reading", mappedBy="encodingAuthor")
      */
     private $encodedReadings;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Reading", mappedBy="auditor")
+     * @ORM\OneToMany(targetEntity="App\Entity\Reading", mappedBy="validationAuthor")
      */
     private $validatedReadings;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Measure", mappedBy="creationAuthor")
+     * @ORM\OneToMany(targetEntity="App\Entity\Measure", mappedBy="encodingAuthor")
      */
     private $measures;
 

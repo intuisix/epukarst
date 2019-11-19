@@ -45,7 +45,7 @@ class Reading
     /**
      * Auteur de l'encodage.
      * 
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="readings")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="encodedReadings")
      * @ORM\JoinColumn(nullable=false)
      */
     private $encodingAuthor;
