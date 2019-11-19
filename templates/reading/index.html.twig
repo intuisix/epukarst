@@ -115,7 +115,7 @@
                     <tbody>
                         {% for reading in pagination.data %}
                             <tr>
-                                <th><input type="checkbox" name="" id=""/></th>
+                                <td><input type="checkbox" name="" id=""/></th>
                                 <td>{{reading.fieldDateTime|date('d/m/Y H:i')}}</td>
                                 <td><a href="{{ path('reading_show', { 'code': reading.code }) }}">{{reading.code}}</a></td>
                                 <td>{{reading.station.basin.system.name}}</td>
@@ -135,6 +135,10 @@
                                     <a href="{{ path('reading_modify', {'code': reading.code}) }}" class="text-primary"><i class="fas fa-edit"></i></a>
                                     <a href="#" class="text-danger"><i class="fas fa-trash"></i></a>
                                 </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="11">Il n'y a pas de relevés à afficher. Vérifiez les filtres.</td>
                             </tr>
                         {% endfor %}
                     </tbody>
