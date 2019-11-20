@@ -4,6 +4,7 @@ namespace App\Service;
 
 use Twig\Environment;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -64,9 +65,9 @@ class PaginationService
     /**
      * Retourne les éléments à afficher sur la page.
      *
-     * @return array
+     * @return array|ArrayIterator
      */
-    public function getData() : array
+    public function getData()
     {
         /* Actualiser le nombre total de pages */
         $this->update();
@@ -76,10 +77,12 @@ class PaginationService
         
         /* Obtenir les éléments de la page */
         if ($this->queryBuilder) {
+            /* Utiliser le paginateur de Doctrine, parce que celui-ci gère
+            correctement la quantité de résultats s'il y a des jointures */
             $query = $this->queryBuilder->getQuery()
                 ->setFirstResult($offset)
                 ->setMaxResults($this->limit);
-            $data = $query->getResult();
+            $data = (new Paginator($query))->getIterator();
         } else {
             $repo = $this->manager->getRepository($this->entityClass);
             $data = $repo->findBy($this->criteria, [], $this->limit, $offset);
