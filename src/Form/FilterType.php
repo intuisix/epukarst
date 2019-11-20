@@ -7,6 +7,7 @@ use App\Entity\Filter;
 use App\Entity\System;
 use App\Entity\Station;
 use Doctrine\ORM\QueryBuilder;
+use App\Form\FilterMeasureType;
 use App\Repository\BasinRepository;
 use App\Repository\StationRepository;
 use Symfony\Component\Form\FormEvent;
@@ -66,6 +67,12 @@ class FilterType extends AbstractType
                 'expanded' => true,
                 'multiple' => true,
                 'required' => true,
+            ])
+            ->add('measures', CollectionType::class, [
+                'allow_add' => true,
+                'allow_delete' => true,
+                'entry_type' => FilterMeasureType::class,
+                'label' => "Paramètres",
             ])
         ;
     }

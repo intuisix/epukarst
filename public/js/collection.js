@@ -1,4 +1,4 @@
-function createCollectionResponders(blockSelector, additionSelector, deletionSelector, deletionMessage) {
+function createCollectionResponders(blockSelector, additionSelector, deletionSelector, deletionMessage = null) {
 
     /* Obtenir le nombre initial de mesures */
     var itemCount = +$(blockSelector).length;
@@ -9,7 +9,7 @@ function createCollectionResponders(blockSelector, additionSelector, deletionSel
         $(deletionSelector).off("click");
         /* Supprimer le bloc de formulaire en cas de clic */
         $(deletionSelector).on("click", function() {
-            if (confirm(deletionMessage)) {
+            if ((null == deletionMessage) || confirm(deletionMessage)) {
                 $(this.dataset.target).remove();
             }
         });

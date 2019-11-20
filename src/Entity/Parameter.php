@@ -111,6 +111,12 @@ class Parameter
         return $this->name;
     }
 
+    public function getNameWithUnit(): ?string
+    {
+        return $this->name .
+            (empty($this->unit) ? "" : " ($this->unit)");
+    }
+
     public function setName(string $name): self
     {
         $this->name = $name;

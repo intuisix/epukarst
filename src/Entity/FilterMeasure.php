@@ -32,6 +32,12 @@ class FilterMeasure
      */
     private $filter;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Parameter")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $parameter;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -69,6 +75,18 @@ class FilterMeasure
     public function setFilter(?Filter $filter): self
     {
         $this->filter = $filter;
+
+        return $this;
+    }
+
+    public function getParameter(): ?Parameter
+    {
+        return $this->parameter;
+    }
+
+    public function setParameter(?Parameter $parameter): self
+    {
+        $this->parameter = $parameter;
 
         return $this;
     }

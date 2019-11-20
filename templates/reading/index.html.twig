@@ -17,6 +17,8 @@
         <div class="col-md-3 no-gutters">
             {# Afficher un volet de filtres #}
             <div class="container">
+                <h5>Filtres</h5>
+
                 {{form_start(form)}}
 
                 {# Afficher une vue hiérarchique des systèmes, bassins et
@@ -24,8 +26,7 @@
                 une programmation manuelle. La division est limitée en hauteur
                 et l'utilisateur a la possibilité de la redimensionner et d'en
                 faire défiler le contenu. #}
-                <label for="systems">Systèmes, bassins et stations</label>
-                <div class="bg-light" id="systems" style="overflow-y: scroll; height: 400px; resize: vertical">
+                <div class="bg-light mb-3" style="overflow-y: scroll; height: 400px; resize: vertical">
                     {% for system in systems %}
                         <div>
                             <div class="form-check">
@@ -60,6 +61,7 @@
                 {{form_row(form.basins)}}
                 {{form_row(form.stations)}}
 
+                {# Afficher les champs de date minimum et de date maximum #}
                 <div class="row">
                     <div class="col">
                         {{form_label(form.minimumDate)}}
@@ -75,12 +77,15 @@
                     </div>
                 </div>
 
+                {# Afficher un sous-formulaire pour les mesures #}
+                {{form_row(form.measures)}}
+
                 <div class="row my-3">
                     <div class="col">
                         {# Bouton pour appliquer le filtre #}
                         <button type="submit" class="btn btn-success float-right">
                             <i class="fas fa-filter"></i>
-                            Filtrer les relevés
+                            Appliquer le filtre
                         </button>
                     </div>
                 </div>
@@ -172,6 +177,43 @@
     hérarchie des systèmes, bassins et stations. #}
 {% endblock %}
 
+{% block _filter_measures_label %}
+    <div class="row my-3">
+        <div class="col">
+            {# Afficher un bouton permettant d'ajouter un paramètre #}
+            <button type="button" data-action="add-measure" class="btn btn-secondary">
+                <i class="fas fa-plus"></i> Ajouter un paramètre
+            </button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _filter_measures_entry_row %}
+    {# Cette division identifie le code HTML qui concerne le paramètre #}
+    <div class="form-group" id="measure_{{id}}">
+        {# Afficher, seul sur une ligne, la sélection de paramètre #}
+        <div class="row">
+            <div class="col">
+                {{form_row(form.parameter)}}
+            </div>
+        </div>
+        {# Afficher côte à côte les champs de valeur minimum et maximum #}
+        <div class="row">
+            <div class="col">
+                {{form_row(form.minimumValue)}}
+            </div>
+            <div class="col">
+                {{form_row(form.maximumValue)}}
+            </div>
+        </div>
+
+        {# Afficher un bouton permettant de supprimer le paramètre #}
+        <button type="button" data-action="delete-measure" data-target="#measure_{{id}}" class="btn btn-danger">
+            <i class="fas fa-trash"></i> Supprimer ce paramètre
+        </button>
+    </div>
+{% endblock %}
+
 {% block javascripts %}
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
     integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
@@ -209,6 +251,17 @@
         $('input[type="checkbox"]').click(function() {
             var checked = $(this).prop('checked');
             $(this).parent().parent().find('input[type="checkbox"]').prop('checked', checked);
-        })
+        });
+    </script>
+
+    <script src="/js/collection.js"></script>
+    <script>
+        var measuresCollectionResponders =
+            createCollectionResponders(
+                '#filter_measures',
+                'button[data-action="add-measure"]',
+                'button[data-action="delete-measure"]'
+            );
+        measuresCollectionResponders();
     </script>
 {% endblock %}

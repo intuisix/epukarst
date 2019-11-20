@@ -3,15 +3,14 @@
 namespace App\Form;
 
 use App\Entity\Parameter;
-use App\Entity\Measurability;
+use App\Entity\FilterMeasure;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
-class MeasurabilityType extends AbstractType
+class FilterMeasureType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -22,35 +21,21 @@ class MeasurabilityType extends AbstractType
                 'choice_label' => function(Parameter $parameter) {
                     return $parameter->getNameWithUnit();
                 },
-                'placeholder' => "Sélectionnez un paramètre",
+                'placeholder' => "Paramètre",
             ])
             ->add('minimumValue', NumberType::class, [
-                'label' => "Valeur maximum",
+                'label' => "Entre",
                 'required' => false,
                 'attr' => [
-                    'placeholder' => "Entrez la valeur minimum mesurable",
-                ],
+                    'placeholder' => "Minimum"
+                ]
             ])
             ->add('maximumValue', NumberType::class, [
-                'label' => "Valeur maximum",
+                'label' => "et",
                 'required' => false,
                 'attr' => [
-                    'placeholder' => "Entrez la valeur maximum mesurable",
-                ],
-            ])
-            ->add('tolerance', NumberType::class, [
-                'label' => "Tolérance",
-                'required' => false,
-                'attr' => [
-                    'placeholder' => "Entrez la précision des mesures",
-                ],
-            ])
-            ->add('notes', TextareaType::class, [
-                'label' => "Remarques",
-                'required' => false,
-                'attr' => [
-                    'placeholder' => "Entrez des remarques éventuelles",
-                ],
+                    'placeholder' => "Maximum"
+                ]
             ])
         ;
     }
@@ -58,7 +43,7 @@ class MeasurabilityType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Measurability::class,
+            'data_class' => FilterMeasure::class,
         ]);
     }
 }

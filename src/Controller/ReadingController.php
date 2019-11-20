@@ -7,6 +7,7 @@ use App\Entity\Reading;
 use App\Entity\Station;
 use App\Form\FilterType;
 use App\Form\ReadingType;
+use App\Entity\FilterMeasure;
 use App\Service\PaginationService;
 use App\Repository\BasinRepository;
 use App\Repository\SystemRepository;
@@ -32,6 +33,7 @@ class ReadingController extends AbstractController
         /* Instancier un filtre */
         $filter = new Filter();
 
+        /* Désérialiser les systèmes */
         if ($session->has('systems')) {
             $systemIds = $session->get('systems');
             foreach ($systemIds as $systemId) {
@@ -39,6 +41,7 @@ class ReadingController extends AbstractController
             }
         }
 
+        /* Désérialiser les bassins */
         if ($session->has('basins')) {
             $basinIds = $session->get('basins');
             foreach ($basinIds as $basinId) {
@@ -46,6 +49,7 @@ class ReadingController extends AbstractController
             }
         }
 
+        /* Désérialiser les stations */
         if ($session->has('stations')) {
             $stationIds = $session->get('stations');
             foreach ($stationIds as $stationId) {
@@ -53,31 +57,62 @@ class ReadingController extends AbstractController
             }
         }
 
+        /* Désérialiser la date minimum */
         if ($session->has('minimumDate')) {
             $filter->setMinimumDate($session->get('minimumDate'));
         }
 
+        /* Désérialiser la date maximum */
         if ($session->has('maximumDate')) {
             $filter->setMaximumDate($session->get('maximumDate'));
+        }
+
+        /* Désérialiser les mesures */
+        if ($session->has('measures')) {
+            $measures = $session->get('measures');
+            foreach ($measures as $parameterId => $measure) {
+                $filterMeasure = new FilterMeasure();
+                $filterMeasure
+                    ->setParameter($parameterRepository->findOneById($parameterId))
+                    ->setMinimumValue($measure['minimumValue'])
+                    ->setMaximumValue($measure['maximumValue']);
+                $filter->addMeasure($filterMeasure);
+            }
         }
 
         $form = $this->createForm(FilterType::class, $filter);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /* Sérialiser les systèmes */
             $systemIds = $filter->getSystems()->map(function($system) { return $system->getId(); })->getValues();
             $session->set('systems', $systemIds);
 
+            /* Sérialiser les bassins */
             $basinIds = $filter->getBasins()->map(function($basin) {
                 return $basin->getId(); })->getValues();
             $session->set('basins', $basinIds);
 
+            /* Sérialiser les stations */
             $stationIds = $filter->getStations()->map(function($station) {
                     return $station->getId(); })->getValues();
             $session->set('stations', $stationIds);
 
+            /* Sérialiser la date minimum */
             $session->set('minimumDate', $filter->getMinimumDate());
+
+            /* Sérialiser la date maximum */
             $session->set('maximumDate', $filter->getMaximumDate());
+
+            /* Sérialiser les mesures */
+            $measures = [];
+            foreach ($filter->getMeasures() as $measure) {
+                $measures[$measure->getParameter()->getId()] = [
+                    'minimumValue' => $measure->getMinimumValue(),
+                    'maximumValue' => $measure->getMaximumValue(),
+                ];
+            }
+            $session->set('measures', $measures);
         }
 
         $pagination
