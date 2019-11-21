@@ -36,7 +36,7 @@ class ReadingRepository extends ServiceEntityRepository
         $measures = $filter->getMeasures();
 
         /* Créer le constructeur de requêtes. Utilisons des noms complets pour
-        faciliter la compréhension. */
+        faciliter la compréhension des éléments de la requête. */
         $queryBuilder = $this->createQueryBuilder('reading')
             ->select('reading, station, basin, system, measure, measurability')
             ->leftJoin('reading.measures', 'measure')
@@ -46,55 +46,86 @@ class ReadingRepository extends ServiceEntityRepository
             ->join('basin.system', 'system')
             ->orderBy('reading.fieldDateTime', 'DESC');
 
+        /* Filtrer par stations */
         if (null !== $stations) {
             $queryBuilder
                 ->where('reading.station IN (:stations)')
                 ->setParameter('stations', $filter->getStations());
         }
 
+        /* Filtrer par date minimum */
         if (null !== $minimumDateTime) {
             $queryBuilder
                 ->andWhere('reading.fieldDateTime >= :minimumDateTime')
                 ->setParameter('minimumDateTime', $minimumDateTime);
         }
 
+        /* Filtrer par date maximum */
         if (null !== $maximumDateTime) {
             $queryBuilder
                 ->andWhere('reading.fieldDateTime <= :maximumDateTime')
                 ->setParameter('maximumDateTime', $maximumDateTime);
         }
 
+        /* Filtrer par paramètre de mesure */
         if (null !== $measures) {
-            foreach ($measures as $measure) {
-                /* L'identifiant de paramètre est le pivot sur lequel on peut
-                faire le rapprochement entre la mesure issue du filtre et les
-                mesures issues des relevés */
-                $parameterId = $measure->getParameter()->getId();
-
-                /* Dans les appels à QueryBuilder ci-dessous, des valeurs sont
-                insérées directement dans la requête avec des forçage de type
-                pour seule protection contre l'injection DQL. Cela évite de
-                devoir générer des noms de paramètres QueryBuilder, dans le cas
-                où le filtre contient plusieurs mesures. */
-
-                /* Ajouter la valeur minimum à la requête */
-                $minimumValue = $measure->getMinimumValue();
-                if (null !== $minimumValue) {
-                    $queryBuilder
-                        ->andWhere('measurability.parameter = ' . (int)$parameterId)
-                        ->andWhere('measure.value >= ' . (float)$minimumValue);
-                }
-
-                /* Ajouter la valeur maximum à la requête */
-                $maximumValue = $measure->getMaximumValue();
-                if (null !== $maximumValue) {
-                    $queryBuilder
-                        ->andWhere('measurability.parameter = ' . (int)$parameterId)
-                        ->andWhere('measure.value <= ' . (float)$maximumValue);
-                }
-            }
+            $queryBuilder
+                ->andWhere('reading.id IN (:ids)')
+                ->setParameter('ids', $this->findIdsByMeasures($measures));
         }
 
         return $queryBuilder;
+    }
+
+    /**
+     * Retourne les identifiants des relevés qui comportent parmi leurs mesures,
+     * pour chaque paramètre de filtre, au moins une valeur mesurée valide
+     * comprise entre les valeurs minimum et le maximum du filtre.
+     *
+     * @param FilterMeasure[] $measures
+     * @return array
+     */
+    private function findIdsByMeasures($measures)
+    {
+        /* Créer un constructeur de requêtes. L'utilisation de noms longs est
+        préféré afin de faciliter la compréhension de la requête. Le paramètre
+        concerné par une mesure de relevé est accessible par le biais de la
+        mesurabilité (ici, l'instrument utilisé n'a aucune importance). */
+        $queryBuilder = $this->createQueryBuilder('reading')
+            ->select('DISTINCT(reading.id)')
+            ->join('reading.measures', 'measure')
+            ->join('measure.measurability', 'measurability');
+
+        foreach ($measures as $measure) {
+            /* L'identifiant de paramètre est le pivot sur lequel on peut
+            faire le rapprochement entre la mesure issue du filtre et les
+            mesures issues des relevés. Ne prendre en compte que les valeurs
+            valides. */
+            $parameterId = $measure->getParameter()->getId();
+            $queryBuilder
+                ->andWhere('measurability.parameter = ' . (int)$parameterId)
+                ->andWhere('measure.valid = true');
+
+            /* Dans les appels à QueryBuilder ci-dessous, des valeurs sont
+            insérées directement dans la requête avec des forçage de type
+            pour seule protection contre l'injection DQL. Cela évite de
+            devoir générer des noms de paramètres QueryBuilder, dans le cas
+            où le filtre contient plusieurs mesures. */
+
+            /* Ajouter la valeur minimum à la requête */
+            $minimumValue = $measure->getMinimumValue();
+            if (null !== $minimumValue) {
+                $queryBuilder
+                    ->andWhere('measure.value >= ' . (float)$minimumValue);
+            }
+
+            /* Ajouter la valeur maximum à la requête */
+            $maximumValue = $measure->getMaximumValue();
+            if (null !== $maximumValue) {
+                $queryBuilder
+                    ->andWhere('measure.value <= ' . (float)$maximumValue);
+            }
+        }
+        return $queryBuilder->getQuery()->getResult();
     }
 }
