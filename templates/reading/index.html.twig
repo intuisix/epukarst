@@ -14,94 +14,90 @@
 
 {% block body %}
     <div class="row no-gutters">
-        <div class="col-md-3 no-gutters">
-            {# Afficher un volet de filtres #}
-            <div class="container">
-                <h5>Filtres</h5>
+        {# Afficher un volet de filtres #}
+        <div class="col py-3 px-3" style="max-width: 400px">
+            <h5>Filtres</h5>
 
-                {{form_start(form)}}
+            {{form_start(form)}}
 
-                {# Afficher une vue hiérarchique des systèmes, bassins et
-                stations combinant les trois formulaires en un seul, grâce à
-                une programmation manuelle. La division est limitée en hauteur
-                et l'utilisateur a la possibilité de la redimensionner et d'en
-                faire défiler le contenu. #}
-                <div class="bg-light mb-3" style="overflow-y: scroll; height: 400px; resize: vertical">
-                    {% for system in systems %}
-                        <div>
-                            <div class="form-check">
-                                <input type="checkbox" name="filter[systems][]" id="filter_systems_{{system.id}}" class="form-check-input" value="{{system.id}}" {% if system in form.vars.data.systems %}checked="checked"{% endif %} />
-                                <label for="filter_systems_{{system.id}}" class="form-check-label"><strong>{{system.name}}</strong></label>
-                            </div>
-                            {% for basin in system.basins %}
-                                <div class="ml-4">
-                                    <div class="form-check">
-                                        <input type="checkbox" name="filter[basins][]" id="filter_basins_{{basin.id}}" class="form-check-input" value="{{basin.id}}" {% if basin in form.vars.data.basins %}checked="checked"{% endif %} />
-                                        <label for="filter_basins_{{basin.id}}" class="form-check-label">{{basin.name}}</label>
-                                    </div>
-                                    {% for station in basin.stations %}
-                                        <div class="ml-4">
-                                            <div class="form-check">
-                                                <input type="checkbox" id="filter_stations_{{station.id}}" class="form-check-input" name="filter[stations][]" value="{{station.id}}" {% if station in form.vars.data.stations %}checked="checked"{% endif %} />
-                                                <label class="form-check-label" for="filter_stations_{{station.id}}"><em>{{station.name}}</em></label>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endfor %}
+            {# Afficher une vue hiérarchique des systèmes, bassins et
+            stations combinant les trois formulaires en un seul, grâce à
+            une programmation manuelle. La division est limitée en hauteur
+            et l'utilisateur a la possibilité de la redimensionner et d'en
+            faire défiler le contenu. #}
+            <div class="bg-light mb-3" style="overflow-y: scroll; height: 400px; resize: vertical">
+                {% for system in systems %}
+                    <div>
+                        <div class="form-check">
+                            <input type="checkbox" name="filter[systems][]" id="filter_systems_{{system.id}}" class="form-check-input" value="{{system.id}}" {% if system in form.vars.data.systems %}checked="checked"{% endif %} />
+                            <label for="filter_systems_{{system.id}}" class="form-check-label"><strong>{{system.name}}</strong></label>
                         </div>
-                    {% endfor %}
-                </div>
-
-                {# Inclure les lignes de formulaires relatifs aux systèmes
-                maintenant, par souci de complétude comme on le fait
-                habituellement pour les autres formulaires, même si ces
-                formulaires sont volontairement bridés. #}
-                {{form_row(form.systems)}}
-                {{form_row(form.basins)}}
-                {{form_row(form.stations)}}
-
-                {# Afficher les champs de date minimum et de date maximum #}
-                <div class="row">
-                    <div class="col">
-                        {{form_label(form.minimumDate)}}
-                        {{form_errors(form.minimumDate)}}
-                        {{form_widget(form.minimumDate)}}
-                        {{form_help(form.minimumDate)}}
+                        {% for basin in system.basins %}
+                            <div class="ml-4">
+                                <div class="form-check">
+                                    <input type="checkbox" name="filter[basins][]" id="filter_basins_{{basin.id}}" class="form-check-input" value="{{basin.id}}" {% if basin in form.vars.data.basins %}checked="checked"{% endif %} />
+                                    <label for="filter_basins_{{basin.id}}" class="form-check-label">{{basin.name}}</label>
+                                </div>
+                                {% for station in basin.stations %}
+                                    <div class="ml-4">
+                                        <div class="form-check">
+                                            <input type="checkbox" id="filter_stations_{{station.id}}" class="form-check-input" name="filter[stations][]" value="{{station.id}}" {% if station in form.vars.data.stations %}checked="checked"{% endif %} />
+                                            <label class="form-check-label" for="filter_stations_{{station.id}}"><em>{{station.name}}</em></label>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
                     </div>
-                    <div class="col">
-                        {{form_label(form.maximumDate)}}
-                        {{form_errors(form.maximumDate)}}
-                        {{form_widget(form.maximumDate)}}
-                        {{form_help(form.maximumDate)}}
-                    </div>
-                </div>
-
-                {# Afficher un sous-formulaire pour les mesures #}
-                {{form_row(form.measures)}}
-
-                <div class="row my-3">
-                    <div class="col">
-                        {# Bouton pour appliquer le filtre #}
-                        <button type="submit" class="btn btn-success float-right">
-                            <i class="fas fa-filter"></i>
-                            Appliquer le filtre
-                        </button>
-                    </div>
-                </div>
-
-                {{form_end(form)}}
+                {% endfor %}
             </div>
+
+            {# Inclure les lignes de formulaires relatifs aux systèmes
+            maintenant, par souci de complétude comme on le fait
+            habituellement pour les autres formulaires, même si ces
+            formulaires sont volontairement bridés. #}
+            {{form_row(form.systems)}}
+            {{form_row(form.basins)}}
+            {{form_row(form.stations)}}
+
+            {# Afficher les champs de date minimum et de date maximum #}
+            <div class="row">
+                <div class="col">
+                    {{form_label(form.minimumDate)}}
+                    {{form_errors(form.minimumDate)}}
+                    {{form_widget(form.minimumDate)}}
+                    {{form_help(form.minimumDate)}}
+                </div>
+                <div class="col">
+                    {{form_label(form.maximumDate)}}
+                    {{form_errors(form.maximumDate)}}
+                    {{form_widget(form.maximumDate)}}
+                    {{form_help(form.maximumDate)}}
+                </div>
+            </div>
+
+            {# Afficher un sous-formulaire pour les mesures #}
+            {{form_row(form.measures)}}
+
+            <div class="row my-3">
+                <div class="col">
+                    {# Bouton pour appliquer le filtre #}
+                    <button type="submit" class="btn btn-success float-right">
+                        <i class="fas fa-filter"></i>
+                        Appliquer le filtre
+                    </button>
+                </div>
+            </div>
+
+            {{form_end(form)}}
         </div>
-        <div class="col no-gutters">
+        <div class="col">
             {# Afficher la carte des relevés #}
-            <div class="container">
-                <div id="map" style="height: 400px">Carte</div>
-            </div>
+            <div id="map" style="height: 400px">Carte</div>
 
             {# Afficher la liste des relevés, sous forme de table liée au
             système de pagination qui suit #}
-            <div class="container">
+            <div>
                 <table width="100%" class="table table-bordered table-striped">
                     <thead>
                         <tr>
