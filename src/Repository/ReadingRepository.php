@@ -95,37 +95,44 @@ class ReadingRepository extends ServiceEntityRepository
             ->select('DISTINCT(reading.id)')
             ->join('reading.measures', 'measure')
             ->join('measure.measurability', 'measurability');
+        
+        /* Ne prendre en compte que les valeurs valides */
+        $queryBuilder->where('measure.valid = true');
 
+        /* Au moins une mesure correspondante est suffisante => OU logique */
+        $orX = $queryBuilder->expr()->orX();
         foreach ($measures as $measure) {
+            /* La mesure doit satisfaire à tous les critères => ET logique */
+            $andX = $queryBuilder->expr()->andX();
+
             /* L'identifiant de paramètre est le pivot sur lequel on peut
             faire le rapprochement entre la mesure issue du filtre et les
-            mesures issues des relevés. Ne prendre en compte que les valeurs
-            valides. */
+            mesures issues des relevés */
             $parameterId = $measure->getParameter()->getId();
-            $queryBuilder
-                ->andWhere('measurability.parameter = ' . (int)$parameterId)
-                ->andWhere('measure.valid = true');
+            $andX->add('measurability.parameter = ' . (int)$parameterId);
 
             /* Dans les appels à QueryBuilder ci-dessous, des valeurs sont
             insérées directement dans la requête avec des forçage de type
-            pour seule protection contre l'injection DQL. Cela évite de
-            devoir générer des noms de paramètres QueryBuilder, dans le cas
-            où le filtre contient plusieurs mesures. */
+            pour seule protection contre l'injection DQL: dans le cas où le
+            filtre contient plusieurs mesures, cela évite de devoir générer des
+            noms de paramètres QueryBuilder */
 
             /* Ajouter la valeur minimum à la requête */
             $minimumValue = $measure->getMinimumValue();
             if (null !== $minimumValue) {
-                $queryBuilder
-                    ->andWhere('measure.value >= ' . (float)$minimumValue);
+                $andX->add('measure.value >= ' . (float)$minimumValue);
             }
 
             /* Ajouter la valeur maximum à la requête */
             $maximumValue = $measure->getMaximumValue();
             if (null !== $maximumValue) {
-                $queryBuilder
-                    ->andWhere('measure.value <= ' . (float)$maximumValue);
+                $andX->add('measure.value <= ' . (float)$maximumValue);
             }
+
+            $orX->add($andX);
         }
+        $queryBuilder->andWhere($orX);
+
         return $queryBuilder->getQuery()->getResult();
     }
 }
