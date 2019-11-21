@@ -75,7 +75,7 @@
             <tbody>
                 {% if reading.measures|length > 0 %}
                     {# TODO: Regrouper par paramètre #}
-                    {% for measure in reading.measures %}
+                    {% for measure in reading.measures|sort((a,b) => a.measurability.parameter.name <=> b.measurability.parameter.name) %}
                         {% set parameter = measure.measurability.parameter %}
                         {% set instrument = measure.measurability.instrument %}
                         <tr>
@@ -104,6 +104,17 @@
             </table>
         </tbody>
 
-        <a href="{{ path('reading_modify', {'code': reading.code}) }}" class="btn btn-primary mb-3">Modifier ce relevé</a>
+        <div class="row mb-3">
+            <a href="{{ path('reading_modify', {'code': reading.code}) }}" class="btn btn-primary ml-3">
+                <i class="fas fa-edit"></i>
+                Modifier ce relevé
+            </a>
+
+            {# Bouton pour revenir à l'index #}
+            <a href="{{ path('reading') }}" class="btn btn-cancel ml-3">
+                <i class="fas fa-backspace"></i>
+                Revenir à la liste
+            </a>
+        </div>
     </div>
 {% endblock %}
