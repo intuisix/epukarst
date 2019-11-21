@@ -28,12 +28,12 @@ class MeasureType extends AbstractType
                     'placeholder' => "Entrez la tolérance éventuelle" ],
                 'required' => false,
             ])
-            ->add('stabilized', CheckboxType::class, [
-                'label' => "Valeur stabilisée",
+            ->add('stable', CheckboxType::class, [
+                'label' => "Stable (lue correctement)",
                 'required' => false,
             ])
             ->add('valid', CheckboxType::class, [
-                'label' => "Valeur valide",
+                'label' => "Valide (exploitable)",
                 'required' => false,
             ])
             ->add('notes', TextareaType::class, [

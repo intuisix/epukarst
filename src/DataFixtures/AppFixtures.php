@@ -385,8 +385,8 @@ class AppFixtures extends Fixture
                 ->setReading($reading)
                 ->setMeasurability($measurability)
                 ->setValue($value)
-                ->setStabilized(mt_rand(0, 10) != 0)
-                ->setValid(mt_rand(0, 10) != 0)     /* 1 invalid out of 10 */
+                ->setStable(mt_rand(0, 10) < 2)    /* 2 unstable out of 10 */
+                ->setValid(mt_rand(0, 10) < 1)     /* 1 invalid out of 10 */
                 ->setTolerance($measurability->getTolerance())
                 ->setEncodingDateTime($reading->getEncodingDateTime())
                 ->setEncodingAuthor($reading->getEncodingAuthor());

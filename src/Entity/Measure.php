@@ -41,7 +41,12 @@ class Measure
     /**
      * @ORM\Column(type="boolean")
      */
-    private $stabilized;
+    private $stable;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $valid;
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -58,11 +63,6 @@ class Measure
      * @ORM\Column(type="datetime")
      */
     private $encodingDateTime;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $valid;
 
     public function getId(): ?int
     {
@@ -117,14 +117,26 @@ class Measure
         return $this;
     }
 
-    public function getStabilized(): ?bool
+    public function getStable(): ?bool
     {
-        return $this->stabilized;
+        return $this->stable;
     }
 
-    public function setStabilized(bool $stabilized): self
+    public function setStable(bool $stable): self
     {
-        $this->stabilized = $stabilized;
+        $this->stable = $stable;
+
+        return $this;
+    }
+
+    public function getValid(): ?bool
+    {
+        return $this->valid;
+    }
+
+    public function setValid(?bool $valid): self
+    {
+        $this->valid = $valid;
 
         return $this;
     }
@@ -180,17 +192,5 @@ class Measure
     public function getParameter()
     {
         return $this->measurability->getParameter();
-    }
-
-    public function getValid(): ?bool
-    {
-        return $this->valid;
-    }
-
-    public function setValid(?bool $valid): self
-    {
-        $this->valid = $valid;
-
-        return $this;
     }
 }
