@@ -385,7 +385,8 @@ class AppFixtures extends Fixture
                 ->setReading($reading)
                 ->setMeasurability($measurability)
                 ->setValue($value)
-                ->setStabilized(true)
+                ->setStabilized(mt_rand(0, 10) != 0)
+                ->setValid(mt_rand(0, 10) != 0)     /* 1 invalid out of 10 */
                 ->setTolerance($measurability->getTolerance())
                 ->setEncodingDateTime($reading->getEncodingDateTime())
                 ->setEncodingAuthor($reading->getEncodingAuthor());
@@ -486,8 +487,7 @@ class AppFixtures extends Fixture
             ->setCommune("Profondeville")
             ->setNumber("533-010")
             ->setWaterMass("M23")
-            ->setDescription("<p>Ce vallon inclut l'abîme de Lesve et la résurgence à la Vilaine Source.</p>" . $this->getFakeDescription(1, 5))
-            ->setPicture("lesve.jpg");
+            ->setDescription("<p>Ce vallon inclut l'abîme de Lesve et la résurgence à la Vilaine Source.</p>" . $this->getFakeDescription(1, 5));
         $this->loadBasins($manager, $system);
         $manager->persist($system);
 
@@ -500,8 +500,7 @@ class AppFixtures extends Fixture
             ->setNumber("555-005")
             ->setWaterMass("M23")
             ->setIntroduction("Système souterrain de Hotton")
-            ->setDescription("<p>L'élément principal de ce système est la grotte des Mille-et-Une Nuits.</p>" . $this->getFakeDescription(1, 5))
-            ->setPicture("hotton.jpg");
+            ->setDescription("<p>L'élément principal de ce système est la grotte des Mille-et-Une Nuits.</p>" . $this->getFakeDescription(1, 5));
         $this->loadBasins($manager, $system);
         $manager->persist($system);
 
@@ -514,8 +513,7 @@ class AppFixtures extends Fixture
             ->setNumber("492-200")
             ->setWaterMass("M21")
             ->setIntroduction("Système souterrain du synclinal de Sprimont")
-            ->setDescription("<p>Description du système dont les éléments principaux sont la grotte du Noû Bleû et le lac Bleû.</p>" . $this->getFakeDescription(1, 5))
-            ->setPicture("nou-bleu.jpg");
+            ->setDescription("<p>Description du système dont les éléments principaux sont la grotte du Noû Bleû et le lac Bleû.</p>" . $this->getFakeDescription(1, 5));
         $this->loadBasins($manager, $system);
         $manager->persist($system);
 
@@ -528,8 +526,7 @@ class AppFixtures extends Fixture
             ->setNumber("493-074")
             ->setWaterMass("M23")
             ->setIntroduction("Système du vallon des Chantoirs")
-            ->setDescription("<p>Description du système.</p>" . $this->getFakeDescription(1, 5))
-            ->setPicture("vallon-des-chantoirs.jpg");
+            ->setDescription("<p>Description du système.</p>" . $this->getFakeDescription(1, 5));
         $this->loadBasins($manager, $system);
         $manager->persist($system);
     
@@ -542,8 +539,7 @@ class AppFixtures extends Fixture
             ->setNumber("538-252")
             ->setWaterMass("M21")
             ->setIntroduction("Système souterrain de la basse-Lesse")
-            ->setDescription("<p>Description du système dont un élément est la Galerie aux Sources.</p>" . $this->getFakeDescription(1, 5))
-            ->setPicture("galerie-aux-sources.jpg");
+            ->setDescription("<p>Description du système dont un élément est la Galerie aux Sources.</p>" . $this->getFakeDescription(1, 5));
         $this->loadBasins($manager, $system);
         $manager->persist($system);
     }

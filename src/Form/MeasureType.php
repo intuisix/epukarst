@@ -32,6 +32,10 @@ class MeasureType extends AbstractType
                 'label' => "Valeur stabilisée",
                 'required' => false,
             ])
+            ->add('valid', CheckboxType::class, [
+                'label' => "Valeur valide",
+                'required' => false,
+            ])
             ->add('notes', TextareaType::class, [
                 'label' => "Remarques",
                 'attr' => [

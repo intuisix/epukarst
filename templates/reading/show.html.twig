@@ -65,7 +65,8 @@
                 <tr>
                     <th>Paramètre</th>
                     <th>Valeur</th>
-                    <th>Stable</th>
+                    <th>Stabilisée</th>
+                    <th>Valide</th>
                     <th>Instrument</th>
                     <th>Encodée le</th>
                     <th>Encodée par</th>
@@ -80,12 +81,27 @@
                         {% set instrument = measure.measurability.instrument %}
                         <tr>
                             <td rowspan="1">{{parameter.name}}</td>
-                            <td>{{measure.value}} 
+                            <td>
+                                {{measure.value}} 
                                 {% if measure.tolerance is not null %}
                                     &plusmn; {{measure.tolerance}} 
                                 {% endif %}
-                                {{parameter.unit}}</td>
-                            <td>{{measure.stabilized ? 'Oui' : 'Non'}}</td>
+                                {{parameter.unit}}
+                            </td>
+                            <td style="text-align: center">
+                                {% if measure.stabilized %}
+                                    <i class="fas fa-check"></i>
+                                {% else %}
+                                    <i class="fas fa-exclamation"></i>
+                                {% endif %}
+                            </td>
+                            <td style="text-align: center">
+                                {% if measure.valid %}
+                                    <i class="fas fa-check"></i>
+                                {% else %}
+                                    <i class="fas fa-exclamation"></i>
+                                {% endif %}
+                            </td>
                             <td>
                                 {% if instrument is not null %}
                                     {{instrument.name}}
@@ -93,7 +109,9 @@
                                     --
                                 {% endif %}
                             </td>
-                            <td>{{measure.encodingDateTime|date('d/m/Y H:i')}}</td>
+                            <td>
+                                {{measure.encodingDateTime|date('d/m/Y H:i')}}
+                            </td>
                             <td>{{measure.encodingAuthor.displayName}}</td>
                             <td>{{measure.notes}}</td>
                         </tr>

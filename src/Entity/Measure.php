@@ -59,6 +59,11 @@ class Measure
      */
     private $encodingDateTime;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $valid;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -175,5 +180,17 @@ class Measure
     public function getParameter()
     {
         return $this->measurability->getParameter();
+    }
+
+    public function getValid(): ?bool
+    {
+        return $this->valid;
+    }
+
+    public function setValid(?bool $valid): self
+    {
+        $this->valid = $valid;
+
+        return $this;
     }
 }

@@ -252,21 +252,52 @@ class Reading
         return $this;
     }
 
-    public function getAverage(Parameter $parameter): ?float
+    /**
+     * Retourne les statistiques (quantité, minimum, maximum, moyenne et somme)
+     * des mesures correspondant à un paramètre défini.
+     * 
+     * Seules les valeurs connues et valides sont prises en compte.
+     * 
+     * Par contre, le fait que les valeurs soient stabilisée ou non n'a pas
+     * d'incidence parce que les valeurs non stabilisées ont tout de même été
+     * appréciées par le contributeur de la mesure.
+     *
+     * TODO: Les statistiques pourraient prendre en compte la tolérance
+     * éventuellement associée à chaque valeur.
+     * 
+     * @param Parameter $parameter
+     * @return array
+     */
+    public function getValueStats(Parameter $parameter)
     {
-        $sum = 0;
         $count = 0;
+        $avg = null;
+        $min = null;
+        $max = null;
+        $sum = null;
     
+        /* Parcourir toutes les mesures */
         foreach ($this->measures as $measure) {
             if ($measure->getParameter() === $parameter) {
+                /* Ajouter aux statistiques, sur base des critères définis dans
+                la description de la fonction */
                 $value = $measure->getValue();
-                if (!is_null($value)) {
-                    $sum += $value;
+                if (!is_null($value) && $measure->getValid()) {
                     $count++;
+                    $sum += $value;
+                    $min = min($value, $min);
+                    $max = max($value, $max);
+                    $avg = $sum / $count;
                 }
             }
         }
     
-        return ($count > 0) ? ($sum / $count) : null;
+        return [
+            'count' => $count,
+            'min' => $min,
+            'max' => $max,
+            'avg' => $avg,
+            'sum' => $sum
+        ];
     }
 }

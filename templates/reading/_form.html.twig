@@ -71,8 +71,15 @@ de modification de relevés #}
                 {{form_row(form.notes)}}
             </div>
             <div class="col">
-                {{form_row(form.stabilized)}}
                 {{form_row(form.value)}}
+                <div class="row">
+                    <div class="col">
+                        {{form_row(form.stabilized)}}
+                    </div>
+                    <div class="col">
+                        {{form_row(form.valid)}}
+                    </div>
+                </div>
                 {{form_row(form.tolerance)}}
             </div>
         </div>

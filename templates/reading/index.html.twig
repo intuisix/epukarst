@@ -124,9 +124,12 @@
                                 <td>{{reading.station.name}}</td>
                                 {% for parameter in parameters %}
                                     <td style="text-align: right">
-                                        {% set avg = reading.average(parameter) %}
-                                        {% if avg is not null %}
-                                            {{avg|format_number({fraction_digit: 3})}}
+                                        {% set stats = reading.valueStats(parameter) %}
+                                        {% if stats.count > 0 %}
+                                            {% if stats.count > 1 %}
+                                                <span class="badge badge-warning badge-pill">{{stats.count}}</span>
+                                            {% endif %}
+                                            {{stats.avg|format_number({fraction_digit: 3})}}
                                         {% else %}
                                             --
                                         {% endif %}
