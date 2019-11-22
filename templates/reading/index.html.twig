@@ -61,25 +61,21 @@
             {{form_row(form.stations)}}
 
             {# Afficher les champs de date minimum et de date maximum #}
-            <div class="row">
-                <div class="col">
-                    {{form_label(form.minimumDate)}}
-                    {{form_errors(form.minimumDate)}}
-                    {{form_widget(form.minimumDate)}}
-                    {{form_help(form.minimumDate)}}
-                </div>
-                <div class="col">
-                    {{form_label(form.maximumDate)}}
-                    {{form_errors(form.maximumDate)}}
-                    {{form_widget(form.maximumDate)}}
-                    {{form_help(form.maximumDate)}}
+            <div class="form-group">
+                <div class="form-row bg-light">
+                    <div class="col">
+                        {{form_row(form.minimumDate)}}
+                    </div>
+                    <div class="col">
+                        {{form_row(form.maximumDate)}}
+                    </div>
                 </div>
             </div>
 
             {# Afficher un sous-formulaire pour les mesures #}
             {{form_row(form.measures)}}
 
-            <div class="row my-3">
+            <div class="form-row my-3">
                 <div class="col">
                     {# Bouton pour appliquer le filtre #}
                     <button type="submit" class="btn btn-success float-right">
@@ -178,7 +174,7 @@
 {% endblock %}
 
 {% block _filter_measures_label %}
-    <div class="row my-3">
+    <div class="form-row my-3">
         <div class="col">
             {# Afficher un bouton permettant d'ajouter un paramètre #}
             <button type="button" data-action="add-measure" class="btn btn-secondary">
@@ -204,15 +200,15 @@
 
 {% block _filter_measures_entry_widget %}
     {# Cette division identifie le code HTML qui concerne le paramètre #}
-    <div class="form-group" id="{{id}}">
+    <div class="bg-light mb-3" id="{{id}}">
         {# Afficher, seul sur une ligne, la sélection de paramètre #}
-        <div class="row">
+        <div class="form-row">
             <div class="col">
                 {{form_row(form.parameter)}}
             </div>
         </div>
         {# Afficher côte à côte les champs de valeur minimum et maximum #}
-        <div class="row">
+        <div class="form-row">
             <div class="col">
                 {{form_row(form.minimumValue)}}
             </div>
@@ -222,7 +218,7 @@
         </div>
 
         {# Afficher un bouton permettant de supprimer le paramètre #}
-        <button type="button" data-action="delete-measure" data-target="#{{id}}" class="btn btn-danger">
+        <button type="button" data-action="delete-measure" data-target="#{{id}}" class="btn btn-danger mb-3">
             <i class="fas fa-trash"></i> Supprimer ce paramètre
         </button>
     </div>
