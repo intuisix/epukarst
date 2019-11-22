@@ -126,7 +126,7 @@
                                             {% if stats.count > 1 %}
                                                 <span class="badge badge-info badge-pill">{{stats.count}}</span>
                                             {% endif %}
-                                            {{stats.avg|format_number({fraction_digit: 3})}}
+                                            {{stats.avg|number_format(1, ',', ' ')}}
                                         {% else %}
                                             --
                                         {% endif %}

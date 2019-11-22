@@ -31,12 +31,12 @@
                     </td>
                     <td class="text-center">{{parameter.unit}}</td>
                     <td class="text-center">
-                        {{parameter.normativeMinimum|number_format(3, ',', ' ')}} -
-                        {{parameter.normativeMaximum|number_format(3, ',', ' ')}}
+                        {{parameter.normativeMinimum|number_format(1, ',', ' ')}} -
+                        {{parameter.normativeMaximum|number_format(1, ',', ' ')}}
                     </td>
                     <td class="text-center">
-                        {{parameter.physicalMinimum|number_format(3, ',', ' ')}} -
-                        {{parameter.physicalMaximum|number_format(3, ',', ' ')}}
+                        {{parameter.physicalMinimum|number_format(1, ',', ' ')}} -
+                        {{parameter.physicalMaximum|number_format(1, ',', ' ')}}
                     </td>
                     <td>
                         <a href="{{ path('parameter_modify', {'id': parameter.id}) }}" class="text-primary"><i class="fas fa-edit"></i></a>

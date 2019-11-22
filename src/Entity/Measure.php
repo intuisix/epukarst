@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\MeasureRepository")
@@ -64,6 +66,56 @@ class Measure
      */
     private $encodingDateTime;
 
+    /**
+     * @Assert\Callback
+     */
+    public function validate(ExecutionContextInterface $context, $payload)
+    {
+        /* Tester la plausibilité de la mesure seulement si l'utilisateur
+        indique que celle-ci est valide. Cela laisse la possibilité pour
+        l'utilisateur, d'introduire une valeur invalide tout en indiquant de
+        lui-même qu'elle est effectivement invalide... */
+        if ($this->valid) {
+            $parameter = $this->measurability->getParameter();
+            $unit = $parameter->getUnit();
+    
+            /* Tester la valeur par rapport aux seuils minimum */
+            $instrumentMinimum = $this->measurability->getMinimumValue();
+            $physicalMinimum = $parameter->getPhysicalMinimum();
+            if ((null !== $physicalMinimum) &&
+                ($this->value < $physicalMinimum)) {
+                $context
+                    ->buildViolation("Cette valeur est supérieure à ce qui est physiquement possible ($physicalMinimum $unit).")
+                    ->atPath('value')
+                    ->addViolation();
+            } else if ((null !== $instrumentMinimum) &&
+                ($this->value < $instrumentMinimum)) {
+                $context
+                    ->buildViolation("Cette valeur est inférieure à ce que l'instrument est capable de mesurer ($instrumentMinimum $unit).")
+                    ->atPath('value')
+                    ->addViolation();
+            }
+    
+            /* Tester la valeur par rapport aux seuils maximum */
+            $instrumentMaximum = $this->measurability->getMaximumValue();
+            $physicalMaximum = $parameter->getPhysicalMaximum();
+            if ((null !== $physicalMaximum) &&
+                ($this->value > $physicalMaximum)) {
+                $context
+                    ->buildViolation("Cette valeur est supérieure à ce qui est physiquement possible ($physicalMaximum $unit).")
+                    ->atPath('value')
+                    ->addViolation();
+            } else if ((null !== $instrumentMaximum) &&
+                ($this->value > $instrumentMaximum))
+            {
+                $context
+                    ->buildViolation("Cette valeur est supérieure à ce que l'instrument est capable de mesurer ($instrumentMaximum $unit).")
+                    ->atPath('value')
+                    ->addViolation();
+            }
+        }
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -110,7 +162,7 @@ class Measure
         return $this->tolerance;
     }
 
-    public function setTolerance(float $tolerance): self
+    public function setTolerance(?float $tolerance): self
     {
         $this->tolerance = $tolerance;
 

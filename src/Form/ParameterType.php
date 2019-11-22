@@ -33,28 +33,28 @@ class ParameterType extends AbstractType
                 'label' => "Seuil minimum normatif",
                 'required' => false,
                 'attr' => [
-                    'placeholder' => "Entrez la valeur minimum normative"
+                    'placeholder' => "Entrez le seuil minimum normatif"
                 ]
             ])
             ->add('normativeMaximum', NumberType::class, [
                 'label' => "Seuil maximum normatif",
                 'required' => false,
                 'attr' => [
-                    'placeholder' => "Entrez la valeur maximum physique"
+                    'placeholder' => "Entrez le seuil maximum normatif"
                 ]
             ])
             ->add('physicalMinimum', NumberType::class, [
                 'label' => "Valeur minimum physique",
                 'required' => false,
                 'attr' => [
-                    'placeholder' => "Entrez la valeur minimum mesurable"
+                    'placeholder' => "Entrez le seuil minimum plausible"
                 ]
             ])
             ->add('physicalMaximum', NumberType::class, [
-                'label' => "Valeur minimum physique",
+                'label' => "Valeur maximum physique",
                 'required' => false,
                 'attr' => [
-                    'placeholder' => "Entrez la valeur maximum mesurable"
+                    'placeholder' => "Entrez le seuil maximum plausible"
                 ]
             ])
             ->add('title', TextType::class, [
