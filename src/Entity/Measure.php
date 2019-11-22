@@ -85,13 +85,13 @@ class Measure
             if ((null !== $physicalMinimum) &&
                 ($this->value < $physicalMinimum)) {
                 $context
-                    ->buildViolation("Cette valeur est supérieure à ce qui est physiquement possible ($physicalMinimum $unit).")
+                    ->buildViolation("Cette valeur est inférieure à ce qui est physiquement possible (au minimum $physicalMinimum $unit).")
                     ->atPath('value')
                     ->addViolation();
             } else if ((null !== $instrumentMinimum) &&
                 ($this->value < $instrumentMinimum)) {
                 $context
-                    ->buildViolation("Cette valeur est inférieure à ce que l'instrument est capable de mesurer ($instrumentMinimum $unit).")
+                    ->buildViolation("Cette valeur est inférieure à ce que l'instrument est capable de mesurer (au minimum $instrumentMinimum $unit).")
                     ->atPath('value')
                     ->addViolation();
             }
@@ -102,14 +102,14 @@ class Measure
             if ((null !== $physicalMaximum) &&
                 ($this->value > $physicalMaximum)) {
                 $context
-                    ->buildViolation("Cette valeur est supérieure à ce qui est physiquement possible ($physicalMaximum $unit).")
+                    ->buildViolation("Cette valeur est supérieure à ce qui est physiquement possible (au maximum $physicalMaximum $unit).")
                     ->atPath('value')
                     ->addViolation();
             } else if ((null !== $instrumentMaximum) &&
                 ($this->value > $instrumentMaximum))
             {
                 $context
-                    ->buildViolation("Cette valeur est supérieure à ce que l'instrument est capable de mesurer ($instrumentMaximum $unit).")
+                    ->buildViolation("Cette valeur est supérieure à ce que l'instrument est capable de mesurer (au maximum $instrumentMaximum $unit).")
                     ->atPath('value')
                     ->addViolation();
             }
