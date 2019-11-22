@@ -17,6 +17,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 /**
@@ -43,6 +44,16 @@ class FilterType extends AbstractType
                 'label' => "et",
                 'required' => false,
                 'widget' => 'single_text',
+            ])
+            ->add('validated', CheckboxType::class, [
+                'label' => "Validé",
+                'data' => true,
+                'required' => false,
+            ])
+            ->add('notValidated', CheckboxType::class, [
+                'label' => "Non validé",
+                'data' => true,
+                'required' => false,
             ])
             ->add('systems', EntityType::class, [
                 'choice_label' => 'name',

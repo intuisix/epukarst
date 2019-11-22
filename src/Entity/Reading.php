@@ -97,6 +97,11 @@ class Reading
      */
     private $measures;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $validated;
+
     public function __construct()
     {
         $this->measures = new ArrayCollection();
@@ -310,5 +315,17 @@ class Reading
             'avg' => $avg,
             'sum' => $sum
         ];
+    }
+
+    public function getValidated(): ?bool
+    {
+        return $this->validated;
+    }
+
+    public function setValidated(?bool $validated): self
+    {
+        $this->validated = $validated;
+
+        return $this;
     }
 }

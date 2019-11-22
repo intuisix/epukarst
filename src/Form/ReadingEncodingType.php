@@ -12,13 +12,15 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
-/* TODO: Remplacer la classe Reading par une classe différente, car il ne faut pas encoder la date de validation et les notes de validation */
-class ReadingType extends AbstractType
+/**
+ * Formulaire permettant l'encodage ou la modification d'un relevé.
+ */
+class ReadingEncodingType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -46,19 +48,23 @@ class ReadingType extends AbstractType
                 'time_widget' => 'single_text',
                 'placeholder' => "Entrez la date et l'heure des mesures sur le terrain",
             ])
+            ->add('measures', CollectionType::class, [
+                'label' => "Mesures",
+                'entry_type' => MeasureType::class,
+                'allow_add' => true,
+                'allow_delete' => true ])
+            ->add('encodingAuthor', TextType::class, [
+                'label' => "Auteur de l'encodage",
+                'disabled' => true,
+            ])
             ->add('encodingNotes', TextareaType::class, [
                 'label' => "Remarques de l'encodage",
                 'required' => false,
                 'attr' => [
                     'placeholder' => "Introduisez vos remarques concernant l'observation et/ou l'encodage",
-                    'rows' => 8,
                 ],
             ])
-            ->add('measures', CollectionType::class, [
-                'label' => "Mesures",
-                'entry_type' => MeasureType::class,
-                'allow_add' => true,
-                'allow_delete' => true ]);
+            ;
     }
 
     public function finishView(FormView $view, FormInterface $form, array $options)

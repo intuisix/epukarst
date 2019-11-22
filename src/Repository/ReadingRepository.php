@@ -33,6 +33,8 @@ class ReadingRepository extends ServiceEntityRepository
         $stations = $filter->getStations();
         $minimumDateTime = $filter->getMinimumDate();
         $maximumDateTime = $filter->getMaximumDate();
+        $validated = $filter->getValidated();
+        $notValidated = $filter->getNotValidated();
         $measures = $filter->getMeasures();
 
         /* Créer le constructeur de requêtes. Utilisons des noms complets pour
@@ -67,7 +69,16 @@ class ReadingRepository extends ServiceEntityRepository
                 ->setParameter('maximumDateTime', $maximumDateTime);
         }
 
-        /* Filtrer par paramètre de mesure */
+        /* Filtrer par état */
+        if (!$validated) {
+            $queryBuilder->andWhere($queryBuilder->expr()->orX('reading.validated = FALSE',
+                     'reading.validated IS NULL'));
+        }
+        if (!$notValidated) {
+            $queryBuilder->andWhere('reading.validated = TRUE');
+        }
+
+        /* Filtrer par mesures */
         if (null !== $measures) {
             $queryBuilder
                 ->andWhere('reading.id IN (:ids)')

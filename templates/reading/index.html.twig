@@ -50,19 +50,18 @@
                         {% endfor %}
                     </div>
                 {% endfor %}
+
+                {# Inclure les lignes de formulaires relatifs aux systèmes
+                par souci de complétude, même si ces formulaires sont
+                volontairement bridés #}
+                {{form_row(form.systems)}}
+                {{form_row(form.basins)}}
+                {{form_row(form.stations)}}
             </div>
 
-            {# Inclure les lignes de formulaires relatifs aux systèmes
-            maintenant, par souci de complétude comme on le fait
-            habituellement pour les autres formulaires, même si ces
-            formulaires sont volontairement bridés. #}
-            {{form_row(form.systems)}}
-            {{form_row(form.basins)}}
-            {{form_row(form.stations)}}
-
             {# Afficher les champs de date minimum et de date maximum #}
-            <div class="form-group">
-                <div class="form-row bg-light">
+            <div class="form-group bg-light">
+                <div class="form-row">
                     <div class="col">
                         {{form_row(form.minimumDate)}}
                     </div>
@@ -72,7 +71,19 @@
                 </div>
             </div>
 
-            {# Afficher un sous-formulaire pour les mesures #}
+            {# Afficher les cases à cocher d'état #}
+            <div class="form-group bg-light">
+                <div class="row">
+                    <div class="col">
+                        {{form_row(form.validated)}}
+                    </div>
+                    <div class="col">
+                        {{form_row(form.notValidated)}}
+                    </div>
+                </div>
+            </div>
+
+            {# Afficher les sous-formulaires pour les mesures #}
             {{form_row(form.measures)}}
 
             <div class="form-row my-3">
@@ -98,26 +109,41 @@
                     <thead>
                         <tr>
                             <th><input type="checkbox" name="" id=""/></th>
-                            <th>Date et heure</th>
+                            <th>Date/heure</th>
                             <th>Code</th>
                             <th>Système</th>
                             <th>Bassin</th>
                             <th>Station</th>
                             {% for parameter in parameters %}
-                                <th style="text-align: center">{{parameter.name}}</th>
+                                <th style="text-align: center">
+                                    {{parameter.name}}
+                                </th>
                             {% endfor %}
+                            <th>Validé</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for reading in pagination.data %}
                             <tr>
-                                <td><input type="checkbox" name="" id=""/></th>
-                                <td>{{reading.fieldDateTime|date('d/m/Y H:i')}}</td>
-                                <td><a href="{{ path('reading_show', { 'code': reading.code }) }}">{{reading.code}}</a></td>
-                                <td>{{reading.station.basin.system.name}}</td>
-                                <td>{{reading.station.basin.name}}</td>
-                                <td>{{reading.station.name}}</td>
+                                <td>
+                                    <input type="checkbox" name="" id=""/>
+                                </th>
+                                <td>
+                                    {{reading.fieldDateTime|date('d/m/Y H:i')}}
+                                </td>
+                                <td>
+                                    <a href="{{ path('reading_show', { 'code': reading.code }) }}">{{reading.code}}</a>
+                                </td>
+                                <td>
+                                    {{reading.station.basin.system.name}}
+                                </td>
+                                <td>
+                                    {{reading.station.basin.name}}
+                                </td>
+                                <td>
+                                    {{reading.station.name}}
+                                </td>
                                 {% for parameter in parameters %}
                                     <td style="text-align: right">
                                         {% set stats = reading.valueStats(parameter) %}
@@ -134,8 +160,16 @@
                                         {% endif %}
                                     </td>
                                 {% endfor %}
+                                <td style="text-align:center">
+                                    {% if reading.validated %}
+                                        <i class="fas fa-flag-checkered"></i>
+                                    {% else %}
+                                        --
+                                    {% endif %}
+                                </td>
                                 <td>
                                     <a href="{{ path('reading_modify', {'code': reading.code}) }}" class="text-primary"><i class="fas fa-edit"></i></a>
+                                    <a href="{{ path('reading_validate', {'code': reading.code}) }}" class="text-success"><i class="fas fa-flag-checkered"></i></a>
                                     <a href="#" class="text-danger"><i class="fas fa-trash"></i></a>
                                 </td>
                             </tr>

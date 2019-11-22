@@ -2,13 +2,16 @@
 
 namespace App\Controller;
 
+use DateTime;
+use App\Entity\User;
 use App\Entity\Filter;
 use App\Entity\Reading;
 use App\Entity\Station;
 use App\Form\FilterType;
-use App\Form\ReadingType;
 use App\Entity\FilterMeasure;
+use App\Form\ReadingEncodingType;
 use App\Service\PaginationService;
+use App\Form\ReadingValidationType;
 use App\Repository\BasinRepository;
 use App\Repository\SystemRepository;
 use App\Repository\ReadingRepository;
@@ -66,14 +69,20 @@ class ReadingController extends AbstractController
             }
         }
 
-        /* Désérialiser la date minimum */
+        /* Désérialiser les dates */
         if ($session->has('minimumDate')) {
             $filter->setMinimumDate($session->get('minimumDate'));
         }
-
-        /* Désérialiser la date maximum */
         if ($session->has('maximumDate')) {
             $filter->setMaximumDate($session->get('maximumDate'));
+        }
+
+        /* Désérialiser les états */
+        if ($session->has('validated')) {
+            $filter->setValidated($session->get('validated'));
+        }
+        if ($session->has('notValidated')) {
+            $filter->setNotValidated($session->get('notValidated'));
         }
 
         /* Désérialiser les mesures */
@@ -110,11 +119,13 @@ class ReadingController extends AbstractController
                     return $station->getId(); })->getValues();
             $session->set('stations', $stationIds);
 
-            /* Sérialiser la date minimum */
+            /* Sérialiser les dates */
             $session->set('minimumDate', $filter->getMinimumDate());
-
-            /* Sérialiser la date maximum */
             $session->set('maximumDate', $filter->getMaximumDate());
+
+            /* Sérialiser les états */
+            $session->set('validated', $filter->getValidated());
+            $session->set('notValidated', $filter->getNotValidated());
 
             /* Sérialiser les mesures */
             $measures = [];
@@ -149,27 +160,21 @@ class ReadingController extends AbstractController
      */
     public function encode(ObjectManager $manager, Request $request) {
         /* Instancier un nouveau relevé */
-        $encodingAuthor = $this->getUser();
-        $encodingDateTime = new \DateTime('now');
-
         $reading = new Reading();
         $reading
-            ->setEncodingAuthor($encodingAuthor)
-            ->setEncodingDateTime($encodingDateTime);
+            ->setEncodingAuthor($this->getUser())
+            ->setEncodingDateTime(new DateTime('now'));
 
         /* Créer et traiter le formulaire */
-        $form = $this->createForm(ReadingType::class, $reading);
+        $form = $this->createForm(ReadingEncodingType::class, $reading);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             /* Associer les mesures au relevé */
-            foreach ($reading->getMeasures() as $measure) {
-                $measure
-                ->setReading($reading)
-                ->setEncodingDateTime($encodingDateTime)
-                ->setEncodingAuthor($encodingAuthor);
-            $manager->persist($measure);
-            }
+            $this->updateMeasures($reading,
+                $this->getUser(),
+                $reading->getEncodingDateTime(),
+                $manager);
         
             $manager->persist($reading);
             $manager->flush();
@@ -194,24 +199,15 @@ class ReadingController extends AbstractController
      */
     public function modify(Reading $reading, ObjectManager $manager, Request $request) {
         /* Créer et traiter le formulaire */
-        $form = $this->createForm(ReadingType::class, $reading);
+        $form = $this->createForm(ReadingEncodingType::class, $reading);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /* (Ré-)associer les mesures au relevé. Associer à l'utilisateur
-            actuel les mesures qui viennent d'être ajoutées, et leur attribuer
-            en lot la date courante. */
-            $encodingDateTime = new \DateTime('now');
-            foreach ($reading->getMeasures() as $measure) {
-                $measure->setReading($reading);
-                if (empty($measure->getEncodingDateTime())) {
-                    $measure->setEncodingDateTime($encodingDateTime);
-                }
-                if (empty($measure->getEncodingAuthor())) {
-                    $measure->setEncodingAuthor($this->getUser());
-                }
-                $manager->persist($measure);
-            }
+            /* Associer les mesures au relevé */
+            $this->updateMeasures($reading,
+                $this->getUser(),
+                new DateTime('now'),
+                $manager);
 
             $manager->persist($reading);
             $manager->flush();
@@ -230,6 +226,46 @@ class ReadingController extends AbstractController
     }
 
     /**
+     * Gère la validation d'un relevé existant.
+     * 
+     * @Route("/reading/{code}/validate", name="reading_validate")
+     * @IsGranted("ROLE_USER")
+     */
+    public function validate(Reading $reading, ObjectManager $manager, Request $request)
+    {
+        /* Définir l'auteur et la date de la validation */
+        $reading
+            ->setValidationAuthor($this->getUser())
+            ->setValidationDateTime(new DateTime('now'));
+
+        /* Créer et traiter le formulaire */
+        $form = $this->createForm(ReadingValidationType::class, $reading);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /* Associer les mesures au relevé */
+            $this->updateMeasures($reading,
+                $reading->getValidationAuthor(),
+                $reading->getValidationDateTime(),
+                $manager);
+
+            $manager->persist($reading);
+            $manager->flush();
+            
+            $this->addFlash('success', "Le relevé <strong>{$reading->getCode()}</strong> a été enregistré avec succès.");
+    
+            return $this->redirectToRoute('reading_show', [
+                'code' => $reading->getCode()
+            ]);
+        }
+
+        return $this->render('reading/validate.html.twig', [
+            'reading' => $reading,
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
      * Affiche un relevé existant.
      * 
      * @Route("/reading/{code}", name="reading_show")
@@ -239,5 +275,36 @@ class ReadingController extends AbstractController
         return $this->render('reading/show.html.twig', [
             'reading' => $reading
         ]);
+    }
+
+    /**
+     * Associe les mesures au relevé et définit l'utilisateur et la date
+     * d'encodage, si ces informations n'existent pas encore.
+     *
+     * @param Reading $reading
+     * @param User $author
+     * @param DateTime $dateTime
+     * @return void
+     */
+    private function updateMeasures(Reading $reading, User $author, DateTime $dateTime, ObjectManager $manager)
+    {
+        /* Pour chaque mesure présente sur le formulaire */
+        foreach ($reading->getMeasures() as $measure) {
+            /* Associer au relevé */
+            $measure->setReading($reading);
+
+            /* Assurer que la date de l'encodage est définie */
+            if (empty($measure->getEncodingDateTime())) {
+                $measure->setEncodingDateTime($dateTime);
+            }
+
+            /* Assurer que l'auteur de l'encodage est définie */
+            if (empty($measure->getEncodingAuthor())) {
+                $measure->setEncodingAuthor($author);
+            }
+
+            /* Persister en base de données */
+            $manager->persist($measure);
+        }
     }
 }

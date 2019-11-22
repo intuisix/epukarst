@@ -59,6 +59,16 @@ class Filter
      */
     private $measures;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $validated;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $notValidated;
+
     public function __construct()
     {
         $this->systems = new ArrayCollection();
@@ -213,6 +223,30 @@ class Filter
                 $measure->setFilter(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getValidated(): ?bool
+    {
+        return $this->validated;
+    }
+
+    public function setValidated(?bool $validated): self
+    {
+        $this->validated = $validated;
+
+        return $this;
+    }
+
+    public function getNotValidated(): ?bool
+    {
+        return $this->notValidated;
+    }
+
+    public function setNotValidated(?bool $notValidated): self
+    {
+        $this->notValidated = $notValidated;
 
         return $this;
     }

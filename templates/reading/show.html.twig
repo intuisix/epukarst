@@ -41,14 +41,14 @@
             <div class="col-md-6">
                 <div class="card mb-3">
                     <div class="card-header">
-                        {% if reading.validationAuthor is not empty %}
+                        {% if reading.validated %}
                             Validé le <strong>{{reading.validationDateTime|date('d/m/Y H:i')}}</strong> par <strong>{{reading.validationAuthor.displayName}}</strong>
                         {% else %}
                             Non validé
                         {% endif %}
                     </div>
                     <div class="card-body">
-                        {% if reading.validationNotes is not empty %}
+                        {% if reading.validated and (reading.validationNotes is not empty) %}
                             {{reading.validationNotes|nl2br}}
                         {% else %}
                             <em>Il n'y a pas de commentaire de validation.</em>
@@ -122,13 +122,20 @@
             </table>
         </tbody>
 
-        <div class="row mb-3">
-            <a href="{{ path('reading_modify', {'code': reading.code}) }}" class="btn btn-primary ml-3">
+        <div class="mb-3">
+            {# Ajouter un bouton pour modifier le relevé #}
+            <a href="{{ path('reading_modify', {'code': reading.code}) }}" class="btn btn-primary">
                 <i class="fas fa-edit"></i>
                 Modifier ce relevé
             </a>
 
-            {# Bouton pour revenir à l'index #}
+            {# Ajouter un bouton pour valider le relevé #}
+            <a href="{{ path('reading_validate', {'code': reading.code}) }}" class="btn btn-success ml-3">
+                <i class="fas fa-flag-checkered"></i>
+                Valider ce relevé
+            </a>
+
+            {# Ajouter un bouton pour revenir à l'index #}
             <a href="{{ path('reading') }}" class="btn btn-cancel ml-3">
                 <i class="fas fa-backspace"></i>
                 Revenir à la liste
