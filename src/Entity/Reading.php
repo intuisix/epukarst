@@ -285,8 +285,12 @@ class Reading
                 if (!is_null($value) && $measure->getValid()) {
                     $count++;
                     $sum += $value;
-                    $min = min($value, $min);
-                    $max = max($value, $max);
+                    if ((null == $min) || ($value < $min)) {
+                        $min = $value;
+                    }
+                    if ((null == $max) || ($value > $max)) {
+                        $max = $value;
+                    }
                     $avg = $sum / $count;
                 }
             }
