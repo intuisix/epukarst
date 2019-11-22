@@ -76,7 +76,7 @@ modification de paramètres #}
 {% endblock %}
 
 {% block _system_basins_entry_widget %}
-    <div class="form-group alert bg-light" id="basin_{{id}}">
+    <div class="form-group alert bg-light" id="{{id}}">
         <div class="row">
             <div class="col md-3">
                 {{form_row(form.code)}}
@@ -87,7 +87,7 @@ modification de paramètres #}
 
                 {% if (form.vars.data is null) or (form.vars.data.stations|length == 0) %}
                     {# Bouton pour supprimer le bassin #}
-                    <button type="button" data-action="delete-basin" data-target="#basin_{{id}}" class="btn btn-danger float-right">
+                    <button type="button" data-action="delete-basin" data-target="#{{id}}" class="btn btn-danger float-right">
                         <i class="fas fa-trash"></i>
                         Supprimer ce bassin
                     </button>
@@ -115,7 +115,7 @@ modification de paramètres #}
 {% endblock %}
 
 {% block _system_pictures_entry_widget %}
-    <div class="form-group alert bg-light" id="picture_{{id}}">
+    <div class="form-group alert bg-light" id="{{id}}">
         <div class="row">
             <div class="col md-3">
                 <img src="{{form.fileName.vars.data}}" alt="{{form.caption.vars.data}}" style="max-width: 100%; height: auto;">
@@ -125,7 +125,7 @@ modification de paramètres #}
                 {{form_row(form.caption)}}
 
                 {# Bouton pour supprimer la photo #}
-                <button type="button" data-action="delete-picture" data-target="#picture_{{id}}" class="btn btn-danger float-right">
+                <button type="button" data-action="delete-picture" data-target="#{{id}}" class="btn btn-danger float-right">
                     <i class="fas fa-trash"></i>
                     Supprimer cette photo
                 </button>

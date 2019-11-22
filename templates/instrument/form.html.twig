@@ -78,7 +78,7 @@ modification de relevés #}
 {% endblock %}
 
 {% block _instrument_measurabilities_entry_widget %}
-    <div class="form-group alert bg-light" id="measurability_{{id}}">
+    <div class="form-group alert bg-light" id="{{id}}">
         <div class="row">
             <div class="col">
                 {{form_row(form.parameter)}}
@@ -101,7 +101,7 @@ modification de relevés #}
         <div class="row">
             <div class="col">
                 {# Bouton pour supprimer le paramètre mesurable #}
-                <button type="button" data-action="delete-measurability" data-target="#measurability_{{id}}" class="btn btn-danger float-right">
+                <button type="button" data-action="delete-measurability" data-target="#{{id}}" class="btn btn-danger float-right">
                     <i class="fas fa-trash"></i>
                     Supprimer ce paramètre mesurable
                 </button>
@@ -130,7 +130,7 @@ modification de relevés #}
 {% endblock %}
 
 {% block _instrument_calibrations_entry_widget %}
-    <div class="form-group alert bg-light" id="calibration_{{id}}">
+    <div class="form-group alert bg-light" id="{{id}}">
         <div class="row">
             <div class="col">
                 {{form_row(form.doneDate)}}
@@ -150,7 +150,7 @@ modification de relevés #}
         <div class="row">
             <div class="col">
                 {# Bouton pour supprimer l'étalonnage #}
-                <button type="button" data-action="delete-calibration" data-target="#calibration_{{id}}" class="btn btn-danger float-right">
+                <button type="button" data-action="delete-calibration" data-target="#{{id}}" class="btn btn-danger float-right">
                     <i class="fas fa-trash"></i>
                     Supprimer cet étalonnage
                 </button>

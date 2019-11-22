@@ -187,9 +187,20 @@
     </div>
 {% endblock %}
 
+{% block _filter_measures_widget %}
+    {# Afficher le widget Twig #}
+    {{form_widget(form)}}
+{% endblock %}
+
 {% block _filter_measures_entry_row %}
+    {# N'afficher que le widget, sans étiquette ou autre information #}
+    {{form_widget(form)}}
+{% endblock %}
+
+{% block _filter_measures_entry_widget %}
     {# Cette division identifie le code HTML qui concerne le paramètre #}
-    <div class="form-group" id="measure_{{id}}">
+    <div class="form-group" id="{{id}}">
+{% dump(id) %}
         {# Afficher, seul sur une ligne, la sélection de paramètre #}
         <div class="row">
             <div class="col">
@@ -207,7 +218,7 @@
         </div>
 
         {# Afficher un bouton permettant de supprimer le paramètre #}
-        <button type="button" data-action="delete-measure" data-target="#measure_{{id}}" class="btn btn-danger">
+        <button type="button" data-action="delete-measure" data-target="#{{id}}" class="btn btn-danger">
             <i class="fas fa-trash"></i> Supprimer ce paramètre
         </button>
     </div>
@@ -255,12 +266,14 @@
 
     <script src="/js/collection.js"></script>
     <script>
-        var measuresCollectionResponders =
-            createCollectionResponders(
-                '#filter_measures',
-                'button[data-action="add-measure"]',
-                'button[data-action="delete-measure"]'
-            );
-        measuresCollectionResponders();
+        $(document).ready(function() {
+            var measuresCollectionResponders =
+                createCollectionResponders(
+                    '#filter_measures',
+                    'button[data-action="add-measure"]',
+                    'button[data-action="delete-measure"]'
+                );
+            measuresCollectionResponders();
+        });
     </script>
 {% endblock %}

@@ -62,9 +62,8 @@ de modification de relevés #}
     {{form_widget(form)}}
 {% endblock %}
 
-
 {% block _reading_measures_entry_widget %}
-    <div class="form-group alert bg-light" id="block_{{id}}">
+    <div class="form-group alert bg-light" id="{{id}}">
         <div class="row">
             <div class="col">
                 {{form_row(form.measurability)}}
@@ -86,7 +85,7 @@ de modification de relevés #}
         <div class="row">
             <div class="col">
                 {# Bouton pour supprimer la mesure #}
-                <button type="button" data-action="delete-measure" data-target="#block_{{id}}" class="btn btn-danger float-right">
+                <button type="button" data-action="delete-measure" data-target="#{{id}}" class="btn btn-danger float-right">
                     <i class="fas fa-trash"></i>
                     Supprimer cette mesure
                 </button>
