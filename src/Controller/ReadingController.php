@@ -37,7 +37,10 @@ class ReadingController extends AbstractController
         if ($session->has('systems')) {
             $systemIds = $session->get('systems');
             foreach ($systemIds as $systemId) {
-                $filter->addSystem($systemRepository->findOneById($systemId));
+                $system = $systemRepository->findOneById($systemId);
+                if ($system != null) {
+                    $filter->addSystem($system);
+                }
             }
         }
 
@@ -45,7 +48,10 @@ class ReadingController extends AbstractController
         if ($session->has('basins')) {
             $basinIds = $session->get('basins');
             foreach ($basinIds as $basinId) {
-                $filter->addBasin($basinRepository->findOneById($basinId));
+                $basin = $basinRepository->findOneById($basinId);
+                if (null != $basin) {
+                    $filter->addBasin($basin);
+                }
             }
         }
 
@@ -53,7 +59,10 @@ class ReadingController extends AbstractController
         if ($session->has('stations')) {
             $stationIds = $session->get('stations');
             foreach ($stationIds as $stationId) {
-                $filter->addStation($stationRepository->findOneById($stationId));
+                $station = $stationRepository->findOneById($stationId);
+                if (null != $station) {
+                    $filter->addStation($station);
+                }
             }
         }
 
@@ -71,12 +80,15 @@ class ReadingController extends AbstractController
         if ($session->has('measures')) {
             $measures = $session->get('measures');
             foreach ($measures as $parameterId => $measure) {
-                $filterMeasure = new FilterMeasure();
-                $filterMeasure
-                    ->setParameter($parameterRepository->findOneById($parameterId))
-                    ->setMinimumValue($measure['minimumValue'])
-                    ->setMaximumValue($measure['maximumValue']);
-                $filter->addMeasure($filterMeasure);
+                $parameter = $parameterRepository->findOneById($parameterId);
+                if (null != $parameter) {
+                    $filterMeasure = new FilterMeasure();
+                    $filterMeasure
+                        ->setParameter($parameter)
+                        ->setMinimumValue($measure['minimumValue'])
+                        ->setMaximumValue($measure['maximumValue']);
+                    $filter->addMeasure($filterMeasure);
+                }
             }
         }
 
