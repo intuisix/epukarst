@@ -14,10 +14,16 @@ de modification de relevés #}
         {# Mettre en forme les informations générales #}
         <div class="alert bg-light">
             <h2>Informations générales</h2>
-            {{form_row(form.station)}}
-            {{form_row(form.code)}}
-            {{form_row(form.fieldDateTime)}}
-            {{form_row(form.encodingNotes)}}
+            <div class="row">
+                <div class="col">
+                    {{form_row(form.station)}}
+                    {{form_row(form.fieldDateTime)}}
+                    {{form_row(form.code)}}
+                </div>
+                <div class="col">
+                    {{form_row(form.encodingNotes)}}
+                </div>
+            </div>
         </div>
 
         {# Mettre en forme les mesures #}

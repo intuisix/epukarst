@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -40,17 +40,19 @@ class ReadingType extends AbstractType
                 'attr' => [
                     'placeholder' => "Ce code sera complété automatiquement" ],
             ])
-            ->add('fieldDateTime', DateType::class, [
-                'label' => "Date de terrain",
-                'widget' => 'single_text',
-                'attr' => [
-                    'placeholder' => "Entrez la date des mesures" ],
+            ->add('fieldDateTime', DateTimeType::class, [
+                'label' => "Date et heure de terrain",
+                'date_widget' => 'single_text',
+                'time_widget' => 'single_text',
+                'placeholder' => "Entrez la date et l'heure des mesures sur le terrain",
             ])
             ->add('encodingNotes', TextareaType::class, [
                 'label' => "Remarques de l'encodage",
                 'required' => false,
                 'attr' => [
-                    'placeholder' => "Introduisez vos remarques concernant l'observation et/ou l'encodage" ],
+                    'placeholder' => "Introduisez vos remarques concernant l'observation et/ou l'encodage",
+                    'rows' => 8,
+                ],
             ])
             ->add('measures', CollectionType::class, [
                 'label' => "Mesures",
