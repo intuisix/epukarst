@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\MeasurabilityRepository")
@@ -55,6 +57,60 @@ class Measurability
      */
     private $notes;
 
+    /**
+     * @Assert\Callback
+     */
+    public function validate(ExecutionContextInterface $context, $payload)
+    {
+        $unit = $this->parameter->getUnit();
+        $physicalMaximum = $this->parameter->getPhysicalMaximum();
+        $physicalMinimum = $this->parameter->getPhysicalMinimum();
+
+        /* Tester la valeur minimum */
+        if ($this->minimumValue) {
+            if ((null !== $physicalMinimum) &&
+                ($this->minimumValue < $physicalMinimum)) {
+                $context
+                    ->buildViolation("Cette valeur est inférieure à ce qui est physiquement possible (au minimum $physicalMinimum $unit).")
+                    ->atPath('minimumValue')
+                    ->addViolation();
+            } else if ((null !== $physicalMaximum) &&
+                ($this->minimumValue > $physicalMaximum)) {
+                $context
+                    ->buildViolation("Cette valeur est supérieure à ce qui est physiquement possible (au maximum $physicalMaximum $unit).")
+                    ->atPath('minimumValue')
+                    ->addViolation();
+            }
+        } else if (null != $physicalMinimum) {
+            $context
+            ->buildViolation("Cette valeur est requise (au minimum $physicalMinimum $unit).")
+            ->atPath('minimumValue')
+            ->addViolation();
+        }
+
+        /* Tester la valeur maximum */
+        if ($this->maximumValue) {
+            if ((null !== $physicalMaximum) &&
+                ($this->value > $physicalMaximum)) {
+                $context
+                    ->buildViolation("Cette valeur est supérieure à ce qui est physiquement possible (au maximum $physicalMaximum $unit).")
+                    ->atPath('maximumValue')
+                    ->addViolation();
+            } else if ((null !== $physicalMinimum) &&
+                ($this->maximumValue < $physicalMinimum)) {
+                $context
+                    ->buildViolation("Cette valeur est inférieure à ce qui est physiquement possible (au minimum $physicalMinimum $unit).")
+                    ->atPath('maximumValue')
+                    ->addViolation();
+            }
+        } else if (null != $physicalMaximum) {
+            $context
+            ->buildViolation("Cette valeur est requise (au maximum $physicalMaximum $unit).")
+            ->atPath('maximumValue')
+            ->addViolation();
+        }
+    }
+
     public function __construct()
     {
         $this->measures = new ArrayCollection();
@@ -94,7 +150,7 @@ class Measurability
         return $this->maximumValue;
     }
 
-    public function setMaximumValue(float $maximumValue): self
+    public function setMaximumValue(?float $maximumValue): self
     {
         $this->maximumValue = $maximumValue;
 
@@ -106,7 +162,7 @@ class Measurability
         return $this->minimumValue;
     }
 
-    public function setMinimumValue(float $minimumValue): self
+    public function setMinimumValue(?float $minimumValue): self
     {
         $this->minimumValue = $minimumValue;
 

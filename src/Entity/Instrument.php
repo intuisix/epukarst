@@ -62,11 +62,15 @@ class Instrument
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Measurability", mappedBy="instrument", orphanRemoval=true)
+     * 
+     * @Assert\Valid()
      */
     private $measurabilities;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Calibration", mappedBy="instrument", orphanRemoval=true)
+     * 
+     * @Assert\Valid()
      */
     private $calibrations;
 

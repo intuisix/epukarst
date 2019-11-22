@@ -25,7 +25,7 @@ class MeasurabilityType extends AbstractType
                 'placeholder' => "Sélectionnez un paramètre",
             ])
             ->add('minimumValue', NumberType::class, [
-                'label' => "Valeur maximum",
+                'label' => "Valeur minimum",
                 'required' => false,
                 'attr' => [
                     'placeholder' => "Entrez la valeur minimum mesurable",

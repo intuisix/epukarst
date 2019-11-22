@@ -7,9 +7,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ReadingRepository")
+ * 
  * @UniqueEntity(fields={"code"}, message="Un autre relevé possède déjà ce code. Veuillez définir un code unique.")
  * @HasLifecycleCallbacks()
  */
@@ -86,7 +88,12 @@ class Reading
     private $validationNotes;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Measure", mappedBy="reading", orphanRemoval=true)
+     * @ORM\OneToMany(
+     *     targetEntity="App\Entity\Measure",
+     *     mappedBy="reading",
+     *     orphanRemoval=true)
+     * 
+     * @Assert\Valid()
      */
     private $measures;
 

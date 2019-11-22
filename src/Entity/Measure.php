@@ -72,23 +72,15 @@ class Measure
     public function validate(ExecutionContextInterface $context, $payload)
     {
         /* Tester la plausibilité de la mesure seulement si l'utilisateur
-        indique que celle-ci est valide. Cela laisse la possibilité pour
-        l'utilisateur, d'introduire une valeur invalide tout en indiquant de
-        lui-même qu'elle est effectivement invalide... */
+        indique qu'elle est valide: ainsi, il est possible d'introduire une
+        valeur pour laquelle il existe un doute, tout en indiquant ce doute explicitement */
         if ($this->valid) {
             $parameter = $this->measurability->getParameter();
             $unit = $parameter->getUnit();
     
-            /* Tester la valeur par rapport aux seuils minimum */
+            /* Tester la valeur par rapport au seuil minimum */
             $instrumentMinimum = $this->measurability->getMinimumValue();
-            $physicalMinimum = $parameter->getPhysicalMinimum();
-            if ((null !== $physicalMinimum) &&
-                ($this->value < $physicalMinimum)) {
-                $context
-                    ->buildViolation("Cette valeur est inférieure à ce qui est physiquement possible (au minimum $physicalMinimum $unit).")
-                    ->atPath('value')
-                    ->addViolation();
-            } else if ((null !== $instrumentMinimum) &&
+            if ((null !== $instrumentMinimum) &&
                 ($this->value < $instrumentMinimum)) {
                 $context
                     ->buildViolation("Cette valeur est inférieure à ce que l'instrument est capable de mesurer (au minimum $instrumentMinimum $unit).")
@@ -96,16 +88,9 @@ class Measure
                     ->addViolation();
             }
     
-            /* Tester la valeur par rapport aux seuils maximum */
+            /* Tester la valeur par rapport au seuil maximum */
             $instrumentMaximum = $this->measurability->getMaximumValue();
-            $physicalMaximum = $parameter->getPhysicalMaximum();
-            if ((null !== $physicalMaximum) &&
-                ($this->value > $physicalMaximum)) {
-                $context
-                    ->buildViolation("Cette valeur est supérieure à ce qui est physiquement possible (au maximum $physicalMaximum $unit).")
-                    ->atPath('value')
-                    ->addViolation();
-            } else if ((null !== $instrumentMaximum) &&
+            if ((null !== $instrumentMaximum) &&
                 ($this->value > $instrumentMaximum))
             {
                 $context

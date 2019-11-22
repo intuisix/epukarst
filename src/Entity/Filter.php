@@ -55,7 +55,7 @@ class Filter
      *      mappedBy="filter",
      *      orphanRemoval=true)
      * 
-     * @Assert\Valid
+     * @Assert\Valid()
      */
     private $measures;
 
