@@ -5,7 +5,9 @@ namespace App\Form;
 use App\Entity\Instrument;
 use App\Form\CalibrationType;
 use App\Form\MeasurabilityType;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -63,6 +65,29 @@ class InstrumentType extends AbstractType
                 'allow_delete' => true
             ])
         ;
+    }
+
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        /* Ordonner les mesurabilités par nom de paramètre */
+        usort(
+            $view->children['measurabilities']->children,
+            function ($a, $b) {
+                return
+                    $a->vars['data']->getParameter()->getName() <=>
+                    $b->vars['data']->getParameter()->getName();
+            }
+        );
+
+        /* Ordonner les étalonnages par dates */
+        usort(
+            $view->children['calibrations']->children,
+            function ($a, $b) {
+                return
+                    $a->vars['data']->getDoneDate() <=>
+                    $b->vars['data']->getDoneDate();
+            }
+        );
     }
 
     public function configureOptions(OptionsResolver $resolver)
