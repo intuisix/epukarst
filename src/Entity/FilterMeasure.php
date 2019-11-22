@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\FilterMeasureRepository")
@@ -18,11 +19,19 @@ class FilterMeasure
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * 
+     * @Assert\Expression(
+     *     "value != null or this.getMaximumValue() != null",
+     *     message="Veuillez spécifier un minimum et/ou un maximum.")
      */
     private $minimumValue;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * 
+     * @Assert\Expression(
+     *     "value != null or this.getMinimumValue() != null",
+     *     message="Veuillez spécifier un minimum et/ou un maximum.")
      */
     private $maximumValue;
 

@@ -108,7 +108,8 @@
                             <th>Bassin</th>
                             <th>Station</th>
                             {% for parameter in parameters %}
-                                <th style="text-align: center">{{parameter.name}}</th>
+                                {# Surligner le nom du paramètre car la colonne contiendra des valeurs moyennes #}
+                                <th style="text-align: center; text-decoration: overline">{{parameter.name}}</th>
                             {% endfor %}
                             <th>Actions</th>
                         </tr>
@@ -127,7 +128,7 @@
                                         {% set stats = reading.valueStats(parameter) %}
                                         {% if stats.count > 0 %}
                                             {% if stats.count > 1 %}
-                                                <span class="badge badge-warning badge-pill">{{stats.count}}</span>
+                                                <span class="badge badge-info badge-pill">{{stats.count}}</span>
                                             {% endif %}
                                             {{stats.avg|format_number({fraction_digit: 3})}}
                                         {% else %}
@@ -182,6 +183,10 @@
             {# Afficher un bouton permettant d'ajouter un paramètre #}
             <button type="button" data-action="add-measure" class="btn btn-secondary">
                 <i class="fas fa-plus"></i> Ajouter un paramètre
+                
+            </button>
+            <button type="button" class="btn btn-link text-info" data-toggle="popover" title="Disjonction des paramètres" data-content="La liste filtrée montrera les relevés dont au moins un paramètre correspond aux critères ci-dessous. Par ailleurs, pour les relevés comportant plusieurs mesures pour un même paramètre, le filtre prend en compte toutes les valeurs valides, et pas seulement les valeurs moyennes affichées dans la liste.">
+                <i class="fas fa-info-circle"></i>
             </button>
         </div>
     </div>
@@ -200,7 +205,6 @@
 {% block _filter_measures_entry_widget %}
     {# Cette division identifie le code HTML qui concerne le paramètre #}
     <div class="form-group" id="{{id}}">
-{% dump(id) %}
         {# Afficher, seul sur une ligne, la sélection de paramètre #}
         <div class="row">
             <div class="col">
@@ -274,6 +278,12 @@
                     'button[data-action="delete-measure"]'
                 );
             measuresCollectionResponders();
+        });
+    </script>
+
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover()
         });
     </script>
 {% endblock %}

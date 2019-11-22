@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\FilterRepository")
@@ -49,7 +50,12 @@ class Filter
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\FilterMeasure", mappedBy="filter", orphanRemoval=true)
+     * @ORM\OneToMany(
+     *      targetEntity="App\Entity\FilterMeasure",
+     *      mappedBy="filter",
+     *      orphanRemoval=true)
+     * 
+     * @Assert\Valid
      */
     private $measures;
 
