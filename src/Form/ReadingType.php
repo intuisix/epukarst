@@ -6,7 +6,9 @@ use App\Entity\Measure;
 use App\Entity\Reading;
 use App\Entity\Station;
 use App\Form\MeasureType;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -57,6 +59,19 @@ class ReadingType extends AbstractType
                 'allow_delete' => true ]);
     }
 
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        /* Ordonner les mesures par nom de paramètre */
+        usort(
+            $view->children['measures']->children,
+            function ($a, $b) {
+                return
+                    $a->vars['data']->getParameter()->getName() <=>
+                    $b->vars['data']->getParameter()->getName();
+            }
+        );
+    }
+    
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
