@@ -189,7 +189,7 @@ class AppFixtures extends Fixture
             ->setPhysicalMaximum(100)
             ->setNormativeMinimum(0)
             ->setNormativeMaximum(6)
-            ->setFavorite(false)
+            ->setFavorite(true)
             ->setIntroduction("Ce paramètre exprime la concentration de nitrites dans l'eau.")
             ->setDescription("<p>Description plus complète...</p>" . $this->getFakeDescription(1, 3));
         $manager->persist($parameter);
@@ -204,7 +204,7 @@ class AppFixtures extends Fixture
             ->setNormativeMaximum(8)
             ->setPhysicalMinimum(-1.1)
             ->setPhysicalMaximum(15)
-            ->setFavorite(true)
+            ->setFavorite(false)
             ->setIntroduction("Ce paramètre représente l'acidité de l'eau.")
             ->setDescription("<p>Résultat de la composition du sol ou de ce qu'il reçoit...</p>" . $this->getFakeDescription(1, 3));
         $manager->persist($parameter);
@@ -219,7 +219,7 @@ class AppFixtures extends Fixture
             ->setNormativeMaximum(100)
             ->setPhysicalMinimum(0)
             ->setPhysicalMaximum(100)
-            ->setFavorite(false)
+            ->setFavorite(true)
             ->setIntroduction("Ce paramètre est un indicateur de la minéralisation de l'eau")
             ->setDescription("<p>Aussi appelé <i>titre hygrométrique</i>, description plus complète...</p>" . $this->getFakeDescription(1, 3));
         $manager->persist($parameter);
@@ -230,10 +230,10 @@ class AppFixtures extends Fixture
             ->setName("t°")
             ->setTitle("Température")
             ->setUnit("°C")
-            ->setNormativeMinimum(-50)
-            ->setNormativeMaximum(50)
-            ->setPhysicalMinimum(-100)
-            ->setPhysicalMaximum(100)
+            ->setNormativeMinimum(null)
+            ->setNormativeMaximum(null)
+            ->setPhysicalMinimum(-273)
+            ->setPhysicalMaximum(null)
             ->setFavorite(false)
             ->setIntroduction("Ce paramètre exprime la température de l'eau")
             ->setDescription("<p>Description plus complète...</p>" . $this->getFakeDescription(1, 3));
@@ -323,7 +323,7 @@ class AppFixtures extends Fixture
             "Conductimètre" => [ "sigma" ],
             "Spectromètre n° 1" => [ "NO2", "NO3" ],
             "Spectromètre n° 2" => [ "NO2", "NO3", "CaCO3" ],
-            "Spectromètre n° 3" => [ "NO2", "NO3", "CaCO3", "O2" ],
+            "Spectromètre n° 3" => [ "CaCO3", "O2" ],
         ];
 
         foreach ($template as $name => $parameters) {
@@ -376,18 +376,18 @@ class AppFixtures extends Fixture
      * @return void
      */
     public function loadMeasures(ObjectManager $manager, Reading $reading) {
-        for ($j = 0; $j < mt_rand(4, count($this->parameters)); $j++) {
+        for ($j = 0; $j < mt_rand(5, count($this->parameters)); $j++) {
             $measurability = $this->measurabilities[mt_rand(0, count($this->measurabilities) - 1)];
             $parameter = $measurability->getParameter();
-            $value = $parameter->getPhysicalMinimum() + (mt_rand(0, mt_getrandmax() - 1) * ($parameter->getPhysicalMaximum() - $parameter->getPhysicalMinimum())) / mt_getrandmax();
+            $value = round($parameter->getPhysicalMinimum() + (mt_rand(0, mt_getrandmax() - 1) * ($parameter->getPhysicalMaximum() - $parameter->getPhysicalMinimum())) / mt_getrandmax(), 1);
             $measure = new Measure();
             $measure
                 ->setReading($reading)
                 ->setMeasurability($measurability)
                 ->setValue($value)
-                ->setStable(mt_rand(0, 10) < 2)    /* 2 unstable out of 10 */
-                ->setValid(mt_rand(0, 10) < 1)     /* 1 invalid out of 10 */
-                ->setTolerance($measurability->getTolerance())
+                ->setStable(mt_rand(0, 10) > 2)    /* 2 unstable out of 10 */
+                ->setValid(mt_rand(0, 10) > 1)     /* 1 invalid out of 10 */
+                ->setTolerance(null)
                 ->setEncodingDateTime($reading->getEncodingDateTime())
                 ->setEncodingAuthor($reading->getEncodingAuthor());
             $manager->persist($measure);
