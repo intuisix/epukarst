@@ -78,7 +78,10 @@
                         {{form_row(form.validated)}}
                     </div>
                     <div class="col">
-                        {{form_row(form.notValidated)}}
+                        {{form_row(form.invalidated)}}
+                    </div>
+                    <div class="col">
+                        {{form_row(form.submitted)}}
                     </div>
                 </div>
             </div>
@@ -119,7 +122,7 @@
                                     {{parameter.name}}
                                 </th>
                             {% endfor %}
-                            <th>Validé</th>
+                            <th>Etat</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -162,8 +165,13 @@
                                 {% endfor %}
                                 <td style="text-align:center">
                                     {% if reading.validated %}
+                                        {# Le relevé est validé #}
                                         <i class="fas fa-flag-checkered"></i>
+                                    {% elseif reading.validated is not null %}
+                                        {# Le relevé est invalidé #}
+                                        <i class="fas fa-ban"></i>
                                     {% else %}
+                                        {# Le relevé est soumis #}
                                         --
                                     {% endif %}
                                 </td>

@@ -67,7 +67,12 @@ class Filter
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $notValidated;
+    private $invalidated;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $submitted;
 
     public function __construct()
     {
@@ -239,14 +244,26 @@ class Filter
         return $this;
     }
 
-    public function getNotValidated(): ?bool
+    public function getInvalidated(): ?bool
     {
-        return $this->notValidated;
+        return $this->invalidated;
     }
 
-    public function setNotValidated(?bool $notValidated): self
+    public function setInvalidated(?bool $invalidated): self
     {
-        $this->notValidated = $notValidated;
+        $this->invalidated = $invalidated;
+
+        return $this;
+    }
+
+    public function getSubmitted(): ?bool
+    {
+        return $this->submitted;
+    }
+
+    public function setSubmitted(?bool $submitted): self
+    {
+        $this->submitted = $submitted;
 
         return $this;
     }

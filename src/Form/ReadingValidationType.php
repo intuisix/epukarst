@@ -76,7 +76,7 @@ class ReadingValidationType extends AbstractType
             ->add('validated', ChoiceType::class, [
                 'label' => "Etat",
                 'choices' => [
-                    'Non validé' => false,
+                    'Invalidé' => false,
                     'Validé' => true,
                 ],
                 'placeholder' => "Sélectionnez un état",

@@ -50,8 +50,13 @@ class FilterType extends AbstractType
                 'data' => true,
                 'required' => false,
             ])
-            ->add('notValidated', CheckboxType::class, [
-                'label' => "Non validé",
+            ->add('invalidated', CheckboxType::class, [
+                'label' => "Invalidé",
+                'data' => true,
+                'required' => false,
+            ])
+            ->add('submitted', CheckboxType::class, [
+                'label' => "Soumis",
                 'data' => true,
                 'required' => false,
             ])

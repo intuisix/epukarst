@@ -81,8 +81,11 @@ class ReadingController extends AbstractController
         if ($session->has('validated')) {
             $filter->setValidated($session->get('validated'));
         }
-        if ($session->has('notValidated')) {
-            $filter->setNotValidated($session->get('notValidated'));
+        if ($session->has('invalidated')) {
+            $filter->setInvalidated($session->get('invalidated'));
+        }
+        if ($session->has('submitted')) {
+            $filter->setSubmitted($session->get('submitted'));
         }
 
         /* Désérialiser les mesures */
@@ -125,7 +128,8 @@ class ReadingController extends AbstractController
 
             /* Sérialiser les états */
             $session->set('validated', $filter->getValidated());
-            $session->set('notValidated', $filter->getNotValidated());
+            $session->set('invalidated', $filter->getInvalidated());
+            $session->set('submitted', $filter->getSubmitted());
 
             /* Sérialiser les mesures */
             $measures = [];

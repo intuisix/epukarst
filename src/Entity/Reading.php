@@ -98,6 +98,11 @@ class Reading
     private $measures;
 
     /**
+     * Etat du relevé, avec trois valeurs possibles:
+     *     - "Soumis"   => null,
+     *     - "Validé"   => true,
+     *     - "Invalidé" => false.
+     * 
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $validated;

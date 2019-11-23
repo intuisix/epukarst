@@ -11,13 +11,13 @@
         <div class="card mb-3">
             <div class="card-body">
                 <dl class="row">
-                    <dt class="col-3">Système :</dt>
+                    <dt class="col-3">Système&nbsp;:</dt>
                     <dd class="col-9">{{reading.station.basin.system.name}}</dd>
-                    <dt class="col-3">Bassin :</dt>
+                    <dt class="col-3">Bassin&nbsp;:</dt>
                     <dd class="col-9">{{reading.station.basin.name}}</dd>
-                    <dt class="col-3">Station :</dt>
+                    <dt class="col-3">Station&nbsp;:</dt>
                     <dd class="col-9">{{reading.station.name}}</dd>
-                    <dt class="col-3">Date de terrain :</dt>
+                    <dt class="col-3">Date de terrain&nbsp;:</dt>
                     <dd class="col-9">{{reading.fieldDateTime|date('d/m/Y H:i')}}</dd>
                 </dl>
             </div>
@@ -41,8 +41,15 @@
             <div class="col-md-6">
                 <div class="card mb-3">
                     <div class="card-header">
-                        {% if reading.validated %}
-                            Validé le <strong>{{reading.validationDateTime|date('d/m/Y H:i')}}</strong> par <strong>{{reading.validationAuthor.displayName}}</strong>
+                        {% if reading.validated is not null %}
+                            {% if reading.validated %}
+                                <i class="fas fa-flag-checkered text-success"></i>
+                                Validé
+                            {% else %}
+                                <i class="fas fa-ban text-danger"></i>
+                                Invalidé
+                            {% endif %}
+                            le <strong>{{reading.validationDateTime|date('d/m/Y H:i')}}</strong> par <strong>{{reading.validationAuthor.displayName}}</strong>
                         {% else %}
                             Non validé
                         {% endif %}
