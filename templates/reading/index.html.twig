@@ -122,7 +122,7 @@
                                     {{parameter.name}}
                                 </th>
                             {% endfor %}
-                            <th>Etat</th>
+                            <th>Validé</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -183,7 +183,7 @@
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="11">Il n'y a pas de relevés à afficher&nbsp;: vérifiez si les filtres ne sont pas trop restrictifs, et s'ils sélectionnent au minimum une station.</td>
+                                <td colspan="100">Il n'y a pas de relevés à afficher&nbsp;: vérifiez si les filtres sélectionnent au moins une station et s'ils ne sont pas trop restrictifs.</td>
                             </tr>
                         {% endfor %}
                     </tbody>

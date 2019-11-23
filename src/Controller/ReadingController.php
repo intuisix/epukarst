@@ -190,8 +190,9 @@ class ReadingController extends AbstractController
             ]);
         }
 
-        return $this->render('reading/encode.html.twig', [
-            'form' => $form->createView()
+        return $this->render('reading/form.html.twig', [
+            'form' => $form->createView(),
+            'title' => "Encoder un nouveau relevé",
         ]);
     }
 
@@ -223,9 +224,10 @@ class ReadingController extends AbstractController
             ]);
         }
 
-        return $this->render('reading/modify.html.twig', [
+        return $this->render('reading/form.html.twig', [
             'reading' => $reading,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'title' => "Modifier le relevé {$reading->getCode()}",
         ]);
     }
 
@@ -263,9 +265,10 @@ class ReadingController extends AbstractController
             ]);
         }
 
-        return $this->render('reading/validate.html.twig', [
+        return $this->render('reading/form.html.twig', [
             'reading' => $reading,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'title' => "Valider le relevé {$reading->getCode()}",
         ]);
     }
 

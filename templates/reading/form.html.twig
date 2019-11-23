@@ -5,10 +5,14 @@ de modification de relevés #}
 
 {% form_theme form _self %}
 
+{% block title %}
+    {{title}}
+{% endblock %}
+
 {% block body %}
     {% dump(form) %}
     <div class="container">
-        <h1>{% block title %}{% endblock %}</h1>
+        <h1>{{title}}</h1>
 
         {{form_start(form)}}
 
