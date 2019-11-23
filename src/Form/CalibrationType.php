@@ -20,7 +20,7 @@ class CalibrationType extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('dueDate', DateType::class, [
-                'label' => 'Date du prochain contrôle',
+                'label' => "Date d'expiration",
                 'widget' => 'single_text',
             ])
             ->add('operatorName', TextType::class, [
@@ -34,7 +34,6 @@ class CalibrationType extends AbstractType
                 'required' => false,
                 'attr' => [
                     'placeholder' => "Entrez une éventuelle remarque",
-                    'rows' => 1,
                 ],
             ])
         ;

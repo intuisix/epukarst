@@ -5,9 +5,13 @@ modification de relevés #}
 
 {% form_theme form _self %}
 
+{% block title %}
+    {{title}}
+{% endblock %}
+
 {% block body %}
     <div class="container">
-        <h1>{% block title %}{% endblock %}</h1>
+        <h1>{{title}}</h1>
 
         {{form_start(form)}}
 
@@ -62,9 +66,9 @@ modification de relevés #}
     <h2>
         {{form_label(form)}}
     </h2>
-    <div class="alert alert-info">
-        La liste ci-dessous doit définir les différents paramètres qui peuvent être mesurés à l'aide de l'instrument.
-    </div>
+    <p>
+        La liste ci-dessous sert à définir les différents paramètres qui peuvent être mesurés à l'aide de l'instrument, et préciser les limites de ces mesures.
+    </p>
 {% endblock %}
 
 {% block _instrument_measurabilities_widget %}
@@ -114,9 +118,20 @@ modification de relevés #}
     <h2>
         {{form_label(form)}}
     </h2>
-    <div class="alert alert-info">
-        Si l'instrument est un appareil concerné par un suivi métrologique, la liste ci-dessous permet de conserver les dates successives auxquelles l'appareil a été contrôlé et étalonné. Si l'instrument est un consommable individuel ou un lot de consommables, la liste peut définir une date de péremption.
-    </div>
+    <p>
+        La liste ci-dessous sert à définir la période durant laquelle la précision des mesures réalisées à l'aide de l'instrument est garantie. La signification réelle peut varier suivant le type d'instrument:
+        <ul>
+            <li>
+                Pour les appareils concernés par un suivi métrologique, il s'agira vraisemblablement des dates de contrôle et d'étalonnage.
+            </li>
+            <li>
+                Pour les consommables, il s'agira vraisemblablement d'une date de péremption.
+            </li>
+            <li>
+                Pour les instruments dont la précision ne s'altère pas avec le temps, la liste peut rester vide.
+            </li>
+        </ul>
+    </p>
 {% endblock %}
 
 {% block _instrument_calibrations_widget %}

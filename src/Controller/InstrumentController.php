@@ -59,9 +59,10 @@ class InstrumentController extends AbstractController
             return $this->redirectToRoute('instrument');
         }
 
-        return $this->render('instrument/create.html.twig', [
+        return $this->render('instrument/form.html.twig', [
             'instrument' => $instrument,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'title' => 'Ajouter un nouvel instrument',
         ]);
     }
 
@@ -96,9 +97,10 @@ class InstrumentController extends AbstractController
             return $this->redirectToRoute('instrument');
         }
 
-        return $this->render('instrument/modify.html.twig', [
+        return $this->render('instrument/form.html.twig', [
             'instrument' => $instrument,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'title' => "Modifier l'instrument {$instrument->getName()}"
         ]);
     }
 
