@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Station;
 use App\Form\StationType;
+use App\Service\PaginationService;
 use App\Repository\StationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -14,18 +15,23 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class StationController extends AbstractController
 {
     /**
-     * @Route("/station", name="station")
+     * @Route("/station/{page<\d+>?1}", name="station")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function index(StationRepository $stationRepository)
+    public function index(int $page, PaginationService $pagination,StationRepository $stationRepository)
     {
+        $pagination
+            ->setEntityClass(Station::class)
+            ->setOrderBy(['code' => 'ASC'])
+            ->setPage($page)
+        ;
         return $this->render('station/index.html.twig', [
-            'stations' => $stationRepository->findAll()
+            'pagination' => $pagination,
         ]);
     }
 
     /**
-     * Affiche et traite le formulaire d'ajout d'une station.
+     * Traite l'ajout d'une station.
      * 
      * @Route("/station/create", name="station_create")
      * @IsGranted("ROLE_ADMIN")
@@ -49,14 +55,15 @@ class StationController extends AbstractController
             return $this->redirectToRoute('station');
         }
 
-        return $this->render('station/create.html.twig', [
+        return $this->render('station/form.html.twig', [
             'station' => $station,
             'form' => $form->createView(),
+            'title' => "Créer une nouvelle station",
         ]);
     }
 
     /**
-     * Affiche et traite le formulaire de modification d'une station.
+     * Traite la modification d'une station.
      * 
      * @Route("/station/{code}/modify", name="station_modify")
      * @IsGranted("ROLE_ADMIN")
@@ -78,9 +85,10 @@ class StationController extends AbstractController
             return $this->redirectToRoute('station');
         }
 
-        return $this->render('station/create.html.twig', [
+        return $this->render('station/form.html.twig', [
             'station' => $station,
             'form' => $form->createView(),
+            'title' => "Modifier la station {$station->getName()}",
         ]);
     }
 

@@ -18,7 +18,7 @@
                 <th>Relevés</th>
                 <th>Actions</th>
             </tr>
-            {% for station in stations|sort((a, b) => (a.name <=> b.name)) %}
+            {% for station in pagination.data %}
                 <tr>
                     <td>{{station.code}}</td>
                     <td>{{station.name}}</td>
@@ -40,8 +40,11 @@
             {% endfor %}
         </table>
 
+        {# Afficher le composant de pagination #}
+        {{pagination.display}}
+
         <a href="{{ path('station_create') }}" class="btn btn-primary">
-            Ajouter une station
+            Créer une station
         </a>
     </div>
 {% endblock %}

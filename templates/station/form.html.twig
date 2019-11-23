@@ -1,0 +1,42 @@
+{# Ce template définit une base commune pour les formulaires de création et de
+modification de station #}
+
+{% extends 'base.html.twig' %}
+
+{% form_theme form _self %}
+
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block body %}
+    <div class="container mb-3">
+        <h1>{{title}}</h1>
+
+        {{form_start(form)}}
+
+        <div class="alert bg-light">
+            {{form_row(form.basin)}}
+            {{form_row(form.code)}}
+            {{form_row(form.name)}}
+            {{form_row(form.kind)}}
+            {{form_row(form.description)}}
+        </div>
+
+        <div class="mb-3">
+            {# Ajouter un bouton pour enregistrer la station #}
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-check"></i>
+                Enregistrer la station
+            </button>
+
+            {# Ajouter un bouton pour revenir à l'index #}
+            <a href="{{ path('station') }}" class="btn btn-cancel ml-3">
+                <i class="fas fa-backspace"></i>
+                Revenir à la liste
+            </a>
+        </div>
+
+        {{form_end(form)}}
+    </div>
+{% endblock %}

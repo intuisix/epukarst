@@ -39,6 +39,7 @@ class PaginationService
     private $entityClass;
     private $queryBuilder;
     private $criteria = [];
+    private $orderBy = [];
     private $limit = 10;
     private $currentPage = 1;
     private $totalPages = 0;
@@ -85,7 +86,7 @@ class PaginationService
             $data = (new Paginator($query))->getIterator();
         } else {
             $repo = $this->manager->getRepository($this->entityClass);
-            $data = $repo->findBy($this->criteria, [], $this->limit, $offset);
+            $data = $repo->findBy($this->criteria, $this->orderBy, $this->limit, $offset);
         }
         
         /* Renvoyer les éléments */
@@ -149,7 +150,12 @@ class PaginationService
     {
         return $this->criteria;
     }
-    
+
+    public function getOrderBy()
+    {
+        return $this->orderBy;
+    }
+
     public function getLimit()
     {
         return $this->limit;
@@ -184,23 +190,41 @@ class PaginationService
     /**
      * Définit les critères simples de sélection, sous forme d'un tableau qui
      * sera transmis à la méthode findBy() de Doctrine au moment d'effectuer
-     * la sélection.
+     * la sélection des éléments.
      *
      * Exemples:
-     *      setCriteria(['age' => 20]);
-     *      setCriteria(['age' => 20, 'surname' => 'Miller'])
-     *      setCriteria(['phone'] => $number->getId())
-     *      setCriteria(['age' => 20, 30, 40])
+     *     setCriteria(['age' => 20]);
+     *     setCriteria(['age' => 20, 'surname' => 'Miller']);
+     *     setCriteria(['phone'] => $number->getId());
+     *     setCriteria(['age' => 20, 30, 40]);
      * 
-     * @param array $criteria.
+     * @param array|null $criteria.
      * @return self
      */
-    public function setCriteria(array $criteria)
+    public function setCriteria(?array $criteria): self
     {
         $this->criteria = $criteria;
         return $this;
     }
-    
+
+    /**
+     * Définit les clés de tri, sous forme d'un tableau qui sera transmis à la
+     * méthode findBy() de Doctrine au moment d'effectuer l'obtention des
+     * éléments.
+     * 
+     * Exemples:
+     *     setOrderBy(['name' => 'ASC']);
+     *     setOrderBy(['age' => 'DESC', 'lastName' => 'ASC']);
+     *
+     * @param array|null $orderBy
+     * @return self
+     */
+    public function setOrderBy(?array $orderBy): self
+    {
+        $this->orderBy = $orderBy;
+        return $this;
+    }
+
     public function setLimit($limit)
     {
         $this->limit = $limit;
