@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -206,5 +207,23 @@ class Instrument
         }
 
         return $this;
+    }
+
+    /**
+     * Détermine la date limite de validité de l'instrument, d'après son
+     * étalonnage le plus récent.
+     *
+     * @return DateTime|null
+     */
+    public function getCalibrationDueDate(): ?DateTime
+    {
+        $calibrationDueDate = null;
+        foreach ($this->calibrations as $calibration) {
+            $dueDate = $calibration->getDueDate();
+            if ($dueDate > $calibrationDueDate) {
+                $calibrationDueDate = $dueDate;
+            }
+        }
+        return $calibrationDueDate;
     }
 }
