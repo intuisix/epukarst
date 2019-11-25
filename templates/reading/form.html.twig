@@ -10,17 +10,22 @@ de modification de relevés #}
 {% endblock %}
 
 {% block body %}
-    {% dump(form) %}
-    <div class="container">
+    <div class="container mb-3">
         <h1>{{title}}</h1>
 
         {{form_start(form)}}
 
         {# Mettre en forme les informations générales #}
         <div class="alert bg-light">
-            {{form_row(form.station)}}
-            {{form_row(form.fieldDateTime)}}
-            {{form_row(form.code)}}
+            <div class="form-row">
+                <div class="col">
+                    {{form_row(form.station)}}
+                    {{form_row(form.fieldDateTime)}}
+                </div>
+                <div class="col">
+                    {{form_row(form.code)}}
+                </div>
+            </div>
         </div>
 
         {# Mettre en forme les mesures #}
@@ -31,7 +36,7 @@ de modification de relevés #}
             {{form_row(form.encodingNotes)}}
         </div>
 
-        {% if form.vars.id == 'reading_validation' %}
+        {% if validation|default(false) %}
             <div class="alert bg-light">
                 {{form_row(form.validationAuthor)}}
                 {{form_row(form.validationNotes)}}
@@ -39,55 +44,53 @@ de modification de relevés #}
             </div>
         {% endif %}
 
-        <div class="mb-3">
-            {# Bouton pour ajouter une mesure #}
-            <button type="button" data-action="add-measure" class="btn btn-secondary">
-                <i class="fas fa-plus"></i>
-                Ajouter une mesure
-            </button>
+        {# Bouton pour enregistrer le relevé #}
+        <button type="submit" class="btn btn-success">
+            <i class="fas fa-check"></i>
+            Enregistrer le relevé
+        </button>
 
-            {# Bouton pour enregistrer le relevé #}
-            <button type="submit" class="btn btn-success ml-3">
-                <i class="fas fa-check"></i>
-                Enregistrer le relevé
-            </button>
-
-            {# Bouton pour revenir à l'index #}
-            <a href="{{ path('reading') }}" class="btn btn-cancel ml-3">
-                <i class="fas fa-backspace"></i>
-                Revenir à la liste
-            </a>
-        </div>
+        {# Bouton pour revenir à l'index #}
+        <a href="{{ path('reading') }}" class="btn btn-cancel">
+            <i class="fas fa-backspace"></i>
+            Revenir à la liste
+        </a>
 
         {{form_end(form)}}
     </div>
 {% endblock %}
 
 
-{% block _reading_encoding_measures_label %}
+{% block _reading_measures_label %}
     <h2>{{form_label(form)}}</h2>
 {% endblock %}
 
-{% block _reading_encoding_measures_widget %}
+{% block _reading_measures_widget %}
     {# Afficher le widget Twig #}
     {{ form_widget(form) }}
+
+    {# Afficher un bouton permettant d'ajouter une mesure #}
+    <button type="button" data-action="add-measure" class="btn btn-secondary">
+        <i class="fas fa-plus"></i>
+        Ajouter une mesure
+    </button>
 {% endblock %}
 
-{% block _reading_encoding_measures_entry_row %}
+{% block _reading_measures_entry_row %}
     {# N'afficher que le widget, sans étiquette ou autre information #}
     {{form_widget(form)}}
 {% endblock %}
 
-{% block _reading_encoding_measures_entry_widget %}
+{% block _reading_measures_entry_widget %}
     <div class="form-group alert bg-light" id="{{id}}">
-        <div class="row">
+        <div class="form-row">
             <div class="col">
                 {{form_row(form.measurability)}}
                 {{form_row(form.notes)}}
             </div>
             <div class="col">
                 {{form_row(form.value)}}
-                <div class="row">
+                <div class="form-row">
                     <div class="col">
                         {{form_row(form.stable)}}
                     </div>
@@ -98,7 +101,7 @@ de modification de relevés #}
                 {{form_row(form.tolerance)}}
             </div>
         </div>
-        <div class="row">
+        <div class="form-row">
             <div class="col">
                 {# Bouton pour supprimer la mesure #}
                 <button type="button" data-action="delete-measure" data-target="#{{id}}" class="btn btn-danger float-right">
@@ -115,7 +118,7 @@ de modification de relevés #}
     <script>
         var measuresCollectionResponders =
             createCollectionResponders(
-                '#reading_encoding_measures',
+                '#reading_measures',
                 'button[data-action="add-measure"]',
                 'button[data-action="delete-measure"]',
                 'Etes-vous sûr de vouloir supprimer cette mesure ?'

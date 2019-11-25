@@ -3,20 +3,19 @@
 namespace App\Controller;
 
 use DateTime;
-use App\Entity\User;
 use App\Entity\Filter;
+use App\Entity\FilterMeasure;
 use App\Entity\Reading;
 use App\Entity\Station;
+use App\Entity\User;
 use App\Form\FilterType;
-use App\Entity\FilterMeasure;
-use App\Form\ReadingEncodingType;
-use App\Service\PaginationService;
-use App\Form\ReadingValidationType;
+use App\Form\ReadingType;
 use App\Repository\BasinRepository;
 use App\Repository\SystemRepository;
 use App\Repository\ReadingRepository;
 use App\Repository\StationRepository;
 use App\Repository\ParameterRepository;
+use App\Service\PaginationService;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
@@ -170,7 +169,7 @@ class ReadingController extends AbstractController
             ->setEncodingDateTime(new DateTime('now'));
 
         /* Créer et traiter le formulaire */
-        $form = $this->createForm(ReadingEncodingType::class, $reading);
+        $form = $this->createForm(ReadingType::class, $reading);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -204,7 +203,7 @@ class ReadingController extends AbstractController
      */
     public function modify(Reading $reading, ObjectManager $manager, Request $request) {
         /* Créer et traiter le formulaire */
-        $form = $this->createForm(ReadingEncodingType::class, $reading);
+        $form = $this->createForm(ReadingType::class, $reading);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -244,8 +243,9 @@ class ReadingController extends AbstractController
             ->setValidationAuthor($this->getUser())
             ->setValidationDateTime(new DateTime('now'));
 
-        /* Créer et traiter le formulaire */
-        $form = $this->createForm(ReadingValidationType::class, $reading);
+        /* Créer et traiter le formulaire en mode validation */
+        $form = $this->createForm(ReadingType::class, $reading, [
+            'validation' => true]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -269,6 +269,7 @@ class ReadingController extends AbstractController
             'reading' => $reading,
             'form' => $form->createView(),
             'title' => "Valider le relevé {$reading->getCode()}",
+            'validation' => true,
         ]);
     }
 

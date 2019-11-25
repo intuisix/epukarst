@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="container mb-3">
         <h1>Relevé {{reading.code}}</h1>
 
         <div class="card mb-3">
@@ -129,24 +129,22 @@
             </table>
         </tbody>
 
-        <div class="mb-3">
-            {# Ajouter un bouton pour modifier le relevé #}
-            <a href="{{ path('reading_modify', {'code': reading.code}) }}" class="btn btn-primary">
-                <i class="fas fa-edit"></i>
-                Modifier ce relevé
-            </a>
+        {# Ajouter un bouton pour modifier le relevé #}
+        <a href="{{ path('reading_modify', {'code': reading.code}) }}" class="btn btn-primary">
+            <i class="fas fa-edit"></i>
+            Modifier ce relevé
+        </a>
 
-            {# Ajouter un bouton pour valider le relevé #}
-            <a href="{{ path('reading_validate', {'code': reading.code}) }}" class="btn btn-success ml-3">
-                <i class="fas fa-flag-checkered"></i>
-                Valider ce relevé
-            </a>
+        {# Ajouter un bouton pour valider le relevé #}
+        <a href="{{ path('reading_validate', {'code': reading.code}) }}" class="btn btn-success">
+            <i class="fas fa-flag-checkered"></i>
+            Valider ce relevé
+        </a>
 
-            {# Ajouter un bouton pour revenir à l'index #}
-            <a href="{{ path('reading') }}" class="btn btn-cancel ml-3">
-                <i class="fas fa-backspace"></i>
-                Revenir à la liste
-            </a>
-        </div>
+        {# Ajouter un bouton pour revenir à l'index #}
+        <a href="{{ path('reading') }}" class="btn btn-cancel">
+            <i class="fas fa-backspace"></i>
+            Revenir à la liste
+        </a>
     </div>
 {% endblock %}
