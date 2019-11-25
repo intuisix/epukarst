@@ -294,16 +294,21 @@ class ReadingController extends AbstractController
      * @param DateTime $dateTime
      * @return void
      */
-    private function updateMeasures(Reading $reading, User $author, DateTime $dateTime, ObjectManager $manager)
+    private function updateMeasures(Reading $reading, User $author, DateTime $encodingDateTime, ObjectManager $manager)
     {
         /* Pour chaque mesure présente sur le formulaire */
         foreach ($reading->getMeasures() as $measure) {
             /* Associer au relevé */
             $measure->setReading($reading);
 
+            /* Assurer que la date de mesure est définie */
+            if (empty($measure->getFieldDateTime())) {
+                $measure->setFieldDateTime($reading->getFieldDateTime());
+            }
+
             /* Assurer que la date de l'encodage est définie */
             if (empty($measure->getEncodingDateTime())) {
-                $measure->setEncodingDateTime($dateTime);
+                $measure->setEncodingDateTime($encodingDateTime);
             }
 
             /* Assurer que l'auteur de l'encodage est définie */

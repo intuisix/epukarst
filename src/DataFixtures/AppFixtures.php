@@ -388,6 +388,7 @@ class AppFixtures extends Fixture
                 ->setStable(mt_rand(0, 10) > 2)    /* 2 unstable out of 10 */
                 ->setValid(mt_rand(0, 10) > 1)     /* 1 invalid out of 10 */
                 ->setTolerance(null)
+                ->setFieldDateTime($reading->getFieldDateTime())
                 ->setEncodingDateTime($reading->getEncodingDateTime())
                 ->setEncodingAuthor($reading->getEncodingAuthor());
             $manager->persist($measure);

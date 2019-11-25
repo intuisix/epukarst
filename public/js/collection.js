@@ -22,8 +22,12 @@ Ce paramètre peut être nul pour ne pas gérer la suppression.
 @param $deletionMessage est le message de la confirmation qui sera demandée à
 l'utilisateur lorsqu'il clique sur le bouton de suppression. Ce paramètre peut
 être nul pour procéder à la suppression sans demander de confirmation.
+
+@param $copyValues est un tableau associatif permettant de préremplir les
+nouveaux sous-formulaires avec des valeurs par défaut provenant d'autres
+éléments (par exemple, issues du formulaire principal).
 */
-function createCollectionResponders($blockSelector, $additionSelector, $deletionSelector, $deletionMessage = null) {
+function createCollectionResponders($blockSelector, $additionSelector, $deletionSelector, $deletionMessage = null, $copyValues = null) {
 
     /* Symfony a déjà numéroté de façon unique les éléments déjà présents;
     obtenir le nombre initial d'éléments dans la collection, afin de pouvoir
@@ -74,6 +78,12 @@ function createCollectionResponders($blockSelector, $additionSelector, $deletion
             l'indice du nouvel élément */
             const prototype = $($blockSelector).data('prototype');
             $($blockSelector).append(prototype.replace(/__name__/g, $itemIndex));
+            /* Copier des valeurs de champs sur le nouveau sous-formulaire */
+            if (null != $copyValues) {
+                for (var $key in $copyValues) {
+                    $($itemSelector + '_' + $key).val($($copyValues[$key]).val());
+                }
+            }
             /* Configure les éventuels boutons ajoutés par le sous-formulaire */
             if (null != $additionSelector) {
                 setupAddButtons($itemSelector + ' ' + $additionSelector);

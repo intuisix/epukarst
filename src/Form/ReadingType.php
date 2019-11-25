@@ -39,27 +39,33 @@ class ReadingType extends AbstractType
                 }
             ])
             ->add('code', TextType::class, [
-                'label' => "Code",
+                'label' => "Code du relevé",
                 'required' => false,
                 'attr' => [
                     'placeholder' => "Ce code sera complété automatiquement" ],
             ])
             ->add('fieldDateTime', DateTimeType::class, [
-                'label' => "Date et heure de terrain",
+                'label' => "Date de terrain (globale)",
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
-                'placeholder' => "Entrez la date et l'heure des mesures sur le terrain",
+                'placeholder' => "Entrez la date et l'heure de terrain",
             ])
             ->add('measures', CollectionType::class, [
                 'label' => "Mesures",
                 'entry_type' => MeasureType::class,
                 'allow_add' => true,
                 'allow_delete' => true ])
+            ->add('encodingDateTime', DateTimeType::class, [
+                    'label' => "Date d'encodage",
+                    'date_widget' => 'single_text',
+                    'time_widget' => 'single_text',
+                    'disabled' => true,
+                ])
             ->add('encodingAuthor', TextType::class, [
-                'label' => "Auteur de l'encodage",
-                'disabled' => true,
-            ])
-            ->add('encodingNotes', TextareaType::class, [
+                    'label' => "Auteur de l'encodage",
+                    'disabled' => true,
+                ])
+                ->add('encodingNotes', TextareaType::class, [
                 'label' => "Remarques de l'encodage",
                 'required' => false,
                 'attr' => [

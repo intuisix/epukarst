@@ -17,7 +17,7 @@
                     <dd class="col-9">{{reading.station.basin.name}}</dd>
                     <dt class="col-3">Station&nbsp;:</dt>
                     <dd class="col-9">{{reading.station.name}}</dd>
-                    <dt class="col-3">Date de terrain&nbsp;:</dt>
+                    <dt class="col-3">Réalisé le&nbsp;:</dt>
                     <dd class="col-9">{{reading.fieldDateTime|date('d/m/Y H:i')}}</dd>
                 </dl>
             </div>
@@ -75,57 +75,59 @@
                     <th>Stable</th>
                     <th>Valide</th>
                     <th>Instrument</th>
+                    <th>Réalisée le</th>
                     <th>Encodée le</th>
                     <th>Encodée par</th>
                     <th>Remarque</th>
                 </tr>
             </thead>
             <tbody>
-                {% if reading.measures|length > 0 %}
-                    {# TODO: Regrouper par paramètre #}
-                    {% for measure in reading.measures|sort((a,b) => a.measurability.parameter.name <=> b.measurability.parameter.name) %}
-                        {% set parameter = measure.measurability.parameter %}
-                        {% set instrument = measure.measurability.instrument %}
-                        <tr>
-                            <td rowspan="1">{{parameter.name}}</td>
-                            <td>
-                                {{measure.value}} 
-                                {% if measure.tolerance is not null %}
-                                    &plusmn; {{measure.tolerance}} 
-                                {% endif %}
-                                {{parameter.unit}}
-                            </td>
-                            <td style="text-align: center">
-                                {% if measure.stable %}
-                                    <i class="fas fa-check"></i>
-                                {% else %}
-                                    <i class="fas fa-exclamation"></i>
-                                {% endif %}
-                            </td>
-                            <td style="text-align: center">
-                                {% if measure.valid %}
-                                    <i class="fas fa-check"></i>
-                                {% else %}
-                                    <i class="fas fa-exclamation"></i>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if instrument is not null %}
-                                    {{instrument.name}}
-                                {% else %}
-                                    --
-                                {% endif %}
-                            </td>
-                            <td>
-                                {{measure.encodingDateTime|date('d/m/Y H:i')}}
-                            </td>
-                            <td>{{measure.encodingAuthor.displayName}}</td>
-                            <td>{{measure.notes}}</td>
-                        </tr>
-                    {% endfor %}
+                {# TODO: Regrouper par paramètre #}
+                {% for measure in reading.measures|sort((a,b) => a.measurability.parameter.name <=> b.measurability.parameter.name) %}
+                    {% set parameter = measure.measurability.parameter %}
+                    {% set instrument = measure.measurability.instrument %}
+                    <tr>
+                        <td rowspan="1">{{parameter.name}}</td>
+                        <td>
+                            {{measure.value}} 
+                            {% if measure.tolerance is not null %}
+                                &plusmn; {{measure.tolerance}} 
+                            {% endif %}
+                            {{parameter.unit}}
+                        </td>
+                        <td style="text-align: center">
+                            {% if measure.stable %}
+                                <i class="fas fa-check"></i>
+                            {% else %}
+                                <i class="fas fa-exclamation"></i>
+                            {% endif %}
+                        </td>
+                        <td style="text-align: center">
+                            {% if measure.valid %}
+                                <i class="fas fa-check text-success"></i>
+                            {% else %}
+                                <i class="fas fa-ban text-danger"></i>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if instrument is not null %}
+                                {{instrument.name}}
+                            {% else %}
+                                --
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{measure.fieldDateTime|date('d/m/Y')}}
+                        </td>
+                        <td>
+                            {{measure.encodingDateTime|date('d/m/Y')}}
+                        </td>
+                        <td>{{measure.encodingAuthor.displayName}}</td>
+                        <td>{{measure.notes}}</td>
+                    </tr>
                 {% else %}
                     <td colspan="100"><em>Il n'y a pas de mesures pour ce relevé.</em></td>
-                {% endif %}
+                {% endfor %}
             </table>
         </tbody>
 

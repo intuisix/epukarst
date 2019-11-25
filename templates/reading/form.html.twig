@@ -13,14 +13,20 @@ de modification de relevés #}
     <div class="container mb-3">
         <h1>{{title}}</h1>
 
-        {{form_start(form)}}
+        <p>
+            Ce formulaire permet d'introduire les données de relevés réalisés sur le terrain à une station d'observation déterminée. Le relevé peut correspondre à des procédés manuels, un ou plusieurs échantillons ont été pris et un ou plusieurs paramètres de nature différents ont été mesurés à un instant relativement précis. Par ailleurs, le relevé peut correspondre à une série de mesures réalisées pendant une durée plus ou moins longue et de façon programmée, grâce par exemple à l'utilisation d'échantillonneurs automatiques ou d'enregistreurs de données. Dans les deux cas, si des échantillons nécessitent une analyse ou une confirmation en laboratoire, il est possible d'ajouter plus tard de nouvelles mesures au relevé.
+        </p>
 
+        {{form_start(form)}}
+        
         {# Mettre en forme les informations générales #}
         <div class="alert bg-light">
-            <div class="form-row">
+            <div class="row">
+                <div class="col">
+                    {{form_row(form.fieldDateTime)}}
+                </div>
                 <div class="col">
                     {{form_row(form.station)}}
-                    {{form_row(form.fieldDateTime)}}
                 </div>
                 <div class="col">
                     {{form_row(form.code)}}
@@ -31,13 +37,17 @@ de modification de relevés #}
         {# Mettre en forme les mesures #}
         {{form_row(form.measures)}}
 
+        <h2>Commentaires</h2>
+
         <div class="alert bg-light">
+            {{form_row(form.encodingDateTime)}}
             {{form_row(form.encodingAuthor)}}
             {{form_row(form.encodingNotes)}}
         </div>
 
         {% if validation|default(false) %}
             <div class="alert bg-light">
+                {{form_row(form.validationDateTime)}}
                 {{form_row(form.validationAuthor)}}
                 {{form_row(form.validationNotes)}}
                 {{form_row(form.validated)}}
@@ -66,6 +76,10 @@ de modification de relevés #}
 {% endblock %}
 
 {% block _reading_measures_widget %}
+    <p>
+        La liste ci-dessous reprend les valeurs mesurées des paramètres et des indications basiques quant à la fiabilité de ces valeurs. Les mesures <em>stables</em> sont celles qui ont été mesurées sans difficulté, alors que les mesures <em>instables</em> sont estimées par la personne qui a réalisé la mesure. Les mesures <em>valides</em> sont celles qui sont a priori exploitables, alors que les mesures <em>invalides</em> sont celles qui doivent être écartées dans l'attente d'une vérification.
+    </p>
+
     {# Afficher le widget Twig #}
     {{ form_widget(form) }}
 
@@ -82,14 +96,29 @@ de modification de relevés #}
 {% endblock %}
 
 {% block _reading_measures_entry_widget %}
-    <div class="form-group alert bg-light" id="{{id}}">
+    <div class="alert bg-light" id="{{id}}">
         <div class="form-row">
             <div class="col">
                 {{form_row(form.measurability)}}
                 {{form_row(form.notes)}}
             </div>
             <div class="col">
-                {{form_row(form.value)}}
+                <div class="form-row">
+                    <div class="col">
+                        {{form_row(form.fieldDateTime)}}
+                    </div>
+                    <div class="col">
+                        {{form_row(form.encodingDateTime)}}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col">
+                        {{form_row(form.value)}}
+                    </div>
+                    <div class="col">
+                        {{form_row(form.tolerance)}}
+                    </div>
+                </div>
                 <div class="form-row">
                     <div class="col">
                         {{form_row(form.stable)}}
@@ -98,7 +127,6 @@ de modification de relevés #}
                         {{form_row(form.valid)}}
                     </div>
                 </div>
-                {{form_row(form.tolerance)}}
             </div>
         </div>
         <div class="form-row">
@@ -116,12 +144,17 @@ de modification de relevés #}
 {% block javascripts %}
     <script src="/js/collection.js"></script>
     <script>
+        var copyValues
         var measuresCollectionResponders =
             createCollectionResponders(
                 '#reading_measures',
                 'button[data-action="add-measure"]',
                 'button[data-action="delete-measure"]',
-                'Etes-vous sûr de vouloir supprimer cette mesure ?'
+                'Etes-vous sûr de vouloir supprimer cette mesure ?',
+                {   /* Pré-remplir pour chaque mesure ajoutée */
+                    'fieldDateTime_date': '#reading_fieldDateTime_date',
+                    'fieldDateTime_time': '#reading_fieldDateTime_time',
+                }
             );
         measuresCollectionResponders();
     </script>

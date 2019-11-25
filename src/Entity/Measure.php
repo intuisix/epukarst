@@ -67,6 +67,11 @@ class Measure
     private $encodingDateTime;
 
     /**
+     * @ORM\Column(type="datetime")
+     */
+    private $fieldDateTime;
+
+    /**
      * @Assert\Callback
      */
     public function validate(ExecutionContextInterface $context, $payload)
@@ -101,14 +106,12 @@ class Measure
                 }
             }
 
-            /* Comparer la date de terrain à l'étalonnage de l'instrument.
-            TODO: Cette comparaison devrait être réalisée lorsque la mesure
-            vient d'être saisie, or elle n'est pas encore rattachée au relevé.
-            La comparaison est bien réalisée lors de la modification et aussi
-            lors la validation du relevé. */
-            if ((null != $instrument) && (null != $this->reading)) {
+            /* Comparer la date de terrain à la date de validité de
+            l'instrument (définie au dernier étalonnage) */
+            if ((null != $instrument)) {
                 $calibrationDueDate = $instrument->getCalibrationDueDate();
-                if ((null != $calibrationDueDate) && ($this->reading->getFieldDateTime() > $calibrationDueDate)) {
+                if ((null != $calibrationDueDate) &&
+                    ($this->fieldDateTime > $calibrationDueDate)) {
                     $context
                         ->buildViolation("Cette valeur a été mesurée à l'aide d'un instrument non contrôlé depuis le {$calibrationDueDate->format('d/m/Y')}.")
                         ->atPath('value')
@@ -246,5 +249,17 @@ class Measure
     public function getParameter()
     {
         return $this->measurability->getParameter();
+    }
+
+    public function getFieldDateTime(): ?\DateTimeInterface
+    {
+        return $this->fieldDateTime;
+    }
+
+    public function setFieldDateTime(?\DateTimeInterface $fieldDateTime): self
+    {
+        $this->fieldDateTime = $fieldDateTime;
+
+        return $this;
     }
 }
