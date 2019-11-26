@@ -76,6 +76,12 @@ class ReadingType extends AbstractType
 
         if ($options['validation'] === true) {
             $builder
+                ->add('validationDateTime', DateTimeType::class, [
+                    'label' => "Date de validation",
+                    'date_widget' => 'single_text',
+                    'time_widget' => 'single_text',
+                    'disabled' => true,
+                ])
                 ->add('validationAuthor', TextType::class, [
                     'label' => "Auteur de la validation",
                     'disabled' => true,

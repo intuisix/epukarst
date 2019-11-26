@@ -40,15 +40,27 @@ de modification de relevés #}
         <h2>Commentaires</h2>
 
         <div class="alert bg-light">
-            {{form_row(form.encodingDateTime)}}
-            {{form_row(form.encodingAuthor)}}
+            <div class="form-row">
+                <div class="col">
+                    {{form_row(form.encodingDateTime)}}
+                </div>
+                <div class="col">
+                    {{form_row(form.encodingAuthor)}}
+                </div>
+            </div>
             {{form_row(form.encodingNotes)}}
         </div>
 
         {% if validation|default(false) %}
             <div class="alert bg-light">
-                {{form_row(form.validationDateTime)}}
-                {{form_row(form.validationAuthor)}}
+                <div class="form-row">
+                    <div class="col">
+                        {{form_row(form.validationDateTime)}}
+                    </div>
+                    <div class="col">
+                        {{form_row(form.validationAuthor)}}
+                    </div>
+                </div>
                 {{form_row(form.validationNotes)}}
                 {{form_row(form.validated)}}
             </div>
