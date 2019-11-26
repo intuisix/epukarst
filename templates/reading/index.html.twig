@@ -194,6 +194,7 @@
 
                 {# Afficher un bouton permettant d'encoder un nouveau relevé #}
                 <a class="btn btn-primary" href="{{path('reading_encode')}}" role="button"><fa class="fas fa-plus"></fa> Encoder un nouveau relevé</a>
+                <button type="submit" class="btn btn-secondary" formaction="{{path('reading_export')}}"><i class="fas fa-file-excel"></i> Exporter les relevés sélectionnés</button>
             </form>
         </div>
     </div>

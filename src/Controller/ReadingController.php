@@ -3,22 +3,26 @@
 namespace App\Controller;
 
 use DateTime;
+use App\Entity\User;
 use App\Entity\Filter;
-use App\Entity\FilterMeasure;
 use App\Entity\Reading;
 use App\Entity\Station;
-use App\Entity\User;
 use App\Form\FilterType;
 use App\Form\ReadingType;
+use App\Entity\FilterMeasure;
+use App\Service\PaginationService;
+use App\Service\ReadingExporterService;
 use App\Repository\BasinRepository;
 use App\Repository\SystemRepository;
 use App\Repository\ReadingRepository;
 use App\Repository\StationRepository;
 use App\Repository\ParameterRepository;
-use App\Service\PaginationService;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
@@ -161,7 +165,8 @@ class ReadingController extends AbstractController
      * @Route("/reading/encode", name="reading_encode")
      * @IsGranted("ROLE_USER")
      */
-    public function encode(ObjectManager $manager, Request $request) {
+    public function encode(ObjectManager $manager, Request $request)
+    {
         /* Instancier un nouveau relevé */
         $reading = new Reading();
         $reading
@@ -201,7 +206,8 @@ class ReadingController extends AbstractController
      * @Route("/reading/{code}/modify", name="reading_modify")
      * @IsGranted("ROLE_USER")
      */
-    public function modify(Reading $reading, ObjectManager $manager, Request $request) {
+    public function modify(Reading $reading, ObjectManager $manager, Request $request)
+    {
         /* Créer et traiter le formulaire */
         $form = $this->createForm(ReadingType::class, $reading);
         $form->handleRequest($request);
@@ -274,12 +280,48 @@ class ReadingController extends AbstractController
     }
 
     /**
-     * Affiche un relevé existant.
+     * Exporte des relevés.
+     * 
+     * @Route("/reading/export", name="reading_export")
+     * @IsGranted("ROLE_USER")
+     *
+     * @param ReadingRepository $readingRepository
+     * @return Response
+     */
+    public function export(ReadingRepository $readingRepository, ReadingExporterService $exporter, ParameterRepository $parameterRepository, Request $request)
+    {
+        /* Déterminer, à partir de la requête, les relevés à exporter, puis les
+        trier par ordre chronologique */
+        $ids = array_keys($request->request->get('readings'));
+        $exporter->setReadings($readingRepository->findBy(
+            ['code' => $ids],
+            ['fieldDateTime' => 'ASC']));
+
+        /* Charger la liste des paramètres à exporter */
+        $exporter->setParameters($parameterRepository->findAll());
+
+        /* Exporter les relevés dans une feuille de calcul en mémoire */
+        $spreadsheet = $exporter->getSpreadsheet();
+
+        /* Générer le fichier au format Excel 2007 Excel (.xlsx) dans le
+        répertoire de fichiers fichiers temporaire du système */
+        $writer = new Xlsx($spreadsheet);
+        $fileName = "epukarst_readings_" . uniqid() . ".xlsx";
+        $tempName = tempnam(sys_get_temp_dir(), $fileName);
+        $writer->save($tempName);
+
+        /* Renvoyer le fichier en pièce jointe de la réponse */
+        return $this->file($tempName, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
+
+    /**
+     * Affiche un relevé.
      * 
      * @Route("/reading/{code}", name="reading_show")
      * @IsGranted("ROLE_USER")
      */
-    public function show(Reading $reading) {
+    public function show(Reading $reading)
+    {
         return $this->render('reading/show.html.twig', [
             'reading' => $reading
         ]);
