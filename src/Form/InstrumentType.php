@@ -21,7 +21,6 @@ class InstrumentType extends AbstractType
         $builder
             ->add('code', TextType::class, [
                 'label' => "Code d'inventaire",
-                'help' => "La notion d'instrument recouvre, au choix, un appareil identifié individuellement ou un ensemble de consommables identifiés par lot.",
                 'attr' => [
                     'placeholder' => "Entrez un code identifiant unique",
                 ],
@@ -36,24 +35,25 @@ class InstrumentType extends AbstractType
                 'label' => "Marque et/ou modèle",
                 'required' => false,
                 'attr' => [
-                    'placeholder' => "Entrez la marque et/ou le modèle éventuel",
+                    'placeholder' => "Entrez la marque et/ou le modèle (facultatif)",
                 ],
             ])
             ->add('serialNumber', TextType::class, [
                 'label' => "Numéro de série",
                 'required' => false,
                 'attr' => [
-                    'placeholder' => "Entrez le numéro de série éventuel donné par le fabricant",
+                    'placeholder' => "Entrez le numéro de série donné par le fabricant (facultatif)",
                 ],
             ])
             ->add('description', TextareaType::class, [
                 'label' => "Description détaillée",
                 'attr' => [
-                    'placeholder' => "Entrez une description détaillée de l'instrument, comme, par exemple, son utilité, des instructions d'utilisation, des précautions de sécurité, la vérification du bon fonctionnement, ...  (Vous associerez les paramètres mesurés par cet instrument dans la suite du formulaire.)",
-                ]
+                    'placeholder' => "Entrez une description détaillée de l'instrument, comme, par exemple, son utilité, ses instructions d'utilisation, ses précautions de sécurité, la façon de vérifier son bon fonctionnement, ...",
+                    'rows' => 10,
+                ],
             ])
             ->add('measurabilities', CollectionType::class, [
-                'label' => "Paramètres mesurables",
+                'label' => "Paramètres",
                 'entry_type' => MeasurabilityType::class,
                 'allow_add' => true,
                 'allow_delete' => true

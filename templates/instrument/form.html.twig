@@ -13,67 +13,65 @@ modification de relevés #}
     <div class="container">
         <h1>{{title}}</h1>
 
+        <p>Ce formulaire permet d'encoder les informations à propos d'un instrument de mesure, qui peut être, au choix, un appareil identifié individuellement ou un ensemble de consommables identifiés par lot. Le formulaire rassemble les données d'identification, la description, la liste des paramètres mesurés et l'historique métrologique de l'instrument&nbsp;: cela permettra de lier les mesures prises sur le terrain à cet instrument, et d'appréhender la validité de ces mesures.</p>
+
         {{form_start(form)}}
 
-        {# Mettre en forme les informations générales #}
+        {# Mettre en forme les données d'identification #}
+        <h2>Identification</h2>
         <div class="alert bg-light">
-            {{form_row(form.code)}}
-            {{form_row(form.name)}}
-            {{form_row(form.model)}}
-            {{form_row(form.serialNumber)}}
-            {{form_row(form.description)}}
+            <div class="row">
+                <div class="col">
+                    {{form_row(form.code)}}
+                    {{form_row(form.name)}}
+                    {{form_row(form.model)}}
+                    {{form_row(form.serialNumber)}}
+                </div>
+                <div class="col">
+                    {{form_row(form.description)}}
+                </div>
+            </div>
         </div>
 
-        {# Mettre en forme les paramètres mesurables #}
+        {# Afficher le sous-formulaire des paramètres #}
         {{form_row(form.measurabilities)}}
 
-        {# Mettre en forme les étalonnages #}
+        {# Afficher le sous-formulaire des étalonnages #}
         {{form_row(form.calibrations)}}
 
-        <div class="row mb-3">
-            <div class="col">
-                {# Bouton pour ajouter un paramètre mesurable #}
-                <button type="button" data-action="add-measurability" class="btn btn-secondary">
-                    <i class="fas fa-plus"></i>
-                    Ajouter un paramètre mesurable
-                </button>
+        <div class="mb-3">
+            {# Afficher un bouton permettant d'enregistrer l'instrument #}
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-check"></i>
+                Enregistrer l'instrument
+            </button>
 
-                {# Bouton pour ajouter un étalonnage #}
-                <button type="button" data-action="add-calibration" class="btn btn-secondary">
-                    <i class="fas fa-plus"></i>
-                    Ajouter un étalonnage
-                </button>
-
-                {# Bouton pour enregistrer l'instrument #}
-                <button type="submit" class="btn btn-success ml-3">
-                    <i class="fas fa-check"></i>
-                    Enregistrer l'instrument
-                </button>
-
-                {# Bouton pour revenir à l'index #}
-                <a href="{{ path('instrument') }}" class="btn btn-cancel ml-3">
-                    <i class="fas fa-backspace"></i>
-                    Annuler
-                </a>
-            </div>
+            {# Afficher un bouton permettant de revenir à l'index #}
+            <a href="{{ path('instrument') }}" class="btn btn-cancel">
+                <i class="fas fa-backspace"></i>
+                Retourner à la liste
+            </a>
         </div>
 
         {{form_end(form)}}
     </div>
 {% endblock %}
 
+
 {% block _instrument_measurabilities_label %}
-    <h2>
-        {{form_label(form)}}
-    </h2>
-    <p>
-        La liste ci-dessous sert à définir les différents paramètres qui peuvent être mesurés à l'aide de l'instrument, et préciser les limites de ces mesures.
-    </p>
+    <h2>{{form_label(form)}}</h2>
+    <p>La liste ci-dessous permet de définir les différents paramètres qui peuvent être mesurés à l'aide de l'instrument, et préciser les limites de ces mesures.</p>
 {% endblock %}
 
 {% block _instrument_measurabilities_widget %}
-    {# Afficher le widget Twig #}
+    {# Afficher le widget #}
     {{form_widget(form)}}
+
+    {# Afficher un bouton permettant d'ajouter un paramètre #}
+    <button type="button" data-action="add-measurability" class="btn btn-secondary">
+        <i class="fas fa-plus"></i>
+        Ajouter un paramètre
+    </button>
 {% endblock %}
 
 {% block _instrument_measurabilities_entry_row %}
@@ -104,39 +102,44 @@ modification de relevés #}
         </div>
         <div class="row">
             <div class="col">
-                {# Bouton pour supprimer le paramètre mesurable #}
+                {# Afficher un bouton permettant de supprimer le paramètre #}
                 <button type="button" data-action="delete-measurability" data-target="#{{id}}" class="btn btn-danger float-right">
                     <i class="fas fa-trash"></i>
-                    Supprimer ce paramètre mesurable
+                    Supprimer ce paramètre
                 </button>
             </div>
         </div>
     </div>
 {% endblock %}
 
+
 {% block _instrument_calibrations_label %}
-    <h2>
-        {{form_label(form)}}
-    </h2>
+    <h2>{{form_label(form)}}</h2>
     <p>
-        La liste ci-dessous sert à définir la période durant laquelle la précision des mesures réalisées à l'aide de l'instrument est garantie. La signification réelle peut varier suivant le type d'instrument:
+        La liste ci-dessous permet de définir la période durant laquelle la précision des mesures réalisées à l'aide de l'instrument est garantie. La signification réelle peut varier suivant le type d'instrument:
         <ul>
             <li>
-                Pour les appareils concernés par un suivi métrologique, il s'agira vraisemblablement des dates de contrôle et d'étalonnage.
+                Pour les instruments dont la précision ne s'altère pas avec le temps, la liste peut rester vide&nbsp;;
+            </li>
+            <li>
+                Pour les appareils concernés par un suivi métrologique, il s'agira vraisemblablement des dates de contrôle et d'étalonnage&nbsp;;
             </li>
             <li>
                 Pour les consommables, il s'agira vraisemblablement d'une date de péremption.
-            </li>
-            <li>
-                Pour les instruments dont la précision ne s'altère pas avec le temps, la liste peut rester vide.
             </li>
         </ul>
     </p>
 {% endblock %}
 
 {% block _instrument_calibrations_widget %}
-    {# Afficher le widget Twig #}
-    {{ form_widget(form) }}
+    {# Afficher le widget #}
+    {{form_widget(form)}}
+
+    {# Afficher un bouton permettant d'ajouter un étalonnage #}
+    <button type="button" data-action="add-calibration" class="btn btn-secondary">
+        <i class="fas fa-plus"></i>
+        Ajouter un étalonnage
+    </button>
 {% endblock %}
 
 {% block _instrument_calibrations_entry_row %}
@@ -173,6 +176,7 @@ modification de relevés #}
         </div>
     </div>
 {% endblock %}
+
 
 {% block javascripts %}
     <script src="/js/collection.js"></script>
