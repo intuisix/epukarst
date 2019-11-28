@@ -13,27 +13,36 @@ modification de station #}
     <div class="container mb-3">
         <h1>{{title}}</h1>
 
+        <p>Ce formulaire permet d'introduire les données d'identification et descriptives d'une station, emplacement qui fait partie d'un bassin d'un système et dans lequel des mesures sont réalisées. La localisation de la station devrait être décrite le plus précisément possible, pour que les mesures soient systématiquement réalisées au même emplacement.</p>
+
         {{form_start(form)}}
 
         <div class="alert bg-light">
-            {{form_row(form.basin)}}
-            {{form_row(form.code)}}
-            {{form_row(form.name)}}
-            {{form_row(form.kind)}}
-            {{form_row(form.description)}}
+            <div class="row">
+                <div class="col">
+                    {{form_row(form.code)}}
+                    {{form_row(form.name)}}
+                    {{form_row(form.basin)}}
+                    {{form_row(form.kind)}}
+                    {{form_row(form.atlasCode)}}
+                </div>
+                <div class="col">
+                    {{form_row(form.description)}}
+                </div>
+            </div>
         </div>
 
         <div class="mb-3">
-            {# Ajouter un bouton pour enregistrer la station #}
+            {# Afficher un bouton permettant d'enregistrer la station #}
             <button type="submit" class="btn btn-success">
                 <i class="fas fa-check"></i>
                 Enregistrer la station
             </button>
 
-            {# Ajouter un bouton pour revenir à l'index #}
-            <a href="{{ path('station') }}" class="btn btn-cancel ml-3">
+            {# AAfficher un bouton permettant de revenir à l'index #}
+            <a href="{{ path('station') }}" class="btn btn-cancel">
                 <i class="fas fa-backspace"></i>
-                Revenir à la liste
+                Retourner à la liste
             </a>
         </div>
 

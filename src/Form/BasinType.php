@@ -15,9 +15,9 @@ class BasinType extends AbstractType
     {
         $builder
             ->add('code', TextType::class, [
-                'label' => "Nom",
+                'label' => "Code identifiant",
                 'attr' => [
-                    'placeholder' => 'Entrez un code identifiant'
+                    'placeholder' => 'Entrez un code unique'
                 ],
             ])
             ->add('name', TextType::class, [

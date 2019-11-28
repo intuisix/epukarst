@@ -38,6 +38,17 @@ class Station
     private $name;
 
     /**
+     * Code identifiant le phénomène karstique dans l'Atlas du Karst Wallon,
+     * (référence documentaire).
+     * 
+     * Etant donné que plusieurs stations peuvent faire partie d'un même
+     * phénomène karstique, ce code peut ne pas être unique.
+     * 
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $atlasCode;
+
+    /**
      * @ORM\Column(type="string", length=255)
      */
     private $kind;
@@ -106,6 +117,18 @@ class Station
     public function setKind(string $kind): self
     {
         $this->kind = $kind;
+
+        return $this;
+    }
+
+    public function getAtlasCode(): ?string
+    {
+        return $this->atlasCode;
+    }
+
+    public function setAtlasCode(?string $atlasCode): self
+    {
+        $this->atlasCode = $atlasCode;
 
         return $this;
     }

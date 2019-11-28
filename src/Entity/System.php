@@ -12,6 +12,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\SystemRepository")
  * @ORM\HasLifecycleCallbacks()
+ * 
  * @UniqueEntity(fields={"name"}, message="Un autre système possède déjà ce nom. Veuillez en choisir un autre.")
  * @UniqueEntity(fields={"code"}, message="Un autre système possède déjà ce code. Veuillez en choisir un autre.")
  */
@@ -65,14 +66,6 @@ class System
     private $basin;
 
     /**
-     * Numéro Atlas du Karst Wallon du système.
-     * 
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Le numéro AKWA ne doit pas être vide")
-     */
-    private $number;
-
-    /**
      * Description détaillée du système.
      * 
      * @ORM\Column(type="text")
@@ -97,7 +90,7 @@ class System
     /**
      * Code de masse d'eau.
      * 
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $waterMass;
 
@@ -211,18 +204,6 @@ class System
         return $this;
     }
 
-    public function getNumber(): ?string
-    {
-        return $this->number;
-    }
-
-    public function setNumber(string $number): self
-    {
-        $this->number = $number;
-
-        return $this;
-    }
-
     public function getDescription(): ?string
     {
         return $this->description;
@@ -283,7 +264,7 @@ class System
         return $this->waterMass;
     }
 
-    public function setWaterMass(string $waterMass): self
+    public function setWaterMass(?string $waterMass): self
     {
         $this->waterMass = $waterMass;
 

@@ -17,9 +17,9 @@ class StationType extends AbstractType
     {
         $builder
             ->add('code', TextType::class, [
-                'label' => "Code",
+                'label' => "Code identifiant",
                 'attr' => [
-                    'placeholder' => "Entrez un code identifiant"
+                    'placeholder' => "Entrez un code unique"
                 ]
             ])
             ->add('name', TextType::class, [
@@ -28,22 +28,31 @@ class StationType extends AbstractType
                     'placeholder' => "Entrez une dénomination"
                 ]
             ])
+            ->add('basin', EntityType::class, [
+                'label' => "Bassin",
+                'class' => Basin::class,
+                'choice_label' => 'name',
+                'group_by' => 'system.name'
+            ])
             ->add('kind', TextType::class, [
                 'label' => "Genre",
                 'attr' => [
                     'placeholder' => "Entrez un genre"
                 ]
             ])
+            ->add('atlasCode', TextType::class, [
+                'label' => "Code AKWA",
+                'attr' => [
+                    'placeholder' => "Entrez le numéro AKWA (facultatif)"
+                ],
+                'required' => false,
+            ])
             ->add('description', TextareaType::class, [
                 'label' => "Description",
                 'attr' => [
-                    'placeholder' => "Entrez une description détaillée"
+                    'placeholder' => "Entrez une description la plus détaillée possible afin de permettre la réalisation des mesures toujours au même emplacement, même lorsque d'autres personnes sont amenées à réaliser les mesures sur cette station",
+                    'rows' => 15,
                 ]
-            ])
-            ->add('basin', EntityType::class, [
-                'class' => Basin::class,
-                'choice_label' => 'name',
-                'group_by' => 'system.name'
             ])
         ;
     }

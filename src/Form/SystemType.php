@@ -20,10 +20,9 @@ class SystemType extends AbstractType
     {
         $builder
             ->add('code', TextType::class, [
-                'label' => "Code",
-                'help' => "Ce code sera utilisé pour construire ceux des futurs relevés relatifs à ce système.",
+                'label' => "Code identifiant",
                 'attr' => [
-                    'placeholder' => "Choisissez un code"
+                    'placeholder' => "Entrez un code unique"
                 ]
             ])
             ->add('name', TextType::class, [
@@ -44,17 +43,12 @@ class SystemType extends AbstractType
                     'placeholder' => "Entrez le nom du bassin dans lequel se déverse le système"
                 ]
             ])
-            ->add('number', TextType::class, [
-                'label' => "Code AKWA",
-                'attr' => [
-                    'placeholder' => "Entrez le numéro AKWA facultatif"
-                ]
-            ])
             ->add('waterMass', TextType::class, [
                 'label' => "Code de masse d'eau",
                 'attr' => [
-                    'placeholder' => "Entrez le numéro de masse d'eau facultatif"
-                ]
+                    'placeholder' => "Entrez le code de masse d'eau (facultatif)"
+                ],
+                'required' => false,
             ])
             ->add('slug', TextType::class, [
                 'label' => "Slug pour l'URL",

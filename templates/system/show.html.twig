@@ -81,6 +81,9 @@
                         <h3 id="station_{{station.code}}" class="d-flex align-items-center">
                             <span class="badge badge-secondary mr-2">{{station.code}}</span>
                             {{station.name}}
+                            {% if station.atlasCode %}
+                                <p>Code AKWA&nbsp;: {{station.atlasCode}}</p>
+                            {% endif %}
                         </h3>
                         {{station.description|raw}}
                     {% endfor %}
