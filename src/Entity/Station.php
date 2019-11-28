@@ -39,6 +39,13 @@ class Station
     private $name;
 
     /**
+     * Genre de la station.
+     * 
+     * @ORM\ManyToOne(targetEntity="App\Entity\StationKind", inversedBy="stations")
+     */
+    private $kind;
+
+    /**
      * Code identifiant le phénomène karstique dans l'Atlas du Karst Wallon,
      * (référence documentaire).
      * 
@@ -48,11 +55,6 @@ class Station
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $atlasCode;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $kind;
 
     /**
      * @ORM\Column(type="text")
@@ -110,12 +112,12 @@ class Station
         return $this;
     }
 
-    public function getKind(): ?string
+    public function getKind(): ?StationKind
     {
         return $this->kind;
     }
 
-    public function setKind(string $kind): self
+    public function setKind(?StationKind $kind): self
     {
         $this->kind = $kind;
 

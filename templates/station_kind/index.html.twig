@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Genres de station{% endblock %}
+
+{% block body %}
+    <div class="container mb-3">
+        <h1>Genres de stations</h1>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Dénomination</th>
+                    <th>Description</th>
+                    <th>Stations</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stationKind in stationKinds|sort((a, b) => (a.name <=> b.name)) %}
+                    <tr>
+                        <td>
+                            {{stationKind.name}}
+                        </td>
+                        <td>
+                            {{stationKind.description|striptags}}
+                        </td>
+                        <td>
+                            {% if stationKind.stations|length %}
+                                <span class="badge badge-primary badge-pill">
+                                        {{stationKind.stations|length}}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{path('station_kind_modify', {'id': stationKind.id})}}" class="text-primary"><i class="fas fa-edit"></i></a>
+                            <a href="{{path('station_kind_delete', {'id': stationKind.id})}}" class="text-danger" data-action="delete"><i class="fas fa-trash"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ path('station_kind_create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Ajouter un genre de station
+        </a>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        /* Programme une demande de confirmation chaque fois que l'on clique
+        sur un bouton de suppression de genre */
+        $('a[data-action="delete"]').click(function() {
+            return confirm("Etes-vous sûr de vouloir supprimer ce genre de station ?");
+        });
+    </script>
+{% endblock %}

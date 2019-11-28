@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Basin;
 use App\Entity\Station;
+use App\Entity\StationKind;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -34,11 +35,14 @@ class StationType extends AbstractType
                 'choice_label' => 'name',
                 'group_by' => 'system.name'
             ])
-            ->add('kind', TextType::class, [
+            ->add('kind', EntityType::class, [
                 'label' => "Genre",
+                'class' => StationKind::class,
+                'choice_label' => 'name',
                 'attr' => [
-                    'placeholder' => "Entrez un genre"
-                ]
+                    'placeholder' => "Sélectionnez un genre (facultatif)"
+                ],
+                'required' => false,
             ])
             ->add('atlasCode', TextType::class, [
                 'label' => "Code AKWA",
@@ -48,7 +52,7 @@ class StationType extends AbstractType
                 'required' => false,
             ])
             ->add('description', TextareaType::class, [
-                'label' => "Description",
+                'label' => "Description (HTML)",
                 'attr' => [
                     'placeholder' => "Entrez une description la plus détaillée possible afin de permettre la réalisation des mesures toujours au même emplacement, même lorsque d'autres personnes sont amenées à réaliser les mesures sur cette station",
                     'rows' => 15,

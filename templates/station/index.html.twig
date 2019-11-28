@@ -24,11 +24,11 @@
                     <td>{{station.code}}</td>
                     <td>{{station.name}}</td>
                     <td>{{station.atlasCode}}</td>
-                    <td>{{station.kind}}</td>
+                    <td>{{station.kind.name|default("")}}</td>
                     <td>{{station.basin.name}}</td>
                     <td>{{station.basin.system.name}}</td>
                     <td>
-                        {% if station.readings|length > 0 %}
+                        {% if station.readings|length %}
                             <span class="badge badge-primary badge-pill">
                                 {{station.readings|length}}
                             </span>
@@ -46,7 +46,7 @@
         {{pagination.display}}
 
         <a href="{{ path('station_create') }}" class="btn btn-primary">
-            Créer une station
+            <i class="fas fa-plus"></i> Créer une station
         </a>
     </div>
 {% endblock %}

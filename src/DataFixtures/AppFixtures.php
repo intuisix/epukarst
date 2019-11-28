@@ -13,6 +13,7 @@ use App\Entity\UserRole;
 use App\Entity\Parameter;
 use App\Entity\Instrument;
 use App\Entity\Calibration;
+use App\Entity\StationKind;
 use App\Entity\Measurability;
 use Faker\Factory as FakerFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -28,6 +29,7 @@ class AppFixtures extends Fixture
     private $parameters;
     private $instruments;
     private $measurabilities;
+    private $stationKinds;
 
     /**
      * Contruit le générateur de données.
@@ -52,6 +54,7 @@ class AppFixtures extends Fixture
         $this->loadOtherUsers($manager);
         $this->loadParameters($manager);
         $this->loadInstruments($manager);
+        $this->loadStationKinds($manager);
         $this->loadSystems($manager);
         $manager->flush();
     }
@@ -369,6 +372,34 @@ class AppFixtures extends Fixture
     }
 
     /**
+     * Génère des genres de stations.
+     *
+     * @param ObjectManager $manager
+     * @return void
+     */
+    private function loadStationKinds(ObjectManager $manager)
+    {
+        $names = [
+            "Perte",
+            "Chantoir",
+            "Gour",
+            "Stalactite",
+            "Rivière",
+            "Regard",
+            "Siphon",
+            "Résurgence",
+        ];
+
+        $this->stationKinds = [];
+        foreach ($names as $name) {
+            $stationKind = new StationKind();
+            $stationKind->setName($name);
+            $manager->persist($stationKind);
+            $this->stationKinds[] = $stationKind;
+        }
+    }
+
+    /**
      * Génère des mesures relatives à un relevé.
      *
      * @param ObjectManager $manager
@@ -427,24 +458,13 @@ class AppFixtures extends Fixture
      * @return void
      */
     private function loadStations(ObjectManager $manager, Basin $basin) {
-        $namings = [
-            "Perte",
-            "Chantoir",
-            "Gour",
-            "Stalactite",
-            "Rivière",
-            "Regard",
-            "Siphon",
-            "Résurgence",
-        ];
-
         for ($i = 0; $i < mt_rand(1, 10); $i++) {
-            $kind = $namings[mt_rand(0, count($namings) - 1)];
+            $kind = $this->stationKinds[mt_rand(0, count($this->stationKinds) - 1)];
             $station = new Station();
             $station
                 ->setBasin($basin)
                 ->setCode($this->getFakeCode())
-                ->setName($kind . " " . $this->faker->firstName)
+                ->setName($kind->getName() . " " . $this->faker->firstName)
                 ->setKind($kind)
                 ->setDescription($this->getFakeDescription(1, 3));
             $this->loadReadings($manager, $station);
@@ -486,7 +506,6 @@ class AppFixtures extends Fixture
             ->setIntroduction("Système souterrain du vallon de Lesve")
             ->setBasin("Burnot")
             ->setCommune("Profondeville")
-            ->setNumber("533-010")
             ->setWaterMass("M23")
             ->setDescription("<p>Ce vallon inclut l'abîme de Lesve et la résurgence à la Vilaine Source.</p>" . $this->getFakeDescription(1, 5));
         $this->loadBasins($manager, $system);
@@ -498,7 +517,6 @@ class AppFixtures extends Fixture
             ->setName("Système de Hotton")
             ->setBasin("Ourthe")
             ->setCommune("Hotton")
-            ->setNumber("555-005")
             ->setWaterMass("M23")
             ->setIntroduction("Système souterrain de Hotton")
             ->setDescription("<p>L'élément principal de ce système est la grotte des Mille-et-Une Nuits.</p>" . $this->getFakeDescription(1, 5));
@@ -511,7 +529,6 @@ class AppFixtures extends Fixture
             ->setName("Noû Bleû (Synclinal de Sprimont)")
             ->setBasin("Ourthe")
             ->setCommune("Sprimont")
-            ->setNumber("492-200")
             ->setWaterMass("M21")
             ->setIntroduction("Système souterrain du synclinal de Sprimont")
             ->setDescription("<p>Description du système dont les éléments principaux sont la grotte du Noû Bleû et le lac Bleû.</p>" . $this->getFakeDescription(1, 5));
@@ -524,7 +541,6 @@ class AppFixtures extends Fixture
             ->setName("Vallon des Chantoirs (Remouchamps)")
             ->setBasin("Amblève")
             ->setCommune("Aywaille")
-            ->setNumber("493-074")
             ->setWaterMass("M23")
             ->setIntroduction("Système du vallon des Chantoirs")
             ->setDescription("<p>Description du système.</p>" . $this->getFakeDescription(1, 5));
@@ -537,7 +553,6 @@ class AppFixtures extends Fixture
             ->setName("Lesse souterraine (Furfooz)")
             ->setBasin("Lesse")
             ->setCommune("Dinant")
-            ->setNumber("538-252")
             ->setWaterMass("M21")
             ->setIntroduction("Système souterrain de la basse-Lesse")
             ->setDescription("<p>Description du système dont un élément est la Galerie aux Sources.</p>" . $this->getFakeDescription(1, 5));
