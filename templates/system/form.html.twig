@@ -5,12 +5,19 @@ modification de paramètres #}
 
 {% form_theme form _self %}
 
+{% block title %}
+    {{title}}
+{% endblock %}
+
 {% block body %}
     <div class="container mb-3">
-        <h1>{% block title %}{% endblock %}</h1>
+        <h1>{{title}}</h1>
+
+        <p>Ce formulaire permet d'introduire les principales informations relatives à un système karstique étudié : données d'identification, description affichées sur la page d'accueil du site, liste des bassins d'alimentation, photos, et liste des paramètres qui seront mesurés.</p>
 
         {{form_start(form)}}
 
+        <h2>Identification</h2>
         <div class="alert bg-light">
             <div class="row">
                 <div class="col-md-3">
@@ -29,26 +36,29 @@ modification de paramètres #}
             </div>
         </div>
 
+        {# Constituer le sous-formulaire des bassins #}
         {{form_row(form.basins)}}
 
+        {# Constituer le sous-formulaire des photos #}
         {{form_row(form.pictures)}}
-
         {{form_row(form.newPictures)}}
 
-        <div class="row">
-            <div class="col">
-                {# Bouton pour enregistrer le système #}
-                <button type="submit" class="btn btn-success">
-                    <i class="fas fa-check"></i>
-                    Enregistrer le système
-                </button>
+        {# Constituer le sous-formulaire des paramètres #}
+        {{form_row(form.parameters)}}
 
-                {# Bouton pour revenir à l'index #}
-                <a href="{{ path('system') }}" class="btn btn-cancel ml-3">
-                    <i class="fas fa-backspace"></i>
-                    Annuler
-                </a>
-            </div>
+        {# Constituer la dernière ligne du formulaire #}
+        <div class="my-3">
+            {# Afficher un bouton permettant d'enregistrer le système #}
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-check"></i>
+                Enregistrer le système
+            </button>
+
+            {# Afficher un bouton permettant de revenir à l'index #}
+            <a href="{{ path('system') }}" class="btn btn-cancel">
+                <i class="fas fa-backspace"></i>
+                Annuler
+            </a>
         </div>
 
         {{form_end(form)}}
@@ -58,7 +68,7 @@ modification de paramètres #}
 
 {% block _system_basins_label %}
     <h2>{{form_label(form)}}</h2>
-    <p>La liste des bassins dont le système est composé permet d'y relier les stations d'observation.</p>
+    <p>La liste ci-dessous permet de recenser les bassins d'alimentation faisant partie du système.</p>
 {% endblock %}
 
 {% block _system_basins_row %}
@@ -78,21 +88,24 @@ modification de paramètres #}
 {% block _system_basins_entry_widget %}
     <div class="form-group alert bg-light" id="{{id}}">
         <div class="row">
-            <div class="col md-3">
+            <div class="col">
                 {{form_row(form.code)}}
                 {{form_row(form.name)}}
             </div>
             <div class="col">
                 {{form_row(form.description)}}
-
-                {% if (form.vars.data is null) or (form.vars.data.stations|length == 0) %}
-                    {# Bouton pour supprimer le bassin #}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {% if (form.vars.data is not null) and (form.vars.data.stations|length) %}
+                    <p>Ce bassin contient {{form.vars.data.stations|length}} station(s).</p>
+                {% else %}
+                    {# Afficher un bouton pour supprimer le bassin #}
                     <button type="button" data-action="delete-basin" data-target="#{{id}}" class="btn btn-danger float-right">
                         <i class="fas fa-trash"></i>
                         Supprimer ce bassin
                     </button>
-                {% else %}
-                    <p class="float-right">Ce bassin contient {{form.vars.data.stations|length}} stations.</p>
                 {% endif %}
             </div>
         </div>
@@ -102,7 +115,7 @@ modification de paramètres #}
 
 {% block _system_pictures_label %}
     <h2>{{form_label(form)}}</h2>
-    <p>Les photos introduites ici seront affichées avec la description du système. Chaque photo est susceptible d'être prise au hasard lors de différents affichages relatifs au système.<p>
+    <p>Les photos de la liste ci-dessous seront affichées avec la description du système. Chaque photo est susceptible d'être prise au hasard lors de différents affichages relatifs au système.<p>
 {% endblock %}
 
 {% block _system_pictures_widget %}
@@ -134,6 +147,46 @@ modification de paramètres #}
     </div>
 {% endblock %}
 
+
+{% block _system_parameters_label %}
+    <h2>{{form_label(form)}}</h2>
+    <p>La liste ci-dessous permet de planifier les paramètres à mesurer sur le système ainsi que l'instrument qui sera en principe utilisé pour ces mesures.</p>
+{% endblock %}
+
+{% block _system_parameters_row %}
+    {{form_row(form)}}
+    {# Afficher un bouton permettant d'ajouter un paramètre #}
+    <button type="button" data-action="add-parameter" class="btn btn-secondary">
+        <i class="fas fa-plus"></i>
+        Ajouter un paramètre
+    </button>
+{% endblock %}
+
+{% block _system_parameters_entry_row %}
+    {# N'afficher que le widget, sans étiquette ou autre information #}
+    {{form_widget(form)}}
+{% endblock %}
+
+{% block _system_parameters_entry_widget %}
+    <div class="form-group alert bg-light" id="{{id}}">
+        <div class="row">
+            <div class="col">
+                {{form_row(form.instrumentParameter)}}
+            </div>
+            <div class="col">
+                {{form_row(form.notes)}}
+
+                {# Bouton pour supprimer le paramètre #}
+                <button type="button" data-action="delete-parameter" data-target="#{{id}}" class="btn btn-danger float-right">
+                    <i class="fas fa-trash"></i>
+                    Supprimer ce paramètre
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
 {% block javascripts %}
     <script src="/js/collection.js"></script>
     <script>
@@ -154,5 +207,14 @@ modification de paramètres #}
                 'Etes-vous sûr de vouloir supprimer cette photo ?'
             );
         picturesCollectionResponder();
+
+        var parametersCollectionResponder =
+            createCollectionResponders(
+                '#system_parameters',
+                'button[data-action="add-parameter"]',
+                'button[data-action="delete-parameter"]',
+                'Etes-vous sûr de vouloir supprimer ce paramètre ?'
+            );
+        parametersCollectionResponder();
     </script>
 {% endblock %}

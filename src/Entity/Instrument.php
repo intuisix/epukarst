@@ -57,7 +57,7 @@ class Instrument
      * Description détaillée de l'instrument.
      * 
      * @ORM\Column(type="text")
-     * @Assert\Length(min=50, minMessage="La description détaillée doit faire au moins 50 caractères")
+     * @Assert\Length(min=10, minMessage="La description détaillée doit faire au moins 10 caractères")
      */
     private $description;
 

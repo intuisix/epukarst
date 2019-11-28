@@ -27,12 +27,12 @@ class SystemController extends AbstractController
     }
 
     /**
-     * Affiche et traite le formulaire de modification d'un système karstique.
+     * Traite l'ajout d'un système karstique.
      * 
-     * @Route("/system/create", name="system_create")
+     * @Route("/system/add", name="system_create")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function create(ObjectManager $manager, Request $request)
+    public function add(ObjectManager $manager, Request $request)
     {
         /* Instancier un nouveau système */
         $system = new System();
@@ -41,29 +41,9 @@ class SystemController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            foreach ($system->getBasins() as $basin) {
-                $basin->setSystem($system);
-                $manager->persist($basin);
-            }
+            /* Mettre à jour les propriétés du système */
+            $picturesAdded = $this->update($system, $form, $manager);
 
-            foreach ($system->getPictures() as $picture) {
-                $picture->setSystem($system);
-                $manager->persist($picture);
-            }
-
-            $picturesAdded = false;
-            foreach ($form['newPictures']->getData() as $uploadedFile)
-            {
-                $picture = new SystemPicture();
-                $picture->setUploadedFile($uploadedFile);
-                $system->addPicture($picture);
-                $manager->persist($picture);
-                $picturesAdded = true;
-            }
-
-            $manager->persist($system);
-            $manager->flush();
-            
             $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été créé avec succès.");
     
             if ($picturesAdded) {
@@ -78,14 +58,15 @@ class SystemController extends AbstractController
             }
         }
 
-        return $this->render('system/create.html.twig', [
+        return $this->render('system/form.html.twig', [
             'system' => $system,
             'form' => $form->createView(),
+            'title' => "Ajouter un nouveau système",
         ]);
     }
 
     /**
-     * Affiche et traite le formulaire de modification d'un système karstique.
+     * Traite la modification d'un système karstique.
      * 
      * @Route("/system/{slug}/modify", name="system_modify")
      * @IsGranted("ROLE_ADMIN")
@@ -97,28 +78,8 @@ class SystemController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            foreach ($system->getBasins() as $basin) {
-                $basin->setSystem($system);
-                $manager->persist($basin);
-            }
-
-            foreach ($system->getPictures() as $picture) {
-                $picture->setSystem($system);
-                $manager->persist($picture);
-            }
-
-            $picturesAdded = false;
-            foreach ($form['newPictures']->getData() as $uploadedFile)
-            {
-                $picture = new SystemPicture();
-                $picture->setUploadedFile($uploadedFile);
-                $system->addPicture($picture);
-                $manager->persist($picture);
-                $picturesAdded = true;
-            }
-
-            $manager->persist($system);
-            $manager->flush();
+            /* Mettre à jour les propriétés du système */
+            $picturesAdded = $this->update($system, $form, $manager);
 
             $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été modifié avec succès.");
     
@@ -134,9 +95,10 @@ class SystemController extends AbstractController
             }
         }
 
-        return $this->render('system/modify.html.twig', [
+        return $this->render('system/form.html.twig', [
             'system' => $system,
             'form' => $form->createView(),
+            'title' => "Modifier le système {$system->getName()}"
         ]);
     }
 
@@ -170,5 +132,44 @@ class SystemController extends AbstractController
         return $this->render('system/show.html.twig', [
             'system' => $system
         ]);
+    }
+
+    /**
+     * Met à jour les propriétés du système.
+     *
+     * @param System $system
+     * @return void
+     */
+    private function update(System $system, $form, ObjectManager $manager)
+    {
+        foreach ($system->getBasins() as $basin) {
+            $basin->setSystem($system);
+            $manager->persist($basin);
+        }
+
+        foreach ($system->getPictures() as $picture) {
+            $picture->setSystem($system);
+            $manager->persist($picture);
+        }
+
+        foreach ($system->getParameters() as $parameter) {
+            $parameter->setSystem($system);
+            $manager->persist($parameter);
+        }
+
+        $picturesAdded = false;
+        foreach ($form['newPictures']->getData() as $uploadedFile)
+        {
+            $picture = new SystemPicture();
+            $picture->setUploadedFile($uploadedFile);
+            $system->addPicture($picture);
+            $manager->persist($picture);
+            $picturesAdded = true;
+        }
+
+        $manager->persist($system);
+        $manager->flush();
+
+        return $picturesAdded;
     }
 }

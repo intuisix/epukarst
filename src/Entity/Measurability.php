@@ -58,6 +58,22 @@ class Measurability
     private $notes;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\SystemParameter", mappedBy="instrumentParameter", orphanRemoval=true)
+     */
+    private $systemParameters;
+
+    /**
+     * Construit l'objet.
+     */
+    public function __construct()
+    {
+        $this->measures = new ArrayCollection();
+        $this->systemParameters = new ArrayCollection();
+    }
+
+    /**
+     * Contrôle la validité des propriétés de l'objet.
+     * 
      * @Assert\Callback
      */
     public function validate(ExecutionContextInterface $context, $payload)
@@ -91,7 +107,7 @@ class Measurability
         /* Tester la valeur maximum */
         if ($this->maximumValue) {
             if ((null !== $physicalMaximum) &&
-                ($this->value > $physicalMaximum)) {
+                ($this->maximumValue > $physicalMaximum)) {
                 $context
                     ->buildViolation("Cette valeur est supérieure à ce qui est physiquement possible (au maximum $physicalMaximum $unit).")
                     ->atPath('maximumValue')
@@ -111,9 +127,19 @@ class Measurability
         }
     }
 
-    public function __construct()
+    /**
+     * Retourne un nom destiné à l'affichage, en le composant du nom du
+     * paramètre, du nom de l'instrument et de l'unité de mesure.
+     *
+     * @return string|null
+     */
+    public function getNameWithUnit(): ?string
     {
-        $this->measures = new ArrayCollection();
+        $unit = $this->parameter->getUnit();
+        return
+            $this->parameter->getName() . " : " .
+            $this->instrument->getName() .
+            (empty($unit) ? "" : " [$unit]");
     }
 
     public function getId(): ?int
@@ -220,6 +246,37 @@ class Measurability
     public function setNotes(?string $notes): self
     {
         $this->notes = $notes;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SystemParameter[]
+     */
+    public function getSystemParameters(): Collection
+    {
+        return $this->systemParameters;
+    }
+
+    public function addSystemParameter(SystemParameter $systemParameter): self
+    {
+        if (!$this->systemParameters->contains($systemParameter)) {
+            $this->systemParameters[] = $systemParameter;
+            $systemParameter->setInstrumentParameter($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSystemParameter(SystemParameter $systemParameter): self
+    {
+        if ($this->systemParameters->contains($systemParameter)) {
+            $this->systemParameters->removeElement($systemParameter);
+            // set the owning side to null (unless already changed)
+            if ($systemParameter->getInstrumentParameter() === $this) {
+                $systemParameter->setInstrumentParameter(null);
+            }
+        }
 
         return $this;
     }

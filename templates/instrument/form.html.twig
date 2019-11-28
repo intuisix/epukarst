@@ -102,11 +102,27 @@ modification de relevés #}
         </div>
         <div class="row">
             <div class="col">
-                {# Afficher un bouton permettant de supprimer le paramètre #}
-                <button type="button" data-action="delete-measurability" data-target="#{{id}}" class="btn btn-danger float-right">
-                    <i class="fas fa-trash"></i>
-                    Supprimer ce paramètre
-                </button>
+                {% if form.vars.data and (form.vars.data.systemParameters|length or form.vars.data.measures|length) %}
+                    {% if form.vars.data.systemParameters|length %}
+                        <p>
+                            Ce paramètre est affecté au(x) système(s)&nbsp;:
+                            {% for parameter in form.vars.data.systemParameters %}
+                                {{parameter.system.name}}{% if loop.last %}.{% else %},{% endif %}
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                    {% if form.vars.data.measures|length %}
+                        <p>
+                            Ce paramètre est affecté à {{form.vars.data.measures|length}} mesure(s).
+                        </p>
+                    {% endif %}
+                {% else %}
+                    {# Afficher un bouton permettant de supprimer le paramètre #}
+                    <button type="button" data-action="delete-measurability" data-target="#{{id}}" class="btn btn-danger float-right">
+                        <i class="fas fa-trash"></i>
+                        Supprimer ce paramètre
+                    </button>
+                {% endif %}
             </div>
         </div>
     </div>

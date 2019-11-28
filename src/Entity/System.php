@@ -117,6 +117,11 @@ class System
     private $userRoles;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\SystemParameter", mappedBy="system", orphanRemoval=true)
+     */
+    private $parameters;
+
+    /**
      * Construit un nouveau système.
      */
     public function __construct()
@@ -124,6 +129,7 @@ class System
         $this->pictures = new ArrayCollection();
         $this->basins = new ArrayCollection();
         $this->userRoles = new ArrayCollection();
+        $this->parameters = new ArrayCollection();
     }
 
     /**
@@ -340,6 +346,37 @@ class System
             // set the owning side to null (unless already changed)
             if ($userRole->getLinkedSystem() === $this) {
                 $userRole->setLinkedSystem(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SystemParameter[]
+     */
+    public function getParameters(): Collection
+    {
+        return $this->parameters;
+    }
+
+    public function addParameter(SystemParameter $parameter): self
+    {
+        if (!$this->parameters->contains($parameter)) {
+            $this->parameters[] = $parameter;
+            $parameter->setSystem($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParameter(SystemParameter $parameter): self
+    {
+        if ($this->parameters->contains($parameter)) {
+            $this->parameters->removeElement($parameter);
+            // set the owning side to null (unless already changed)
+            if ($parameter->getSystem() === $this) {
+                $parameter->setSystem(null);
             }
         }
 

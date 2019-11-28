@@ -109,7 +109,13 @@ class SystemType extends AbstractType
                 'label' => "Bassins d'alimentation",
                 'entry_type' => BasinType::class,
                 'allow_add' => true,
-                'allow_delete' => false,
+                'allow_delete' => true,
+            ])
+            ->add('parameters', CollectionType::class, [
+                'label' => "Instruments de mesure",
+                'entry_type' => SystemParameterType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
             ])
         ;
     }
