@@ -25,7 +25,7 @@ class StationKindController extends AbstractController
     /**
      * @Route("/station-kind/create", name="station_kind_create")
      */
-    public function create(StationKindRepository $repository, ObjectManager $manager, Request $request)
+    public function create(ObjectManager $manager, Request $request)
     {
         /* Instancier un nouveau genre de station */
         $stationKind = new StationKind();
