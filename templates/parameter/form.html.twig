@@ -1,13 +1,17 @@
 {# Ce template définit une base commune pour les formulaires de création et de
-modification de paramètres #}
+modification de paramètre #}
 
 {% extends 'base.html.twig' %}
+
+{% block title %}
+    {{title}}
+{% endblock %}
 
 {% form_theme form _self %}
 
 {% block body %}
     <div class="container mb-3">
-        <h1>{% block title %}{% endblock %}</h1>
+        <h1>{{title}}</h1>
 
         {{form_start(form)}}
 
@@ -28,21 +32,17 @@ modification de paramètres #}
             </div>
         </div>
 
-        <div class="row">
-            <div class="col">
-                {# Bouton pour enregistrer le paramètre #}
-                <button type="submit" class="btn btn-success">
-                    <i class="fas fa-check"></i>
-                    Enregistrer le paramètre
-                </button>
+        {# Afficher un bouton permettant d'enregistrer le paramètre #}
+        <button type="submit" class="btn btn-success">
+            <i class="fas fa-check"></i>
+            Enregistrer le paramètre
+        </button>
 
-                {# Bouton pour revenir à l'index #}
-                <a href="{{ path('parameter') }}" class="btn btn-cancel ml-3">
-                    <i class="fas fa-backspace"></i>
-                    Annuler
-                </a>
-            </div>
-        </div>
+        {# Afficher un bouton permettant de revenir à l'index #}
+        <a href="{{ path('parameter') }}" class="btn btn-cancel">
+            <i class="fas fa-backspace"></i>
+            Retourner à la liste
+        </a>
 
         {{form_end(form)}}
     </div>

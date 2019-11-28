@@ -26,8 +26,8 @@ class ParameterController extends AbstractController
     }
 
     /**
-     * Affiche et traite le formulaire de création d'un paramètre.
-
+     * Traite le formulaire de création d'un paramètre.
+     * 
      * @Route("/parameter/create", name="parameter_create")
      * @IsGranted("ROLE_ADMIN")
      */
@@ -41,20 +41,21 @@ class ParameterController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $manager->persist($parameter);
             $manager->flush();
-            
+
             $this->addFlash('success', "Le paramètre <strong>{$parameter->getName()}</strong> a été créé avec succès.");
-    
+
             return $this->redirectToRoute('parameter');
         }
 
-        return $this->render('parameter/create.html.twig', [
+        return $this->render('parameter/form.html.twig', [
             'parameter' => $parameter,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'title' => "Ajouter un nouveau paramètre",
         ]);
     }
 
     /**
-     * Affiche et traite le formulaire de modification d'un paramètre.
+     * Traite le formulaire de modification d'un paramètre.
      * 
      * @Route("/parameter/{id}/modify", name="parameter_modify")
      * @IsGranted("ROLE_ADMIN")
@@ -67,15 +68,16 @@ class ParameterController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $manager->persist($parameter);
             $manager->flush();
-            
+
             $this->addFlash('success', "Le paramètre <strong>{$parameter->getName()}</strong> a été modifié avec succès.");
-    
+
             return $this->redirectToRoute('parameter');
         }
 
-        return $this->render('parameter/modify.html.twig', [
+        return $this->render('parameter/form.html.twig', [
             'parameter' => $parameter,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'title' => "Modifier le paramètre {$parameter->getName()}",
         ]);
     }
 
