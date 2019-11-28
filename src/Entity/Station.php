@@ -11,6 +11,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass="App\Repository\StationRepository")
  * 
  * @UniqueEntity(fields={"code"}, message="Une autre station possède déjà ce code. Veuillez définir un code unique.")
+ * @UniqueEntity(fields={"name", "basin"}, message="Une autre station possède déjà ce nom dans le même bassin. Veuillez en choisir un autre.")
  */
 class Station
 {

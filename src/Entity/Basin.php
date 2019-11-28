@@ -9,7 +9,9 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\BasinRepository")
+ * 
  * @UniqueEntity(fields={"code"}, message="Un autre bassin possède déjà ce code. Veuillez définir un code unique.")
+ * @UniqueEntity(fields={"name", "system"}, message="Un autre bassin possède déjà ce nom dans le même système. Veuillez en choisir un autre.")
  */
 class Basin
 {
