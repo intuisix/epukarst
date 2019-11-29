@@ -86,6 +86,56 @@ class PostController extends AbstractController
     }
 
     /**
+     * Traite la demande de publication d'un article.
+     *
+     * @Route("/post/{id}/publish", name="post_publish")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function publish(Post $post, ObjectManager $manager)
+    {
+        $now = new \DateTime();
+        $publishingDate = $post->getPublishFromDate();
+        $unpublishingDate = $post->getPublishToDate();
+
+        if ((null == $publishingDate) || ($publishingDate > $now)) {
+            $post->setPublishFromDate($now);
+        }
+        
+        if ((null != $unpublishingDate) && ($unpublishingDate <= $now)) {
+            $post->setPublishToDate(null);
+        }
+
+        $manager->flush();
+
+        $this->addFlash('success', "L'article <strong>{$post->getTitle()}</strong> a été publié avec succès.");
+
+        return $this->redirectToRoute('post');
+    }
+
+    /**
+     * Traite la demande de dépublication d'un article.
+     *
+     * @Route("/post/{id}/unpublish", name="post_unpublish")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function unpublish(Post $post, ObjectManager $manager)
+    {
+        $now = new \DateTime();
+        $publishingDate = $post->getPublishFromDate();
+        $unpublishingDate = $post->getPublishToDate();
+
+        if ((null != $publishingDate) && ((null == $unpublishingDate) || ($unpublishingDate >= $now))) {
+            $post->setPublishToDate(new \DateTime());
+        }
+
+        $manager->flush();
+
+        $this->addFlash('success', "L'article <strong>{$post->getTitle()}</strong> a été dépublié avec succès.");
+
+        return $this->redirectToRoute('post');
+    }
+
+    /**
      * Traite la demande de suppression d'un article.
      * 
      * @Route("/post/{id}/delete", name="post_delete")

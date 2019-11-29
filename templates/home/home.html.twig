@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="container mb-3">
         <div style="position: relative" class="mb-3">
             <div style="z-index: 0">
                 <img src="images/home/epukarst.png" style="width: 100%">
@@ -39,37 +39,20 @@
             </div>
         </div>
 
-        {% for post in posts %}
-            <article>
-                {% if post.title is not null %}
+        <div class="row no-gutters" style="background-color: black; color: white">
+            {% for post in posts %}
+                <div class="col" style="margin: 15px">
                     <h2>{{post.title}}</h2>
-                {% endif %}
 
-                <div class="metadata">
-                    {% if post.date is not null %}
-                        <span>
-                            <i class="fas fa-calendar"></i>
-                            {{post.date|localizeddate('long', 'none', null, 'UTC')}}
-                        </span>
+                    {% if post.summary %}
+                        <p>{{post.summary}}</p>
                     {% endif %}
-                    {% if post.author is not null %}
-                        <span>
-                            <i class="fas fa-user"></i>
-                            {{post.author.displayName}}
-                        </span>
-                    {% endif %}
-                </div>
-
-                {% if post.summary %}
-                    <p>{{post.summary}}</p>
 
                     {% if post.slug is not null %}
-                        <a href="{{path('home_post', {'slug': post.slug})}}" class="btn-link">En savoir plus</a>
+                        <a href="{{path('home_post', {'slug': post.slug})}}" class="btn btn-primary">En savoir plus</a>
                     {% endif %}
-                {% else %}
-                    {{post.content|raw}}
-                {% endif %}
-            </article>
-        {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}

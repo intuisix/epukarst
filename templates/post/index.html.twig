@@ -12,9 +12,11 @@
                     <th>N° d'ordre</th>
                     <th>Titre</th>
                     <th>Parent</th>
-                    <th>Accueil</th>
-                    <th>Menu</th>
-                    <th>Créé le</th>
+                    <th style="text-align: center">
+                        <i class="fas fa-star"></i> /
+                        <i class="fas fa-bars"></i>
+                    </th>
+                    <th>Date</th>
                     <th>Auteur</th>
                     <th>Publication</th>
                     <th>Actions</th>
@@ -32,12 +34,10 @@
                         <td>
                             {{post.parent.title|default('')}}
                         </td>
-                        <td>
+                        <td style="text-align: center">
                             {% if post.home %}
                                 <i class="fas fa-star"></i>
                             {% endif %}
-                        </td>
-                        <td>
                             {% if post.topMenu %}
                                 <i class="fas fa-bars"></i>
                             {% endif %}
@@ -61,6 +61,8 @@
                         </td>
                         <td>
                             <a href="{{path('post_modify', {'id': post.id})}}" class="text-primary"><i class="fas fa-edit"></i></a>
+                            <a href="{{path('post_publish', {'id': post.id})}}" class="text-secondary"><i class="fas fa-eye"></i></a>
+                            <a href="{{path('post_unpublish', {'id': post.id})}}" class="text-secondary"><i class="fas fa-eye-slash"></i></a>
                             <a href="{{path('post_delete', {'id': post.id})}}" class="text-danger" data-action="delete"><i class="fas fa-trash"></i></a>
                         </td>
                     </tr>

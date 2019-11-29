@@ -5,8 +5,23 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="container mb-3">
         <h1>{{post.title}}</h1>
+
+        <div class="metadata">
+            {% if post.date is not null %}
+                <span>
+                    <i class="fas fa-calendar"></i>
+                    {{post.date|localizeddate('long', 'none', null, 'UTC')}}
+                </span>
+            {% endif %}
+            {% if post.author is not null %}
+                <span>
+                    <i class="fas fa-user"></i>
+                    {{post.author.displayName}}
+                </span>
+            {% endif %}
+        </div>
 
         {{post.content|raw}}
 
@@ -35,7 +50,7 @@
                     <p>{{post.summary}}</p>
 
                     {% if post.slug is not null %}
-                        <a href="{{path('home_post', {'slug': post.slug})}}" class="btn-link">En savoir plus</a>
+                        <a href="{{path('home_post', {'slug': post.slug})}}" class="btn btn-primary">En savoir plus</a>
                     {% endif %}
                 {% else %}
                     {{post.content|raw}}
