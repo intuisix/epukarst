@@ -3,6 +3,12 @@
     zoom: 1;
 }
 
+.metadata {
+    color: gray;
+    font-size: .75rem;
+    margin-bottom: .5rem;
+}
+
 div.container {
     margin-top: 20px;
 }

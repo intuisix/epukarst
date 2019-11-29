@@ -140,7 +140,12 @@ class PaginationService
         /* Contraindre l'indice de la page en cours */
         $this->currentPage = max(1, min($this->currentPage, $this->totalPages));
     }
-    
+
+    public function hasToPaginate()
+    {
+        return $this->totalPages > 1;
+    }
+
     public function getEntityClass()
     {
         return $this->entityClass;

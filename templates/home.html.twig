@@ -1,29 +1,75 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Le site d'analyse qualitative des eaux souterraines
+    Etude de la vulnérabilité des ressources en eaux souterraines
 {% endblock %}
 
 {% block body %}
     <div class="container">
-        <div class="jumbotron">
-            <h1 class="display-3">Pour des eaux potables propres !</h1>
-            <div class="alert alert-warning">Ce site est en construction. De ce fait, les données qu'il présente ne sont pas encore toutes représentatives.</div>
-            <p class="lead">L'eau potable représente une ressource de première nécessité et un enjeu majeur dans la bonne gestion de l'environnement, au même titre que le climat et la mobilité.  La Directive Cadre sur l'Eau et sa transposition dans la législation wallone organise non seulement la protection des captages mais également des nappes et des ressources hydriques potentiellement potabilisables.</p>
-            <hr class="my-4">
-            <p>Dans cette optique, l'ensemble des masses d'eau souterraines en Europe devront atteindre un bon état quantitatif et chimique, à l'échéance 2027 au plus tard. En Wallonie, l'aspect quantitatif est globalement sous contrôle, et les efforts à faire concernent surtout la qualité chimique des eaux souterraines.</p>
-            <p>Grâce au projet EpuKarst, la Commission Wallonne d'Etude et de Protection des Eaux Souterraines (CWEPSS) et ses partenaires, étudient la vulnérabilité et la variabilité des concentrations en nitrates dans les systèmes aquifères karstiques, et détermine leurs impacts sur les ressources en eaux potabilisables de Wallonie.</p>
-            <p>EpuKarst est une base de données collaborative en ligne qui permet aux divers partenaires du projet d'encoder leurs observations de terrain et les analyses réalisées sur différentes stations d'observation présentes au sein de 5 systèmes karstiques.</p>
-            <a href="{{ path('system') }}" class="btn btn-primary">Voir les systèmes concernés par l'étude</a>
+        <div style="position: relative" class="mb-3">
+            <div style="z-index: 0">
+                <img src="images/home/epukarst.png" style="width: 100%">
+            </div>
+            <div style="z-index: 1; position: absolute; left: 5%; bottom: 5%; width: 90%; color: white; font-size: 2vw; text-shadow: 3px 3px 3px rgba(0,0,0,0.5)">
+                <h1 style="font-size: 4vw">EPU-KARST</h1>
+                <div>Variabilité et transfert des nitrates dans les aquifères karstiques&nbsp;:</div>
+                <div>Etude de la vulnérabilité des ressources en eaux souterraines</div>
+            </div>
+            <div style="z-index: 2; position: absolute; right: 5%; top: 5%">
+                <div class="row no-gutters">
+                    <a href="home/issep">
+                        <div class="col" style="padding: 0px; margin: 5px"><img src="images/home/issep.png" alt="ISSeP" style="width: 120px"></div>
+                    </a>
+                    <a href="home/cwepss">
+                        <div class="col" style="padding: 0px; margin: 5px"><img src="images/home/cwepss.png" alt="CWEPSS" style="width: 100px"></div>
+                    </a>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col" style="padding: 0px; margin: 5px">
+                        <a href="home/sanifox">
+                            <img src="images/home/sanifox.png" alt="Sanifox" style="width: 230px">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div style="z-index: 3; position: absolute; left: 5%; top: 5%">
+                <div class="col" style="padding: 0px; margin: 5px; color: #3b8ac3">
+                    Financement octroyé par<br>
+                    <img src="images/home/spge.png" alt="SPGE" style="width: 200px"></div>
+            </div>
         </div>
 
-        <h2>Le cycle du nitrate</h2>
-        <p>Texte...</p>
+        {% for post in posts %}
+            <article>
+                {% if post.title is not null %}
+                    <h2>{{post.title}}</h2>
+                {% endif %}
 
-        <h2>Une investigation hydrologique originale</h2>
-        <p>Texte...</p>
-    
-        <h2>Les objectifs du projet</h2>
-        <p>Texte...</p>
-</div>
+                <div class="metadata">
+                    {% if post.date is not null %}
+                        <span>
+                            <i class="fas fa-calendar"></i>
+                            {{post.date|localizeddate('long', 'none', null, 'UTC')}}
+                        </span>
+                    {% endif %}
+                    {% if post.author is not null %}
+                        <span>
+                            <i class="fas fa-user"></i>
+                            {{post.author.displayName}}
+                        </span>
+                    {% endif %}
+                </div>
+
+                {% if post.summary %}
+                    <p>{{post.summary}}</p>
+
+                    {% if post.slug is not null %}
+                        <a href="{{path('home_post', {'slug': post.slug})}}" class="btn-link">En savoir plus</a>
+                    {% endif %}
+                {% else %}
+                    {{post.content|raw}}
+                {% endif %}
+            </article>
+        {% endfor %}
+    </div>
 {% endblock %}

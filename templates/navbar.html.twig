@@ -1,48 +1,61 @@
 {% set user = app.user %}
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="{{ path('home') }}">EpuKarst</a>
+    <a class="navbar-brand" href="{{path('home')}}">Epu-Karst</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarColor03">
         <ul class="navbar-nav mr-auto">
+            {# Afficher les menus configurés #}
+            {% for post in topMenu.posts %}
+                <li class="nav-item">
+                    <a href="{{path('home_post', {'slug': post.slug})}}" class="nav-link">{{post.title}}</a>
+                </li>
+            {% endfor %}
+            {# Afficher les autres menus #}
             <li class="nav-item">
-                <a class="nav-link" href="{{ path('system') }}">Systèmes</a>
+                <a class="nav-link" href="{{path('system')}}">Systèmes</a>
             </li>
             {% if user %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('reading') }}">Relevés</a>
+                    <a class="nav-link" href="{{path('reading')}}">Relevés</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('station') }}">Stations</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('station_kind') }}">Genres de station</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('instrument') }}">Instruments</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('parameter') }}">Paramètres</a>
+                    <a class="nav-link" href="{{path('station')}}">Stations</a>
                 </li>
             {% endif %}
         </ul>
         <ul class="navbar-nav ml-auto">
+            {% if user.isAdmin|default(false) %}
+                {# Afficher le menu déroulant de l'administration #}
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" id="adminDropdownLink">
+                        <i class="fas fa-cogs"></i> Administration
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="adminDropdownLink">
+                        <a class="dropdown-item" href="{{path('instrument')}}">Instruments</a>
+                        <a class="dropdown-item" href="{{path('parameter')}}">Paramètres</a>
+                        <a class="dropdown-item" href="{{path('station_kind')}}">Genres de station</a>
+                        <a class="dropdown-item" href="{{path('post')}}">Articles</a>
+                    </div>
+                </li>
+            {% endif %}
             {% if user %}
+                {# Afficher le menu déroulant de l'utilisateur #}
                 <li class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" id="accountDropdownLink">
                         <img src="{{user.picture}}" class="avatar avatar-mini" alt="Avatar de {{user.displayName}}"/> {{user.displayName}}
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdownLink">
                         <div class="dropdown-divider"></div>
-                        <a href="{{ path('user_logout') }}" class="dropdown-item">Vous déconnecter</a>
+                        <a href="{{path('user_logout')}}" class="dropdown-item">Vous déconnecter</a>
                     </div>
                 </li>
             {% else %}
                 <li class="nav-item">
-                    <a href="{{ path('user_login') }}" class="nav-link">Vous connecter</a>
+                    <a href="{{path('user_login')}}" class="nav-link">Vous connecter</a>
                 </li>
             {% endif %}
         </ul>

@@ -1,0 +1,55 @@
+{# Ce template définit une base commune pour les formulaires de création et de
+modification d'article #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block body %}
+    <div class="container mb-3">
+        <h1>{{title}}</h1>
+
+        <p>Ce formulaire permet de définir un article à publier dans la partie publique du site.</p>
+
+        {{form_start(form)}}
+
+        <div class="alert bg-light">
+            <div class="row">
+                <div class="col">
+                    {{form_row(form.parent)}}
+                    {{form_row(form.title)}}
+                    {{form_row(form.slug)}}
+                    {{form_row(form.summary)}}
+                    {{form_row(form.content)}}
+                </div>
+                <div class="col-3">
+                    {{form_row(form.orderNumber)}}
+                    {{form_row(form.topMenu)}}
+                    {{form_row(form.home)}}
+                    {{form_row(form.author)}}
+                    {{form_row(form.date)}}
+                    {{form_row(form.publishFromDate)}}
+                    {{form_row(form.publishToDate)}}
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {# Afficher un bouton permettant d'enregistrer l'article #}
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-check"></i>
+                Enregistrer l'article
+            </button>
+
+            {# Afficher un bouton permettant de revenir à l'index #}
+            <a href="{{path('post')}}" class="btn btn-cancel">
+                <i class="fas fa-backspace"></i>
+                Retourner à la liste
+            </a>
+        </div>
+
+        {{form_end(form)}}
+    </div>
+{% endblock %}

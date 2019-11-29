@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{post.title}}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{post.title}}</h1>
+
+        {{post.content|raw}}
+
+        {% for post in pagination.data %}
+            <article>
+                {% if post.title is not null %}
+                    <h2>{{post.title}}</h2>
+                {% endif %}
+
+                <div class="metadata">
+                    {% if post.date is not null %}
+                        <span>
+                            <i class="fas fa-calendar"></i>
+                            {{post.date|localizeddate('long', 'none', null, 'UTC')}}
+                        </span>
+                    {% endif %}
+                    {% if post.author is not null %}
+                        <span>
+                            <i class="fas fa-user"></i>
+                            {{post.author.displayName}}
+                        </span>
+                    {% endif %}
+                </div>
+
+                {% if post.summary %}
+                    <p>{{post.summary}}</p>
+
+                    {% if post.slug is not null %}
+                        <a href="{{path('home_post', {'slug': post.slug})}}" class="btn-link">En savoir plus</a>
+                    {% endif %}
+                {% else %}
+                    {{post.content|raw}}
+                {% endif %}
+            </article>
+        {% endfor %}
+
+        {% if pagination.hasToPaginate %}
+            {{pagination.display}}
+        {% endif %}
+    </div>
+{% endblock %}
