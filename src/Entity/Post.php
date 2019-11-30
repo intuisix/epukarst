@@ -105,12 +105,53 @@ class Post
      * @ORM\PrePersist()
      * @ORM\PreUpdate()
      */
-    public function update() {
+    public function update()
+    {
         if (empty($this->slug)) {
             $slugify = new Slugify();
             $this->slug = $slugify->Slugify($this->title);
         }
         dump($this);
+    }
+
+    /**
+     * Publie un article à partir de maintenant.
+     *
+     * @return void
+     */
+    public function publish()
+    {
+        $now = new \DateTime();
+
+        /* Publier à partir de maintenant, si la publication n'était pas encore programmée ou si elle l'était dans le futur */
+        if ((null == $this->publishFromDate) || ($this->publishFromDate > $now)) {
+            $this->setPublishFromDate($now);
+        }
+
+        /* Déprogrammer la /dépublication/ si elle l'est dans le passé, parce qu'elle empêcherait la publication à partir de maintenant */
+        if ((null != $this->publishToDate) && ($this->publishToDate <= $now)) {
+            $this->setPublishToDate(null);
+        }
+    }
+
+    /**
+     * Dépublie un article à partir de maintenant.
+     *
+     * @return void
+     */
+    public function unpublish()
+    {
+        $now = new \DateTime();
+
+        /* Dépublier à partir de maintenant, si la dépublication n'était pas encore programmée ou si elle l'était dans le futur */
+        if ((null == $this->publishToDate) || ($this->publishToDate > $now)) {
+            $this->setPublishToDate($now);
+        }
+
+        /* Déprogrammer la /publication/ si elle l'est dans le futur */
+        if ((null != $this->publishFromDate) && ($this->publishFromDate >= $now)) {
+            $this->setPublishFromDate(null);
+        }
     }
 
     public function getId(): ?int

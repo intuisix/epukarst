@@ -93,18 +93,7 @@ class PostController extends AbstractController
      */
     public function publish(Post $post, ObjectManager $manager)
     {
-        $now = new \DateTime();
-        $publishingDate = $post->getPublishFromDate();
-        $unpublishingDate = $post->getPublishToDate();
-
-        if ((null == $publishingDate) || ($publishingDate > $now)) {
-            $post->setPublishFromDate($now);
-        }
-        
-        if ((null != $unpublishingDate) && ($unpublishingDate <= $now)) {
-            $post->setPublishToDate(null);
-        }
-
+        $post->publish();
         $manager->flush();
 
         $this->addFlash('success', "L'article <strong>{$post->getTitle()}</strong> a été publié avec succès.");
@@ -120,14 +109,7 @@ class PostController extends AbstractController
      */
     public function unpublish(Post $post, ObjectManager $manager)
     {
-        $now = new \DateTime();
-        $publishingDate = $post->getPublishFromDate();
-        $unpublishingDate = $post->getPublishToDate();
-
-        if ((null != $publishingDate) && ((null == $unpublishingDate) || ($unpublishingDate >= $now))) {
-            $post->setPublishToDate(new \DateTime());
-        }
-
+        $post->unpublish();
         $manager->flush();
 
         $this->addFlash('success', "L'article <strong>{$post->getTitle()}</strong> a été dépublié avec succès.");
