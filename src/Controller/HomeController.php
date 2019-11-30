@@ -26,7 +26,8 @@ class HomeController extends AbstractController
             ->andWhere('p.publishToDate IS NULL OR p.publishToDate >= :today')
             ->setParameter('today', new \DateTime())
             ->orderBy('p.orderNumber', 'ASC')
-            ->addOrderBy('p.date', 'DESC');
+            ->addOrderBy('p.date', 'DESC')
+            ->addOrderBy('p.id', 'ASC');
 
         return $this->render('home/home.html.twig', [
             'posts' => $queryBuilder->getQuery()->getResult(),
@@ -47,6 +48,7 @@ class HomeController extends AbstractController
             ->setParameter('today', new \DateTime())
             ->orderBy('p.orderNumber', 'ASC')
             ->addOrderBy('p.date', 'DESC')
+            ->addOrderBy('p.id', 'ASC')
             ->setParameter('menu', $post->getId());
 
         $pagination

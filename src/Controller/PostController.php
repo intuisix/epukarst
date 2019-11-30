@@ -22,7 +22,7 @@ class PostController extends AbstractController
     {
         $pagination
             ->setEntityClass(Post::class)
-            ->setOrderBy(['orderNumber' => 'ASC', 'date' => 'DESC'])
+            ->setOrderBy(['orderNumber' => 'ASC', 'date' => 'DESC', 'id' => 'ASC'])
             ->setLimit(25)
             ->setPage($page);
 

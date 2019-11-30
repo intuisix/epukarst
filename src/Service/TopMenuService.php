@@ -28,7 +28,8 @@ class TopMenuService
             ->andWhere('p.publishToDate IS NULL OR p.publishToDate >= :today')
             ->setParameter('today', new \DateTime())
             ->orderBy('p.orderNumber', 'ASC')
-            ->addOrderBy('p.date', 'DESC');
+            ->addOrderBy('p.date', 'DESC')
+            ->addOrderBy('p.id', 'ASC');
 
         return $queryBuilder->getQuery()->getResult();
     }

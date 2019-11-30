@@ -111,7 +111,6 @@ class Post
             $slugify = new Slugify();
             $this->slug = $slugify->Slugify($this->title);
         }
-        dump($this);
     }
 
     /**
