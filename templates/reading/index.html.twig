@@ -192,8 +192,20 @@
                 {# Afficher le composant de pagination #}
                 {{pagination.display}}
 
-                {# Afficher un bouton permettant d'encoder un nouveau relevé #}
-                <a class="btn btn-primary" href="{{path('reading_encode')}}" role="button"><fa class="fas fa-plus"></fa> Encoder un nouveau relevé</a>
+                {# Afficher un bouton permettant d'encoder un relevé de sation #}
+                <a class="btn btn-primary" href="{{path('reading_encode')}}" role="button"><fa class="fas fa-plus"></fa> Encoder un relevé de station</a>
+
+                {# Afficher un bouton à menu déroulant permettant d'encoder un relevé, pour chaque système #}
+                <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <fa class="fas fa-plus"></fa> Encoder un relevé de système
+                </button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                    {% for system in systems %}
+                        <a class="dropdown-item" href="{{path('system_reading_encode', {'code': system.code})}}">{{system.name}}</a>
+                    {% endfor %}
+                </div>
+
+                {# Afficher un bouton permettant d'exporter les relevés #}
                 <button type="submit" class="btn btn-secondary" formaction="{{path('reading_export')}}"><i class="fas fa-file-excel"></i> Exporter les relevés sélectionnés</button>
             </form>
         </div>

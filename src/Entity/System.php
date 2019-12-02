@@ -115,6 +115,11 @@ class System
     private $parameters;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\SystemReading", mappedBy="system", orphanRemoval=true)
+     */
+    private $systemReadings;
+
+    /**
      * Construit un nouveau système.
      */
     public function __construct()
@@ -123,6 +128,7 @@ class System
         $this->basins = new ArrayCollection();
         $this->userRoles = new ArrayCollection();
         $this->parameters = new ArrayCollection();
+        $this->systemReadings = new ArrayCollection();
     }
 
     /**
@@ -358,6 +364,37 @@ class System
             // set the owning side to null (unless already changed)
             if ($parameter->getSystem() === $this) {
                 $parameter->setSystem(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SystemReading[]
+     */
+    public function getSystemReadings(): Collection
+    {
+        return $this->systemReadings;
+    }
+
+    public function addSystemReading(SystemReading $systemReading): self
+    {
+        if (!$this->systemReadings->contains($systemReading)) {
+            $this->systemReadings[] = $systemReading;
+            $systemReading->setSystem($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSystemReading(SystemReading $systemReading): self
+    {
+        if ($this->systemReadings->contains($systemReading)) {
+            $this->systemReadings->removeElement($systemReading);
+            // set the owning side to null (unless already changed)
+            if ($systemReading->getSystem() === $this) {
+                $systemReading->setSystem(null);
             }
         }
 

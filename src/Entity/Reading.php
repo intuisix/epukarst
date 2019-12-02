@@ -107,6 +107,11 @@ class Reading
      */
     private $validated;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\SystemReading", inversedBy="stationReadings")
+     */
+    private $systemReading;
+
     public function __construct()
     {
         $this->measures = new ArrayCollection();
@@ -330,6 +335,18 @@ class Reading
     public function setValidated(?bool $validated): self
     {
         $this->validated = $validated;
+
+        return $this;
+    }
+
+    public function getSystemReading(): ?SystemReading
+    {
+        return $this->systemReading;
+    }
+
+    public function setSystemReading(?SystemReading $systemReading): self
+    {
+        $this->systemReading = $systemReading;
 
         return $this;
     }

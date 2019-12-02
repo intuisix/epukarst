@@ -92,12 +92,24 @@ class User implements UserInterface
      */
     private $measures;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\SystemReading", mappedBy="encodingAuthor")
+     */
+    private $systemReadings;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\SystemReading", mappedBy="validationAuthor")
+     */
+    private $systemValidations;
+
     public function __construct()
     {
         $this->userRoles = new ArrayCollection();
         $this->readings = new ArrayCollection();
         $this->validatedReadings = new ArrayCollection();
         $this->measures = new ArrayCollection();
+        $this->systemReadings = new ArrayCollection();
+        $this->systemValidations = new ArrayCollection();
     }
 
     /**
@@ -414,5 +426,67 @@ class User implements UserInterface
     public function __toString() : string
     {
         return $this->displayName;
+    }
+
+    /**
+     * @return Collection|SystemReading[]
+     */
+    public function getSystemReadings(): Collection
+    {
+        return $this->systemReadings;
+    }
+
+    public function addSystemReading(SystemReading $systemReading): self
+    {
+        if (!$this->systemReadings->contains($systemReading)) {
+            $this->systemReadings[] = $systemReading;
+            $systemReading->setEncodingAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSystemReading(SystemReading $systemReading): self
+    {
+        if ($this->systemReadings->contains($systemReading)) {
+            $this->systemReadings->removeElement($systemReading);
+            // set the owning side to null (unless already changed)
+            if ($systemReading->getEncodingAuthor() === $this) {
+                $systemReading->setEncodingAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SystemReading[]
+     */
+    public function getSystemValidations(): Collection
+    {
+        return $this->systemValidations;
+    }
+
+    public function addSystemValidation(SystemReading $systemValidation): self
+    {
+        if (!$this->systemValidations->contains($systemValidation)) {
+            $this->systemValidations[] = $systemValidation;
+            $systemValidation->setValidationAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSystemValidation(SystemReading $systemValidation): self
+    {
+        if ($this->systemValidations->contains($systemValidation)) {
+            $this->systemValidations->removeElement($systemValidation);
+            // set the owning side to null (unless already changed)
+            if ($systemValidation->getValidationAuthor() === $this) {
+                $systemValidation->setValidationAuthor(null);
+            }
+        }
+
+        return $this;
     }
 }

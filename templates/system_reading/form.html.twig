@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% form_theme form _self %}
+
+{% block body %}
+    <div class="container mb-3">
+        <h1>{{title}}</h1>
+
+        {{form_start(form)}}
+
+        {# Afficher les champs généraux #}
+        <div class="alert bg-light">
+            <div class="row">
+                <div class="col">
+                    {{form_row(form.system)}}
+                </div>
+                <div class="col">
+                    {{form_row(form.fieldDateTime)}}
+                </div>
+                <div class="col">
+                    {{form_row(form.code)}}
+                </div>
+            </div>
+        </div>
+
+        {# Afficher la matrice des mesures par stations et paramètres #}
+        <div class="alert bg-light">
+            {{form_row(form.systemParameters)}}
+            {{form_row(form.stationReadings)}}
+        </div>
+
+        {# Afficher les informations d'encodage #}
+        <div class="alert bg-light">
+            <div class="row">
+                <div class="col">
+                    {{form_row(form.encodingDateTime)}}
+                </div>
+                <div class="col">
+                    {{form_row(form.encodingAuthor)}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    {{form_row(form.encodingNotes)}}
+                </div>
+            </div>
+        </div>
+
+        {# Afficher les informations de validation #}
+        <div class="alert bg-light">
+            <div class="row">
+                <div class="col">
+                    {{form_row(form.validationDateTime)}}
+                </div>
+                <div class="col">
+                    {{form_row(form.validationAuthor)}}
+                </div>
+            </div>
+            {{form_row(form.validationNotes)}}
+            {{form_row(form.validationStatus)}}
+        </div>
+
+        {# Afficher un bouton permettant d'enregistrer le relevé #}
+        <button type="submit" class="btn btn-success">
+            <i class="fas fa-check"></i>
+            Enregistrer le relevé
+        </button>
+
+        {{form_end(form)}}
+    </div>
+{% endblock %}
+
+
+{% block _system_reading_stationReadings_row %}
+    {{form_row(form)}}
+    <a href="#" class="btn btn-secondary"><i class="fas fa-plus"></i> Ajouter une station</a>
+{% endblock %}
+
+{% block _system_reading_stationReadings_entry_row %}
+    {# N'afficher que le widget pour le relevé de station, sans étiquette ou autre information #}
+    {{form_widget(form)}}
+{% endblock %}
+
+{% block _system_reading_stationReadings_entry_widget %}
+    <div class="form-row my-2">
+        {# Afficher le champ de saisie de la station #}
+        <div class="col-3">
+            {{form_widget(form.station)}}
+        </div>
+        {# Pour chacune des mesures du relevé de station #}
+        {% for measure in form.measures.children %}
+            <div class="col">
+                {# Afficher seulement e champ de saisie de la valeur #}
+                {{form_widget(measure.children.value)}}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
