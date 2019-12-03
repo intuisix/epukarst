@@ -6,6 +6,7 @@ use App\Entity\System;
 use App\Entity\Measure;
 use App\Entity\Reading;
 use App\Entity\SystemReading;
+use App\Entity\SystemParameter;
 use App\Form\SystemReadingType;
 use App\Repository\StationRepository;
 use App\Repository\MeasurabilityRepository;
@@ -50,7 +51,9 @@ class SystemReadingController extends AbstractController
             ->setParameter('system', $system->getId());
         $stations = $queryBuilder->getQuery()->getResult();
 
-        $i = 0;
+        $systemParameters = $system->getParameters()->map(function(SystemParameter $p) {
+            return $p->getInstrumentParameter();
+        });
 
         /* Ajouter toutes les stations du système au relevé */
         foreach ($stations as $station) {
@@ -60,7 +63,6 @@ class SystemReadingController extends AbstractController
             foreach ($system->getParameters() as $systemParameter) {
                 $measure = new Measure();
                 $measure->setMeasurability($systemParameter->getInstrumentParameter());
-                $measure->setValue(++$i);  // Pour tester
                 $stationReading->addMeasure($measure);
             }
 
@@ -70,7 +72,9 @@ class SystemReadingController extends AbstractController
         /* Créer et traiter le formulaire */
         $form = $this->createForm(SystemReadingType::class, $systemReading, [
             'stations' => $stations,
-            'measurabilities' => $measurabilityRepository->findAll()]);
+            'measurabilities' => $measurabilityRepository->findAll()
+        ]);
+        $form->get('systemParameters')->setData($systemParameters);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

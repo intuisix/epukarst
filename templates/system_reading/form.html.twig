@@ -29,8 +29,17 @@
 
         {# Afficher la matrice des mesures par stations et paramètres #}
         <div class="alert bg-light">
-            {{form_row(form.systemParameters)}}
-            {{form_row(form.stationReadings)}}
+            <table>
+                <thead>
+                    {{form_row(form.systemParameters)}}
+                </thead>
+                <tbody>
+                    {{form_row(form.stationReadings)}}
+                </tbody>
+            </table>
+
+            {# Afficher un bouton permettant d'ajouter un relevé de station #}
+            <a href="#" class="btn btn-secondary"><i class="fas fa-plus"></i> Ajouter une station</a>
         </div>
 
         {# Afficher les informations d'encodage #}
@@ -75,9 +84,31 @@
 {% endblock %}
 
 
+{# Modèle pour le tableau "paramètres de système" #}
+{% block _system_reading_systemParameters_row %}
+    <tr>
+        <th width="20%">
+            Stations
+        </th>
+        <th colspan="100">
+            Paramètres
+        </th>
+    </tr>
+    <tr>
+        <td>
+            &nbsp;
+        </td>
+        {% for parameter in form.children %}
+            <td>
+                {{form_widget(parameter)}}
+            </td>
+        {% endfor %}
+    </tr>
+{% endblock %}
+
+{# Modèle pour le tableau "relevés de station" #}
 {% block _system_reading_stationReadings_row %}
-    {{form_row(form)}}
-    <a href="#" class="btn btn-secondary"><i class="fas fa-plus"></i> Ajouter une station</a>
+    {{form_widget(form)}}
 {% endblock %}
 
 {% block _system_reading_stationReadings_entry_row %}
@@ -85,18 +116,19 @@
     {{form_widget(form)}}
 {% endblock %}
 
+{# Modèle pour chaque élément "relevé de station" #}
 {% block _system_reading_stationReadings_entry_widget %}
-    <div class="form-row my-2">
+    <tr>
         {# Afficher le champ de saisie de la station #}
-        <div class="col-3">
+        <td>
             {{form_widget(form.station)}}
-        </div>
+        </td>
         {# Pour chacune des mesures du relevé de station #}
         {% for measure in form.measures.children %}
-            <div class="col">
+            <td>
                 {# Afficher seulement e champ de saisie de la valeur #}
                 {{form_widget(measure.children.value)}}
-            </div>
+            </td>
         {% endfor %}
-    </div>
+    </tr>
 {% endblock %}

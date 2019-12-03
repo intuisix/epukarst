@@ -32,6 +32,7 @@ class SystemReadingType extends AbstractType
                 'choice_label' => 'name',
                 'placeholder' => "Veuillez sélectionner un système",
                 'required' => true,
+                'disabled' => true,
             ])
             ->add('code', TextType::class, [
                 'label' => "Code",
