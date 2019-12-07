@@ -16,27 +16,23 @@ class SystemReadingStationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-/*            ->add('code')
-            ->add('fieldDateTime')
-            ->add('encodingDateTime')
-            ->add('encodingNotes')
-            ->add('validationDateTime')
-            ->add('validationNotes')
-            ->add('validated')*/
-/*            ->add('station', EntityType::class, [
-                'label' => "Station",
-                'class' => Station::class,
-                'choices' => $options['stations'],
-                'choice_label' => 'name',
-            ])*/
             ->add('station', TextType::class, [
                 'label' => "Station",
                 'required' => true,
                 'disabled' => true,
+                'attr' => [
+                    'placeholder' => 'Dénomination',
+                ],
             ])
-/*            ->add('encodingAuthor')
-            ->add('validationAuthor')
-            ->add('systemReading')*/
+            ->add('atlasCode', TextType::class, [
+                'label' => "AKWA",
+                'disabled' => true,
+                'required' => false,
+                'mapped' => false,
+                'attr' => [
+                    'placeholder' => "N°",
+                ],
+            ])
             ->add('measures', CollectionType::class, [
                 'label' => "Mesure",
                 'entry_type' => SystemReadingMeasureType::class,

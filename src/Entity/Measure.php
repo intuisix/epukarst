@@ -76,46 +76,51 @@ class Measure
      */
     public function validate(ExecutionContextInterface $context, $payload)
     {
-        /* Tester la plausibilité de la mesure seulement si l'utilisateur
-        indique qu'elle est valide: ainsi, il est possible d'introduire une
-        valeur pour laquelle il existe un doute mentionné explicitement */
-        if ($this->valid) {
-            $parameter = $this->measurability->getParameter();
-            $instrument = $this->measurability->getInstrument();
-    
-            if (null !== $parameter) {
-                /* Comparer la valeur au seuil minimum de l'instrument  */
-                $instrumentMinimum = $this->measurability->getMinimumValue();
-                if ((null !== $instrumentMinimum) &&
-                    ($this->value < $instrumentMinimum)) {
-                    $context
-                        ->buildViolation("Cette valeur est inférieure à ce que l'instrument est capable de mesurer (au minimum $instrumentMinimum {$parameter->getUnit()}).")
-                        ->atPath('value')
-                        ->addViolation();
-                }
+        /* Tester la plausibilité de la mesure seulement si l'utilisateur a
+        spécifié la valeur et a indiqué qu'elle est valide:
+        1) une valeur non introduite dans le tableau du formulaire d'encodage
+           de système ne donne pas lieu à la création d'une mesure;
+        2) il est possible d'introduire une valeur pour laquelle il existe un
+           doute mentionné explicitement */
+        if (null !== $this->value) {
+            if ($this->valid) {
+                $parameter = $this->measurability->getParameter();
+                $instrument = $this->measurability->getInstrument();
         
-                /* Comparer la valeur au seuil maximum de l'instrument */
-                $instrumentMaximum = $this->measurability->getMaximumValue();
-                if ((null !== $instrumentMaximum) &&
-                    ($this->value > $instrumentMaximum))
-                {
-                    $context
-                        ->buildViolation("Cette valeur est supérieure à ce que l'instrument est capable de mesurer (au maximum $instrumentMaximum {$parameter->getUnit()}).")
-                        ->atPath('value')
-                        ->addViolation();
+                if (null !== $parameter) {
+                    /* Comparer la valeur au seuil minimum de l'instrument  */
+                    $instrumentMinimum = $this->measurability->getMinimumValue();
+                    if ((null !== $instrumentMinimum) &&
+                        ($this->value < $instrumentMinimum)) {
+                        $context
+                            ->buildViolation("Cette valeur est inférieure à ce que l'instrument est capable de mesurer (au minimum $instrumentMinimum {$parameter->getUnit()}).")
+                            ->atPath('value')
+                            ->addViolation();
+                    }
+            
+                    /* Comparer la valeur au seuil maximum de l'instrument */
+                    $instrumentMaximum = $this->measurability->getMaximumValue();
+                    if ((null !== $instrumentMaximum) &&
+                        ($this->value > $instrumentMaximum))
+                    {
+                        $context
+                            ->buildViolation("Cette valeur est supérieure à ce que l'instrument est capable de mesurer (au maximum $instrumentMaximum {$parameter->getUnit()}).")
+                            ->atPath('value')
+                            ->addViolation();
+                    }
                 }
-            }
 
-            /* Comparer la date de terrain à la date de validité de
-            l'instrument (définie au dernier étalonnage) */
-            if ((null != $instrument)) {
-                $calibrationDueDate = $instrument->getCalibrationDueDate();
-                if ((null != $calibrationDueDate) &&
-                    ($this->fieldDateTime > $calibrationDueDate)) {
-                    $context
-                        ->buildViolation("Cette valeur a été mesurée à l'aide d'un instrument non contrôlé depuis le {$calibrationDueDate->format('d/m/Y')}.")
-                        ->atPath('value')
-                        ->addViolation();
+                /* Comparer la date de terrain à la date de validité de
+                l'instrument (définie au dernier étalonnage) */
+                if ((null != $instrument)) {
+                    $calibrationDueDate = $instrument->getCalibrationDueDate();
+                    if ((null != $calibrationDueDate) &&
+                        ($this->fieldDateTime > $calibrationDueDate)) {
+                        $context
+                            ->buildViolation("Cette valeur a été mesurée à l'aide d'un instrument non contrôlé depuis le {$calibrationDueDate->format('d/m/Y')}.")
+                            ->atPath('value')
+                            ->addViolation();
+                    }
                 }
             }
         }
@@ -155,7 +160,7 @@ class Measure
         return $this->value;
     }
 
-    public function setValue(float $value): self
+    public function setValue(?float $value): self
     {
         $this->value = $value;
 
@@ -179,7 +184,7 @@ class Measure
         return $this->stable;
     }
 
-    public function setStable(bool $stable): self
+    public function setStable(?bool $stable): self
     {
         $this->stable = $stable;
 

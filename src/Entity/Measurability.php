@@ -200,7 +200,7 @@ class Measurability
         return $this->tolerance;
     }
 
-    public function setTolerance(float $tolerance): self
+    public function setTolerance(?float $tolerance): self
     {
         $this->tolerance = $tolerance;
 

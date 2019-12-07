@@ -131,6 +131,11 @@ class System
         $this->systemReadings = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return $this->name;
+    }
+
     /**
      * Met à jour les propriétés du système avant qu'il ne soit mémorisé dans
      * la base de données.
