@@ -43,7 +43,7 @@ class ReadingRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('reading')
             ->select('reading, station, basin, system, measure, measurability')
             ->leftJoin('reading.measures', 'measure')
-            ->join('measure.measurability', 'measurability')
+            ->leftJoin('measure.measurability', 'measurability')
             ->join('reading.station', 'station')
             ->join('station.basin', 'basin')
             ->join('basin.system', 'system')
@@ -82,7 +82,7 @@ class ReadingRepository extends ServiceEntityRepository
         }
 
         /* Filtrer par mesures */
-        if (null !== $measures) {
+        if (count($measures) > 0) {
             $queryBuilder
                 ->andWhere('reading.id IN (:ids)')
                 ->setParameter('ids', $this->findIdsByMeasures($measures));
