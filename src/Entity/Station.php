@@ -9,6 +9,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\StationRepository")
+ * @ORM\HasLifecycleCallbacks()
  * 
  * @UniqueEntity(fields={"code"}, message="Une autre station possède déjà ce code. Veuillez définir un code unique.")
  * @UniqueEntity(fields={"name", "basin"}, message="Une autre station possède déjà ce nom dans le même bassin. Veuillez en choisir un autre.")
@@ -74,6 +75,21 @@ class Station
     public function __toString()
     {
         return $this->name;
+    }
+    
+    /**
+     * Met à jour les propriétés avant la mémorisation en base de données.
+     *
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     * 
+     * @return void
+     */
+    public function update()
+    {
+        if (empty($this->code)) {
+            $this->code = uniqid();
+        }
     }
 
     public function getId(): ?int

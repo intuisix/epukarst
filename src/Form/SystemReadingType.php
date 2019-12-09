@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Basin;
 use App\Entity\User;
 use App\Entity\System;
 use App\Entity\Reading;
@@ -47,6 +48,7 @@ class SystemReadingType extends AbstractType
             ->add('stationReadings', CollectionType::class, [
                 'label' => "Stations",
                 'entry_options' => [
+                    'basins' => $options['basins'],
                     'stations' => $options['stations']],
                 'entry_type' => SystemReadingStationType::class,
                 'allow_add' => true,
@@ -113,15 +115,16 @@ class SystemReadingType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => SystemReading::class,
-            'validation' => false,
-        ]);
-
         $resolver
+            ->setDefaults([
+                'data_class' => SystemReading::class,
+                'validation' => false,
+            ])
             ->setRequired('stations')
-            ->setRequired('measurabilities')
             ->setAllowedTypes('stations', 'App\Entity\Station[]')
+            ->setRequired('basins')
+            ->setAllowedTypes('basins', 'App\Entity\Basin[]')
+            ->setRequired('measurabilities')
             ->setAllowedTypes('measurabilities', 'App\Entity\Measurability[]');
     }
 }

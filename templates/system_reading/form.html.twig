@@ -6,8 +6,62 @@
 
 {% form_theme form _self %}
 
+{% import _self as formMacros %}
+
+{% macro showStationReadings(form, systemParameters) %}
+    {% set __name__ = form.vars.name %}
+    <tbody id="system_reading_stationReadings_{{__name__}}">
+        <tr>
+            {# Afficher le widget de dénomination #}
+            <td class="align-top" rowspan="2">
+                {{form_widget(form.name)}}
+                {# Afficher un bouton permettant de supprimer le paramètre #}
+                <button type="button" data-action="delete-stationReading" data-target="#system_reading_stationReadings_{{__name__}}" class="btn btn-link float-right">
+                    <i class="fas fa-trash text-danger"></i>
+                </button>
+            </td>
+            {# Afficher le widget de code AKWA #}
+            <td class="align-top">
+                {{form_widget(form.atlasCode)}}
+            </td>
+            {# Afficher le widget de bassin #}
+            <td class="align-top">
+                {{form_widget(form.basin)}}
+            </td>
+            {# Afficher le widget de genre #}
+            <td class="align-top">
+                {{form_widget(form.kind)}}
+            </td>
+            {# Pour chacun des paramètres #}
+            {% for parameter in systemParameters %}
+                {% set __index__ = loop.index0 %}
+                <td class="align-top">
+                    {# Afficher le widget de valeur #}
+                    <input type="text" id="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_value" name="system_reading[stationReadings][{{__name__}}][measures][{{__index__}}][value]" class="form-control">
+                    {# Afficher le widget de mesure stable #}
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" id="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_stable" name="system_reading[stationReadings][{{__name__}}][measures][{{__index__}}][stable]" tabindex="-1" class="form-check-input" value="1" checked="checked">
+                        <label class="checkbox-inline form-check-label" style="color: lightgray" for="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_stable">S</label>
+                    </div>
+                    {# Afficher le widget de mesure valide #}
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" id="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_valid" name="system_reading[stationReadings][{{__name__}}][measures][{{__index__}}][valid]" tabindex="-1" class="form-check-input" value="1" checked="checked">
+                        <label class="checkbox-inline form-check-label" style="color: lightgray" for="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_valid">V</label>
+                    </div>
+                </td>
+            {% endfor %}
+        </tr>
+        <tr>
+            <td />
+            <td colspan="100">
+                {{form_widget(form.description)}}
+            </td>
+        </tr>
+    </tbody>
+{% endmacro %}
+
 {% block body %}
-    <div class="container mb-3">
+    <div class="container-fluid mb-3">
         <h1>{{title}}</h1>
 
         <p>Ce formulaire permet l'encodage des mesures simultanément pour toutes les stations d'un système, en considérant que ces mesures ont été prises dans la même journée et en utilisant le même jeu d'instruments.</p>
@@ -31,8 +85,8 @@
 
         {# Afficher le tableau d'encodage des mesures avec en colonnes les paramètres, en lignes les stations, et en cellules les mesures #}
         <div class="alert bg-light">
-            <p>Dans le tableau ci-dessous, n'oubliez pas de sélectionner l'instrument ayant servi à prendre les mesures, et introduisez les valeurs mesurées en respectant l'unité du paramètre. &laquo;&nbsp;S&nbsp;&raquo; siginifie que la valeur stable, et &laquo;&nbsp;V&nbsp;&raquo; qu'elle est valide.</p>
-            <table cellpadding="3">
+            <p>Dans le tableau ci-dessous, n'oubliez pas de commencer à sélectionner l'instrument ayant servi à prendre les mesures. Introduisez ensuite les valeurs mesurées en respectant l'unité du paramètre. Décochez &laquo;&nbsp;S&nbsp;&raquo; si la valeur était instable à la mesure, et &laquo;&nbsp;V&nbsp;&raquo; si le logiciel vous signale une erreur (cela peut arriver lorsque la valeur est hors gamme).</p>
+            <table cellpadding="3" id="stationReadingsBody" data-prototype="{{formMacros.showStationReadings(form.stationReadings.vars.prototype, form.systemParameters)|e('html_attr')}}">
                 <thead>
                     <tr>
                         {# Afficher les en-têtes des colonnes pour le nom et le code AKWA de la station #}
@@ -42,56 +96,27 @@
                         <th width="10%">
                             {{form_label(form.stationReadings|first.atlasCode)}}
                         </th>
+                        <th width="10%">
+                            {{form_label(form.stationReadings|first.basin)}}
+                        </th>
+                        <th width="10%">
+                            {{form_label(form.stationReadings|first.kind)}}
+                        </th>
+
                         {# Afficher les paramètres (en-têtes de colonnes) #}
                         {{form_row(form.systemParameters)}}
                     </tr>
                 </thead>
-                <tbody>
-                    {# Afficher les relevés de stations (lignes du tableau) #}
-                    {{form_row(form.stationReadings)}}
 
-                    {# Définir un prototype pour l'ajout de relevés de stations supplémentaires; ces relevés seront insérés ici #}
-{% if 0 %}
-                    {% set __name__ = '__name__' %}
-                    <tr id="system_reading_stationReadings_{{__name__}}" hidden="hidden">
-                        {# Afficher le widget de dénomination #}
-                        <td style="vertical-align: top">
-                            <input type="text" id="system_reading_stationReadings_{{__name__}}_station" name="system_reading[stationReadings][{{__name__}}][station]" required="required" placeholder="Dénomination" class="form-control" value="">
-                        </td>
-                        {# Afficher le widget de code AKWA #}
-                        <td style="vertical-align: top">
-                            <input type="text" id="system_reading_stationReadings_{{__name__}}_atlasCode" name="system_reading[stationReadings][{{__name__}}][atlasCode]" placeholder="N°" class="form-control">
-                        </td>
-                        {# Pour chacun des paramètres #}
-                        {% for parameter in form.systemParameters %}
-                            {% set __index__ = loop.index0 %}
-                            <td>
-                                {# Afficher le widget de valeur #}
-                                <input type="text" id="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_value" name="system_reading[stationReadings][{{__name__}}][measures][{{__index__}}][value]" class="form-control">
-                                {# Afficher le widget de mesure stable #}
-                                <div class="form-check form-check-inline">
-                                    <input type="checkbox" id="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_stable" name="system_reading[stationReadings][{{__name__}}][measures][{{__index__}}][stable]" tabindex="-1" class="form-check-input" value="1" checked="checked">
-                                    <label class="checkbox-inline form-check-label" style="color: lightgray" for="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_stable">S</label>
-                                </div>
-                                {# Afficher le widget de mesure valide #}
-                                <div class="form-check form-check-inline">
-                                    <input type="checkbox" id="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_valid" name="system_reading[stationReadings][{{__name__}}][measures][{{__index__}}][valid]" tabindex="-1" class="form-check-input" value="1" checked="checked">
-                                    <label class="checkbox-inline form-check-label" style="color: lightgray" for="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_valid">V</label>
-                                </div>
-                            </td>
-                        {% endfor %}
-                    </tr>
-{% endif %}
-                </tbody>
+                {# Afficher les relevés de stations (lignes du tableau) #}
+                {{form_row(form.stationReadings)}}
             </table>
 
             {# Afficher un bouton permettant d'ajouter un relevé de station #}
-{% if 0 %}
             <button type="button" data-action="add-stationReading" class="btn btn-secondary">
                 <i class="fas fa-plus"></i>
                 Ajouter une nouvelle station
             </button>
-{% endif %}
         </div>
 
         {# Afficher les informations d'encodage #}
@@ -169,61 +194,71 @@
 
 {# Modèle d'un relevé de station (cellule du tableau) #}
 {% block _system_reading_stationReadings_entry_widget %}
-    <tr id="{{id}}">
-        {# Afficher le champ de saisie de la station #}
-        <td style="vertical-align: top">
-            {{form_widget(form.station)}}
-        </td>
-        <td style="vertical-align: top">
-            {{form_widget(form.atlasCode)}}
-        </td>
-        {# Pour chacune des mesures du relevé de station #}
-        {% for measure in form.measures.children %}
-            <td>
-                {# Afficher le widget de valeur sans étiquette ni aide ni erreur #}
-                {{form_widget(measure.children.value)}}
-                {# Afficher la case à cocher "mesure stable" #}
-                {{form_widget(measure.children.stable, {
-                    'attr': {
-                        'tabindex': '-1'
-                    },
-                    'label_attr': {
-                        'class': 'checkbox-inline',
-                        'style': 'color: lightgray'
-                    }
-                })}}
-                {# Afficher la case à cocher "mesure valide" #}
-                {{form_widget(measure.children.valid, {
-                    'attr': {
-                        'tabindex': '-1'
-                    },
-                    'label_attr': {
-                        'class': 'checkbox-inline',
-                        'style': 'color: lightgray'
-                    }
-                })}}
+    <tbody>
+        <tr id="{{id}}">
+            {# Afficher le champ de saisie de la station #}
+            <td class="align-top">
+                {{form_widget(form.station)}}
             </td>
-        {% endfor %}
-    </tr>
+            <td class="align-top">
+                {{form_widget(form.atlasCode, { 'attr': { 'disabled': true }})}}
+            </td>
+            <td class="align-top">
+                {{form_widget(form.basin, { 'attr': { 'disabled': true }})}}
+            </td>
+            <td class="align-top">
+                {{form_widget(form.kind, { 'attr': { 'disabled': true }})}}
+            </td>
+            {# Pour chacune des mesures du relevé de station #}
+            {% for measure in form.measures.children %}
+                <td class="align-top">
+                    {# Afficher le widget de valeur sans étiquette ni aide ni erreur #}
+                    {{form_widget(measure.children.value)}}
+                    {# Afficher la case à cocher "mesure stable" #}
+                    {{form_widget(measure.children.stable, {
+                        'attr': {
+                            'tabindex': '-1',
+                        },
+                        'label_attr': {
+                            'class': 'checkbox-inline',
+                            'style': 'color: lightgray',
+                        }
+                    })}}
+                    {# Afficher la case à cocher "mesure valide" #}
+                    {{form_widget(measure.children.valid, {
+                        'attr': {
+                            'tabindex': '-1',
+                        },
+                        'label_attr': {
+                            'class': 'checkbox-inline',
+                            'style': 'color: lightgray',
+                        }
+                    })}}
+                </td>
+            {% endfor %}
+        </tr>
+    </tbody>
 {% endblock %}
 
 
-{#% block javascripts %}
+{% block javascripts %}
     <script>
-        $('button[data-action=add-stationReading]').click(function() {
+        /* Définir l'action du bouton permettant d'ajouter un relevé de station dans le tableau d'encodage */
+        var $stationIndex = +0;
+        $('[data-action=add-stationReading]').click(function() {
             /* Trouver un indice libre */
-            var $stationIndex = +0;
             while (0 != $('#system_reading_stationReadings_' + $stationIndex).length) {
                 $stationIndex++;
             }
 
             /* Créer un nouvel élément à partir du prototype */
-            var $prototype = $('#system_reading_stationReadings___name__');
-            var $html = $prototype.prop('outerHTML').replace(/__name__/g, $stationIndex);
-            $prototype.before($html);
+            const $prototype = $('#stationReadingsBody').data('prototype');
+            $('#stationReadingsBody').append($prototype.replace(/__name__/g, $stationIndex));
 
-            /* Supprimer l'attribut "caché" du nouvel élément */
-            $('#system_reading_stationReadings_' + $stationIndex).removeAttr('hidden');
+            /* Définir l'action du bouton permettant de supprimer un relevé de station dans le tableau d'encodage */
+            $('#system_reading_stationReadings_' + $stationIndex + ' ' + '[data-action=delete-stationReading]').click(function() {
+                $(this.dataset.target).remove();
+            });
         });
     </script>
-{% endblock %#}
+{% endblock %}

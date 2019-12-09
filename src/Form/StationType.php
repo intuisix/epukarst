@@ -52,11 +52,11 @@ class StationType extends AbstractType
                 'required' => false,
             ])
             ->add('description', TextareaType::class, [
-                'label' => "Description (HTML)",
+                'label' => "Description",
                 'attr' => [
                     'placeholder' => "Entrez une description la plus détaillée possible afin de permettre la réalisation des mesures toujours au même emplacement, même lorsque d'autres personnes sont amenées à réaliser les mesures sur cette station",
                     'rows' => 15,
-                ]
+                ],
             ])
         ;
     }

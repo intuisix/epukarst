@@ -5,10 +5,13 @@ namespace App\Controller;
 use App\Entity\System;
 use App\Entity\Measure;
 use App\Entity\Reading;
+use App\Entity\Station;
 use App\Entity\SystemReading;
 use App\Entity\SystemParameter;
 use App\Form\SystemReadingType;
+use App\Repository\BasinRepository;
 use App\Repository\StationRepository;
+use App\Repository\StationKindRepository;
 use App\Repository\MeasurabilityRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -28,12 +31,43 @@ class SystemReadingController extends AbstractController
     }
 
     /**
+     * Crée et ajoute au relevé de système un relevé correspondant à la station
+     * donnée et, pour chaque paramètre mesurable, une valeur de mesure vide par
+     * défaut.
+     *
+     * @param [type] $station
+     * @param [type] $systemReading
+     * @param [type] $systemParameters
+     * @return void
+     */
+    private function appendStationReadingTemplate($station, $systemReading, $systemParameters)
+    {
+        /* Créer le relevé de station */
+        $stationReading = new Reading();
+        $stationReading->setStation($station);
+
+        /* Pour chaque paramètre d'instrument, ajouter une nouvelle mesure au relevé de station */
+        foreach ($systemParameters as $systemParameter) {
+            $measure = new Measure();
+            $measure
+                ->setMeasurability($systemParameter)
+                ->setValue(null)
+                ->setStable(true)
+                ->setValid(true);
+            $stationReading->addMeasure($measure);
+        }
+
+        /* Ajouter la station au relevé */
+        $systemReading->addStationReading($stationReading);
+    }
+
+    /**
      * Gère l'encodage d'un nouveau relevé pour un système.
      * 
      * @Route("/system-reading/encode/{code}", name="system_reading_encode")
      * @IsGranted("ROLE_USER")
      */
-    public function encode(System $system, ObjectManager $manager, Request $request, StationRepository $stationRepository, MeasurabilityRepository $measurabilityRepository)
+    public function encode(System $system, ObjectManager $manager, Request $request, StationRepository $stationRepository, MeasurabilityRepository $measurabilityRepository, BasinRepository $basinRepository, StationKindRepository $stationKindRepository)
     {
         /* Instancier un nouveau relevé */
         $systemReading = new SystemReading();
@@ -54,46 +88,56 @@ class SystemReadingController extends AbstractController
             return $p->getInstrumentParameter();
         });
 
-        /* Peupler les lignes du tableau d'encodage des mesures: pour toutes les stations du système, il faut ajouter au relevé de système un relevé de station contenant, pour chaque paramètre d'instrument, une valeur vide par défaut */
+        /* Ajoute au relevé de système un relevé pour chaque station */
         foreach ($stations as $station) {
-            /* Créer le relevé de station */
-            $stationReading = new Reading();
-            $stationReading->setStation($station);
-
-            /* Pour chaque paramètre d'instrument, ajouter une nouvelle mesure au relevé de station */
-            foreach ($systemParameters as $systemParameter) {
-                $measure = new Measure();
-                $measure
-                    ->setMeasurability($systemParameter)
-                    ->setValue(null)
-                    ->setStable(true)
-                    ->setValid(true);
-                $stationReading->addMeasure($measure);
-            }
-
-            /* Ajouter la station au relevé */
-            $systemReading->addStationReading($stationReading);
+            $this->appendStationReadingTemplate($station, $systemReading, $systemParameters);
         }
 
         /* Créer le formulaire */
         $form = $this->createForm(SystemReadingType::class, $systemReading, [
             'stations' => $stations,
+            'basins' => $system->getBasins()->toArray(),
             'measurabilities' => $measurabilityRepository->findAll(),
         ]);
 
         /* Peupler les en-têtes de colonnes du tableau d'encodage des mesures: ce sont les paramètres d'instrument du relevé de système */
         $form->get('systemParameters')->setData($systemParameters);
 
-        /* Etant donné que les champs du formulaire correspondant aux codes AKWA ne sont pas mappés car ils sont relatifs aux stations et non à leur relevé, il faut récupérer le code AKWA de chaque station pour l'inscrire dans le champ correspondant du formulaire */
+        /* Récupérer les valeurs des champs non mappés */
         foreach ($form->get('stationReadings') as $child) {
             $stationReading = $child->getData();
             $station = $stationReading->getStation();
+            $child->get('name')->setData($station->getName());
             $child->get('atlasCode')->setData($station->getAtlasCode());
+            $child->get('basin')->setData($station->getBasin());
+            $child->get('kind')->setData($station->getKind());
+            $child->get('description')->setData($station->getDescription());
+        }
+
+        /* Créer les éventuelles stations à créer */
+        if ($request->request->has('system_reading')) {
+            foreach ($request->request->get('system_reading')['stationReadings'] as $requestKey => $requestParam) {
+                if (array_key_exists('name', $requestParam)) {
+                    /* Créer la station */
+                    $station = new Station();
+                    $station
+                        ->setName($requestParam['name'])
+                        ->setAtlasCode($requestParam['atlasCode'])
+                        ->setBasin($basinRepository->findOneById($requestParam['basin']))
+                        ->setKind($stationKindRepository->findOneById($requestParam['kind']))
+                        ->setDescription($requestParam['description']);
+                    $manager->persist($station);
+
+                    /* Ajouter au relevé de système un relevé de la station */
+                    $this->appendStationReadingTemplate($station, $systemReading, $systemParameters);
+                }
+            }
         }
 
         /* Traiter le formulaire */
         $form->handleRequest($request);
 
+        /* Tester la validité du formulaire */
         if ($form->isSubmitted() && $form->isValid()) {
             /* Obtenir des informations du relevé de système */
             $fieldDateTime = $systemReading->getFieldDateTime();
@@ -116,7 +160,7 @@ class SystemReadingController extends AbstractController
                     }
                 }
 
-                /* Traiter les autres mesures */
+                /* Traiter les mesures restantes */
                 foreach ($stationReading->getMeasures() as $measure) {
                     /* Définir les propriétés de la mesure et l'associer au relevé de station */
                     $measure
