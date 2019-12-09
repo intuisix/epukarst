@@ -39,13 +39,16 @@ function createCollectionResponders($blockSelector, $additionSelector, $deletion
     dans un ou plusiers sous-formulaire(s) */
     function setupDeleteButtons($selector)
     {
-        /* Supprimer le sous-formulaire en cas de clic, après avoir demandé
-        confirmation à l'utilisateur si un message a été spécifié */
-        $($selector).click(function() {
-            if ((null == $deletionMessage) || confirm($deletionMessage)) {
-                $(this.dataset.target).remove();
-            }
-        });
+        var $buttons = $($selector);
+        if (null != $buttons) {
+            /* Supprimer le sous-formulaire en cas de clic, après avoir demandé
+            confirmation à l'utilisateur si un message a été spécifié */
+            $buttons.click(function() {
+                if ((null == $deletionMessage) || confirm($deletionMessage)) {
+                    $(this.dataset.target).remove();
+                }
+            });
+        }
     }
 
     /* Retourne le sélecteur d'un sous-formulaire */
@@ -58,40 +61,43 @@ function createCollectionResponders($blockSelector, $additionSelector, $deletion
     formulaire principal et/ou dans un ou plusieurs sous-formulaires */
     function setupAddButtons($selector) 
     {
-        /* Ajouter un sous-formulaire en cas de clic */
-        $($selector).click(function() {
-            /* Attribuer un numéro unique à l'élément, en principe dans la
-            continuité des numéros existants; cependant, lorsque le formulaire
-            est affiché une deuxième ou une énième fois après que l'utilisateur
-            ait supprimé des éléments, il se peut que des discontinuités soient
-            présentes dans la numérotation, ou même des inversions; par
-            conséquent, la boucle permet de trouver un numéro qui n'est pas
-            encore attribué */
-            var $itemSelector = getItemSelector($itemIndex);
-            while ($($itemSelector).length) {
-                $itemIndex++;
-                $itemSelector = getItemSelector($itemIndex);
-            }
-            /* Un prototype du sous-formulaire a été créé par Symfony: pour
-            ajouter le sous-formulaire correspondant au nouvel élément, il
-            suffit le dupliquer et d'y remplacer la chaîne __name__ par
-            l'indice du nouvel élément */
-            const prototype = $($blockSelector).data('prototype');
-            $($blockSelector).append(prototype.replace(/__name__/g, $itemIndex));
-            /* Copier des valeurs de champs sur le nouveau sous-formulaire */
-            if (null != $copyValues) {
-                for (var $key in $copyValues) {
-                    $($itemSelector + '_' + $key).val($($copyValues[$key]).val());
+        $buttons = $($selector);
+        if (null != $buttons) {
+            /* Ajouter un sous-formulaire en cas de clic */
+            $buttons.click(function() {
+                /* Attribuer un numéro unique à l'élément, en principe dans la
+                continuité des numéros existants; cependant, lorsque le formulaire
+                est affiché une deuxième ou une énième fois après que l'utilisateur
+                ait supprimé des éléments, il se peut que des discontinuités soient
+                présentes dans la numérotation, ou même des inversions; par
+                conséquent, la boucle permet de trouver un numéro qui n'est pas
+                encore attribué */
+                var $itemSelector = getItemSelector($itemIndex);
+                while ($($itemSelector).length) {
+                    $itemIndex++;
+                    $itemSelector = getItemSelector($itemIndex);
                 }
-            }
-            /* Configure les éventuels boutons ajoutés par le sous-formulaire */
-            if (null != $additionSelector) {
-                setupAddButtons($itemSelector + ' ' + $additionSelector);
-            }
-            if (null != $deletionSelector) {
-                setupDeleteButtons($itemSelector + ' ' + $deletionSelector);
-            }
-        });
+                /* Un prototype du sous-formulaire a été créé par Symfony: pour
+                ajouter le sous-formulaire correspondant au nouvel élément, il
+                suffit le dupliquer et d'y remplacer la chaîne __name__ par
+                l'indice du nouvel élément */
+                const prototype = $($blockSelector).data('prototype');
+                $($blockSelector).append(prototype.replace(/__name__/g, $itemIndex));
+                /* Copier des valeurs de champs sur le nouveau sous-formulaire */
+                if (null != $copyValues) {
+                    for (var $key in $copyValues) {
+                        $($itemSelector + '_' + $key).val($($copyValues[$key]).val());
+                    }
+                }
+                /* Configure les éventuels boutons ajoutés par le sous-formulaire */
+                if (null != $additionSelector) {
+                    setupAddButtons($itemSelector + ' ' + $additionSelector);
+                }
+                if (null != $deletionSelector) {
+                    setupDeleteButtons($itemSelector + ' ' + $deletionSelector);
+                }
+            });
+        }
     }
 
     /* Configure les boutons existants */
@@ -105,20 +111,9 @@ function createCollectionResponders($blockSelector, $additionSelector, $deletion
         }
     }
 
-    /* Réaliser quelques vérifications de base et afficher des avertissements
-    sur la console: si des sélecteurs sont spécifiés, au moins une occurrence
-    doit être présente soit dans le formulaire lui-même soit dans le prototype
-    de sous-formulaire */
+    /* Vérifier qu'exactement une occurrence du bloc est présente */
     if (1 != $($blockSelector).length) {
         console.error($blockSelector, 'not found or not unique')
-    }
-    if ((null != $additionSelector) && (
-        (0 == $($additionSelector).length))) {
-        console.error($additionSelector, 'defined but not found')
-    }
-    if ((null != $deletionSelector) && 
-        (0 == $($deletionSelector).length)) {
-        console.error($deletionSelector, 'defined but not found', )
     }
 
     return setupButtons;
