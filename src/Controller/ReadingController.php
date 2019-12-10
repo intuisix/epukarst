@@ -371,7 +371,7 @@ class ReadingController extends AbstractController
      */
     public function delete(Reading $reading, Request $request, ObjectManager $manager)
     {
-        $form = $this->createFormBuilder($reading)->getForm();
+        $form = $this->createFormBuilder()->getForm();
 
         $form->handleRequest($request);
 

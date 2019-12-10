@@ -73,7 +73,10 @@ class SystemReading
     private $code;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Reading", mappedBy="systemReading")
+     * @ORM\OneToMany(
+     *     targetEntity="App\Entity\Reading",
+     *     mappedBy="systemReading",
+     *     orphanRemoval=true)
      * 
      * @Assert\Valid()
      */

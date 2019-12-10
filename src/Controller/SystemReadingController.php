@@ -204,6 +204,33 @@ class SystemReadingController extends AbstractController
     }
 
     /**
+     * Traite la suppression d'un relevé de système.
+     *
+     * @Route("system-reading/{code}/delete", name="system_reading_delete")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function delete(SystemReading $systemReading, Request $request, ObjectManager $manager)
+    {
+        $form = $this->createFormBuilder()->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $manager->remove($systemReading);
+            $manager->flush();
+    
+            $this->addFlash('success', "Le relevé <strong>{$systemReading->getCode()}</strong> a été supprimé avec succès.");
+    
+            return $this->redirectToRoute('system_reading');
+        }
+
+        return $this->render('system_reading/delete.html.twig', [
+            'form' => $form->createView(),
+            'systemReading' => $systemReading,
+        ]);
+    }
+
+    /**
      * @Route("/system-reading/{code}", name="system_reading_show")
      * @IsGranted("ROLE_ADMIN")
      */

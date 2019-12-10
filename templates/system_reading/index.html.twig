@@ -33,7 +33,7 @@
                             {{reading.encodingAuthor}}
                         </td>
                         <td>
-                            <a href="{{path('system_reading_show', {'code': reading.code })}}">{{reading.code}}</a>
+                            <a href="{{path('system_reading_show', {'code': reading.code})}}">{{reading.code}}</a>
                         </td>
                         <td>
                             {{reading.system.name}}
@@ -42,7 +42,7 @@
                             {{reading.stationReadings|length}}
                         </td>
                         <td>
-                            <a href="#"><i class="fas fa-trash text-danger"></i></a>
+                            <a href="{{path('system_reading_delete', {'code': reading.code})}}"><i class="fas fa-trash text-danger"></i></a>
                         </td>
                     </tr>
                 {% else %}
