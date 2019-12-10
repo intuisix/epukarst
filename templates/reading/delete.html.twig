@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Supprimer le relevé {{reading.code}}
+{% endblock %}
+
+{% block body %}
+    <div class="container mb-3">
+        <h1>Supprimer le relevé {{reading.code}}</h1>
+
+        {{form_start(form)}}
+
+        <div class="alert alert-danger">
+            Cette opération est irréversible.
+            <br>
+            Etes-vous certain de vouloir supprimer ce relevé du {{reading.fieldDateTime|date('d/m/Y')}} relatif à la station {{reading.station}}&nbsp;?
+        </div>
+
+        {# Ajouter un bouton pour confirmer la suppression #}
+        <button type="submit" class="btn btn-danger">
+            <i class="fa fa-trash" aria-hidden="true"></i>
+            Supprimer le relevé
+        </button>
+
+        {# Ajouter un bouton pour revenir à l'index #}
+        <a href="{{ path('reading') }}" class="btn btn-cancel">
+            <i class="fas fa-backspace"></i>
+            Revenir à la liste
+        </a>
+
+        {{form_end(form)}}
+    </div>
+{% endblock %}

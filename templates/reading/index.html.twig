@@ -131,7 +131,7 @@
                             <tr>
                                 <td>
                                     <input type="checkbox" name="readings[{{reading.code}}]"/>
-                                </th>
+                                </td>
                                 <td>
                                     {{reading.fieldDateTime|date('d/m/Y H:i')}}
                                 </td>
@@ -178,7 +178,7 @@
                                 <td>
                                     <a href="{{path('reading_modify', {'code': reading.code})}}"><i class="fas fa-edit text-primary"></i></a>
                                     <a href="{{path('reading_validate', {'code': reading.code})}}"><i class="fas fa-flag-checkered text-success"></i></a>
-                                    <a href="#"><i class="fas fa-trash text-danger"></i></a>
+                                    <a href="{{path('reading_delete', {'code': reading.code})}}"><i class="fas fa-trash text-danger"></i></a>
                                 </td>
                             </tr>
                         {% else %}

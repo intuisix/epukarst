@@ -362,4 +362,31 @@ class ReadingController extends AbstractController
             $manager->persist($measure);
         }
     }
+
+    /**
+     * Traite la suppression d'un relevé.
+     *
+     * @Route("reading/{code}/delete", name="reading_delete")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function delete(Reading $reading, Request $request, ObjectManager $manager)
+    {
+        $form = $this->createFormBuilder($reading)->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $manager->remove($reading);
+            $manager->flush();
+    
+            $this->addFlash('success', "Le relevé <strong>{$reading->getCode()}</strong> a été supprimé avec succès.");
+    
+            return $this->redirectToRoute('reading');
+        }
+
+        return $this->render('reading/delete.html.twig', [
+            'form' => $form->createView(),
+            'reading' => $reading,
+        ]);
+    }
 }
