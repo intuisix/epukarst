@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Utilisateur.
@@ -16,7 +17,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * 
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="user_account")
- * @HasLifecycleCallbacks()
+ * @ORM\HasLifecycleCallbacks()
+ * 
+ * @UniqueEntity(fields={"displayName"}, message="Un autre utilisateur possède déjà le même pseudonyme. Veuillez en choisir un autre.")
+ * @UniqueEntity(fields={"email"}, message="Un autre utilisateur possède déjà la même adresse e-mail. Veuillez en choisir une autre.")
  */
 class User implements UserInterface
 {

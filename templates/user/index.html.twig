@@ -1,20 +1,54 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello UserController!{% endblock %}
+{% block title %}
+    Utilisateurs
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="container mb-3">
+        <h1>Utilisateurs</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Pseudonyme</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Organisation</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in pagination.data %}
+                    <tr>
+                        <td>
+                            {{user.displayName}}
+                        </td>
+                        <td>
+                            {{user.lastName}}
+                        </td>
+                        <td>
+                            {{user.firstName}}
+                        </td>
+                        <td>
+                            {{user.organization}}
+                        </td>
+                        <td>
+                        <a href="{{path('user_modify', {'id': user.id})}}" class="text-primary"><i class="fas fa-edit"></i></a>
+                        <a href="{{path('user_delete', {'id': user.id})}}" class="text-danger" data-action="delete"><i class="fas fa-trash"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="100">
+                            <em>Il n'y a pas encore d'utilisateurs.</em>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/Users/daniel/Web/epukarst/src/Controller/UserController.php'|file_link(0) }}">src/Controller/UserController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/Users/daniel/Web/epukarst/templates/user/index.html.twig'|file_link(0) }}">templates/user/index.html.twig</a></code></li>
-    </ul>
-</div>
+        {# Afficher le contrôle de pagination #}
+        {{pagination.display}}
+    </div>
 {% endblock %}

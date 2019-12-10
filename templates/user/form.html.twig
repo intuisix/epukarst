@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block body %}
+    <div class="container mb-3">
+        <h1>{{title}}</h1>
+
+        {{form_start(form)}}
+
+        <div class="alert bg-light">
+            <div class="row">
+                <div class="col">
+                    {{form_row(form.displayName)}}
+                    {{form_row(form.firstName)}}
+                    {{form_row(form.lastName)}}
+                    {{form_row(form.organization)}}
+                </div>
+                <div class="col-4">
+                    {{form_row(form.email)}}
+                    {{form_row(form.password)}}
+                    {{form_row(form.phone)}}
+                </div>
+            </div>
+
+            {{form_row(form.description)}}
+            {{form_row(form.picture)}}
+        </div>
+
+        {# Afficher un bouton permettant d'enregistrer l'utilisateur #}
+        <button type="submit" class="btn btn-success">
+            <i class="fas fa-check"></i>
+            Enregistrer l'utilisateur
+        </button>
+
+        {# Afficher un bouton permettant de revenir à l'index #}
+        <a href="{{path('user')}}" class="btn btn-cancel">
+            <i class="fas fa-backspace"></i>
+            Retourner à la liste
+        </a>
+
+        {{form_end(form)}}
+    </div>
+{% endblock %}

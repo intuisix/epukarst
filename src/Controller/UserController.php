@@ -2,22 +2,85 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Form\UserType;
+use App\Service\PaginationService;
+use Symfony\Component\HttpFoundation\Request;
+use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class UserController extends AbstractController
 {
     /**
-     * @Route("/user", name="user")
+     * Affiche la liste des utilisateurs.
+     * 
+     * @Route("/user/{page<\d+>?1}", name="user")
+     * @IsGranted("ROLE_ADMIN")
      */
-    public function index()
+    public function index(int $page, PaginationService $pagination)
     {
+        $pagination
+            ->setEntityClass(User::class)
+            ->setOrderBy(['displayName' => 'ASC'])
+            ->setLimit(25)
+        ;
+
         return $this->render('user/index.html.twig', [
-            'controller_name' => 'UserController' ]);
+            'pagination' => $pagination ]);
     }
 
-  /**
+    /**
+     * Traite la modification d'un utilisateur.
+     *
+     * @Route("/user/{id}/modify", name="user_modify")
+     * @IsGranted("ROLE_ADMIN")
+     * 
+     * @param User $user
+     * @param ObjectManager $manager
+     * @param Request $request
+     * @return void
+     */
+    public function modify(User $user, ObjectManager $manager, Request $request)
+    {
+        $form = $this->createForm(UserType::class, $user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash('success', "L'utilisateur <strong>$user</strong> a été enregistré avec succès.");
+
+            return $this->redirectToRoute('user');
+        }
+
+        return $this->render('user/form.html.twig', [
+            'form' => $form->createView(),
+            'title' => "Modifier l'utilisateur $user",
+        ]);
+    }
+
+    /**
+     * Traite la suppression d'un utilisateur.
+     * 
+     * @Route("/user/{id}/delete", name="user_delete")
+     * @IsGranted("ROLE_ADMIN")
+     *
+     * @param User $user
+     * @param ObjectManager $manager
+     * @param Request $request
+     * @return void
+     */
+    public function delete(User $user, ObjectManager $manager, Request $request)
+    {
+
+    }
+
+    /**
      * Gère le formulaire de connexion.
      * 
      * @Route("/login", name="user_login")
