@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Relevé de système {{systemReading.code}}
+{% endblock %}
+
+{% block body %}
+    <div class="container mb-3">
+        <h1>Relevé de système {{systemReading.code}}</h1>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-3">Système&nbsp;:</dt>
+                    <dd class="col-9">{{systemReading.system.name}}</dd>
+                    <dt class="col-3">Réalisé le&nbsp;:</dt>
+                    <dd class="col-9">{{systemReading.fieldDateTime|date('d/m/Y H:i')}}</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        Encodé le <strong>{{systemReading.encodingDateTime|date('d/m/Y H:i')}}</strong> par <strong>{{systemReading.encodingAuthor.displayName}}</strong>
+                    </div>
+                    <div class="card-body">
+                        {% if systemReading.encodingNotes is not empty %}
+                            {{systemReading.encodingNotes|nl2br}}
+                        {% else %}
+                            <em>Il n'y a pas de commentaire d'encodage.</em>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+{% if 0 %}
+            <div class="col">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        {% if systemReading.validationStatus is not null %}
+                            {% if systemReading.validationStatus %}
+                                <i class="fas fa-flag-checkered text-success"></i>
+                                Validé
+                            {% else %}
+                                <i class="fas fa-ban text-danger"></i>
+                                Invalidé
+                            {% endif %}
+                            le <strong>{{systemReading.validationDateTime|date('d/m/Y H:i')}}</strong> par <strong>{{systemReading.validationAuthor.displayName}}</strong>
+                        {% else %}
+                            Non validé
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        {% if systemReading.validationStatus and (systemReading.validationNotes is not empty) %}
+                            {{systemReading.validationNotes|nl2br}}
+                        {% else %}
+                            <em>Il n'y a pas de commentaire de validation.</em>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+{% endif %}
+        </div>
+
+        <h2>Relevés de stations</h2>
+
+        <table width="100%" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Terrain</th>
+                    <th>Encodage</th>
+                    <th>Code</th>
+                    <th>Bassin</th>
+                    <th>Station</th>
+                    {% for parameter in parameters %}
+                        <th style="text-align: center">
+                            {{parameter.nameWithUnit}}
+                        </th>
+                    {% endfor %}
+                    <th>Validé</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stationReading in systemReading.stationReadings %}
+                    <tr>
+                        <td>
+                            {{stationReading.fieldDateTime|date('d/m/Y')}}
+                        </td>
+                        <td>
+                            {{stationReading.encodingDateTime|date('d/m/Y')}}
+                        </td>
+                        <td>
+                            <a href="{{path('reading_show', {'code': stationReading.code })}}">{{stationReading.code}}</a>
+                        </td>
+                        <td>
+                            {{stationReading.station.basin.name}}
+                        </td>
+                        <td>
+                            {{stationReading.station.name}}
+                        </td>
+                        {% for parameter in parameters %}
+                            <td style="text-align: right">
+                                {% set stats = stationReading.valueStats(parameter) %}
+                                {% if stats.count > 0 %}
+                                    {% if stats.count > 1 %}
+                                        <span class="badge badge-info badge-pill">{{stats.count}}</span>
+                                        {{stats.min|number_format(1, ',', ' ')}} -
+                                        {{stats.max|number_format(1, ',', ' ')}}
+                                    {% else %}
+                                        {{stats.avg|number_format(1, ',', ' ')}}
+                                    {% endif %}
+                                {% else %}
+                                    --
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                        <td style="text-align:center">
+                            {% if stationReading.validated %}
+                                {# Le relevé est validé #}
+                                <i class="fas fa-flag-checkered"></i>
+                            {% elseif stationReading.validated is not null %}
+                                {# Le relevé est invalidé #}
+                                <i class="fas fa-ban"></i>
+                            {% else %}
+                                {# Le relevé est soumis #}
+                                --
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{path('reading_modify', {'code': stationReading.code})}}"><i class="fas fa-edit text-primary"></i></a>
+                            <a href="{{path('reading_validate', {'code': stationReading.code})}}"><i class="fas fa-flag-checkered text-success"></i></a>
+                            <a href="{{path('reading_delete', {'code': stationReading.code})}}"><i class="fas fa-trash text-danger"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="100">Il n'y a pas de relevés de station.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {# Ajouter un bouton pour revenir à l'index #}
+        <a href="{{ path('system_reading') }}" class="btn btn-cancel">
+            <i class="fas fa-backspace"></i>
+            Revenir à la liste
+        </a>
+    </div>
+{% endblock %}

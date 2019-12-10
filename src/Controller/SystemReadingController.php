@@ -9,8 +9,11 @@ use App\Entity\Station;
 use App\Entity\SystemReading;
 use App\Entity\SystemParameter;
 use App\Form\SystemReadingType;
+use App\Service\PaginationService;
 use App\Repository\BasinRepository;
+use App\Repository\SystemRepository;
 use App\Repository\StationRepository;
+use App\Repository\ParameterRepository;
 use App\Repository\StationKindRepository;
 use App\Repository\MeasurabilityRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,11 +25,20 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class SystemReadingController extends AbstractController
 {
     /**
-     * @Route("/system-reading", name="system_reading")
+     * @Route("/system-reading/{page<\d+>?1}", name="system_reading")
+     * @IsGranted("ROLE_ADMIN")
      */
-    public function index()
+    public function index(int $page, PaginationService $pagination, SystemRepository $systemRepository)
     {
+        $pagination
+            ->setEntityClass(SystemReading::class)
+            ->setOrderBy(['fieldDateTime' => 'DESC'])
+            ->setPage($page)
+        ;
+
         return $this->render('system_reading/index.html.twig', [
+            'pagination' => $pagination,
+            'systems' => $systemRepository->findAll(),
         ]);
     }
 
@@ -40,7 +52,7 @@ class SystemReadingController extends AbstractController
      * @param [type] $systemParameters
      * @return void
      */
-    private function appendStationReadingTemplate($station, $systemReading, $systemParameters)
+    private function appendStationReadingTemplate($station, SystemReading $systemReading, $systemParameters)
     {
         /* Créer le relevé de station */
         $stationReading = new Reading();
@@ -193,11 +205,14 @@ class SystemReadingController extends AbstractController
 
     /**
      * @Route("/system-reading/{code}", name="system_reading_show")
+     * @IsGranted("ROLE_ADMIN")
      */
-    public function show(SystemReading $reading)
+    public function show(SystemReading $systemReading, ParameterRepository $parameterRepository)
     {
-        dump($reading);
-        return $this->render('system_reading/index.html.twig', [
-            ]);
+        return $this->render('system_reading/show.html.twig', [
+            'systemReading' => $systemReading,
+            'parameters' => $parameterRepository->findBy(
+                [ 'favorite' => true ], [ 'name' => 'ASC']),
+        ]);
     }
 }

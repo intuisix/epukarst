@@ -1,8 +1,69 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
+    Relevés de système
 {% endblock %}
 
 {% block body %}
+    <div class="container">
+        <h1 class="mb-3">Relevés de systèmes</h1>
 
+        <table width="100%" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Terrain</th>
+                    <th>Encodage</th>
+                    <th>Auteur</th>
+                    <th>Code</th>
+                    <th>Système</th>
+                    <th>Stations</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reading in pagination.data %}
+                    <tr>
+                        <td>
+                            {{reading.fieldDateTime|date('d/m/Y')}}
+                        </td>
+                        <td>
+                            {{reading.encodingDateTime|date('d/m/Y')}}
+                        </td>
+                        <td>
+                            {{reading.encodingAuthor}}
+                        </td>
+                        <td>
+                            <a href="{{path('system_reading_show', {'code': reading.code })}}">{{reading.code}}</a>
+                        </td>
+                        <td>
+                            {{reading.system.name}}
+                        </td>
+                        <td>
+                            {{reading.stationReadings|length}}
+                        </td>
+                        <td>
+                            <a href="#"><i class="fas fa-trash text-danger"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="100">Il n'y a pas de relevés à afficher.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {# Afficher le composant de pagination #}
+        {{pagination.display}}
+
+        {# Afficher un bouton à menu déroulant permettant d'encoder un relevé, pour chaque système #}
+        <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <fa class="fas fa-plus"></fa> Encoder un relevé de système
+        </button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+            {% for system in systems %}
+                <a class="dropdown-item" href="{{path('system_reading_encode', {'code': system.code})}}">{{system.name}}</a>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
