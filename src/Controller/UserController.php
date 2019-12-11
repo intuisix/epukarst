@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Form\UserPasswordType;
 use App\Service\PaginationService;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -11,6 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserController extends AbstractController
 {
@@ -61,6 +63,40 @@ class UserController extends AbstractController
         return $this->render('user/form.html.twig', [
             'form' => $form->createView(),
             'title' => "Modifier l'utilisateur $user",
+        ]);
+    }
+
+    /**
+     * Traite le changement du mot de passe de l'utilisateur.
+     *
+     * @Route("/user/{id}/password", name="user_password")
+     * @IsGranted("ROLE_ADMIN")
+     *
+     * @param User $user
+     * @param ObjectManager $manager
+     * @param Request $request
+     * @return void
+     */
+    public function setPassword(User $user, ObjectManager $manager, Request $request, UserPasswordEncoderInterface $encoder)
+    {
+        $form = $this->createForm(UserPasswordType::class, $user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /* Hacher le mot de passe */
+            $user->setPassword($encoder->encodePassword($user, $user->getPassword()));
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash('success', "Le mot de passe de <strong>$user</strong> a été enregistré avec succès.");
+
+            return $this->redirectToRoute('user');
+        }
+
+        return $this->render('user/password.html.twig', [
+            'form' => $form->createView(),
+            'title' => "Modifier le mot de passe de $user",
         ]);
     }
 

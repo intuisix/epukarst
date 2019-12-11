@@ -34,8 +34,9 @@
                             {{user.organization}}
                         </td>
                         <td>
-                        <a href="{{path('user_modify', {'id': user.id})}}" class="text-primary"><i class="fas fa-edit"></i></a>
-                        <a href="{{path('user_delete', {'id': user.id})}}" class="text-danger" data-action="delete"><i class="fas fa-trash"></i></a>
+                            <a href="{{path('user_modify', {'id': user.id})}}" class="text-primary"><i class="fas fa-edit"></i></a>
+                            <a href="{{path('user_password', {'id': user.id})}}" class="text-primary"><i class="fas fa-key"></i></a>
+                            <a href="{{path('user_delete', {'id': user.id})}}" class="text-danger" data-action="delete"><i class="fas fa-trash"></i></a>
                         </td>
                     </tr>
                 {% else %}
