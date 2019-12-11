@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\User;
+use App\Form\UserRoleType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -12,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class UserType extends AbstractType
 {
@@ -20,31 +22,61 @@ class UserType extends AbstractType
         $builder
             ->add('firstName', TextType::class, [
                 'label' => "Prénom",
+                'attr' => [
+                    'placeholder' => "Prénom",
+                ]
             ])
             ->add('lastName', TextType::class, [
                 'label' => "Nom",
+                'attr' => [
+                    'placeholder' => "Nom",
+                ]
             ])
             ->add('organization', TextType::class, [
                 'label' => "Organisation",
                 'required' => false,
+                'attr' => [
+                    'placeholder' => "Société, organisme ou club",
+                ]
             ])
             ->add('email', TextType::class, [
                 'label' => "E-mail",
+                'attr' => [
+                    'placeholder' => "nom.prenom@exemple.org",
+                ]
             ])
             ->add('phone', TelType::class, [
                 'label' => "Téléphone",
                 'required' => false,
+                'attr' => [
+                    'placeholder' => "+32 999 99.99.99",
+                ]
             ])
             ->add('displayName', TextType::class, [
                 'label' => "Pseudonyme",
                 'required' => false,
+                'attr' => [
+                    'placeholder' => "Peut être complété automatiquement",
+                ]
             ])
             ->add('description', TextareaType::class, [
                 'label' => "Description",
                 'required' => false,
+                'attr' => [
+                    'placeholder' => "Présentez brièvement l'utilisateur (facultatif)",
+                ]
             ])
             ->add('picture', UrlType::class, [
                 'label' => "Photo",
+                'attr' => [
+                    'placeholder' => "https://www.exemple.org/photo",
+                ]
+            ])
+            ->add('userRoles', CollectionType::class, [
+                'label' => "Rôles",
+                'entry_type' => UserRoleType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
             ])
         ;
     }

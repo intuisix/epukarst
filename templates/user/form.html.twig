@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% form_theme form _self %}
+
 {% block title %}
     {{title}}
 {% endblock %}
@@ -10,22 +12,34 @@
 
         {{form_start(form)}}
 
-        <div class="alert bg-light">
-            <div class="row">
-                <div class="col">
-                    {{form_row(form.firstName)}}
-                    {{form_row(form.lastName)}}
-                    {{form_row(form.organization)}}
-                </div>
-                <div class="col-4">
+        <div class="row">
+            <div class="col">
+                <div class="alert bg-light">
+                    <div class="form-row">
+                        <div class="col">
+                            {{form_row(form.firstName)}}
+                        </div>
+                        <div class="col">
+                            {{form_row(form.lastName)}}
+                        </div>
+                    </div>
                     {{form_row(form.displayName)}}
-                    {{form_row(form.email)}}
-                    {{form_row(form.phone)}}
+                    <div class="row">
+                        <div class="col">
+                            {{form_row(form.email)}}
+                        </div>
+                        <div class="col">
+                            {{form_row(form.phone)}}
+                        </div>
+                    </div>
+                    {{form_row(form.organization)}}
+                    {{form_row(form.description)}}
+                    {{form_row(form.picture)}}
                 </div>
             </div>
-
-            {{form_row(form.description)}}
-            {{form_row(form.picture)}}
+            <div class="col-4">
+                {{form_row(form.userRoles)}}
+            </div>
         </div>
 
         {# Afficher un bouton permettant d'enregistrer l'utilisateur #}
@@ -42,4 +56,62 @@
 
         {{form_end(form)}}
     </div>
+{% endblock %}
+
+{% block _user_userRoles_row %}
+    {# Afficher l'ensemble des rôles d'utilisateur #}
+    {{form_row(form)}}
+    {# Afficher un bouton pour ajouter un rôle d'utilisateur #}
+    <button type="button" data-action="add-userRole" class="btn btn-secondary">
+        <i class="fas fa-plus"></i>
+        Ajouter un rôle
+    </button>
+{% endblock %}
+
+{% block _user_userRoles_label %}
+    <h2>{{form.vars.label}}</h2>
+    <p>Accordez des permissions à l'utilisateur en lui attribuant des rôles&nbsp;:</p>
+{% endblock %}
+
+{% block _user_userRoles_entry_label %}
+    {# Ne pas afficher d'étiquette #}
+{% endblock %}
+
+{% block _user_userRoles_entry_widget %}
+    <div class="alert bg-light" id="{{id}}">
+        <div class="row">
+            <div class="col">
+                {# Afficher le widget de rôle #}
+                {{form_row(form.linkedRole, {'label_attr': {'hidden': 'hidden'}})}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {# Afficher le widget de système #}
+                {{form_row(form.linkedSystem, {'label_attr': {'hidden': 'hidden'}})}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {# Afficher un bouton permettant de supprimer le rôle #}
+                <button type="button" data-action="delete-userRole" data-target="#{{id}}" class="btn btn-danger float-right">
+                    <i class="fas fa-trash"></i>
+                    Supprimer ce rôle
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="/js/collection.js"></script>
+    <script>
+        var userRolesCollectionResponder =
+            createCollectionResponders(
+                '#user_userRoles',
+                'button[data-action="add-userRole"]',
+                'button[data-action="delete-userRole"]'
+            );
+        userRolesCollectionResponder();
+    </script>
 {% endblock %}

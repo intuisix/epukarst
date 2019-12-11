@@ -52,6 +52,12 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /* Associer les rôles à l'utilisateur */
+            foreach ($user->getUserRoles() as $userRole) {
+                $userRole->setLinkedUser($user);
+                $manager->persist($userRole);
+            }
+            /* Persister l'utilisateur en base de données */
             $manager->persist($user);
             $manager->flush();
 
