@@ -112,9 +112,22 @@ class Reading
      */
     private $systemReading;
 
+    /**
+     * Construit une instance de relevé.
+     */
     public function __construct()
     {
         $this->measures = new ArrayCollection();
+    }
+
+    /**
+     * Retourne le code du relevé.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->code;
     }
 
     /**

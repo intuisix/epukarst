@@ -227,6 +227,7 @@ class SystemReadingController extends AbstractController
         return $this->render('system_reading/delete.html.twig', [
             'form' => $form->createView(),
             'systemReading' => $systemReading,
+            'title' => "Supprimer le relevé $systemReading",
         ]);
     }
 

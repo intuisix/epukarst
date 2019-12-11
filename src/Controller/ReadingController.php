@@ -387,6 +387,7 @@ class ReadingController extends AbstractController
         return $this->render('reading/delete.html.twig', [
             'form' => $form->createView(),
             'reading' => $reading,
+            'title' => "Supprimer le relevé $reading",
         ]);
     }
 }

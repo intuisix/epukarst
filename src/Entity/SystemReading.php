@@ -82,9 +82,22 @@ class SystemReading
      */
     private $stationReadings;
 
+    /**
+     * Construit une instance de relevé.
+     */
     public function __construct()
     {
         $this->stationReadings = new ArrayCollection();
+    }
+
+    /**
+     * Retourne le code du relevé.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->code;
     }
 
     /**
