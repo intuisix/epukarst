@@ -199,24 +199,28 @@ class UserController extends AbstractController
      */
     public function delete(User $user, ObjectManager $manager, Request $request)
     {
-        $form = $this->createFormBuilder()->getForm();
+        if ($user === $this->getUser()) {
+            $this->addFlash('danger', "Vous ne pouvez pas supprimer vous-même votre compte d'utilisateur.");
+        } else {
+            $form = $this->createFormBuilder()->getForm();
 
-        $form->handleRequest($request);
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $manager->remove($user);
-            $manager->flush();
-    
-            $this->addFlash('success', "L'utilisateur <strong>$user</strong> a été supprimé avec succès.");
-    
-            return $this->redirectToRoute('user');
+            if ($form->isSubmitted() && $form->isValid()) {
+                $manager->remove($user);
+                $manager->flush();
+        
+                $this->addFlash('success', "L'utilisateur <strong>$user</strong> a été supprimé avec succès.");
+            } else {
+                return $this->render('user/delete.html.twig', [
+                    'form' => $form->createView(),
+                    'user' => $user,
+                    'title' => "Supprimer le relevé $user",
+                ]);
+            }
         }
 
-        return $this->render('user/delete.html.twig', [
-            'form' => $form->createView(),
-            'user' => $user,
-            'title' => "Supprimer le relevé $user",
-        ]);
+        return $this->redirectToRoute('user');
     }
 
     /**
