@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\System;
 use App\Form\SystemType;
 use App\Entity\SystemPicture;
+use App\Service\PaginationService;
 use App\Repository\SystemRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -27,6 +28,23 @@ class SystemController extends AbstractController
     }
 
     /**
+     * Affiche la liste des systèmes karstiques.
+     * 
+     * @Route("/system/list/{page<\d+>?1}", name="systems_list")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function list(int $page, SystemRepository $systemRepository, PaginationService $pagination)
+    {
+        $pagination
+            ->setEntityClass(System::class)
+            ->setPage($page);
+
+        return $this->render('system/list.html.twig', [
+            'pagination' => $pagination
+        ]);
+    }
+
+    /**
      * Traite l'ajout d'un système karstique.
      * 
      * @Route("/system/add", name="system_create")
@@ -45,11 +63,11 @@ class SystemController extends AbstractController
             $picturesAdded = $this->update($system, $form, $manager);
 
             $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été créé avec succès.");
-    
+
             if ($picturesAdded) {
                 $this->addFlash('info', "Veuillez maintenant compléter les légendes des photos.");
                 return $this->redirectToRoute('system_modify', [
-                    'slug' => $system->getSlug(),
+                    'code' => $system->getCode(),
                 ]);
             } else {
                 return $this->redirectToRoute('system_show', [
@@ -68,7 +86,7 @@ class SystemController extends AbstractController
     /**
      * Traite la modification d'un système karstique.
      * 
-     * @Route("/system/{slug}/modify", name="system_modify")
+     * @Route("/system/{code}/modify", name="system_modify")
      * @IsGranted("ROLE_ADMIN")
      */
     public function modify(System $system, ObjectManager $manager, Request $request)
@@ -82,11 +100,11 @@ class SystemController extends AbstractController
             $picturesAdded = $this->update($system, $form, $manager);
 
             $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été modifié avec succès.");
-    
+
             if ($picturesAdded) {
                 $this->addFlash('info', "Veuillez maintenant compléter les légendes des photos.");
                 return $this->redirectToRoute('system_modify', [
-                    'slug' => $system->getSlug(),
+                    'code' => $system->getCode(),
                 ]);
             } else {
                 return $this->redirectToRoute('system_show', [
@@ -105,7 +123,7 @@ class SystemController extends AbstractController
     /**
      * Traite la demande de suppression d'un système karstique.
      * 
-     * @Route("/system/{slug}/delete", name="system_delete")
+     * @Route("/system/{code}/delete", name="system_delete")
      * @IsGranted("ROLE_ADMIN")
      */
     public function delete(System $system, ObjectManager $manager, Request $request)
@@ -113,13 +131,24 @@ class SystemController extends AbstractController
         if (count($system->getBasins()) > 0) {
             $this->addFlash('danger', "Vous ne pouvez pas supprimer le système <strong>{$system->getName()}</strong> car il possède des bassins.");
         } else {
-            $manager->remove($system);
-            $manager->flush();
-    
-            $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été supprimé avec succès.");
+            $form = $this->createFormBuilder()->getForm();
+
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $manager->remove($system);
+                $manager->flush();
+                $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été supprimé avec succès.");
+            } else {
+                return $this->render('system/delete.html.twig', [
+                    'form' => $form->createView(),
+                    'system' => $system,
+                    'title' => "Supprimer le système {$system->getName()}",
+                ]);
+            }
         }
 
-        return $this->redirectToRoute('system');
+        return $this->redirectToRoute('systems_list');
     }
 
     /**
@@ -152,11 +181,6 @@ class SystemController extends AbstractController
             $manager->persist($picture);
         }
 
-        foreach ($system->getParameters() as $parameter) {
-            $parameter->setSystem($system);
-            $manager->persist($parameter);
-        }
-
         $picturesAdded = false;
         foreach ($form['newPictures']->getData() as $uploadedFile)
         {
@@ -165,6 +189,16 @@ class SystemController extends AbstractController
             $system->addPicture($picture);
             $manager->persist($picture);
             $picturesAdded = true;
+        }
+
+        foreach ($system->getParameters() as $parameter) {
+            $parameter->setSystem($system);
+            $manager->persist($parameter);
+        }
+
+        foreach ($system->getUserRoles() as $userRole) {
+            $userRole->setLinkedSystem($system);
+            $manager->persist($userRole);
         }
 
         $manager->persist($system);

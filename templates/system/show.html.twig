@@ -24,9 +24,9 @@
                 <p><big>{{system.introduction}}</big></p>
                 <p>{{system.commune}} - {{system.basin}}</p>
                 {% if app.user and app.user.isAdmin() %}
-                    <a href="{{ path('system_modify', {'slug': system.slug}) }}" class="btn btn-primary">Modifier le système</a>
+                    <a href="{{ path('system_modify', {'code': system.code}) }}" class="btn btn-primary">Modifier le système</a>
 
-                    <a href="{{ path('system_delete', {'slug': system.slug}) }}" class="btn btn-danger" id='delete-button'>Supprimer le système</a>
+                    <a href="{{ path('system_delete', {'code': system.code}) }}" class="btn btn-danger" id='delete-button'>Supprimer le système</a>
                 {% endif %}
             </div>
         </div>
@@ -81,10 +81,10 @@
                         <h3 id="station_{{station.code}}" class="d-flex align-items-center">
                             <span class="badge badge-secondary mr-2">{{station.code}}</span>
                             {{station.name}}
-                            {% if station.atlasCode %}
-                                <p>Code AKWA&nbsp;: {{station.atlasCode}}</p>
-                            {% endif %}
                         </h3>
+                        {% if station.atlasCode %}
+                            <p>Code AKWA&nbsp;: {{station.atlasCode}}</p>
+                        {% endif %}
                         {{station.description|raw}}
                     {% endfor %}
 
@@ -113,12 +113,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block javascripts %}
-    <script>
-        $('#delete-button').click(function() {
-            return confirm("Êtes-vous sûr de vouloir supprimer ce système ?");
-        })
-    </script>
 {% endblock %}

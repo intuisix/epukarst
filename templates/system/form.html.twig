@@ -17,48 +17,82 @@ modification de systèmes #}
 
         {{form_start(form)}}
 
-        <h2>Identification</h2>
-        <div class="alert bg-light">
-            <div class="row">
-                <div class="col-md-3">
-                    {{form_row(form.code)}}
-                    {{form_row(form.basin)}}
-                    {{form_row(form.commune)}}
-                    {{form_row(form.waterMass)}}
+        {# Afficher une barre d'onglets #}
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="identification-tab" data-toggle="tab" href="#identification" role="tab" aria-controls="identification" aria-selected="true">Identification</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pictures-tab" data-toggle="tab" href="#pictures" role="tab" aria-controls="pictures" aria-selected="false">{{form.pictures.vars.label}}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="basins-tab" data-toggle="tab" href="#basins" role="tab" aria-controls="basins" aria-selected="false">Bassins</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="parameters-tab" data-toggle="tab" href="#parameters" role="tab" aria-controls="parameters" aria-selected="false">Paramètres</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="roles-tab" data-toggle="tab" href="#roles" role="tab" aria-controls="roles" aria-selected="false">Rôles</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            {# Définir le panneau d'identification #}
+            <div class="tab-pane fade show active" id="identification" role="tabpanel" aria-labelledby="identification-tab">
+                <div class="alert">
+                    <div class="row">
+                        <div class="col-md-3">
+                            {{form_row(form.code)}}
+                            {{form_row(form.basin)}}
+                            {{form_row(form.commune)}}
+                            {{form_row(form.waterMass)}}
+                        </div>
+                        <div class="col-md-9">
+                            {{form_row(form.name)}}
+                            {{form_row(form.slug)}}
+                            {{form_row(form.introduction)}}
+                            {{form_row(form.description)}}
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-9">
-                    {{form_row(form.name)}}
-                    {{form_row(form.slug)}}
-                    {{form_row(form.introduction)}}
-                    {{form_row(form.description)}}
+            </div>
+            {# Définir le panneau des photographies #}
+            <div class="tab-pane fade" id="pictures" role="tabpanel" aria-labelledby="pictures-tab">
+                <div class="alert">
+                    {{form_row(form.pictures)}}
+                    {{form_row(form.newPictures)}}
+                </div>
+            </div>
+            {# Définir le panneau des bassins #}
+            <div class="tab-pane fade" id="basins" role="tabpanel" aria-labelledby="basins-tab">
+                <div class="alert">
+                    {{form_row(form.basins)}}
+                </div>
+            </div>
+            {# Définir le panneau des paramètres #}
+            <div class="tab-pane fade" id="parameters" role="tabpanel" aria-labelledby="parameters-tab">
+                <div class="alert">
+                    {{form_row(form.parameters)}}
+                </div>
+            </div>
+            {# Définir le panneau des rôles #}
+            <div class="tab-pane fade" id="roles" role="tabpanel" aria-labelledby="roles-tab">
+                <div class="alert">
+                    {{form_row(form.userRoles)}}
                 </div>
             </div>
         </div>
 
-        {# Constituer le sous-formulaire des bassins #}
-        {{form_row(form.basins)}}
+        {# Afficher un bouton permettant d'enregistrer le système #}
+        <button type="submit" class="btn btn-success">
+            <i class="fas fa-check"></i>
+            Enregistrer le système
+        </button>
 
-        {# Constituer le sous-formulaire des photos #}
-        {{form_row(form.pictures)}}
-        {{form_row(form.newPictures)}}
-
-        {# Constituer le sous-formulaire des paramètres #}
-        {{form_row(form.parameters)}}
-
-        {# Constituer la dernière ligne du formulaire #}
-        <div class="my-3">
-            {# Afficher un bouton permettant d'enregistrer le système #}
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-check"></i>
-                Enregistrer le système
-            </button>
-
-            {# Afficher un bouton permettant de revenir à l'index #}
-            <a href="{{ path('system') }}" class="btn btn-cancel">
-                <i class="fas fa-backspace"></i>
-                Annuler
-            </a>
-        </div>
+        {# Afficher un bouton permettant de revenir à l'index #}
+        <a href="{{path('systems_list')}}" class="btn btn-cancel">
+            <i class="fas fa-backspace"></i>
+            Revenir à la liste
+        </a>
 
         {{form_end(form)}}
     </div>
@@ -66,8 +100,7 @@ modification de systèmes #}
 
 
 {% block _system_basins_label %}
-    <h2>{{form_label(form)}}</h2>
-    <p>La liste ci-dessous permet de recenser les bassins d'alimentation faisant partie du système.</p>
+    <p>Ce permet de définir les bassins d'alimentation faisant partie du système.</p>
 {% endblock %}
 
 {% block _system_basins_row %}
@@ -100,7 +133,7 @@ modification de systèmes #}
                 {% if (form.vars.data is not null) and (form.vars.data.stations|length) %}
                     <p>Ce bassin contient {{form.vars.data.stations|length}} station(s).</p>
                 {% else %}
-                    {# Afficher un bouton pour supprimer le bassin #}
+                    {# Afficher un bouton permettant de supprimer le bassin #}
                     <button type="button" data-action="delete-basin" data-target="#{{id}}" class="btn btn-danger float-right">
                         <i class="fas fa-trash"></i>
                         Supprimer ce bassin
@@ -113,8 +146,7 @@ modification de systèmes #}
 
 
 {% block _system_pictures_label %}
-    <h2>{{form_label(form)}}</h2>
-    <p>Les photos de la liste ci-dessous seront affichées avec la description du système. Chaque photo est susceptible d'être prise au hasard lors de différents affichages relatifs au système.<p>
+    <p>Ce panneau permet de définir les photos du système.<p>
 {% endblock %}
 
 {% block _system_pictures_widget %}
@@ -135,8 +167,11 @@ modification de systèmes #}
             <div class="col">
                 {{form_row(form.fileName)}}
                 {{form_row(form.caption)}}
-
-                {# Bouton pour supprimer la photo #}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {# Afficher un bouton permettant de supprimer la photo #}
                 <button type="button" data-action="delete-picture" data-target="#{{id}}" class="btn btn-danger float-right">
                     <i class="fas fa-trash"></i>
                     Supprimer cette photo
@@ -148,8 +183,7 @@ modification de systèmes #}
 
 
 {% block _system_parameters_label %}
-    <h2>{{form_label(form)}}</h2>
-    <p>La liste ci-dessous permet de planifier les paramètres à mesurer sur le système ainsi que l'instrument qui sera en principe utilisé pour ces mesures.</p>
+    <p>Ce panneau planifie les paramètres à mesurer sur le système ainsi que l'instrument qui sera en principe utilisé pour ces mesures.</p>
 {% endblock %}
 
 {% block _system_parameters_row %}
@@ -174,11 +208,55 @@ modification de systèmes #}
             </div>
             <div class="col">
                 {{form_row(form.notes)}}
-
-                {# Bouton pour supprimer le paramètre #}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {# Afficher un bouton permettant de supprimer le paramètre #}
                 <button type="button" data-action="delete-parameter" data-target="#{{id}}" class="btn btn-danger float-right">
                     <i class="fas fa-trash"></i>
                     Supprimer ce paramètre
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block _system_userRoles_label %}
+    <p>Ce permet de définir les rôles des utilisateurs associés au système.</p>
+{% endblock %}
+
+{% block _system_userRoles_row %}
+    {{form_row(form)}}
+    {# Afficher un bouton permettant d'ajouter un bassin #}
+    <button type="button" data-action="add-userRole" class="btn btn-secondary">
+        <i class="fas fa-plus"></i>
+        Ajouter un rôle
+    </button>
+{% endblock %}
+
+{% block _system_userRoles_entry_row %}
+    {# N'afficher que le widget, sans étiquette ou autre information #}
+    {{form_widget(form)}}
+{% endblock %}
+
+{% block _system_userRoles_entry_widget %}
+    <div class="form-group alert bg-light" id="{{id}}">
+        <div class="row">
+            <div class="col">
+                {{form_row(form.linkedUser)}}
+            </div>
+            <div class="col">
+                {{form_row(form.linkedRole)}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {# Afficher un bouton permettant de supprimer le rôle #}
+                <button type="button" data-action="delete-userRole" data-target="#{{id}}" class="btn btn-danger float-right">
+                    <i class="fas fa-trash"></i>
+                    Supprimer ce rôle
                 </button>
             </div>
         </div>
@@ -215,5 +293,14 @@ modification de systèmes #}
                 'Etes-vous sûr de vouloir supprimer ce paramètre ?'
             );
         parametersCollectionResponder();
+
+        var userRolesCollectionResponder =
+            createCollectionResponders(
+                '#system_userRoles',
+                'button[data-action="add-userRole"]',
+                'button[data-action="delete-userRole"]',
+                'Etes-vous sûr de vouloir supprimer ce rôle ?'
+            );
+        userRolesCollectionResponder();
     </script>
 {% endblock %}

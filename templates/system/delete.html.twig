@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block body %}
+    <div class="container mb-3">
+        <h1>{{title}}</h1>
+
+        {{form_start(form)}}
+
+        <div class="alert alert-danger">
+            Cette opération est irréversible.
+            <br>
+            Etes-vous certain de vouloir supprimer le système <strong>{{system.name}}</strong>&nbsp;?
+        </div>
+
+        {# Ajouter un bouton pour confirmer la suppression #}
+        <button type="submit" class="btn btn-danger">
+            <i class="fa fa-trash" aria-hidden="true"></i>
+            Supprimer le système
+        </button>
+
+        {# Ajouter un bouton pour revenir à l'index #}
+        <a href="{{path('systems_list')}}" class="btn btn-cancel">
+            <i class="fas fa-backspace"></i>
+            Revenir à la liste
+        </a>
+
+        {{form_end(form)}}
+    </div>
+{% endblock %}

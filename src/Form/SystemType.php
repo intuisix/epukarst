@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\System;
+use App\Form\SystemRoleType;
 use App\Form\SystemPictureType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -72,7 +73,7 @@ class SystemType extends AbstractType
                 'help' => "En HTML, chaque paragraphe est commencé par <p> et terminé par </p>. Pour mettre un texte en gras, entourez-le de <b> et </b>. Pour les italiques, c'est <i> et </i>. Les hyperliens sont créés avec <a href=\"url-référencé\"> et </a>.",
             ])
             ->add('pictures', CollectionType::class, [
-                'label' => 'Photos',
+                'label' => 'Photographies',
                 'entry_type' => SystemPictureType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
@@ -100,14 +101,20 @@ class SystemType extends AbstractType
                 ]
             ])
             ->add('basins', CollectionType::class, [
-                'label' => "Bassins d'alimentation",
+                'label' => "Bassins",
                 'entry_type' => BasinType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
             ])
             ->add('parameters', CollectionType::class, [
-                'label' => "Instruments de mesure",
+                'label' => "Paramètres",
                 'entry_type' => SystemParameterType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+            ])
+            ->add('userRoles', CollectionType::class, [
+                'label' => "Rôles",
+                'entry_type' => SystemRoleType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
             ])
