@@ -97,7 +97,7 @@ class System
     /**
      * Bassins constituant le système.
      * 
-     * @ORM\OneToMany(targetEntity="App\Entity\Basin", mappedBy="system")
+     * @ORM\OneToMany(targetEntity="App\Entity\Basin", mappedBy="system", orphanRemoval=true)
      * @ORM\OrderBy({"name": "ASC"})
      */
     private $basins;
