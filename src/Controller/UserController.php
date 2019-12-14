@@ -5,8 +5,12 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Form\UserPasswordType;
+use Symfony\Component\Mime\Email;
 use App\Service\PaginationService;
+use App\Service\PasswordGeneratorService;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -35,6 +39,82 @@ class UserController extends AbstractController
     }
 
     /**
+     * Traite l'ajout d'un utilisateur.
+     * 
+     * @Route("/user/add", name="user_add")
+     * @IsGranted("ROLE_ADMIN")
+     * 
+     * @param ObjectManager $manager
+     * @param Request $request
+     * @return Response
+     */
+    public function add(ObjectManager $manager, Request $request, UserPasswordEncoderInterface $encoder, MailerInterface $mailer, PasswordGeneratorService $generator)
+    {
+        /* Instancier un nouvel utilisateur */
+        $user = new User();
+
+        $form = $this->createForm(UserType::class, $user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /* Générer un mot de passe */
+            $password = $generator->generate();
+            $user->setPassword($encoder->encodePassword($user, $password));
+
+            /* Associer les rôles à l'utilisateur */
+            foreach ($user->getUserRoles() as $userRole) {
+                $userRole->setLinkedUser($user);
+                $manager->persist($userRole);
+            }
+
+            /* Persister l'utilisateur dans la base de données */
+            $manager->persist($user);
+            $manager->flush();
+
+            /* Transmettre un e-mail de bienvenue à l'utilisateur */
+            $host = $this->getUser();
+            $email = (new TemplatedEmail())
+                ->from($host->getEmail())
+                ->to($user->getEmail())
+                ->bcc($host->getEmail())
+                ->priority(Email::PRIORITY_HIGH)
+                ->subject("Bienvenue dans le programme Epu-Karst !")
+                ->htmlTemplate('user/emails/welcome.html.twig')
+                ->context([
+                    'user' => $user,
+                    'host' => $host,
+                    'password' => $password,
+                ]);
+            $mailer->send($email);
+
+            $this->addFlash('success', "L'utilisateur <strong>$user</strong> a été ajouté avec succès.");
+
+            return $this->redirectToRoute('user');
+        }
+
+        return $this->render('user/form.html.twig', [
+            'form' => $form->createView(),
+            'title' => "Ajouter un utilisateur",
+        ]);
+    }
+
+    /**
+     * Traite l'activation d'un utilisateur.
+     * 
+     * @Route("/user/{email}/activate", name="user_activate")
+     * 
+     * @param ObjectManager $manager
+     * @param Request $request
+     * @return Response
+     */
+    public function activate(User $user, ObjectManager $manager)
+    {
+        return $this->render('user/activate.html.twig', [
+        ]);
+    }
+
+    /**
      * Traite la modification d'un utilisateur.
      *
      * @Route("/user/{id}/modify", name="user_modify")
@@ -43,7 +123,7 @@ class UserController extends AbstractController
      * @param User $user
      * @param ObjectManager $manager
      * @param Request $request
-     * @return void
+     * @return Response
      */
     public function modify(User $user, ObjectManager $manager, Request $request)
     {
