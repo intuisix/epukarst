@@ -10,48 +10,66 @@ modification de relevés #}
 {% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="container mb-3">
         <h1>{{title}}</h1>
 
-        <p>Ce formulaire permet d'encoder les informations à propos d'un instrument de mesure, qui peut être, au choix, un appareil identifié individuellement ou un ensemble de consommables identifiés par lot. Le formulaire rassemble les données d'identification, la description, la liste des paramètres mesurés et l'historique métrologique de l'instrument&nbsp;: cela permettra de lier les mesures prises sur le terrain à cet instrument, et d'appréhender la validité de ces mesures.</p>
+        <p>Ce formulaire permet d'encoder les informations à propos d'un instrument de mesure, qui peut être, au choix, un appareil identifié individuellement ou un ensemble de consommables identifiés par lot.</p>
 
         {{form_start(form)}}
 
-        {# Mettre en forme les données d'identification #}
-        <h2>Identification</h2>
-        <div class="alert bg-light">
-            <div class="row">
-                <div class="col">
-                    {{form_row(form.code)}}
-                    {{form_row(form.name)}}
-                    {{form_row(form.model)}}
-                    {{form_row(form.serialNumber)}}
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Identification</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="measurabilities-tab" data-toggle="tab" href="#measurabilities" role="tab" aria-controls="measurabilities" aria-selected="false">{{form.measurabilities.vars.label}}</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="calibrations-tab" data-toggle="tab" href="#calibrations" role="tab" aria-controls="calibrations" aria-selected="false">{{form.calibrations.vars.label}}</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            {# Afficher le panneau d'identification #}
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <div class="alert">
+                    <div class="row">
+                        <div class="col">
+                            {{form_row(form.code)}}
+                            {{form_row(form.name)}}
+                            {{form_row(form.model)}}
+                            {{form_row(form.serialNumber)}}
+                        </div>
+                        <div class="col">
+                            {{form_row(form.description)}}
+                        </div>
+                    </div>
                 </div>
-                <div class="col">
-                    {{form_row(form.description)}}
+            </div>
+            {# Afficher le panneau des paramètres #}
+            <div class="tab-pane fade" id="measurabilities" role="tabpanel" aria-labelledby="measurabilities-tab">
+                <div class="alert">
+                    {{form_row(form.measurabilities)}}
+                </div>
+            </div>
+            {# Afficher le panneau des étalonnages #}
+            <div class="tab-pane fade" id="calibrations" role="tabpanel" aria-labelledby="calibrations-tab">
+                <div class="alert">
+                    {{form_row(form.calibrations)}}
                 </div>
             </div>
         </div>
 
-        {# Afficher le sous-formulaire des paramètres #}
-        {{form_row(form.measurabilities)}}
+        {# Afficher un bouton permettant d'enregistrer l'instrument #}
+        <button type="submit" class="btn btn-success">
+            <i class="fas fa-check"></i>
+            Enregistrer l'instrument
+        </button>
 
-        {# Afficher le sous-formulaire des étalonnages #}
-        {{form_row(form.calibrations)}}
-
-        <div class="mb-3">
-            {# Afficher un bouton permettant d'enregistrer l'instrument #}
-            <button type="submit" class="btn btn-success">
-                <i class="fas fa-check"></i>
-                Enregistrer l'instrument
-            </button>
-
-            {# Afficher un bouton permettant de revenir à l'index #}
-            <a href="{{ path('instrument') }}" class="btn btn-cancel">
-                <i class="fas fa-backspace"></i>
-                Retourner à la liste
-            </a>
-        </div>
+        {# Afficher un bouton permettant de revenir à l'index #}
+        <a href="{{path('instrument')}}" class="btn btn-cancel">
+            <i class="fas fa-backspace"></i>
+            Retourner à la liste
+        </a>
 
         {{form_end(form)}}
     </div>
@@ -59,8 +77,7 @@ modification de relevés #}
 
 
 {% block _instrument_measurabilities_label %}
-    <h2>{{form_label(form)}}</h2>
-    <p>La liste ci-dessous permet de définir les différents paramètres qui peuvent être mesurés à l'aide de l'instrument, et préciser les limites de ces mesures.</p>
+    <p>Ce panneau permet de définir les paramètres qui peuvent être mesurés à l'aide de l'instrument. Pour chaque paramètre, préciser les valeurs limites permet de contrôler la validité des mesures lors des encodages ultérieurs.</p>
 {% endblock %}
 
 {% block _instrument_measurabilities_widget %}
@@ -130,21 +147,20 @@ modification de relevés #}
 
 
 {% block _instrument_calibrations_label %}
-    <h2>{{form_label(form)}}</h2>
     <p>
-        La liste ci-dessous permet de définir la période durant laquelle la précision des mesures réalisées à l'aide de l'instrument est garantie. La signification réelle peut varier suivant le type d'instrument:
-        <ul>
-            <li>
-                Pour les instruments dont la précision ne s'altère pas avec le temps, la liste peut rester vide&nbsp;;
-            </li>
-            <li>
-                Pour les appareils concernés par un suivi métrologique, il s'agira vraisemblablement des dates de contrôle et d'étalonnage&nbsp;;
-            </li>
-            <li>
-                Pour les consommables, il s'agira vraisemblablement d'une date de péremption.
-            </li>
-        </ul>
+        Ce panneau permet de définir l'historique métrologique de l'instrument en vue de contrôler la validité des mesures lors des encodages ultérieurs.
     </p>
+    <ul>
+        <li>
+            <i class="fas fa-ruler"></i> Règles et récipients dont la précision ne s'altère pas avec le temps : laissez la liste vide afin de désactiver le contrôle.
+        </li>
+        <li>
+            <i class="fas fa-trash"></i> Consommables : introduisez un seul étalonnage avec la date limite de validité.
+        </li>
+        <li>
+            <i class="fas fa-clock"></i> Appareils concernés par un suivi métrologique : introduisez les dates des contrôles et de validité successives.
+        </li>
+    </ul>            
 {% endblock %}
 
 {% block _instrument_calibrations_widget %}
