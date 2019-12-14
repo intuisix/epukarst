@@ -16,6 +16,7 @@
                     <th>Localité</th>
                     <th>Bassin versant</th>
                     <th>Bassins</th>
+                    <th>Paramètres</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -29,7 +30,16 @@
                         <td>{{system.basin}}</td>
                         <td>
                             {% if system.basins|length %}
-                                <span class="badge badge-primary badge-pill">{{system.basins|length}}</span>
+                                <span class="badge badge-success badge-pill">{{system.basins|length}}</span>
+                            {% else %}
+                                <i class="fas fa-exclamation-triangle text-danger"></i>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if system.parameters|length %}
+                                <span class="badge badge-success badge-pill">{{system.parameters|length}}</span>
+                            {% else %}
+                                <i class="fas fa-exclamation-triangle text-danger"></i>
                             {% endif %}
                         </td>
                         <td>
