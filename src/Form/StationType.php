@@ -37,14 +37,13 @@ class StationType extends AbstractType
                 'choice_label' => 'name',
                 'group_by' => 'system.name',
                 'required' => true,
+                'placeholder' => "Sélectionnez un bassin",
             ])
             ->add('kind', EntityType::class, [
                 'label' => "Genre",
                 'class' => StationKind::class,
                 'choice_label' => 'name',
-                'attr' => [
-                    'placeholder' => "Sélectionnez un genre (facultatif)"
-                ],
+                'placeholder' => "Sélectionnez un genre (facultatif)",
                 'required' => false,
             ])
             ->add('atlasCode', TextType::class, [
