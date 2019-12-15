@@ -14,28 +14,29 @@
         <tr>
             {# Afficher le widget de dénomination #}
             <td class="align-top" rowspan="2">
-                {{form_widget(form.name)}}
+                {{form_widget(form.station.name)}}
                 {# Afficher un bouton permettant de supprimer le paramètre #}
-                <button type="button" data-action="delete-stationReading" data-target="#system_reading_stationReadings_{{__name__}}" class="btn btn-link float-right">
+                <button type="button" data-action="delete-stationReading" data-target="#system_reading_stationReadings_{{__name__}}" tabindex="-1" class="btn btn-link float-right">
                     <i class="fas fa-trash text-danger"></i>
                 </button>
             </td>
             {# Afficher le widget de code AKWA #}
             <td class="align-top">
-                {{form_widget(form.atlasCode)}}
+                {{form_widget(form.station.atlasCode)}}
             </td>
             {# Afficher le widget de bassin #}
             <td class="align-top">
-                {{form_widget(form.basin)}}
+                {{form_widget(form.station.basin)}}
             </td>
             {# Afficher le widget de genre #}
             <td class="align-top">
-                {{form_widget(form.kind)}}
+                {{form_widget(form.station.kind)}}
             </td>
             {# Pour chacun des paramètres #}
             {% for parameter in systemParameters %}
                 {% set __index__ = loop.index0 %}
                 <td class="align-top">
+                    <select id="system_reading_stationReadings_0_measures_1_measurability" name="system_reading[stationReadings][0][measures][1][measurability]" class="form-control" hidden="hidden"><option value="120" selected="selected">t° : Thermomètre [°C]</option><option value="114">NO2 : Bandelette NO2 [mg/l]</option><option value="115">NO3 : Bandelette NO3 [mg/l]</option><option value="116">pH : Bandelette pH</option><option value="117">CaCO3 : Bandelette TH [mg/l]</option><option value="118">Débit : Gobelet doseur [l/s]</option><option value="119">Débit : Echelle graduée [l/s]</option><option value="121">Débit : Débimètre [l/s]</option><option value="122">sigma : Conductimètre [mS/m]</option><option value="123">NO2 : Spectromètre n° 1 [mg/l]</option><option value="124">NO3 : Spectromètre n° 1 [mg/l]</option><option value="125">NO2 : Spectromètre n° 2 [mg/l]</option><option value="126">NO3 : Spectromètre n° 2 [mg/l]</option><option value="127">CaCO3 : Spectromètre n° 2 [mg/l]</option><option value="128">CaCO3 : Spectromètre n° 3 [mg/l]</option><option value="129">O2 : Spectromètre n° 3 [mg/l]</option></select>
                     {# Afficher le widget de valeur #}
                     <input type="text" id="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_value" name="system_reading[stationReadings][{{__name__}}][measures][{{__index__}}][value]" class="form-control">
                     {# Afficher le widget de mesure stable #}
@@ -54,7 +55,7 @@
         <tr>
             <td />
             <td colspan="100">
-                {{form_widget(form.description)}}
+                {{form_widget(form.station.description)}}
             </td>
         </tr>
     </tbody>
@@ -91,16 +92,16 @@
                     <tr>
                         {# Afficher les en-têtes des colonnes pour le nom et le code AKWA de la station #}
                         <th width="15%">
-                            {{form_label(form.stationReadings|first.station)}}
+                            Station
                         </th>
                         <th width="10%">
-                            {{form_label(form.stationReadings|first.atlasCode)}}
+                            AKWA
                         </th>
                         <th width="10%">
-                            {{form_label(form.stationReadings|first.basin)}}
+                            Bassin
                         </th>
                         <th width="10%">
-                            {{form_label(form.stationReadings|first.kind)}}
+                            Genre
                         </th>
 
                         {# Afficher les paramètres (en-têtes de colonnes) #}
@@ -194,25 +195,28 @@
 
 {# Modèle d'un relevé de station (cellule du tableau) #}
 {% block _system_reading_stationReadings_entry_widget %}
-    <tbody>
-        <tr id="{{id}}">
-            {# Afficher le champ de saisie de la station #}
+    <tbody id="{{id}}">
+        <tr>
+            {# Afficher les champs relatifs à la station #}
             <td class="align-top">
-                {{form_widget(form.station)}}
+                {{form_widget(form.station.name)}}
             </td>
             <td class="align-top">
-                {{form_widget(form.atlasCode, { 'attr': { 'disabled': true }})}}
+                {{form_widget(form.station.atlasCode)}}
             </td>
             <td class="align-top">
-                {{form_widget(form.basin, { 'attr': { 'disabled': true }})}}
+                {{form_widget(form.station.basin)}}
             </td>
             <td class="align-top">
-                {{form_widget(form.kind, { 'attr': { 'disabled': true }})}}
+                {{form_widget(form.station.kind)}}
             </td>
             {# Pour chacune des mesures du relevé de station #}
             {% for measure in form.measures.children %}
                 <td class="align-top">
+                    {# Inclure le widget de paramètre, qui est caché #}
+                    {{form_widget(measure.children.measurability)}}
                     {# Afficher le widget de valeur sans étiquette ni aide ni erreur #}
+                    {{form_errors(measure.children.value)}}
                     {{form_widget(measure.children.value)}}
                     {# Afficher la case à cocher "mesure stable" #}
                     {{form_widget(measure.children.stable, {
@@ -236,6 +240,11 @@
                     })}}
                 </td>
             {% endfor %}
+        </tr>
+        <tr hidden="hidden">
+            <td class="align-top">
+                {{form_widget(form.station.description)}}
+            </td>
         </tr>
     </tbody>
 {% endblock %}

@@ -21,28 +21,30 @@
                 </tr>
             </thead>
             <tbody>
-                {% for reading in pagination.data %}
+                {% for systemReading in pagination.data %}
                     <tr>
                         <td>
-                            {{reading.fieldDateTime|date('d/m/Y')}}
+                            {{systemReading.fieldDateTime|date('d/m/Y')}}
                         </td>
                         <td>
-                            {{reading.encodingDateTime|date('d/m/Y')}}
+                            {{systemReading.encodingDateTime|date('d/m/Y')}}
                         </td>
                         <td>
-                            {{reading.encodingAuthor}}
+                            {{systemReading.encodingAuthor}}
                         </td>
                         <td>
-                            <a href="{{path('system_reading_show', {'code': reading.code})}}">{{reading.code}}</a>
+                            <a href="{{path('system_reading_show', {'code': systemReading.code})}}">{{systemReading.code}}</a>
                         </td>
                         <td>
-                            {{reading.system.name}}
+                            {{systemReading.system.name}}
                         </td>
                         <td>
-                            {{reading.stationReadings|length}}
+                            {% if systemReading.stationReadings|length %}
+                                <span class="badge badge-primary badge-pill">{{systemReading.stationReadings|length}}</span>
+                            {% endif %}
                         </td>
                         <td>
-                            <a href="{{path('system_reading_delete', {'code': reading.code})}}"><i class="fas fa-trash text-danger"></i></a>
+                            <a href="{{path('system_reading_delete', {'code': systemReading.code})}}"><i class="fas fa-trash text-danger"></i></a>
                         </td>
                     </tr>
                 {% else %}

@@ -81,6 +81,16 @@ class SystemReadingController extends AbstractController
      */
     public function encode(System $system, ObjectManager $manager, Request $request, StationRepository $stationRepository, MeasurabilityRepository $measurabilityRepository, BasinRepository $basinRepository, StationKindRepository $stationKindRepository)
     {
+        if ($system->getBasins()->count() == 0) {
+            $this->addFlash('danger', "Il n'est pas possible d'encoder de mesures pour l'instant, car les administrateurs n'ont pas encore encodé de bassin pour le système <strong>{$system->getName()}</strong>.");
+            return $this->redirectToRoute('reading');
+        }
+
+        if ($system->getParameters()->count() == 0) {
+            $this->addFlash('danger', "Il n'est pas possible d'encoder de mesures pour l'instant, car les administrateurs n'ont pas encore encodé de paramètre pour le système <strong>{$system->getName()}</strong>.");
+            return $this->redirectToRoute('reading');
+        }
+
         /* Instancier un nouveau relevé */
         $systemReading = new SystemReading();
         $systemReading
@@ -88,14 +98,14 @@ class SystemReadingController extends AbstractController
             ->setEncodingDateTime(new \DateTime('now'))
             ->setEncodingAuthor($this->getUser());
 
-        /* Déterminer la liste des stations du système */
+        /* Déterminer la liste des stations pré-existantes */
         $queryBuilder = $stationRepository->createQueryBuilder('s')
             ->innerJoin('s.basin', 'b')
             ->where('b.system = :system')
             ->setParameter('system', $system->getId());
         $stations = $queryBuilder->getQuery()->getResult();
 
-        /* Déterminer la liste de paramètres d'instrument par défaut du relevé de système, à partir de la liste qui est associée au système */
+        /* Déterminer la liste de paramètres du système */
         $systemParameters = $system->getParameters()->map(function(SystemParameter $p) {
             return $p->getInstrumentParameter();
         });
@@ -115,19 +125,8 @@ class SystemReadingController extends AbstractController
         /* Peupler les en-têtes de colonnes du tableau d'encodage des mesures: ce sont les paramètres d'instrument du relevé de système */
         $form->get('systemParameters')->setData($systemParameters);
 
-        /* Récupérer les valeurs des champs non mappés */
-        foreach ($form->get('stationReadings') as $child) {
-            $stationReading = $child->getData();
-            $station = $stationReading->getStation();
-            $child->get('name')->setData($station->getName());
-            $child->get('atlasCode')->setData($station->getAtlasCode());
-            $child->get('basin')->setData($station->getBasin());
-            $child->get('kind')->setData($station->getKind());
-            $child->get('description')->setData($station->getDescription());
-        }
-
         /* Créer les éventuelles stations à créer */
-        if ($request->request->has('system_reading')) {
+        if (0/*TODO*/ && $request->request->has('system_reading')) {
             foreach ($request->request->get('system_reading')['stationReadings'] as $requestKey => $requestParam) {
                 if (array_key_exists('name', $requestParam)) {
                     /* Créer la station */
@@ -145,9 +144,11 @@ class SystemReadingController extends AbstractController
                 }
             }
         }
+dump(1, $request, $systemReading);
 
         /* Traiter le formulaire */
         $form->handleRequest($request);
+dump(2, $request, $systemReading);
 
         /* Tester la validité du formulaire */
         if ($form->isSubmitted() && $form->isValid()) {
@@ -158,7 +159,11 @@ class SystemReadingController extends AbstractController
 
             /* Traiter les relevés de station */
             foreach ($systemReading->getStationReadings() as $stationReading) {
-                /* Supprimer les mesures sans valeur */
+                /* Persister la station dans la base de données */
+                $station = $stationReading->getStation();
+                $manager->persist($station);
+
+                /* Supprimer les mesures pour lesquelles aucune valeur n'a été encodée */
                 foreach ($stationReading->getMeasures() as $measure) {
                     if (empty($measure->getValue())) {
                         $stationReading->removeMeasure($measure);
@@ -166,27 +171,24 @@ class SystemReadingController extends AbstractController
                 }
 
                 /* Traiter les mesures restantes */
-                $measureCount = 0;
-                foreach ($stationReading->getMeasures() as $measure) {
-                    ++$measureCount;
-                    /* Définir les propriétés de la mesure et l'associer au relevé de station */
-                    $measure
-                        ->setFieldDateTime($fieldDateTime)
-                        ->setEncodingDateTime($encodingDateTime)
-                        ->setEncodingAuthor($encodingAuthor)
-                        ->setReading($stationReading);
-                    /* Persister la mesure */
-                    $manager->persist($measure);
-                }
+                $measures = $stationReading->getMeasures();
+                if (0 != $measures->count()) {
+                    /* Définir les propriétés de la mesure et la persister dans la base de données */
+                    foreach ($measures as $measure) {
+                        $measure
+                            ->setFieldDateTime($fieldDateTime)
+                            ->setEncodingDateTime($encodingDateTime)
+                            ->setEncodingAuthor($encodingAuthor)
+                            ->setReading($stationReading);
+                        $manager->persist($measure);
+                    }
 
-                if (0 < $measureCount) {
-                    /* Définir les propriétés du relevé de station et l'associer au relevé de système */
+                    /* Définir les propriétés du relevé de station la persister dans la base de données */
                     $stationReading
                         ->setFieldDateTime($fieldDateTime)
                         ->setEncodingDateTime($encodingDateTime)
                         ->setEncodingAuthor($encodingAuthor)
                         ->setSystemReading($systemReading);
-                    /* Persister le relevé de station */
                     $manager->persist($stationReading);
                 } else {
                     /* Enlever le relevé de la station car il est vide */
