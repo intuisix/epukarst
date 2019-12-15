@@ -34,7 +34,7 @@ class SystemReadingType extends AbstractType
                 'disabled' => true,
             ])
             ->add('code', TextType::class, [
-                'label' => "Code",
+                'label' => "Code du relevé",
                 'required' => false,
                 'attr' => [
                     'placeholder' => 'Ce code sera attribué automatiquement',
@@ -71,7 +71,7 @@ class SystemReadingType extends AbstractType
                     'label' => "Remarques de l'encodage",
                     'required' => false,
                     'attr' => [
-                        'placeholder' => "Entrez vos remarques éventuelles d'observation et/ou d'encodage concernant les mesures du système en général",
+                        'placeholder' => "Entrez vos remarques concernant le système en général",
                     ]
                 ])
             ;
@@ -95,7 +95,7 @@ class SystemReadingType extends AbstractType
                     'label' => "Remarques de la validation",
                     'required' => false,
                     'attr' => [
-                        'placeholder' => "Entrez vos remarques éventuelles de validation concernant les mesures du système en général",
+                        'placeholder' => "Entrez vos remarques concernant le système en général",
                     ]
                 ])
                 ->add('validationStatus', ChoiceType::class, [

@@ -103,7 +103,7 @@ class SystemReadingController extends AbstractController
         /* Créer et traiter le formulaire */
         $form = $this->createForm(SystemReadingType::class, $systemReading, [
             'showEncoding' => true,
-            'showValidation' => true,
+            'showValidation' => false,
         ]);
         $form->handleRequest($request);
 
@@ -161,6 +161,7 @@ class SystemReadingController extends AbstractController
         return $this->render('system_reading/form.html.twig', [
             'form' => $form->createView(),
             'title' => "Encoder un nouveau relevé de système",
+            'system' => $system,
             'systemParameters' => $systemParameters,
         ]);
     }

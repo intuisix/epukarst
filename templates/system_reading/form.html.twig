@@ -125,7 +125,7 @@
             Enregistrer le relevé
         </button>
 
-        {# Afficher un bouton pour revenir à l'index #}
+        {# Afficher un bouton permettant de revenir à l'index #}
         <a href="{{path('reading')}}" class="btn btn-cancel">
             <i class="fas fa-backspace"></i>
             Revenir à la liste
@@ -146,53 +146,35 @@
                 <br>
                 <small>{{form.vars.value.station.atlasCode|default('--')}}</small>
             </td>
-            {# Afficher les cellules des mesures du relevé de station #}
-            {% for measure in form.measures.children %}
-                <td class="align-top">
-                    {# Inclure le widget de paramètre (caché) #}
-                    {{form_widget(measure.children.measurability)}}
-                    {# Afficher le widget de valeur et l'éventuelle erreur #}
-                    {{form_errors(measure.children.value)}}
-                    {{form_widget(measure.children.value)}}
-                    {# Afficher la case à cocher de mesure stable #}
-                    {{form_widget(measure.children.stable, {
-                        'label_attr': {
-                            'class': 'checkbox-inline',
-                            'style': 'color: lightgray',
-                        }
-                    })}}
-                    {# Afficher la case à cocher de mesure valide #}
-                    {{form_widget(measure.children.valid, {
-                        'label_attr': {
-                            'class': 'checkbox-inline',
-                            'style': 'color: lightgray',
-                        }
-                    })}}
-                </td>
-            {% endfor %}
+
+            {# Afficher les mesures du relevé de station #}
+            {{form(form.measures)}}
         </tr>
     </tbody>
 {% endblock %}
 
 
-{% block javascripts %}
-    <script>
-        /* Définir l'action du bouton permettant d'ajouter un relevé de station dans le tableau d'encodage */
-        var $stationIndex = +0;
-        $('[data-action=add-stationReading]').click(function() {
-            /* Trouver un indice libre */
-            while (0 != $('#system_reading_stationReadings_' + $stationIndex).length) {
-                $stationIndex++;
+{# Modèle d'une mesure #}
+{% block _system_reading_stationReadings_entry_measures_entry_row %}
+    <td class="align-top">
+        {# Inclure le widget de paramètre (caché) #}
+        {{form_widget(form.measurability)}}
+        {# Afficher le widget de valeur et l'éventuelle erreur #}
+        {{form_errors(form.value)}}
+        {{form_widget(form.value)}}
+        {# Afficher la case à cocher de mesure stable #}
+        {{form_widget(form.stable, {
+            'label_attr': {
+                'class': 'checkbox-inline',
+                'style': 'color: lightgray',
             }
-
-            /* Créer un nouvel élément à partir du prototype */
-            const $prototype = $('#stationReadingsBody').data('prototype');
-            $('#stationReadingsBody').append($prototype.replace(/__name__/g, $stationIndex));
-
-            /* Définir l'action du bouton permettant de supprimer un relevé de station dans le tableau d'encodage */
-            $('#system_reading_stationReadings_' + $stationIndex + ' ' + '[data-action=delete-stationReading]').click(function() {
-                $(this.dataset.target).remove();
-            });
-        });
-    </script>
+        })}}
+        {# Afficher la case à cocher de mesure valide #}
+        {{form_widget(form.valid, {
+            'label_attr': {
+                'class': 'checkbox-inline',
+                'style': 'color: lightgray',
+            }
+        })}}
+    </td>
 {% endblock %}
