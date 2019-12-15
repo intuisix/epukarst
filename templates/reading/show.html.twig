@@ -19,6 +19,16 @@
                     <dd class="col-9">{{reading.station.name}}</dd>
                     <dt class="col-3">Réalisé le&nbsp;:</dt>
                     <dd class="col-9">{{reading.fieldDateTime|date('d/m/Y H:i')}}</dd>
+                    <dt class="col-3">Relevé de système&nbsp;:</dt>
+                    <dd class="col-9">
+                        {% if reading.systemReading is not null %}
+                            <a href="{{path('system_reading_show', {'code': reading.systemReading.code})}}">
+                                {{reading.systemReading.code}}
+                            </a>
+                        {% else %}
+                            --
+                        {% endif %}
+                    </dd>
                 </dl>
             </div>
         </div>

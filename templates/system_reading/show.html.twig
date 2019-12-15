@@ -34,33 +34,33 @@
                     </div>
                 </div>
             </div>
-{% if 0 %}
-            <div class="col">
-                <div class="card mb-3">
-                    <div class="card-header">
-                        {% if systemReading.validationStatus is not null %}
-                            {% if systemReading.validationStatus %}
-                                <i class="fas fa-flag-checkered text-success"></i>
-                                Validé
+            {% if systemReading.validationStatus is not null %}
+                <div class="col">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            {% if systemReading.validationStatus is not null %}
+                                {% if systemReading.validationStatus %}
+                                    <i class="fas fa-flag-checkered text-success"></i>
+                                    Validé
+                                {% else %}
+                                    <i class="fas fa-ban text-danger"></i>
+                                    Invalidé
+                                {% endif %}
+                                le <strong>{{systemReading.validationDateTime|date('d/m/Y H:i')}}</strong> par <strong>{{systemReading.validationAuthor.displayName}}</strong>
                             {% else %}
-                                <i class="fas fa-ban text-danger"></i>
-                                Invalidé
+                                Non validé
                             {% endif %}
-                            le <strong>{{systemReading.validationDateTime|date('d/m/Y H:i')}}</strong> par <strong>{{systemReading.validationAuthor.displayName}}</strong>
-                        {% else %}
-                            Non validé
-                        {% endif %}
-                    </div>
-                    <div class="card-body">
-                        {% if systemReading.validationStatus and (systemReading.validationNotes is not empty) %}
-                            {{systemReading.validationNotes|nl2br}}
-                        {% else %}
-                            <em>Il n'y a pas de commentaire de validation.</em>
-                        {% endif %}
+                        </div>
+                        <div class="card-body">
+                            {% if systemReading.validationStatus and (systemReading.validationNotes is not empty) %}
+                                {{systemReading.validationNotes|nl2br}}
+                            {% else %}
+                                <em>Il n'y a pas de commentaire de validation.</em>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-            </div>
-{% endif %}
+            {% endif %}
         </div>
 
         <h2>Relevés de stations</h2>
@@ -68,11 +68,11 @@
         <table width="100%" class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>Terrain</th>
-                    <th>Encodage</th>
                     <th>Code</th>
                     <th>Bassin</th>
                     <th>Station</th>
+                    <th>Réalisé le</th>
+                    <th>Encodé le</th>
                     {% for parameter in parameters %}
                         <th style="text-align: center">
                             {{parameter.nameWithUnit}}
@@ -86,12 +86,6 @@
                 {% for stationReading in systemReading.stationReadings %}
                     <tr>
                         <td>
-                            {{stationReading.fieldDateTime|date('d/m/Y')}}
-                        </td>
-                        <td>
-                            {{stationReading.encodingDateTime|date('d/m/Y')}}
-                        </td>
-                        <td>
                             <a href="{{path('reading_show', {'code': stationReading.code })}}">{{stationReading.code}}</a>
                         </td>
                         <td>
@@ -99,6 +93,12 @@
                         </td>
                         <td>
                             {{stationReading.station.name}}
+                        </td>
+                        <td>
+                            {{stationReading.fieldDateTime|date('d/m/Y')}}
+                        </td>
+                        <td>
+                            {{stationReading.encodingDateTime|date('d/m/Y')}}
                         </td>
                         {% for parameter in parameters %}
                             <td style="text-align: right">
