@@ -12,6 +12,10 @@
 
         <p>Ce formulaire permet l'encodage rapide des mesures pour toutes les stations d'un système, en leur attribuant la même date de terrain et les mêmes instruments de mesure.</p>
 
+        <div class="mb-3">
+            <a href="{{path('system_stations', {'code': system.code})}}" class="btn btn-primary">Ajouter des stations au système</a>
+        </div>
+
         {{form_start(form)}}
 
         {# Afficher les champs généraux #}
