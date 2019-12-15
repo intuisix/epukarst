@@ -22,28 +22,18 @@ class SystemReadingStationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-/*            ->add('station', EntityType::class, [
-                'label' => "Station",
-                'class' => Station::class,
-                'choice_label' => 'name',
-                'choices' => $options['stations'],
-                'required' => true,
-                'disabled' => true,
-                'attr' => [
-                    'placeholder' => 'Station',
-                ],
-            ])*/
-            ->add(
-                $builder->create('station', StationSimplifiedType::class, [
-                    'basins' => $options['basins'],
-//                    'disabled' => true,
-                ])
-            )
             ->add('measures', CollectionType::class, [
                 'label' => "Mesure",
                 'entry_type' => SystemReadingMeasureType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
+            ])
+            ->add('encodingNotes', TextareaType::class, [
+                'label' => "Remarques de l'encodage",
+                'required' => false,
+                'attr' => [
+                    'placeholder' => "Introduisez vos remarques d'observation et/ou d'encodage concernant les mesures propres à cette station",
+                ],
             ])
         ;
     }
@@ -54,9 +44,6 @@ class SystemReadingStationType extends AbstractType
             ->setDefaults([
                 'data_class' => Reading::class,
             ])
-            ->setRequired('stations')
-            ->setAllowedTypes('stations', 'App\Entity\Station[]')
-            ->setRequired('basins')
-            ->setAllowedTypes('basins', 'App\Entity\Basin[]');
+        ;
     }
 }

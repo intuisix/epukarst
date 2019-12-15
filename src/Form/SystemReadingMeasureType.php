@@ -30,10 +30,12 @@ class SystemReadingMeasureType extends AbstractType
             ->add('stable', CheckboxType::class, [
                 'label' => "S",
                 'required' => false,
+                'attr' => [ 'tabindex' => -1 ],
             ])
             ->add('valid', CheckboxType::class, [
                 'label' => "V",
                 'required' => false,
+                'attr' => [ 'tabindex' => -1 ],
             ])
         ;
     }

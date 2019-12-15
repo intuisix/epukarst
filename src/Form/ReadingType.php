@@ -65,7 +65,7 @@ class ReadingType extends AbstractType
                     'label' => "Auteur de l'encodage",
                     'disabled' => true,
                 ])
-                ->add('encodingNotes', TextareaType::class, [
+            ->add('encodingNotes', TextareaType::class, [
                 'label' => "Remarques de l'encodage",
                 'required' => false,
                 'attr' => [

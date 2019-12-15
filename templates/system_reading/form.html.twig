@@ -6,66 +6,11 @@
 
 {% form_theme form _self %}
 
-{% import _self as formMacros %}
-
-{% macro showStationReadings(form, systemParameters) %}
-    {% set __name__ = form.vars.name %}
-    <tbody id="system_reading_stationReadings_{{__name__}}">
-        <tr>
-            {# Afficher le widget de dénomination #}
-            <td class="align-top" rowspan="2">
-                {{form_widget(form.station.name)}}
-                {# Afficher un bouton permettant de supprimer le paramètre #}
-                <button type="button" data-action="delete-stationReading" data-target="#system_reading_stationReadings_{{__name__}}" tabindex="-1" class="btn btn-link float-right">
-                    <i class="fas fa-trash text-danger"></i>
-                </button>
-            </td>
-            {# Afficher le widget de code AKWA #}
-            <td class="align-top">
-                {{form_widget(form.station.atlasCode)}}
-            </td>
-            {# Afficher le widget de bassin #}
-            <td class="align-top">
-                {{form_widget(form.station.basin)}}
-            </td>
-            {# Afficher le widget de genre #}
-            <td class="align-top">
-                {{form_widget(form.station.kind)}}
-            </td>
-            {# Pour chacun des paramètres #}
-            {% for parameter in systemParameters %}
-                {% set __index__ = loop.index0 %}
-                <td class="align-top">
-                    <select id="system_reading_stationReadings_0_measures_1_measurability" name="system_reading[stationReadings][0][measures][1][measurability]" class="form-control" hidden="hidden"><option value="120" selected="selected">t° : Thermomètre [°C]</option><option value="114">NO2 : Bandelette NO2 [mg/l]</option><option value="115">NO3 : Bandelette NO3 [mg/l]</option><option value="116">pH : Bandelette pH</option><option value="117">CaCO3 : Bandelette TH [mg/l]</option><option value="118">Débit : Gobelet doseur [l/s]</option><option value="119">Débit : Echelle graduée [l/s]</option><option value="121">Débit : Débimètre [l/s]</option><option value="122">sigma : Conductimètre [mS/m]</option><option value="123">NO2 : Spectromètre n° 1 [mg/l]</option><option value="124">NO3 : Spectromètre n° 1 [mg/l]</option><option value="125">NO2 : Spectromètre n° 2 [mg/l]</option><option value="126">NO3 : Spectromètre n° 2 [mg/l]</option><option value="127">CaCO3 : Spectromètre n° 2 [mg/l]</option><option value="128">CaCO3 : Spectromètre n° 3 [mg/l]</option><option value="129">O2 : Spectromètre n° 3 [mg/l]</option></select>
-                    {# Afficher le widget de valeur #}
-                    <input type="text" id="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_value" name="system_reading[stationReadings][{{__name__}}][measures][{{__index__}}][value]" class="form-control">
-                    {# Afficher le widget de mesure stable #}
-                    <div class="form-check form-check-inline">
-                        <input type="checkbox" id="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_stable" name="system_reading[stationReadings][{{__name__}}][measures][{{__index__}}][stable]" tabindex="-1" class="form-check-input" value="1" checked="checked">
-                        <label class="checkbox-inline form-check-label" style="color: lightgray" for="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_stable">S</label>
-                    </div>
-                    {# Afficher le widget de mesure valide #}
-                    <div class="form-check form-check-inline">
-                        <input type="checkbox" id="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_valid" name="system_reading[stationReadings][{{__name__}}][measures][{{__index__}}][valid]" tabindex="-1" class="form-check-input" value="1" checked="checked">
-                        <label class="checkbox-inline form-check-label" style="color: lightgray" for="system_reading_stationReadings_{{__name__}}_measures_{{__index__}}_valid">V</label>
-                    </div>
-                </td>
-            {% endfor %}
-        </tr>
-        <tr>
-            <td />
-            <td colspan="100">
-                {{form_widget(form.station.description)}}
-            </td>
-        </tr>
-    </tbody>
-{% endmacro %}
-
 {% block body %}
-    <div class="container-fluid mb-3">
+    <div class="container mb-3">
         <h1>{{title}}</h1>
 
-        <p>Ce formulaire permet l'encodage des mesures simultanément pour toutes les stations d'un système, en considérant que ces mesures ont été prises dans la même journée et en utilisant le même jeu d'instruments.</p>
+        <p>Ce formulaire permet l'encodage rapide des mesures pour toutes les stations d'un système, en leur attribuant la même date de terrain et les mêmes instruments de mesure.</p>
 
         {{form_start(form)}}
 
@@ -85,71 +30,92 @@
         </div>
 
         {# Afficher le tableau d'encodage des mesures avec en colonnes les paramètres, en lignes les stations, et en cellules les mesures #}
+        <h2>Mesures</h2>
         <div class="alert bg-light">
-            <p>Dans le tableau ci-dessous, n'oubliez pas de commencer à sélectionner l'instrument ayant servi à prendre les mesures. Introduisez ensuite les valeurs mesurées en respectant l'unité du paramètre. Décochez &laquo;&nbsp;S&nbsp;&raquo; si la valeur était instable à la mesure, et &laquo;&nbsp;V&nbsp;&raquo; si le logiciel vous signale une erreur (cela peut arriver lorsque la valeur est hors gamme).</p>
-            <table cellpadding="3" id="stationReadingsBody" data-prototype="{{formMacros.showStationReadings(form.stationReadings.vars.prototype, form.systemParameters)|e('html_attr')}}">
+            <table cellpadding="3" width="100%">
                 <thead>
                     <tr>
-                        {# Afficher les en-têtes des colonnes pour le nom et le code AKWA de la station #}
+                        {# Afficher les en-têtes des colonnes de la station #}
                         <th width="15%">
                             Station
                         </th>
-                        <th width="10%">
-                            AKWA
-                        </th>
-                        <th width="10%">
-                            Bassin
-                        </th>
-                        <th width="10%">
-                            Genre
-                        </th>
-
-                        {# Afficher les paramètres (en-têtes de colonnes) #}
-                        {{form_row(form.systemParameters)}}
+                        {# Afficher les en-têtes de colonnes des paramètres #}
+                        {% for systemParameter in systemParameters %}
+                            <th class="text-center">
+                                {{systemParameter.parameter.name}}
+                                [{{systemParameter.parameter.unit}}]
+                                <br>
+                                {{systemParameter.instrument.name}}
+                            </th>
+                        {% endfor %}
                     </tr>
                 </thead>
 
                 {# Afficher les relevés de stations (lignes du tableau) #}
-                {{form_row(form.stationReadings)}}
+                {{form_widget(form.stationReadings)}}
             </table>
+            <small class="text-muted">Introduisez <strong>toutes</strong> les valeurs qui ont été mesurées, en veillant à respecter l'unité du paramètre concerné. Complétez la valeur en décochant &laquo;&nbsp;S&nbsp;&raquo; si la valeur était instable lors de la mesure, et &laquo;&nbsp;V&nbsp;&raquo; si une valeur est hors gamme ou qu'elle vous paraît invalide.</small>
+        </div>
 
-            {# Afficher un bouton permettant d'ajouter un relevé de station #}
-            <button type="button" data-action="add-stationReading" class="btn btn-secondary">
-                <i class="fas fa-plus"></i>
-                Ajouter une nouvelle station
-            </button>
+        <div class="alert bg-light">
+            <table cellpadding="3" width="100%">
+                <thead>
+                    <tr>
+                        <th width="15%">Station</th>
+                        <th>Remarque</th>
+                    </tr>
+                </thead>
+                {% for stationReading in form.children.stationReadings %}
+                    <tbody>
+                        <tr>
+                            <td class="align-top">
+                                {{stationReading.vars.data.station.name}}
+                                <br>
+                                <small>{{stationReading.vars.value.station.atlasCode|default('--')}}</small>
+                            </td>
+                            <td>
+                                {{form_widget(stationReading.children.encodingNotes, {
+                                    'attr' : {'rows': 1}
+                                })}}
+                            </td>
+                        </tr>
+                    </tbody>
+                {% endfor %}
+            </table>
         </div>
 
         {# Afficher les informations d'encodage #}
-        <div class="alert bg-light">
-            <div class="row">
-                <div class="col">
-                    {{form_row(form.encodingDateTime)}}
-                </div>
-                <div class="col">
-                    {{form_row(form.encodingAuthor)}}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    {{form_row(form.encodingNotes)}}
-                </div>
-            </div>
-        </div>
-
-        {# Afficher les informations de validation #}
-        {% if validation|default(false) %}
+        {% if form.encodingNotes is defined %}
+            <h2>Encodage</h2>
             <div class="alert bg-light">
                 <div class="row">
-                    <div class="col">
-                        {{form_row(form.validationDateTime)}}
+                    <div class="col-3">
+                        {{form_row(form.encodingDateTime)}}
+                        {{form_row(form.encodingAuthor)}}
                     </div>
                     <div class="col">
-                        {{form_row(form.validationAuthor)}}
+                        {{form_row(form.encodingNotes, {
+                            'attr': {'rows': 4}})}}
                     </div>
                 </div>
-                {{form_row(form.validationNotes)}}
-                {{form_row(form.validationStatus)}}
+            </div>
+        {% endif %}
+
+        {# Afficher les informations de validation #}
+        {% if form.validationNotes is defined %}
+            <h2>Validation</h2>
+            <div class="alert bg-light">
+                <div class="row">
+                    <div class="col-3">
+                        {{form_row(form.validationDateTime)}}
+                        {{form_row(form.validationAuthor)}}
+                    </div>
+                    <div class="col">
+                        {{form_row(form.validationNotes, {
+                            'attr': {'rows': 4}})}}
+                        {{form_row(form.validationStatus)}}
+                    </div>
+                </div>
             </div>
         {% endif %}
 
@@ -170,69 +136,33 @@
 {% endblock %}
 
 
-{# Modèle englobant tous les paramètres d'instrument (colonnes du tableau) #}
-{% block _system_reading_systemParameters_row %}
-    {# Afficher seulement le widget, sans étiquette ni aide ni erreur #}
-    {{form_widget(form)}}
-{% endblock %}
-
-{# Modèle d'un paramètre d'instrument (colonne du tableau)) #}
-{% block _system_reading_systemParameters_entry_row %}
-    <td>{{form_widget(form)}}</td>
-{% endblock %}
-
-{# Modèle englobant tous les relevés de station (lignes du tableau) #}
-{% block _system_reading_stationReadings_row %}
-    {# Afficher seulement le widget, sans étiquette ni aide ni erreur #}
-    {{form_widget(form)}}
-{% endblock %}
-
-{# Modèle d'un relevé de station (ligne du tableau) #}
+{# Modèle d'un relevé de station #}
 {% block _system_reading_stationReadings_entry_row %}
-    {# Afficher seulement le widget, sans étiquette ni aide ni erreur #}
-    {{form_widget(form)}}
-{% endblock %}
-
-{# Modèle d'un relevé de station (cellule du tableau) #}
-{% block _system_reading_stationReadings_entry_widget %}
     <tbody id="{{id}}">
         <tr>
-            {# Afficher les champs relatifs à la station #}
+            {# Afficher les cellules statiques relatives à la station #}
             <td class="align-top">
-                {{form_widget(form.station.name)}}
+                {{form.vars.value.station.name}}
+                <br>
+                <small>{{form.vars.value.station.atlasCode|default('--')}}</small>
             </td>
-            <td class="align-top">
-                {{form_widget(form.station.atlasCode)}}
-            </td>
-            <td class="align-top">
-                {{form_widget(form.station.basin)}}
-            </td>
-            <td class="align-top">
-                {{form_widget(form.station.kind)}}
-            </td>
-            {# Pour chacune des mesures du relevé de station #}
+            {# Afficher les cellules des mesures du relevé de station #}
             {% for measure in form.measures.children %}
                 <td class="align-top">
-                    {# Inclure le widget de paramètre, qui est caché #}
+                    {# Inclure le widget de paramètre (caché) #}
                     {{form_widget(measure.children.measurability)}}
-                    {# Afficher le widget de valeur sans étiquette ni aide ni erreur #}
+                    {# Afficher le widget de valeur et l'éventuelle erreur #}
                     {{form_errors(measure.children.value)}}
                     {{form_widget(measure.children.value)}}
-                    {# Afficher la case à cocher "mesure stable" #}
+                    {# Afficher la case à cocher de mesure stable #}
                     {{form_widget(measure.children.stable, {
-                        'attr': {
-                            'tabindex': '-1',
-                        },
                         'label_attr': {
                             'class': 'checkbox-inline',
                             'style': 'color: lightgray',
                         }
                     })}}
-                    {# Afficher la case à cocher "mesure valide" #}
+                    {# Afficher la case à cocher de mesure valide #}
                     {{form_widget(measure.children.valid, {
-                        'attr': {
-                            'tabindex': '-1',
-                        },
                         'label_attr': {
                             'class': 'checkbox-inline',
                             'style': 'color: lightgray',
@@ -240,11 +170,6 @@
                     })}}
                 </td>
             {% endfor %}
-        </tr>
-        <tr hidden="hidden">
-            <td class="align-top">
-                {{form_widget(form.station.description)}}
-            </td>
         </tr>
     </tbody>
 {% endblock %}

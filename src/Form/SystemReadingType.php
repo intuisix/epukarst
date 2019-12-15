@@ -47,66 +47,59 @@ class SystemReadingType extends AbstractType
             ])
             ->add('stationReadings', CollectionType::class, [
                 'label' => "Stations",
-                'entry_options' => [
-                    'basins' => $options['basins'],
-                    'stations' => $options['stations']],
                 'entry_type' => SystemReadingStationType::class,
-                'allow_add' => true,
-                'allow_delete' => true,
-            ])
-            ->add('systemParameters', CollectionType::class, [
-                'label' => 'Paramètres/instruments',
-                'entry_type' => EntityType::class,
-                'entry_options' => [
-                     'label' => "Paramètre",
-                     'class' => Measurability::class,
-                     'choice_label' => 'nameWithUnit',
-                     'required' => true,
-                     'choices' => $options['measurabilities'],
-                     'group_by' => 'parameter.name',
-                ],
-                'allow_add' => true,
-                'allow_delete' => true,
-                'mapped' => false,
-            ])
-            ->add('encodingAuthor', TextType::class, [
-                'label' => "Auteur de l'encodage",
-                'disabled' => true,
-                'required' => true,
-            ])
-            ->add('encodingDateTime', DateTimeType::class, [
-                'label' => "Date d'encodage",
-                'date_widget' => 'single_text',
-                'time_widget' => 'single_text',
-                'disabled' => true,
-                'required' => true,
-            ])
-            ->add('encodingNotes', TextareaType::class, [
-                'label' => "Remarques d'encodage",
-                'required' => false,
+                'allow_add' => false,
+                'allow_delete' => false,
             ])
         ;
 
-        if ($options['validation']) {
-            $form
+        if ($options['showEncoding']) {
+            $builder
+                ->add('encodingAuthor', TextType::class, [
+                    'label' => "Auteur de l'encodage",
+                    'disabled' => true,
+                    'required' => true,
+                ])
+                ->add('encodingDateTime', DateTimeType::class, [
+                    'label' => "Date de l'encodage",
+                    'date_widget' => 'single_text',
+                    'time_widget' => 'single_text',
+                    'disabled' => true,
+                    'required' => true,
+                ])
+                ->add('encodingNotes', TextareaType::class, [
+                    'label' => "Remarques de l'encodage",
+                    'required' => false,
+                    'attr' => [
+                        'placeholder' => "Entrez vos remarques éventuelles d'observation et/ou d'encodage concernant les mesures du système en général",
+                    ]
+                ])
+            ;
+        }
+
+        if ($options['showValidation']) {
+            $builder
                 ->add('validationAuthor', TextType::class, [
                     'label' => "Auteur de la validation",
                     'disabled' => true,
                     'required' => false,
                 ])
                 ->add('validationDateTime', DateTimeType::class, [
-                    'label' => "Date de validation",
+                    'label' => "Date de la validation",
                     'date_widget' => 'single_text',
                     'time_widget' => 'single_text',
                     'disabled' => true,
                     'required' => false,
                 ])
                 ->add('validationNotes', TextareaType::class, [
-                    'label' => "Remarques de validation",
+                    'label' => "Remarques de la validation",
                     'required' => false,
+                    'attr' => [
+                        'placeholder' => "Entrez vos remarques éventuelles de validation concernant les mesures du système en général",
+                    ]
                 ])
                 ->add('validationStatus', ChoiceType::class, [
-                    'label' => "Etat de validation",
+                    'label' => "Etat de la validation",
                     'required' => false,
                 ])
             ;
@@ -118,13 +111,9 @@ class SystemReadingType extends AbstractType
         $resolver
             ->setDefaults([
                 'data_class' => SystemReading::class,
-                'validation' => false,
+                'showEncoding' => false,
+                'showValidation' => false,
             ])
-            ->setRequired('stations')
-            ->setAllowedTypes('stations', 'App\Entity\Station[]')
-            ->setRequired('basins')
-            ->setAllowedTypes('basins', 'App\Entity\Basin[]')
-            ->setRequired('measurabilities')
-            ->setAllowedTypes('measurabilities', 'App\Entity\Measurability[]');
+        ;
     }
 }
