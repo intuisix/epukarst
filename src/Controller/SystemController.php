@@ -49,12 +49,12 @@ class SystemController extends AbstractController
     }
 
     /**
-     * Traite l'ajout d'un système karstique.
+     * Traite la création d'un système karstique.
      * 
      * @Route("/system/add", name="system_create")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function add(ObjectManager $manager, Request $request)
+    public function create(ObjectManager $manager, Request $request)
     {
         /* Instancier un nouveau système */
         $system = new System();
@@ -153,43 +153,6 @@ class SystemController extends AbstractController
         }
 
         return $this->redirectToRoute('systems_list');
-    }
-
-    /**
-     * Gère les stations d'un système karstique.
-     * 
-     * @Route("/system/{code}/stations", name="system_stations")
-     */
-    public function defineStations(System $system, StationRepository $stationRepository, ObjectManager $manager, Request $request)
-    {
-        /* Obtenir la liste des stations du système */
-        $systemStations = new SystemStations();
-        $queryBuilder = $stationRepository->createQueryBuilder('s')
-            ->innerJoin('s.basin', 'b')
-            ->where('b.system = :system')
-            ->setParameter('system', $system->getId());
-        foreach ($queryBuilder->getQuery()->getResult() as $station) {
-            $systemStations->addStation($station);
-        }
-
-        $form = $this->createForm(SystemStationsType::class, $systemStations);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            foreach ($systemStations->getStations() as $station) {
-                $manager->persist($station);
-            }
-            $manager->flush();
-
-            $this->addFlash('success', "Les stations du système <strong>{$system->getName()}</strong> ont été enregistrées.");
-
-            return $this->redirectToRoute('reading');
-        }
-
-        return $this->render('system/stations.html.twig', [
-            'form' => $form->createView(),
-            'title' => "Définir les stations de {$system->getName()}",
-        ]);
     }
 
     /**
