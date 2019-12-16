@@ -25,8 +25,8 @@ class SystemReadingStationType extends AbstractType
             ->add('measures', CollectionType::class, [
                 'label' => "Mesure",
                 'entry_type' => SystemReadingMeasureType::class,
-                'allow_add' => true,
-                'allow_delete' => true,
+                'allow_add' => false,
+                'allow_delete' => false,
             ])
             ->add('encodingNotes', TextareaType::class, [
                 'label' => "Remarques de l'encodage",
