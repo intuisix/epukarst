@@ -10,10 +10,10 @@
     <div class="container mb-3">
         <h1>{{title}}</h1>
 
-        <p>Ce formulaire permet l'encodage rapide des mesures pour toutes les stations d'un système, en leur attribuant la même date de terrain et les mêmes instruments de mesure.</p>
+        <p>Ce formulaire permet l'encodage rapide des mesures pour toutes les stations d'un système, en leur attribuant la même date de terrain et les mêmes instruments de mesure. Avant de commencer, adaptez les stations de mesure et les paramètres du système si cela est nécessaire.</p>
 
         <div class="mb-3">
-            <a href="{{path('system_stations', {'code': system.code})}}" class="btn btn-primary">Ajouter des stations au système</a>
+            <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-primary"><i class="fas fa-archway"></i> Définir les stations du système</a>
         </div>
 
         {{form_start(form)}}

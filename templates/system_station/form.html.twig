@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form _self %}
+
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block body %}
+    <div class="container mb-3">
+        <h1>{{title}}</h1>
+
+        <p>Ce formulaire permet de définir une station, emplacement qui fait partie d'un bassin d'un système et dans lequel des mesures sont réalisées.</p>
+        <p>La localisation de la station devrait être décrite le plus précisément possible afin que les mesures successives de la station puissent être réalisées systématiquement au même emplacement, même lorsque d'autres personnes effectuent le relevé.</p>
+
+        {{form_start(form)}}
+
+        <div class="alert bg-light">
+            <div class="row">
+                <div class="col">
+                    {{form_row(form.name)}}
+                    {{form_row(form.basin)}}
+                    <div class="row">
+                        <div class="col">{{form_row(form.atlasCode)}}</div>
+                        <div class="col">{{form_row(form.kind)}}</div>
+                        <div class="col">{{form_row(form.code)}}</div>
+                    </div>
+                </div>
+                <div class="col">
+                    {{form_row(form.description, {'attr': {'rows': 10}})}}
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {# Afficher un bouton permettant d'enregistrer la station #}
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-check"></i>
+                Enregistrer la station
+            </button>
+
+            {# Afficher un bouton permettant de revenir à l'index #}
+            <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-cancel">
+                <i class="fas fa-backspace"></i>
+                Retourner à la liste
+            </a>
+        </div>
+
+        {{form_end(form)}}
+    </div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{title}}</h1>
+
+        <p>Cette page énumère, dans leurs bassins respectifs, les emplacements auxlequels les relevés sont réalisés dans le système.</p>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Bassin</th>
+                    <th>Nom</th>
+                    <th>Code</th>
+                    <th>AKWA</th>
+                    <th>Genre</th>
+                    <th>Description</th>
+                    <th>Relevés</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            {# Lister les bassins triés par code #}
+            {% for basin in system.basins|sort((a,b) => (a.code <=> b.code)) %}
+                <tbody>
+                    <tr>
+                        <th colspan="2">{{basin.name|default}}</th>
+                        <th>{{basin.code}}</th>
+                        <th></th>
+                        <th></th>
+                        <th>{{basin.description}}</th>
+                        <th></th>
+                        <th>
+                        </th>
+                    </tr>
+                    {# Lister les stations triées par code #}
+                    {% for station in basin.stations|sort((a,b) => (a.code <=> b.code)) %}
+                        <tr>
+                            <td></td>
+                            <td>{{station.name|default}}</td>
+                            <td>{{station.code|default}}</td>
+                            <td>{{station.atlasCode|default}}</td>
+                            <td>{{station.kind.name|default}}</td>
+                            <td>{{station.description|default}}</td>
+                            <td>
+                                {% if station.readings|length %}
+                                    <span class="badge badge-primary badge-pill">
+                                        {{station.readings|length}}
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{path('system_station_update', {'code': station.code})}}"><i class="fas fa-edit text-primary"></i></a>
+                                <a href="{{path('system_station_delete', {'code': station.code})}}"><i class="fas fa-trash text-danger"></i></a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <td colspan="100"><em>Le système ne comporte pas de station.</em></td>
+                    {% endfor %}
+                {% else %}
+                    <td colspan="100"><em>Le système ne comporte pas de bassin.</em></td>
+                </tbody>
+            {% endfor %}
+        </table>
+
+        <a href="{{path('system_station_create', {'code': system.code})}}" class="btn btn-secondary"><i class="fas fa-archway"></i> Ajouter une station</a>
+
+        <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary"><i class="far fa-file-alt"></i> Encoder un relevé de système</a>
+    </div>
+{% endblock %}
