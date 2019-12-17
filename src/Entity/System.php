@@ -30,6 +30,7 @@ class System
      * 
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Veuillez renseigner un code")
+     * @Assert\Regex("/^[A-Za-z0-9\-]+$/", message="Le code ne peut contenir que des lettres, des chiffres et des tirets")
      */
     private $code;
 
@@ -84,6 +85,7 @@ class System
      * Photos présentant le système.
      * 
      * @ORM\OneToMany(targetEntity="App\Entity\SystemPicture", mappedBy="system", orphanRemoval=true)
+     * @Assert\Valid()
      */
     private $pictures;
 
@@ -99,6 +101,8 @@ class System
      * 
      * @ORM\OneToMany(targetEntity="App\Entity\Basin", mappedBy="system", orphanRemoval=true)
      * @ORM\OrderBy({"name": "ASC"})
+     * 
+     * @Assert\Valid()
      */
     private $basins;
 
@@ -106,11 +110,15 @@ class System
      * Utilisateurs liés au système.
      * 
      * @ORM\OneToMany(targetEntity="App\Entity\UserRole", mappedBy="linkedSystem")
+     * 
+     * @Assert\Valid()
      */
     private $userRoles;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\SystemParameter", mappedBy="system", orphanRemoval=true)
+     * 
+     * @Assert\Valid()
      */
     private $parameters;
 
