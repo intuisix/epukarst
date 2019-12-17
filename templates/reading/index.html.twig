@@ -25,24 +25,33 @@
             une programmation manuelle. La division est limitée en hauteur
             et l'utilisateur a la possibilité de la redimensionner et d'en
             faire défiler le contenu. #}
-            <div class="bg-light mb-3" style="overflow-y: scroll; height: 400px; resize: vertical" id="filter_stations">
+            <div class="alert bg-light mb-3" style="overflow-y: scroll; height: 400px; resize: vertical" id="filter_stations">
                 {% for system in systems %}
                     <div>
                         <div class="form-check">
                             <input type="checkbox" name="filter[systems][]" id="filter_systems_{{system.id}}" class="form-check-input" value="{{system.id}}" {% if system in form.vars.data.systems %}checked="checked"{% endif %} />
-                            <label for="filter_systems_{{system.id}}" class="form-check-label"><strong>{{system.name}}</strong></label>
+                            <label for="filter_systems_{{system.id}}" class="form-check-label">
+                                <strong>{{system.name}}</strong>
+                            </label>
+                            <span class="badge badge-secondary float-right">{{system.code}}</span>
                         </div>
                         {% for basin in system.basins %}
                             <div class="ml-4">
                                 <div class="form-check">
                                     <input type="checkbox" name="filter[basins][]" id="filter_basins_{{basin.id}}" class="form-check-input" value="{{basin.id}}" {% if basin in form.vars.data.basins %}checked="checked"{% endif %} />
-                                    <label for="filter_basins_{{basin.id}}" class="form-check-label">{{basin.name}}</label>
+                                    <label for="filter_basins_{{basin.id}}" class="form-check-label">
+                                        {{basin.name}}
+                                    </label>
+                                    <span class="badge badge-secondary  float-right">{{basin.code}}</span>
                                 </div>
                                 {% for station in basin.stations %}
                                     <div class="ml-4">
                                         <div class="form-check">
                                             <input type="checkbox" id="filter_stations_{{station.id}}" class="form-check-input" name="filter[stations][]" value="{{station.id}}" {% if station in form.vars.data.stations %}checked="checked"{% endif %} />
-                                            <label class="form-check-label" for="filter_stations_{{station.id}}"><em>{{station.name}}</em></label>
+                                            <label class="form-check-label" for="filter_stations_{{station.id}}">
+                                                <em>{{station.name}}</em>
+                                            </label>
+                                            <span class="badge badge-secondary float-right">{{station.code}}</span>
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -60,7 +69,7 @@
             </div>
 
             {# Afficher les champs de date minimum et de date maximum #}
-            <div class="form-group bg-light">
+            <div class="alert form-group bg-light">
                 <div class="form-row">
                     <div class="col">
                         {{form_row(form.minimumDate)}}
@@ -72,7 +81,7 @@
             </div>
 
             {# Afficher les cases à cocher d'état #}
-            <div class="form-group bg-light">
+            <div class="alert form-group bg-light">
                 <div class="row">
                     <div class="col">
                         {{form_row(form.validated)}}
@@ -89,7 +98,7 @@
             {# Afficher les sous-formulaires pour les mesures #}
             {{form_row(form.measures)}}
 
-            <div class="form-row my-3">
+            <div class="form-row">
                 <div class="col">
                     {# Bouton pour appliquer le filtre #}
                     <button type="submit" class="btn btn-success float-right">
@@ -103,11 +112,11 @@
         </div>
         <div class="col">
             {# Afficher la carte des relevés #}
-            <div id="map" style="height: 400px">Carte</div>
+            <div id="map" style="height: 300px">Carte</div>
 
             {# Afficher la liste des relevés, sous forme de table liée au
             système de pagination qui suit #}
-            <form class="mb-3" method="POST" id="readings">
+            <form class="my-3" method="POST" id="readings">
                 <table width="100%" class="table table-bordered table-striped">
                     <thead>
                         <tr>
@@ -257,7 +266,7 @@
 
 {% block _filter_measures_entry_widget %}
     {# Cette division identifie le code HTML qui concerne le paramètre #}
-    <div class="bg-light mb-3" id="{{id}}">
+    <div class="alert bg-light" id="{{id}}">
         {# Afficher, seul sur une ligne, la sélection de paramètre #}
         <div class="form-row">
             <div class="col">
