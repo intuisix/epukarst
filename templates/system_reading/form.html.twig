@@ -40,7 +40,7 @@
                 <thead>
                     <tr>
                         {# Afficher les en-têtes des colonnes de la station #}
-                        <th width="15%">
+                        <th width="20%">
                             Station
                         </th>
                         {# Afficher les en-têtes de colonnes des paramètres #}
@@ -65,7 +65,7 @@
             <table cellpadding="3" width="100%">
                 <thead>
                     <tr>
-                        <th width="15%">Station</th>
+                        <th width="20%">Station</th>
                         <th>Remarque</th>
                     </tr>
                 </thead>
@@ -75,7 +75,10 @@
                             <td class="align-top">
                                 {{stationReading.vars.data.station.name}}
                                 <br>
-                                <small>{{stationReading.vars.value.station.atlasCode|default('--')}}</small>
+                                <small>
+                                    <span class="badge badge-secondary mr-2">{{stationReading.vars.value.station.code}}</span>
+                                    {{stationReading.vars.value.station.atlasCode}}
+                                </small>
                             </td>
                             <td>
                                 {{form_widget(stationReading.children.encodingNotes, {
@@ -148,7 +151,10 @@
             <td class="align-top">
                 {{form.vars.value.station.name}}
                 <br>
-                <small>{{form.vars.value.station.atlasCode|default('--')}}</small>
+                <small>
+                    <span class="badge badge-secondary mr-2">{{form.vars.value.station.code}}</span>
+                    {{form.vars.value.station.atlasCode}}
+                </small>
             </td>
 
             {# Afficher les mesures du relevé de station #}

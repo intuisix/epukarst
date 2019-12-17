@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
@@ -31,6 +32,7 @@ class Station
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Regex("/^[A-Za-z0-9\-]+$/", message="Le code ne peut contenir que des lettres, des chiffres et des tirets")
      */
     private $code;
 
@@ -88,7 +90,26 @@ class Station
     public function update()
     {
         if (empty($this->code)) {
-            $this->code = uniqid();
+            /* Calculer le code suivant dans la séquence en parcourant les autres stations */
+            $highestNumber = 0;
+            foreach ($this->basin->getStations() as $station) {
+                $code = $station->getCode();
+                /* Rechercher le début du nombre situé en fin de chaîne */
+                $i = strlen($code);
+                while ($i > 0 && is_numeric($code[$i - 1])) {
+                    $i--;
+                }
+                /* Déterminer si ce nombre est le plus élevé rencontré */
+                if (($i > 0) && ($code[$i - 1] == '-')) {
+                    $number = (int)substr($code, $i);
+                    if ($number > $highestNumber) {
+                        $highestNumber = $number;
+                    }
+                }
+            }
+            /* Formater le code en utilisant celui du bassin comme préfixe (même si d'autres préfixes ont été rencontrés durant l'examen des autres stations) */
+            $this->code = $this->basin->getCode() . '-' .
+                sprintf("%02u", $highestNumber + 1);
         }
     }
 

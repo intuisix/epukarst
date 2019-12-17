@@ -34,6 +34,7 @@ class Reading
      * Code attribué au relevé.
      * 
      * @ORM\Column(type="string", length=255)
+     * @Assert\Regex("/^[A-Za-z0-9\-]+$/", message="Le code ne peut contenir que des lettres, des chiffres et des tirets")
      */
     private $code;
 
@@ -139,7 +140,26 @@ class Reading
      */
     public function update() {
         if (empty($this->code)) {
-            $this->code = uniqid();
+            /* Calculer le code suivant dans la séquence en parcourant les autres relevés */
+            $highestNumber = 0;
+            foreach ($this->station->getReadings() as $reading) {
+                $code = $reading->getCode();
+                /* Rechercher le début du nombre situé en fin de chaîne */
+                $i = strlen($code);
+                while ($i > 0 && is_numeric($code[$i - 1])) {
+                    $i--;
+                }
+                /* Déterminer si ce nombre est le plus élevé rencontré */
+                if (($i > 0) && ($code[$i - 1] == '-')) {
+                    $number = (int)substr($code, $i);
+                    if ($number > $highestNumber) {
+                        $highestNumber = $number;
+                    }
+                }
+            }
+            /* Formater le code en utilisant celui de la station comme préfixe (même si d'autres préfixes ont été rencontrés durant l'examen des autres relevés) */
+            $this->code = $this->station->getCode() . '-' .
+                sprintf("%04u", $highestNumber + 1);
         }
     }
 
