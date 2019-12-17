@@ -31,7 +31,7 @@
                         <th>{{basin.code}}</th>
                         <th></th>
                         <th></th>
-                        <th>{{basin.description}}</th>
+                        <th>{{basin.description|default|striptags}}</th>
                         <th></th>
                         <th>
                         </th>
@@ -44,7 +44,7 @@
                             <td>{{station.code|default}}</td>
                             <td>{{station.atlasCode|default}}</td>
                             <td>{{station.kind.name|default}}</td>
-                            <td>{{station.description|default}}</td>
+                            <td>{{station.description|default|striptags}}</td>
                             <td>
                                 {% if station.readings|length %}
                                     <span class="badge badge-primary badge-pill">
