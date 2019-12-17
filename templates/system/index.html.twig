@@ -14,14 +14,13 @@
                 <div class="col-md-4">
                     <div class="card bg-light mb-3">
                         <div class="card-header text-center">
+                            {{system.basin}} /
                             {{system.commune}}
-                            <br>
-                            {{system.basin}}
                         </div>
                         {% if system.pictures|length > 0 %}
                             <a href="{{url}}">
                                 {# Prendre une image au hasard parmi celles du système #}
-                                <img src="{{system.pictures[random(0, system.pictures|length - 1)].fileName}}" alt="{{system.name}}" style="height: 200px; width: 100%; display:block"/>
+                                <img src="{{system.pictures[random(0, system.pictures|length - 1)].fileName}}" alt="{{system.name}}" style="height: 300px; width: 100%; display:block"/>
                             </a>
                         {% else %}
                             <div class="alert alert-warning">Il n'y a pas encore de photo pour ce système.</div>
@@ -33,7 +32,10 @@
                             <p class="card-text">
                                 {{system.introduction}}
                             </p>
-                            <a href="{{url}}">En savoir plus&nbsp;!</a>
+                            <a href="{{url}}" class="btn btn-link float-right">
+                                Plus d'informations
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -41,7 +43,10 @@
         </div>
 
         {% if app.user and app.user.isAdmin() %}
-            <a href="{{ path('system_create') }}" class="btn btn-primary">Ajouter un système</a>
+            <a href="{{path('system_create')}}" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Ajouter un système
+            </a>
         {% endif %}
     </div>
 {% endblock %}

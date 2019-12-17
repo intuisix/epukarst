@@ -44,7 +44,7 @@ class SystemController extends AbstractController
             ->setPage($page);
 
         return $this->render('system/list.html.twig', [
-            'pagination' => $pagination
+            'pagination' => $pagination,
         ]);
     }
 
@@ -74,9 +74,7 @@ class SystemController extends AbstractController
                     'code' => $system->getCode(),
                 ]);
             } else {
-                return $this->redirectToRoute('system_show', [
-                    'slug' => $system->getSlug(),
-                ]);
+                return $this->redirectToRoute('systems_list');
             }
         }
 
@@ -96,7 +94,9 @@ class SystemController extends AbstractController
     public function modify(System $system, ObjectManager $manager, Request $request)
     {
         /* Créer et traiter le formulaire */
-        $form = $this->createForm(SystemType::class, $system);
+        $form = $this->createForm(SystemType::class, $system, [
+            'picture_files' => SystemPicture::scanPicturesDir('images/systems'),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -111,9 +111,7 @@ class SystemController extends AbstractController
                     'code' => $system->getCode(),
                 ]);
             } else {
-                return $this->redirectToRoute('system_show', [
-                    'slug' => $system->getSlug(),
-                ]);
+                return $this->redirectToRoute('systems_list');
             }
         }
 

@@ -6,40 +6,39 @@
 
 {% block body %}
     {# Corps de la page #}
-    <div class="container">
-
-        {# Image de titre #}
-        <div class="ad-title py-3 mb-3"
-            {% if system.pictures|length > 0 %}
-                {# Prendre une image au hasard parmi celles du système #}
-                style="background-image: url({{system.pictures[random(0, system.pictures|length - 1)].fileName}}); background-size: cover; background-position: center"
-            {% else %}
-                style="background-color: grey"
-            {% endif %} >
-            <div class="container">
-                <h1 class="d-flex align-items-center">
-                    <span class="badge badge-secondary mr-2">{{system.code}}</span>
-                    {{system.name}}
-                </h1>
-                <p><big>{{system.introduction}}</big></p>
-                <p>{{system.commune}} - {{system.basin}}</p>
-                {% if app.user and app.user.isAdmin() %}
-                    <a href="{{ path('system_modify', {'code': system.code}) }}" class="btn btn-primary">Modifier le système</a>
-
-                    <a href="{{ path('system_delete', {'code': system.code}) }}" class="btn btn-danger" id='delete-button'>Supprimer le système</a>
-                {% endif %}
-            </div>
-        </div>
+    <div class="container mb-3">
+        <h1>
+            <span class="badge badge-secondary mr-2">
+                {{system.code}}
+            </span>
+            {{system.name}}
+        </h1>
 
         <div class="row">
             {# Colonne principale #}
             <div class="col-md-8 mb-3">
-                {# Description détaillée du système #}
-                {{system.description|raw}}
+                {# Description introductive #}
+                <p><big>{{system.introduction}}</big></p>
+
+                {# Commune et bassin versant #}
+                <div class="row">
+                    <div class="col-6">
+                        <dl>
+                            <dt>Commune&nbsp;:</dt>
+                            <dd>{{system.commune}}</dd>
+                        </dl>
+                    </div>
+                    <div class="col-6">
+                        <dl>
+                            <dt>Bassin versant&nbsp;:</dt>
+                            <dd>{{system.basin}}</dd>
+                        </dl>
+                    </div>
+                </div>
 
                 {# Carousel d'images #}
                 {% if system.pictures|length > 0 %}
-                    <div id="carouselExampleIndicators" class="carousel slide mb-5" data-ride="carousel">
+                    <div id="carouselExampleIndicators" class="carousel slide mb-3" data-ride="carousel">
                         <ol class="carousel-indicators">
                             {% for picture in system.pictures %}
                                 <li data-target="#carouselExampleIndicators" data-slide-to="{{loop.index0}}" class="{% if loop.first %}active{% endif %}"></li>
@@ -48,7 +47,7 @@
                         <div class="carousel-inner">
                             {% for picture in system.pictures %}
                                 <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                    <img src="{{picture.fileName}}" class="d-block w-100" alt="...">
+                                    <img src="/{{picture.fileName}}" class="d-block w-100" alt="...">
                                     <div class="carousel-caption d-none-d-md-block">
                                         <h5>{{system.name}}</h5>
                                         <p>{{picture.caption}}</p>
@@ -66,12 +65,16 @@
                         </a>
                     </div>
                 {% endif %}
-                
+
+                {# Description détaillée du système #}
+                {{system.description|raw}}
+
                 {# Description des bassins du système #}
                 {% for basin in system.basins %}
-                    <hr>
                     <h2 id="basin_{{basin.code}}" class="d-flex align-items-center">
-                        <span class="badge badge-secondary mr-2">{{basin.code}}</span>
+                        <span class="badge badge-secondary mr-2">
+                            {{basin.code}}
+                        </span>
                         {{basin.name}}
                     </h2>
                     {{basin.description|raw}}
@@ -79,7 +82,9 @@
                     {# Description des stations du système #}
                     {% for station in basin.stations %}
                         <h3 id="station_{{station.code}}" class="d-flex align-items-center">
-                            <span class="badge badge-secondary mr-2">{{station.code}}</span>
+                            <span class="badge badge-secondary mr-2">
+                                {{station.code}}
+                            </span>
                             {{station.name}}
                         </h3>
                         {% if station.atlasCode %}
@@ -93,23 +98,46 @@
 
             {# Colonne de droite #}
             <div class="col alert bg-light">
+                {# Liste des bassins et des stations #}
                 <h2>Bassins et stations</h2>
-
-                {# Pour chaque bassin #}
                 {% for basin in system.basins %}
-                    <div class="card mt-3">
+                    <div class="card my-3">
                         <div class="card-header">
                             <a href="#basin_{{basin.code}}">{{basin.name}}</a>
                         </div>
                         <ul class="list-group list-group-flush">
                             {% for station in basin.stations %}
                                 <li class="list-group-item">
-                                    <a href="#station_{{station.code}}">{{station.name}}</a>
+                                    <a href="#station_{{station.code}}" class="ml-4">{{station.name}}</a>
                                 </li>
                             {% endfor %}
                         </ul>
                     </div>
                 {% endfor %}
+
+                {# Boutons #}
+                {% if app.user %}
+                    {% if app.user.isAdmin %}
+                        <a href="{{path('system_modify', {'code': system.code})}}" class="btn btn-primary btn-block">
+                            <i class="fas fa-plus"></i>
+                            Modifier le système
+                        </a>
+                    {% endif %}
+                    <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary btn-block">
+                        <i class="fas fa-file"></i>
+                        Encoder un relevé de système
+                    </a>
+                    <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-primary btn-block">
+                        <i class="fas fa-archway"></i>
+                        Définir les stations du système
+                    </a>
+                    {% if app.user.isAdmin %}
+                        <a href="{{path('system_delete', {'code': system.code})}}" class="btn btn-danger btn-block">
+                            <i class="fas fa-trash"></i>
+                            Supprimer le système
+                        </a>
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
     </div>

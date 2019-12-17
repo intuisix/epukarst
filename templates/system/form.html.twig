@@ -105,7 +105,7 @@ modification de systèmes #}
 
 {% block _system_basins_row %}
     {{form_row(form)}}
-    {# Bouton pour ajouter un bassin #}
+    {# Bouton permettant d'ajouter un bassin #}
     <button type="button" data-action="add-basin" class="btn btn-secondary">
         <i class="fas fa-plus"></i>
         Ajouter un bassin
@@ -133,7 +133,7 @@ modification de systèmes #}
                 {% if (form.vars.data is not null) and (form.vars.data.stations|length) %}
                     <p>Ce bassin contient {{form.vars.data.stations|length}} station(s).</p>
                 {% else %}
-                    {# Afficher un bouton permettant de supprimer le bassin #}
+                    {# Bouton permettant de supprimer le bassin #}
                     <button type="button" data-action="delete-basin" data-target="#{{id}}" class="btn btn-danger float-right">
                         <i class="fas fa-trash"></i>
                         Supprimer ce bassin
@@ -149,8 +149,13 @@ modification de systèmes #}
     <p>Ce panneau permet de définir les photos du système.<p>
 {% endblock %}
 
-{% block _system_pictures_widget %}
-    {{form_widget(form)}}
+{% block _system_pictures_row %}
+    {{form_row(form)}}
+    {# Bouton permettant d'ajouter une photo #}
+    <button type="button" data-action="add-picture" class="btn btn-secondary">
+        <i class="fas fa-plus"></i>
+        Ajouter manuellement une photo
+    </button>
 {% endblock %}
 
 {% block _system_pictures_entry_row %}
@@ -162,7 +167,9 @@ modification de systèmes #}
     <div class="form-group alert bg-light" id="{{id}}">
         <div class="row">
             <div class="col md-3">
-                <img src="{{form.fileName.vars.data}}" alt="{{form.caption.vars.data}}" style="max-width: 100%; height: auto;">
+                {% if form.children.fileName.vars.data is not null %}
+                    <img src="/{{form.children.fileName.vars.value}}" alt="{{form.children.fileName.vars.value}}" style="max-width: 100%; height: auto;">
+                {% endif %}
             </div>
             <div class="col">
                 {{form_row(form.fileName)}}
@@ -171,7 +178,7 @@ modification de systèmes #}
         </div>
         <div class="row">
             <div class="col">
-                {# Afficher un bouton permettant de supprimer la photo #}
+                {# Bouton permettant de supprimer la photo #}
                 <button type="button" data-action="delete-picture" data-target="#{{id}}" class="btn btn-danger float-right">
                     <i class="fas fa-trash"></i>
                     Supprimer cette photo
@@ -188,7 +195,7 @@ modification de systèmes #}
 
 {% block _system_parameters_row %}
     {{form_row(form)}}
-    {# Afficher un bouton permettant d'ajouter un paramètre #}
+    {# Bouton permettant d'ajouter un paramètre #}
     <button type="button" data-action="add-parameter" class="btn btn-secondary">
         <i class="fas fa-plus"></i>
         Ajouter un paramètre
@@ -212,7 +219,7 @@ modification de systèmes #}
         </div>
         <div class="row">
             <div class="col">
-                {# Afficher un bouton permettant de supprimer le paramètre #}
+                {# Bouton permettant de supprimer le paramètre #}
                 <button type="button" data-action="delete-parameter" data-target="#{{id}}" class="btn btn-danger float-right">
                     <i class="fas fa-trash"></i>
                     Supprimer ce paramètre
@@ -229,7 +236,7 @@ modification de systèmes #}
 
 {% block _system_userRoles_row %}
     {{form_row(form)}}
-    {# Afficher un bouton permettant d'ajouter un bassin #}
+    {# Bouton permettant d'ajouter un bassin #}
     <button type="button" data-action="add-userRole" class="btn btn-secondary">
         <i class="fas fa-plus"></i>
         Ajouter un rôle
@@ -253,7 +260,7 @@ modification de systèmes #}
         </div>
         <div class="row">
             <div class="col">
-                {# Afficher un bouton permettant de supprimer le rôle #}
+                {# Bouton permettant de supprimer le rôle #}
                 <button type="button" data-action="delete-userRole" data-target="#{{id}}" class="btn btn-danger float-right">
                     <i class="fas fa-trash"></i>
                     Supprimer ce rôle

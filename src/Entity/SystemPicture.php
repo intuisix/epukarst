@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PictureRepository")
+ * @ORM\HasLifecycleCallbacks
  */
 class SystemPicture
 {
@@ -42,6 +43,27 @@ class SystemPicture
      */
     private $uploadDateTime;
 
+    /**
+     * Met à jour les propriétés avant la mémorisation dans la base de données.
+     *
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     * 
+     * @return void
+     */
+    public function update()
+    {
+        if (empty($this->uploadDateTime)) {
+            $this->uploadDateTime = new \DateTimeImmutable();
+        }
+    }
+
+    /**
+     * Stocke une image qui vient d'être transférée.
+     *
+     * @param UploadedFile $file
+     * @return void
+     */
     public function setUploadedFile(UploadedFile $file)
     {
         if ($file) {
@@ -54,7 +76,7 @@ class SystemPicture
             $file->move(self::PICTURES_PATH, $newName);
 
             /* Surcharger le nom de fichier existant */
-            $this->fileName = '/' . self::PICTURES_PATH . '/' . $newName;
+            $this->fileName = self::PICTURES_PATH . DIRECTORY_SEPARATOR . $newName;
             $this->uploadDateTime = new \DateTimeImmutable();
         }
 
@@ -112,5 +134,28 @@ class SystemPicture
         $this->uploadDateTime = $uploadDateTime;
 
         return $this;
+    }
+
+    /**
+     * Etablit la liste des fichiers présents dans le répertoire des images.
+     *
+     * @param [type] $dir
+     * @param array $results
+     * @return array
+     */
+    static function scanPicturesDir($dir, &$results = array())
+    {
+        $files = scandir($dir);
+        foreach ($files as $key => $value) {
+            if ('.' != $value[0]) {
+                $path = $dir . DIRECTORY_SEPARATOR . $value;
+                if (is_dir($path)) {
+                    scanPicturesDir($path, $results);
+                } else {
+                    $results[] = $path;
+                }
+            }
+        }
+        return $results;
     }
 }

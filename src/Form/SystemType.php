@@ -77,6 +77,9 @@ class SystemType extends AbstractType
                 'entry_type' => SystemPictureType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
+                'entry_options' => [
+                    'files' => $options['picture_files'],
+                ]
             ])
             ->add('newPictures', FileType::class, [
                 'label' => "Ajouter des photos",
@@ -123,8 +126,10 @@ class SystemType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => System::class,
-        ]);
+        $resolver
+            ->setDefaults([
+                'data_class' => System::class,
+            ])
+            ->setRequired('picture_files');
     }
 }
