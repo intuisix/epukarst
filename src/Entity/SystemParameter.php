@@ -75,4 +75,10 @@ class SystemParameter
 
         return $this;
     }
+
+    public function getName(): ?string
+    {
+        return $this->instrumentParameter ?
+            $this->instrumentParameter->getName() : null;
+    }
 }

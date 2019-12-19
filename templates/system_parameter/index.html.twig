@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{title}}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{title}}</h1>
+
+        <p>Cette page énumère les paramètres mesurés dans le système, en précisant pour chacun d'eux l'instrument de mesure utilisé.</p>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Paramètre</th>
+                    <th>Instrument</th>
+                    <th>Remarques</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {# Lister les paramètres #}
+                {% for systemParameter in system.parameters|sort((a,b) => (a.instrumentParameter.nameWithUnit <=> b.instrumentParameter.nameWithUnit)) %}
+                    <tr>
+                        <td>{{systemParameter.instrumentParameter.parameter.name|default}}</td>
+                        <td>{{systemParameter.instrumentParameter.instrument.name|default}}</td>
+                        <td>{{systemParameter.notes|striptags}}</td>
+                        <td>
+                            <a href="{{path('system_parameter_update', {'id': systemParameter.id})}}"><i class="fas fa-edit text-primary"></i></a>
+                            <a href="{{path('system_parameter_delete', {'id': systemParameter.id})}}"><i class="fas fa-trash text-danger"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <td colspan="100"><em>Le système ne comporte pas de paramètre.</em></td>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="mb-3">
+            {# Bouton permettant d'ajouter un paramètre #}
+            <a href="{{path('system_parameter_create', {'code': system.code})}}" class="btn btn-secondary">
+                <i class="fas fa-plus"></i>
+                Ajouter un paramètre
+            </a>
+
+            {# Bouton permettant de passer à l'encodage d'un relevé #}
+            <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary">
+                <i class="far fa-file-alt"></i>
+                Encoder un relevé de système
+            </a>
+        </div>
+    </div>
+{% endblock %}

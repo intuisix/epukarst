@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{title}}
+{% endblock title %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{title}}</h1>
+
+        <p>Ce formulaire permet de définir un paramètre à mesurer pour un système, en signalant par quel instrument il est mesuré.</p>
+
+        {{form_start(form)}}
+
+        <div class="alert bg-light">
+            {{form_row(form.instrumentParameter)}}
+            {{form_row(form.notes)}}
+        </div>
+
+        <div class="mb-3">
+            {# Bouton permettant d'enregistrer le paramètre #}
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-check"></i>
+                Enregistrer le paramètre
+            </button>
+
+            {# Bouton permettant de revenir à l'index #}
+            <a href="{{path('system_parameter', {'code': system.code})}}" class="btn btn-cancel">
+                <i class="fas fa-backspace"></i>
+                Retourner à la liste
+            </a>
+        </div>
+
+        {{form_end(form)}}
+    </div>
+{% endblock %}
