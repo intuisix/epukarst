@@ -57,20 +57,8 @@ class SystemReadingController extends AbstractController
             ->setParameter('system', $system->getId());
         $systemStations = $queryBuilder->getQuery()->getResult();
 
-        if (empty($systemStations)) {
-            $this->addFlash('danger', "Il n'est pas possible d'encoder de mesures pour l'instant, car aucune station n'a été ajoutée au système <strong>{$system->getName()}</strong>.");
-            return $this->redirectToRoute('reading');
-        }
-
         /* Obtenir la liste de paramètres du système */
-        $systemParameters = $system->getParameters()->map(function(SystemParameter $p) {
-            return $p->getInstrumentParameter();
-        });
-
-        if (empty($systemParameters)) {
-            $this->addFlash('danger', "Il n'est pas possible d'encoder de mesures pour l'instant, car aucun paramètre n'a encore été attribué au système <strong>{$system->getName()}</strong>.");
-            return $this->redirectToRoute('reading');
-        }
+        $systemParameters = $system->getParameters();
 
         /* Instancier un nouveau relevé de système */
         $systemReading = new SystemReading();
@@ -79,25 +67,27 @@ class SystemReadingController extends AbstractController
             ->setEncodingDateTime(new \DateTime('now'))
             ->setEncodingAuthor($this->getUser());
 
-        /* Pour chaque station du système, ajouter un relevé de station à celui du système */
-        foreach ($systemStations as $station) {
-            /* Créer le relevé de station */
-            $stationReading = new Reading();
-            $stationReading->setStation($station);
-
-            /* Pour chaque paramètre, ajouter une nouvelle mesure au relevé de station */
-            foreach ($systemParameters as $systemParameter) {
-                $measure = new Measure();
-                $measure
-                    ->setMeasurability($systemParameter)
-                    ->setValue(null)
-                    ->setStable(true)
-                    ->setValid(true);
-                $stationReading->addMeasure($measure);
+        if (!empty($systemStations) && !empty($systemParameters)) {
+            /* Pour chaque station du système, ajouter un relevé de station à celui du système */
+            foreach ($systemStations as $station) {
+                /* Créer le relevé de station */
+                $stationReading = new Reading();
+                $stationReading->setStation($station);
+    
+                /* Pour chaque paramètre, ajouter une nouvelle mesure au relevé de station */
+                foreach ($systemParameters as $systemParameter) {
+                    $measure = new Measure();
+                    $measure
+                        ->setMeasurability($systemParameter->getInstrumentParameter())
+                        ->setValue(null)
+                        ->setStable(true)
+                        ->setValid(true);
+                    $stationReading->addMeasure($measure);
+                }
+    
+                /* Ajouter la station au relevé */
+                $systemReading->addStationReading($stationReading);
             }
-
-            /* Ajouter la station au relevé */
-            $systemReading->addStationReading($stationReading);
         }
 
         /* Créer et traiter le formulaire */
@@ -160,9 +150,8 @@ class SystemReadingController extends AbstractController
 
         return $this->render('system_reading/form.html.twig', [
             'form' => $form->createView(),
-            'title' => "Encoder un nouveau relevé de système",
+            'title' => "Encoder un relevé pour {$system->getName()}",
             'system' => $system,
-            'systemParameters' => $systemParameters,
         ]);
     }
 

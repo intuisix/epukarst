@@ -58,7 +58,7 @@
                             </td>
                         </tr>
                     {% else %}
-                        <td colspan="100"><em>Le système ne comporte pas de station.</em></td>
+                        <td colspan="100"><em>Ce bassin ne comporte pas de station.</em></td>
                     {% endfor %}
                 {% else %}
                     <td colspan="100"><em>Le système ne comporte pas de bassin.</em></td>
@@ -66,8 +66,18 @@
             {% endfor %}
         </table>
 
-        <a href="{{path('system_station_create', {'code': system.code})}}" class="btn btn-secondary"><i class="fas fa-archway"></i> Ajouter une station</a>
+        <div class="mb-3">
+            {# Bouton permettant d'ajouter une station #}
+            <a href="{{path('system_station_create', {'code': system.code})}}" class="btn btn-secondary">
+                <i class="fas fa-plus"></i>
+                Ajouter une station
+            </a>
 
-        <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary"><i class="far fa-file-alt"></i> Encoder un relevé de système</a>
+            {# Bouton permettant de passer à l'encodage d'un relevé #}
+            <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary">
+                <i class="far fa-file-alt"></i>
+                Encoder un relevé de système
+            </a>
+        </div>
     </div>
 {% endblock %}

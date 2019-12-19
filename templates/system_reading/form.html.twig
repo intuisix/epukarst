@@ -10,90 +10,105 @@
     <div class="container mb-3">
         <h1>{{title}}</h1>
 
-        <p>Ce formulaire permet l'encodage rapide des mesures pour toutes les stations d'un système, en leur attribuant la même date de terrain et les mêmes instruments de mesure. Avant de commencer, adaptez les stations de mesure et les paramètres du système si cela est nécessaire.</p>
-
-        <div class="mb-3">
-            <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-primary"><i class="fas fa-archway"></i> Définir les stations du système</a>
-        </div>
+        <p>Ce formulaire permet l'encodage rapide des mesures pour toutes les stations d'un système, en leur attribuant la même date de terrain et les mêmes instruments de mesure. Avant de commencer à encoder des mesures, vérifiez ci-dessous si la liste des stations et la liste des paramètres sont complètes, et adaptez-les en cas de besoin&nbsp;!</p>
 
         {{form_start(form)}}
 
         {# Afficher les champs généraux #}
         <div class="alert bg-light">
             <div class="row">
-                <div class="col">
+                <div class="col-3">
                     {{form_row(form.fieldDateTime)}}
                 </div>
-                <div class="col">
-                    {{form_row(form.system)}}
+                <div class="col-3">
+                    {{form_row(form.code)}}
                 </div>
                 <div class="col">
-                    {{form_row(form.code)}}
+                    <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-primary btn-block">
+                        <i class="fas fa-bullseye"></i>
+                        Définir les stations du système
+                    </a>
+                    <a href="{{path('system_parameter', {'code': system.code})}}" class="btn btn-primary btn-block">
+                        <i class="fas fa-asterisk"></i>
+                        Définir les paramètres du système
+                    </a>
                 </div>
             </div>
         </div>
 
-        {# Afficher le tableau d'encodage des mesures avec en colonnes les paramètres, en lignes les stations, et en cellules les mesures #}
-        <h2>Mesures</h2>
-        <div class="alert bg-light">
-            <table cellpadding="3" width="100%">
-                <thead>
-                    <tr>
-                        {# Afficher les en-têtes des colonnes de la station #}
-                        <th width="20%">
-                            Station
-                        </th>
-                        {# Afficher les en-têtes de colonnes des paramètres #}
-                        {% for systemParameter in systemParameters %}
-                            <th class="text-center">
-                                {{systemParameter.parameter.name}}
-                                [{{systemParameter.parameter.unit}}]
-                                <br>
-                                {{systemParameter.instrument.name}}
-                            </th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-
-                {# Afficher les relevés de stations (lignes du tableau) #}
-                {{form_widget(form.stationReadings)}}
-            </table>
-            <small class="text-muted">Introduisez <strong>toutes</strong> les valeurs qui ont été mesurées, en veillant à respecter l'unité du paramètre concerné. Complétez la valeur en décochant &laquo;&nbsp;S&nbsp;&raquo; si la valeur était instable lors de la mesure, et &laquo;&nbsp;V&nbsp;&raquo; si une valeur est hors gamme ou qu'elle vous paraît invalide.</small>
-        </div>
-
-        <div class="alert bg-light">
-            <table cellpadding="3" width="100%">
-                <thead>
-                    <tr>
-                        <th width="20%">Station</th>
-                        <th>Remarque</th>
-                    </tr>
-                </thead>
-                {% for stationReading in form.children.stationReadings %}
-                    <tbody>
+        {% if form.stationReadings|length == 0 %}
+            <div class="alert alert-warning">
+                Pour pouvoir encoder des mesures, vous devez d'abord assigner des stations et des paramètres au système.
+            </div>
+            {# Afficher les relevés de stations #}
+            {{form_widget(form.stationReadings)}}
+        {% else %}
+            {# Afficher le tableau d'encodage des mesures avec en colonnes les paramètres, en lignes les stations, et en cellules les mesures #}
+            <div class="alert bg-light">
+                <table cellpadding="3" width="100%">
+                    <thead>
                         <tr>
-                            <td class="align-top">
-                                {{stationReading.vars.data.station.name}}
-                                <br>
-                                <small>
-                                    <span class="badge badge-secondary mr-2">{{stationReading.vars.value.station.code}}</span>
-                                    {{stationReading.vars.value.station.atlasCode}}
-                                </small>
-                            </td>
-                            <td>
-                                {{form_widget(stationReading.children.encodingNotes, {
-                                    'attr' : {'rows': 1}
-                                })}}
-                            </td>
+                            {# Afficher les en-têtes de station #}
+                            <th width="20%">
+                                Station
+                            </th>
+                            {# Afficher les en-têtes des paramètres #}
+                            {% for systemParameter in system.parameters %}
+                                <td class="text-center">
+                                    <strong>
+                                        {{systemParameter.instrumentParameter.parameter.name}}
+                                    </strong>
+                                    <br>
+                                    {% if systemParameter.instrumentParameter.parameter.unit %}
+                                        [{{systemParameter.instrumentParameter.parameter.unit}}]
+                                    {% endif %}
+                                    <br>
+                                    {{systemParameter.instrumentParameter.instrument.name}}
+                                </td>
+                            {% endfor %}
                         </tr>
-                    </tbody>
-                {% endfor %}
-            </table>
-        </div>
+                    </thead>
+                    {# Afficher les relevés de stations #}
+                    {{form_widget(form.stationReadings)}}
+                </table>
+                <small class="text-muted">Introduisez <strong>toutes</strong> les valeurs qui ont été mesurées, en veillant à respecter l'unité du paramètre concerné. Complétez la valeur en décochant &laquo;&nbsp;S&nbsp;&raquo; si la valeur était instable lors de la mesure, et &laquo;&nbsp;V&nbsp;&raquo; si une valeur est hors gamme ou qu'elle vous paraît invalide.</small>
+            </div>
+
+            <div class="alert bg-light">
+                <table cellpadding="3" width="100%">
+                    <thead>
+                        <tr>
+                            <th width="20%">Station</th>
+                            <th>Remarque</th>
+                        </tr>
+                    </thead>
+                    {% for stationReading in form.children.stationReadings %}
+                        <tbody>
+                            <tr>
+                                <td class="align-top">
+                                    {{stationReading.vars.data.station.name}}
+                                    <br>
+                                    <small>
+                                        <span class="badge badge-secondary">
+                                            {{stationReading.vars.value.station.code}}
+                                        </span>
+                                        {{stationReading.vars.value.station.atlasCode}}
+                                    </small>
+                                </td>
+                                <td>
+                                    {{form_widget(stationReading.children.encodingNotes, {
+                                        'attr' : {'rows': 1}
+                                    })}}
+                                </td>
+                            </tr>
+                        </tbody>
+                    {% endfor %}
+                </table>
+            </div>
+        {% endif %}
 
         {# Afficher les informations d'encodage #}
         {% if form.encodingNotes is defined %}
-            <h2>Encodage</h2>
             <div class="alert bg-light">
                 <div class="row">
                     <div class="col-3">
@@ -110,7 +125,6 @@
 
         {# Afficher les informations de validation #}
         {% if form.validationNotes is defined %}
-            <h2>Validation</h2>
             <div class="alert bg-light">
                 <div class="row">
                     <div class="col-3">
@@ -142,7 +156,6 @@
     </div>
 {% endblock %}
 
-
 {# Modèle d'un relevé de station #}
 {% block _system_reading_stationReadings_entry_row %}
     <tbody id="{{id}}">
@@ -152,7 +165,9 @@
                 {{form.vars.value.station.name}}
                 <br>
                 <small>
-                    <span class="badge badge-secondary mr-2">{{form.vars.value.station.code}}</span>
+                    <span class="badge badge-secondary">
+                        {{form.vars.value.station.code}}
+                    </span>
                     {{form.vars.value.station.atlasCode}}
                 </small>
             </td>
@@ -162,7 +177,6 @@
         </tr>
     </tbody>
 {% endblock %}
-
 
 {# Modèle d'une mesure #}
 {% block _system_reading_stationReadings_entry_measures_entry_row %}

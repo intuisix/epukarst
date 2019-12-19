@@ -29,6 +29,7 @@ class System
      * Code identifiant le système.
      * 
      * @ORM\Column(type="string", length=255)
+     * 
      * @Assert\NotBlank(message="Veuillez renseigner un code")
      * @Assert\Regex("/^[A-Za-z0-9\-]+$/", message="Le code ne peut contenir que des lettres, des chiffres et des tirets")
      */
@@ -38,7 +39,8 @@ class System
      * Dénomination du système.
      * 
      * @ORM\Column(type="string", length=255)
-     * @Assert\Length(min=5, minMessage="Le nom doit faire au moins 5 caractères")
+     * 
+     * @Assert\NotBlank(message="Veuillez renseigner un nom")
      */
     private $name;
 
@@ -46,7 +48,8 @@ class System
      * Texte introductif du système.
      * 
      * @ORM\Column(type="string", length=255)
-     * @Assert\Length(min=10, minMessage="Le texte d'introduction doit faire au moins 10 caractères")
+     * 
+     * @Assert\NotBlank(message="Veuillez renseigner une introduction")
      */
     private $introduction;
 
@@ -54,7 +57,8 @@ class System
      * Nom de la commune sur laquelle se situe le système.
      * 
      * @ORM\Column(type="string", length=255)
-     * @Assert\Length(min=5, minMessage="Le nom de la commune doit faire au moins 5 caractères")
+     * 
+     * @Assert\NotBlank(message="Veuillez renseigner une commune")
      */
     private $commune;
 
@@ -62,7 +66,8 @@ class System
      * Nom du bassin dans lequel le système se verse.
      * 
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="Le nom du bassin versant ne doit pas être vide")
+     * 
+     * @Assert\NotBlank(message="Veuillez renseigner un bassin versant")
      */
     private $basin;
 
@@ -70,7 +75,8 @@ class System
      * Description détaillée du système.
      * 
      * @ORM\Column(type="text")
-     * @Assert\Length(min=100, minMessage="La description détaillée doit faire au moins 100 caractères")
+     * 
+     * @Assert\NotBlank(message="Veuillez renseigner une description")
      */
     private $description;
 
@@ -85,6 +91,7 @@ class System
      * Photos présentant le système.
      * 
      * @ORM\OneToMany(targetEntity="App\Entity\SystemPicture", mappedBy="system", orphanRemoval=true)
+     * 
      * @Assert\Valid()
      */
     private $pictures;

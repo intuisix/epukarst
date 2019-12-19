@@ -28,11 +28,6 @@ class SystemReadingType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('system', TextType::class, [
-                'label' => "Système",
-                'required' => true,
-                'disabled' => true,
-            ])
             ->add('code', TextType::class, [
                 'label' => "Code du relevé",
                 'required' => false,
