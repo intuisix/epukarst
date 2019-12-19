@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "684e1bcb7a1032863e24b6d6d5af23ab",
+    "content-hash": "8a98a4dad5b0012966ce3bedd3ba4413",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -114,6 +114,51 @@
                 "slugify"
             ],
             "time": "2019-01-31T20:38:55+00:00"
+        },
+        {
+            "name": "denissimon/formula-parser",
+            "version": "v2.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/denissimon/formula-parser.git",
+                "reference": "d6d19374f75f9a353fbbdb0945eb9dbbb602f8b2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/denissimon/formula-parser/zipball/d6d19374f75f9a353fbbdb0945eb9dbbb602f8b2",
+                "reference": "d6d19374f75f9a353fbbdb0945eb9dbbb602f8b2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FormulaParser\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Denis Simon",
+                    "email": "denis.v.simon@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Parsing and evaluating mathematical formulas given as strings.",
+            "keywords": [
+                "Evaluation",
+                "expression",
+                "formula",
+                "math",
+                "parser",
+                "parsing"
+            ],
+            "time": "2019-11-05T10:48:08+00:00"
         },
         {
             "name": "doctrine/annotations",
