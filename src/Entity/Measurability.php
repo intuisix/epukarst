@@ -83,52 +83,60 @@ class Measurability
         $physicalMinimum = $this->parameter->getPhysicalMinimum();
 
         /* Tester la valeur minimum */
-        if ($this->minimumValue) {
+        if (null !== $this->minimumValue) {
             if ((null !== $physicalMinimum) &&
                 ($this->minimumValue < $physicalMinimum)) {
                 $context
-                    ->buildViolation("Cette valeur est inférieure à ce qui est physiquement possible (au minimum $physicalMinimum $unit).")
+                    ->buildViolation("Cette valeur est inférieure à ce qui est physiquement possible (≥ $physicalMinimum $unit).")
                     ->atPath('minimumValue')
                     ->addViolation();
             } else if ((null !== $physicalMaximum) &&
                 ($this->minimumValue > $physicalMaximum)) {
                 $context
-                    ->buildViolation("Cette valeur est supérieure à ce qui est physiquement possible (au maximum $physicalMaximum $unit).")
+                    ->buildViolation("Cette valeur est supérieure à ce qui est physiquement possible (≤ $physicalMaximum $unit).")
                     ->atPath('minimumValue')
                     ->addViolation();
             }
-        } else if (null != $physicalMinimum) {
-            $context
-            ->buildViolation("Cette valeur est requise (au minimum $physicalMinimum $unit).")
-            ->atPath('minimumValue')
-            ->addViolation();
+        } else {
+            /* Utiliser le minimum physique */
+            $this->minimumValue = $physicalMinimum;
         }
 
         /* Tester la valeur maximum */
-        if ($this->maximumValue) {
+        if (null !== $this->maximumValue) {
             if ((null !== $physicalMaximum) &&
                 ($this->maximumValue > $physicalMaximum)) {
                 $context
-                    ->buildViolation("Cette valeur est supérieure à ce qui est physiquement possible (au maximum $physicalMaximum $unit).")
+                    ->buildViolation("Cette valeur est supérieure à ce qui est physiquement possible (≤ $physicalMaximum $unit).")
                     ->atPath('maximumValue')
                     ->addViolation();
             } else if ((null !== $physicalMinimum) &&
                 ($this->maximumValue < $physicalMinimum)) {
                 $context
-                    ->buildViolation("Cette valeur est inférieure à ce qui est physiquement possible (au minimum $physicalMinimum $unit).")
+                    ->buildViolation("Cette valeur est inférieure à ce qui est physiquement possible (≥ $physicalMinimum $unit).")
                     ->atPath('maximumValue')
                     ->addViolation();
             }
-        } else if (null != $physicalMaximum) {
-            $context
-            ->buildViolation("Cette valeur est requise (au maximum $physicalMaximum $unit).")
-            ->atPath('maximumValue')
-            ->addViolation();
+        } else {
+            /* Utiliser le maximum physique */
+            $this->maximumValue = $physicalMaximum;
         }
     }
 
     /**
-     * Retourne un nom destiné à l'affichage, en le composant du nom du
+     * Retourne un nom destiné à l'affichage en le composant du nom du
+     * paramètre et du nom de l'instrument.
+     *
+     * @return string|null
+     */
+    public function getName() : ?string
+    {
+        return $this->parameter->getName() . " : " .
+            $this->instrument->getName();
+    }
+
+    /**
+     * Retourne un nom destiné à l'affichage en le composant du nom du
      * paramètre, du nom de l'instrument et de l'unité de mesure.
      *
      * @return string|null

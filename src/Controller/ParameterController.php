@@ -87,12 +87,24 @@ class ParameterController extends AbstractController
      * @Route("/parameter/{id}/delete", name="parameter_delete")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function delete(Parameter $parameter, ObjectManager $manager) {
-        $manager->remove($parameter);
-        $manager->flush();
+    public function delete(Parameter $parameter, ObjectManager $manager, Request $request) {
+        /* Créer et traiter le formulaire de confirmation */
+        $form = $this->createFormBuilder()->getForm();
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            /* Supprimer le paramètre */
+            $manager->remove($parameter);
+            $manager->flush();
+    
+            $this->addFlash('success', "Le paramètre <strong>{$parameter->getName()}</strong> a été supprimé avec succès.");
+    
+            return $this->redirectToRoute('parameter');
+        }
 
-        $this->addFlash('success', "Le paramètre <strong>{$parameter->getName()}</strong> a été supprimé avec succès.");
-
-        return $this->redirectToRoute('parameter');
+        return $this->render('parameter/delete.html.twig', [
+            'form' => $form->createView(),
+            'parameter' => $parameter,
+            'title' => "Supprimer le paramètre {$parameter->getName()}",
+        ]);
     }
 }

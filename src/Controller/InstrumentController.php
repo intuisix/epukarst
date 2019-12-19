@@ -32,7 +32,8 @@ class InstrumentController extends AbstractController
      * @Route("/instrument/create", name="instrument_create")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function create(ObjectManager $manager, Request $request) {
+    public function create(ObjectManager $manager, Request $request)
+    {
         /* Instancier un nouvel instrument */
         $instrument = new Instrument();
         /* Créer et traiter le formulaire */
@@ -40,12 +41,13 @@ class InstrumentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+            /* Persister les étalonnages */
             foreach ($instrument->getCalibrations() as $calibration) {
                 $calibration->setInstrument($instrument);
                 $manager->persist($calibration);
             }
 
+            /* Persister les paramètres */
             foreach ($instrument->getMeasurabilities() as $measurability) {
                 $measurability->setInstrument($instrument);
                 $manager->persist($measurability);
@@ -72,18 +74,20 @@ class InstrumentController extends AbstractController
      * @Route("/instrument/{code}/modify", name="instrument_modify")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function modify(Instrument $instrument, ObjectManager $manager, Request $request) {
+    public function modify(Instrument $instrument, ObjectManager $manager, Request $request)
+    {
         /* Créer et traiter le formulaire */
         $form = $this->createForm(InstrumentType::class, $instrument);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+            /* Persister les étalonnages */
             foreach ($instrument->getCalibrations() as $calibration) {
                 $calibration->setInstrument($instrument);
                 $manager->persist($calibration);
             }
 
+            /* Persister les paramètres */
             foreach ($instrument->getMeasurabilities() as $measurability) {
                 $measurability->setInstrument($instrument);
                 $manager->persist($measurability);
@@ -110,12 +114,25 @@ class InstrumentController extends AbstractController
      * @Route("/instrument/{code}/delete", name="instrument_delete")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function delete(Instrument $instrument, ObjectManager $manager) {
-        $manager->remove($instrument);
-        $manager->flush();
+    public function delete(Instrument $instrument, ObjectManager $manager, Request $request)
+    {
+        /* Créer et traiter le formulaire de confirmation */
+        $form = $this->createFormBuilder()->getForm();
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            /* Supprimer l'instrument */
+            $manager->remove($instrument);
+            $manager->flush();
+    
+            $this->addFlash('success', "L'instrument <strong>{$instrument->getName()}</strong> a été supprimé avec succès.");
+    
+            return $this->redirectToRoute('instrument');
+        }
 
-        $this->addFlash('success', "L'instrument <strong>{$instrument->getName()}</strong> a été supprimé avec succès.");
-
-        return $this->redirectToRoute('instrument');
+        return $this->render('instrument/delete.html.twig', [
+            'form' => $form->createView(),
+            'instrument' => $instrument,
+            'title' => "Supprimer l'instrument {$instrument->getName()}",
+        ]);
     }
 }

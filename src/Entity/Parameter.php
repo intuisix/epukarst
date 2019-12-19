@@ -26,7 +26,8 @@ class Parameter
      * Nom du paramètre.
      * 
      * @ORM\Column(type="string", length=255)
-     * @Assert\Length(min=2, minMessage="Le nom doit faire au moins 2 caractères")
+     * 
+     * @Assert\NotBlank(message="Veuillez renseigner un nom")
      */
     private $name;
 
@@ -76,17 +77,22 @@ class Parameter
      * Description du paramètre.
      * 
      * @ORM\Column(type="text")
-     * @Assert\Length(min=20, minMessage="La description doit faire au moins 20 caractères")
+     * 
+     * @Assert\NotBlank(message="Veuillez renseigner une description")
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * 
+     * @Assert\NotBlank(message="Veuillez renseigner une introduction")
      */
     private $introduction;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * 
+     * @Assert\NotBlank(message="Veuillez renseigner un titre")
      */
     private $title;
 

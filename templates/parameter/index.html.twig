@@ -49,25 +49,16 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{{ path('parameter_modify', {'id': parameter.id}) }}" class="text-primary"><i class="fas fa-edit"></i></a>
-                        <a href="{{ path('parameter_delete', {'id': parameter.id}) }}" class="text-danger" data-action="delete"><i class="fas fa-trash"></i></a>
+                        <a href="{{path('parameter_modify', {'id': parameter.id})}}" class="text-primary"><i class="fas fa-edit"></i></a>
+                        <a href="{{path('parameter_delete', {'id': parameter.id})}}" class="text-danger" data-action="delete"><i class="fas fa-trash"></i></a>
                     </td>
                 </tr>
             {% endfor %}
         </table>
 
-        <a href="{{ path('parameter_create') }}" class="btn btn-primary">
+        <a href="{{path('parameter_create')}}" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
             Ajouter un paramètre
         </a>
     </div>
-{% endblock %}
-
-{% block javascripts %}
-    <script>
-        /* Programme une demande de confirmation chaque fois que l'on clique
-        sur un bouton de suppression de paramètre */
-        $('a[data-action="delete"]').click(function() {
-            return confirm("Etes-vous sûr de vouloir supprimer ce paramètre ?");
-        });
-    </script>
 {% endblock %}

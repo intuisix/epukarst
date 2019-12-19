@@ -27,7 +27,8 @@ class Instrument
      * Code identifiant l'instrument.
      * 
      * @ORM\Column(type="string", length=255)
-     * @Assert\Length(min=2, minMessage="Le code doit faire au moins 2 caractères")
+     * 
+     * @Assert\NotBlank(message="Veuillez renseigner un code")
      */
     private $code;
 
@@ -35,7 +36,8 @@ class Instrument
      * Dénomination de l'instrument.
      * 
      * @ORM\Column(type="string", length=255)
-     * @Assert\Length(min=5, minMessage="La dénomination doit faire au moins 5 caractères")
+     * 
+     * @Assert\NotBlank(message="Veuillez renseigner une dénomination")
      */
     private $name;
 
@@ -57,7 +59,8 @@ class Instrument
      * Description détaillée de l'instrument.
      * 
      * @ORM\Column(type="text")
-     * @Assert\Length(min=10, minMessage="La description détaillée doit faire au moins 10 caractères")
+     * 
+     * @Assert\NotBlank(message="Veuillez renseigner une description")
      */
     private $description;
 
