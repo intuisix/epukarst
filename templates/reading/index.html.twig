@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row no-gutters">
+    <div class="row no-gutters flex-nowrap">
         {# Afficher un volet de filtres #}
         <div class="col py-3 px-3" style="max-width: 400px">
             <h5>Filtre</h5>
@@ -120,16 +120,17 @@
                 <table width="100%" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th><input type="checkbox"/></th>
-                            <th>Date de terrain</th>
-                            <th>Code</th>
-                            <th>Système</th>
-                            <th>Bassin</th>
-                            <th>Station</th>
+                            <th width="10"><input type="checkbox"/></th>
+                            <th width="100">Relevé</th>
+                            <th width="200">Système<br><em>Station</em></th>
                             {% for parameter in parameters %}
-                                <th style="text-align: center">
-                                    {{parameter.nameWithUnit}}
-                                </th>
+                                <td style="text-align: center">
+                                    <strong>{{parameter.name}}</strong>
+                                    {% if parameter.unit %}
+                                        <br>
+                                        {{parameter.unit}}
+                                    {% endif %}
+                                </td>
                             {% endfor %}
                             <th>Validé</th>
                             <th>Actions</th>
@@ -142,19 +143,16 @@
                                     <input type="checkbox" name="readings[{{reading.code}}]"/>
                                 </td>
                                 <td>
-                                    {{reading.fieldDateTime|date('d/m/Y H:i')}}
-                                </td>
-                                <td>
-                                    <a href="{{path('reading_show', {'code': reading.code })}}">{{reading.code}}</a>
+                                    <a href="{{path('reading_show', {'code': reading.code })}}">
+                                        {{reading.fieldDateTime|date('d/m/Y')}}
+                                        <br>
+                                        <span class="badge badge-secondary">{{reading.code}}</span>
+                                    </a>
                                 </td>
                                 <td>
                                     {{reading.station.basin.system.name}}
-                                </td>
-                                <td>
-                                    {{reading.station.basin.name}}
-                                </td>
-                                <td>
-                                    {{reading.station.name}}
+                                    <br>
+                                    <em>{{reading.station.name}}</em>
                                 </td>
                                 {% for parameter in parameters %}
                                     <td style="text-align: right">
@@ -185,6 +183,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
+                                    <a href="{{path('reading_show', {'code': reading.code })}}"><i class="fas fa-eye"></i></a>
                                     <a href="{{path('reading_modify', {'code': reading.code})}}"><i class="fas fa-edit text-primary"></i></a>
                                     <a href="{{path('reading_validate', {'code': reading.code})}}"><i class="fas fa-flag-checkered text-success"></i></a>
                                     <a href="{{path('reading_delete', {'code': reading.code})}}"><i class="fas fa-trash text-danger"></i></a>
