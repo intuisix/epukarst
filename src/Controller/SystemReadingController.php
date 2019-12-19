@@ -73,7 +73,7 @@ class SystemReadingController extends AbstractController
                 /* Créer le relevé de station */
                 $stationReading = new Reading();
                 $stationReading->setStation($station);
-    
+
                 /* Pour chaque paramètre, ajouter une nouvelle mesure au relevé de station */
                 foreach ($systemParameters as $systemParameter) {
                     $measure = new Measure();
@@ -115,7 +115,7 @@ class SystemReadingController extends AbstractController
 
                 /* Traiter les mesures restantes */
                 $measures = $stationReading->getMeasures();
-                if (0 != $measures->count()) {
+                if (!empty($measures) || !empty($systemReading->getNotes())) {
                     /* Définir les propriétés de chaque mesure et persister ces dernières dans la base de données */
                     foreach ($measures as $measure) {
                         $measure
@@ -134,7 +134,7 @@ class SystemReadingController extends AbstractController
                         ->setSystemReading($systemReading);
                     $manager->persist($stationReading);
                 } else {
-                    /* Enlever le relevé de la station car il est vide */
+                    /* Enlever le relevé de station car il est vide et aucune remarque n'a été fournie */
                     $systemReading->removeStationReading($stationReading);
                 }
             }
