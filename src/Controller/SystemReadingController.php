@@ -115,7 +115,7 @@ class SystemReadingController extends AbstractController
 
                 /* Traiter les mesures restantes */
                 $measures = $stationReading->getMeasures();
-                if (!empty($measures) || !empty($systemReading->getNotes())) {
+                if ((0 != $measures->count()) || !empty($stationReading->getEncodingNotes())) {
                     /* Définir les propriétés de chaque mesure et persister ces dernières dans la base de données */
                     foreach ($measures as $measure) {
                         $measure
