@@ -9,6 +9,7 @@ use App\Entity\Station;
 use App\Entity\SystemReading;
 use App\Entity\SystemParameter;
 use App\Form\SystemReadingType;
+use FormulaParser\FormulaParser;
 use App\Service\PaginationService;
 use App\Repository\BasinRepository;
 use App\Repository\SystemRepository;
@@ -48,7 +49,7 @@ class SystemReadingController extends AbstractController
      * @Route("/system-reading/encode/{code}", name="system_reading_encode")
      * @IsGranted("ROLE_USER")
      */
-    public function encode(System $system, ObjectManager $manager, Request $request, StationRepository $stationRepository, MeasurabilityRepository $measurabilityRepository, BasinRepository $basinRepository, StationKindRepository $stationKindRepository)
+    public function encode(System $system, ObjectManager $manager, Request $request, StationRepository $stationRepository, MeasurabilityRepository $instrumentParameterRepository, BasinRepository $basinRepository, StationKindRepository $stationKindRepository)
     {
         /* Obtenir la liste des stations du système */
         $queryBuilder = $stationRepository->createQueryBuilder('s')
@@ -74,9 +75,9 @@ class SystemReadingController extends AbstractController
                 $stationReading = new Reading();
                 $stationReading->setStation($station);
 
-                /* Pour chaque paramètre, ajouter une nouvelle mesure au relevé de station */
+                /* Pour chaque paramètre, ajouter une nouvelle mesure au relevé de station en activant la conversion de valeur */
                 foreach ($systemParameters as $systemParameter) {
-                    $measure = new Measure();
+                    $measure = new Measure(true);
                     $measure
                         ->setMeasurability($systemParameter->getInstrumentParameter())
                         ->setValue(null)
@@ -106,6 +107,8 @@ class SystemReadingController extends AbstractController
 
             /* Traiter chacun des relevés de station */
             foreach ($systemReading->getStationReadings() as $stationReading) {
+                $station = $stationReading->getStation();
+
                 /* Supprimer les mesures pour lesquelles aucune valeur n'a été encodée */
                 foreach ($stationReading->getMeasures() as $measure) {
                     if (null === $measure->getValue()) {

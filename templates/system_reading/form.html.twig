@@ -59,8 +59,15 @@
                                         {{systemParameter.instrumentParameter.parameter.name}}
                                     </strong>
                                     <br>
-                                    {% if systemParameter.instrumentParameter.parameter.unit %}
-                                        [{{systemParameter.instrumentParameter.parameter.unit}}]
+                                    {% if systemParameter.instrumentParameter.inputUnit is not null %}
+                                        {# Afficher qu'une conversion d'unité sera réalisée #}
+                                        [{{systemParameter.instrumentParameter.inputUnit}}]
+                                        <i class="fas fa-square-root-alt"></i>
+                                    {% else %}
+                                        {# Pas de conversion d'unité #}
+                                        {% if systemParameter.instrumentParameter.parameter.unit %}
+                                            [{{systemParameter.instrumentParameter.parameter.unit}}]
+                                        {% endif %}
                                     {% endif %}
                                     <br>
                                     {{systemParameter.instrumentParameter.instrument.name}}

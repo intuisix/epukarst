@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use App\Entity\Measure;
+use App\Entity\SystemParameter;
 use Doctrine\ORM\Mapping as ORM;
+use FormulaParser\FormulaParser;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -63,6 +66,16 @@ class Measurability
     private $systemParameters;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $inputUnit;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $inputConversion;
+
+    /**
      * Construit l'objet.
      */
     public function __construct()
@@ -81,6 +94,19 @@ class Measurability
         $unit = $this->parameter->getUnit();
         $physicalMaximum = $this->parameter->getPhysicalMaximum();
         $physicalMinimum = $this->parameter->getPhysicalMinimum();
+
+        /* Tester la formule de conversion d'unité */
+        if (null !== $this->inputConversion) {
+            try {
+                $this->convert(1.0);
+            }
+            catch (\Exception $exception) {
+                $context
+                    ->buildViolation("La formule est invalide : \"{$exception->getMessage()}\".")
+                    ->atPath('inputConversion')
+                    ->addViolation();
+            }
+        }
 
         /* Tester la valeur minimum */
         if (null !== $this->minimumValue) {
@@ -121,6 +147,30 @@ class Measurability
             /* Utiliser le maximum physique */
             $this->maximumValue = $physicalMaximum;
         }
+    }
+
+    /**
+     * Convertit une valeur en exploitant la formule de conversion éventuelle.
+     *
+     * @param float $value
+     * @return float
+     */
+    public function convert(float $value): float
+    {
+        /* Exécuter la formule de conversion */
+        if (null !== $this->inputConversion) {
+            $parser = new FormulaParser($this->inputConversion);
+            $parser->setVariables(['x' => $value]);
+            $result = $parser->getResult();
+            /* Lever une exception en cas de problème */
+            if ($result[0] != 'done') {
+                throw new \Exception($result[1]);
+            }
+            /* Sinon, retourner la valeur résultant de la formule */
+            return $result[1];
+        }
+        /* S'il n'y a pas de formule, retourner la valeur reçue */
+        return $value;
     }
 
     /**
@@ -285,6 +335,30 @@ class Measurability
                 $systemParameter->setInstrumentParameter(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getInputUnit(): ?string
+    {
+        return $this->inputUnit;
+    }
+
+    public function setInputUnit(?string $inputUnit): self
+    {
+        $this->inputUnit = $inputUnit;
+
+        return $this;
+    }
+
+    public function getInputConversion(): ?string
+    {
+        return $this->inputConversion;
+    }
+
+    public function setInputConversion(?string $inputConversion): self
+    {
+        $this->inputConversion = $inputConversion;
 
         return $this;
     }

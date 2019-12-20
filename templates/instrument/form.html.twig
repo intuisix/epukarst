@@ -77,7 +77,11 @@ modification de relevés #}
 
 
 {% block _instrument_measurabilities_label %}
-    <p>Ce panneau permet de définir les paramètres qui peuvent être mesurés à l'aide de l'instrument. Pour chaque paramètre, préciser les valeurs limites permet de contrôler la validité des mesures lors des encodages ultérieurs.</p>
+    <p>Ce panneau permet de définir les paramètres qui peuvent être mesurés à l'aide de l'instrument. Pour chaque paramètre, il est possible de&nbsp;:</p>
+    <ul>
+        <li>Préciser une unité spécifique pour la saisie, avec une formule de conversion supportant les opérateurs principaux +, -, *, /, ^, et ()&nbsp;</li>
+        <li>Préciser les valeurs limites pour activer un contrôle de la validité des mesures au moment des encodages (<i class="fas fa-exclamation-triangle"></i> dans l'unité principale&nbsp;!).</li>
+    </ul>
 {% endblock %}
 
 {% block _instrument_measurabilities_widget %}
@@ -110,6 +114,12 @@ modification de relevés #}
             </div>
             <div class="col">
                 {{form_row(form.tolerance)}}
+            </div>
+            <div class="col">
+                {{form_row(form.inputUnit)}}
+            </div>
+            <div class="col-3">
+                {{form_row(form.inputConversion)}}
             </div>
         </div>
         <div class="row">

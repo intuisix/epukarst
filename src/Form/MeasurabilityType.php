@@ -8,6 +8,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
@@ -28,21 +29,35 @@ class MeasurabilityType extends AbstractType
                 'label' => "Valeur minimum",
                 'required' => false,
                 'attr' => [
-                    'placeholder' => "Entrez la valeur minimum mesurable",
+                    'placeholder' => "Limite inférieure",
                 ],
             ])
             ->add('maximumValue', NumberType::class, [
                 'label' => "Valeur maximum",
                 'required' => false,
                 'attr' => [
-                    'placeholder' => "Entrez la valeur maximum mesurable",
+                    'placeholder' => "Limite supérieure",
                 ],
             ])
             ->add('tolerance', NumberType::class, [
                 'label' => "Tolérance",
                 'required' => false,
                 'attr' => [
-                    'placeholder' => "Entrez la précision des mesures",
+                    'placeholder' => "Précision de mesure",
+                ],
+            ])
+            ->add('inputUnit', TextType::class, [
+                'label' => "Unité de saisie",
+                'required' => false,
+                'attr' => [
+                    'placeholder' => "Unité"
+                ],
+            ])
+            ->add('inputConversion', TextType::class, [
+                'label' => "Conversion de saisie",
+                'required' => false,
+                'attr' => [
+                    'placeholder' => "(x+3.5)*(1.2^3)"
                 ],
             ])
             ->add('notes', TextareaType::class, [

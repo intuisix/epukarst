@@ -72,6 +72,24 @@ class Measure
     private $fieldDateTime;
 
     /**
+     * Indique si la valeur doit être convertie.
+     */
+    private $conversionRequired;
+
+    /**
+     * Indique si la valeur a été convertie.
+     */
+    private $conversionDone;
+
+    /**
+     * Construit une mesure.
+     */
+    public function __construct(bool $conversionRequired = false)
+    {
+        $this->conversionRequired = $conversionRequired;
+    }
+
+    /**
      * @Assert\Callback
      */
     public function validate(ExecutionContextInterface $context, $payload)
@@ -86,13 +104,27 @@ class Measure
             $parameter = $this->measurability->getParameter();
             $instrument = $this->measurability->getInstrument();
 
+            /* Si une conversion est prévue, la réaliser et afficher une erreur en cas de problème d'interprétation de la formule */
+            if ($this->conversionRequired && !$this->conversionDone) {
+                /* Tenter de convertir la valeur */
+                try {
+                    $this->value = $this->measurability->convert($this->value);
+                    $this->conversionDone = true;
+                } catch (\Exception $exception) {
+                    $context
+                        ->buildViolation("Erreur pendant la conversion: \"{$exception->getMessage()}\".")
+                        ->atPath('value')
+                        ->addViolation();
+                }
+            }
+
             if (null !== $parameter) {
                 /* Comparer la valeur au seuil minimum de l'instrument  */
                 $instrumentMinimum = $this->measurability->getMinimumValue();
                 if ((null !== $instrumentMinimum) &&
                     ($this->value < $instrumentMinimum)) {
                     $context
-                        ->buildViolation("Cette valeur est inférieure à ce que l'instrument est capable de mesurer (au minimum $instrumentMinimum {$parameter->getUnit()}).")
+                        ->buildViolation("Cette valeur est inférieure à ce que l'instrument est capable de mesurer ($instrumentMinimum {$parameter->getUnit()}).")
                         ->atPath('value')
                         ->addViolation();
                 }
@@ -103,7 +135,7 @@ class Measure
                     ($this->value > $instrumentMaximum))
                 {
                     $context
-                        ->buildViolation("Cette valeur est supérieure à ce que l'instrument est capable de mesurer (au maximum $instrumentMaximum {$parameter->getUnit()}).")
+                        ->buildViolation("Cette valeur est supérieure à ce que l'instrument est capable de mesurer ($instrumentMaximum {$parameter->getUnit()}).")
                         ->atPath('value')
                         ->addViolation();
                 }
@@ -161,6 +193,7 @@ class Measure
     public function setValue(?float $value): self
     {
         $this->value = $value;
+        $this->conversionDone = false;
 
         return $this;
     }
