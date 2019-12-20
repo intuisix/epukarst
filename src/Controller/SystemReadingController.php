@@ -108,7 +108,7 @@ class SystemReadingController extends AbstractController
             foreach ($systemReading->getStationReadings() as $stationReading) {
                 /* Supprimer les mesures pour lesquelles aucune valeur n'a été encodée */
                 foreach ($stationReading->getMeasures() as $measure) {
-                    if (empty($measure->getValue())) {
+                    if (null === $measure->getValue()) {
                         $stationReading->removeMeasure($measure);
                     }
                 }
