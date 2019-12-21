@@ -92,8 +92,7 @@
                 </tr>
             </thead>
             <tbody>
-                {# TODO: Regrouper par paramètre #}
-                {% for measure in reading.measures|sort((a,b) => a.measurability.parameter.name <=> b.measurability.parameter.name) %}
+                {% for measure in reading.measures|sort((a,b) => a.measurability.parameter.position <=> b.measurability.parameter.position) %}
                     {% set parameter = measure.measurability.parameter %}
                     {% set instrument = measure.measurability.instrument %}
                     <tr>

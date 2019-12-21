@@ -112,8 +112,8 @@ class ReadingType extends AbstractType
             $view->children['measures']->children,
             function ($a, $b) {
                 return
-                    $a->vars['data']->getParameter()->getName() <=>
-                    $b->vars['data']->getParameter()->getName();
+                    $a->vars['data']->getParameter()->getPosition() <=>
+                    $b->vars['data']->getParameter()->getPosition();
             }
         );
     }
