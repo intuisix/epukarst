@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\System;
 use App\Entity\Station;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Station|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +20,20 @@ class StationRepository extends ServiceEntityRepository
         parent::__construct($registry, Station::class);
     }
 
-    // /**
-    //  * @return Station[] Returns an array of Station objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * Trouve les stations appartenant à un système.
+     *
+     * @param System $system
+     * @return Station[]
+     */
+    public function findBySystem(System $system)
     {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        return $this
+            ->createQueryBuilder('s')
+            ->innerJoin('s.basin', 'b')
+            ->where('b.system = :system')
+            ->setParameter('system', $system)
+            ->orderBy('s.code')
+            ->getQuery()->getResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Station
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

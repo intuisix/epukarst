@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\System;
 use App\Entity\Station;
 use App\Form\SystemStationType;
+use App\Repository\StationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,11 +16,12 @@ class SystemStationController extends AbstractController
     /**
      * @Route("/system-station/{code}", name="system_station")
      */
-    public function index(System $system)
+    public function index(System $system, StationRepository $stationRepository)
     {
         return $this->render('system_station/index.html.twig', [
             'system' => $system,
             'title' => "Stations de {$system->getName()}",
+            'stations' => $stationRepository->findBySystem($system),
         ]);
     }
 
