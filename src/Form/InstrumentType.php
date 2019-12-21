@@ -69,13 +69,13 @@ class InstrumentType extends AbstractType
 
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        /* Ordonner les mesurabilités par nom de paramètre */
+        /* Ordonner les paramètres par position */
         usort(
             $view->children['measurabilities']->children,
             function ($a, $b) {
                 return
-                    $a->vars['data']->getParameter()->getName() <=>
-                    $b->vars['data']->getParameter()->getName();
+                    $a->vars['data']->getParameter()->getPosition() <=>
+                    $b->vars['data']->getParameter()->getPosition();
             }
         );
 
