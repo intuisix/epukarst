@@ -69,10 +69,8 @@
             <thead>
                 <tr>
                     <th>Code</th>
-                    <th>Bassin</th>
                     <th>Station</th>
                     <th>Réalisé le</th>
-                    <th>Encodé le</th>
                     {% for parameter in parameters %}
                         <th style="text-align: center">
                             {{parameter.nameWithUnit}}
@@ -89,16 +87,10 @@
                             <a href="{{path('reading_show', {'code': stationReading.code })}}">{{stationReading.code}}</a>
                         </td>
                         <td>
-                            {{stationReading.station.basin.name}}
-                        </td>
-                        <td>
                             {{stationReading.station.name}}
                         </td>
                         <td>
                             {{stationReading.fieldDateTime|date('d/m/Y')}}
-                        </td>
-                        <td>
-                            {{stationReading.encodingDateTime|date('d/m/Y')}}
                         </td>
                         {% for parameter in parameters %}
                             <td style="text-align: right">
