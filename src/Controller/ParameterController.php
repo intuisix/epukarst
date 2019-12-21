@@ -130,6 +130,7 @@ class ParameterController extends AbstractController
             'title' => "Supprimer le paramètre {$parameter->getName()}",
         ]);
     }
+
     /**
      * Crée un tableau listant les positions des paramètres ordonnés, en vue de
      * fournir les choix pour la sélection de position. 

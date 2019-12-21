@@ -76,7 +76,7 @@ class Post
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $orderNumber;
+    private $position;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
@@ -266,14 +266,14 @@ class Post
         return $this;
     }
 
-    public function getOrderNumber(): ?int
+    public function getPosition(): ?int
     {
-        return $this->orderNumber;
+        return $this->position;
     }
 
-    public function setOrderNumber(?int $orderNumber): self
+    public function setPosition(?int $position): self
     {
-        $this->orderNumber = $orderNumber;
+        $this->position = $position;
 
         return $this;
     }

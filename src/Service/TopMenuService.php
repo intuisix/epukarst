@@ -20,17 +20,6 @@ class TopMenuService
     public function getPosts()
     {
         /* Sélectionner les articles à paraître sur la barre de navigation */
-        $queryBuilder = $this->repository->createQueryBuilder('p');
-        $queryBuilder
-            ->select('p')
-            ->where('p.topMenu = TRUE')
-            ->andWhere('p.publishFromDate IS NOT NULL AND p.publishFromDate <= :today')
-            ->andWhere('p.publishToDate IS NULL OR p.publishToDate >= :today')
-            ->setParameter('today', new \DateTime())
-            ->orderBy('p.orderNumber', 'ASC')
-            ->addOrderBy('p.date', 'DESC')
-            ->addOrderBy('p.id', 'ASC');
-
-        return $queryBuilder->getQuery()->getResult();
+        return $this->repository->findTopMenuPosts();
     }
 }

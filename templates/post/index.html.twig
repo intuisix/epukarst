@@ -9,7 +9,6 @@
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>N° d'ordre</th>
                     <th>Titre</th>
                     <th>Parent</th>
                     <th style="text-align: center">
@@ -25,9 +24,6 @@
             <tbody>
                 {% for post in pagination.data %}
                     <tr>
-                        <td>
-                            {{post.orderNumber}}
-                        </td>
                         <td>
                             {{post.title}}
                         </td>

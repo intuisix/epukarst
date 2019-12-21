@@ -22,7 +22,7 @@ class PostController extends AbstractController
     {
         $pagination
             ->setEntityClass(Post::class)
-            ->setOrderBy(['orderNumber' => 'ASC', 'date' => 'DESC', 'id' => 'ASC'])
+            ->setOrderBy(['position' => 'ASC', 'date' => 'DESC', 'id' => 'ASC'])
             ->setLimit(25)
             ->setPage($page);
 
@@ -35,15 +35,25 @@ class PostController extends AbstractController
      * @Route("/post/create", name="post_create")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function create(ObjectManager $manager, Request $request)
+    public function create(ObjectManager $manager, Request $request, PostRepository $postRepository)
     {
+        /* Créer un tableau des articles ordonnés */
+        $orderedPosts = $postRepository->findAllOrdered();
+        $positions = $this->getPositions($orderedPosts);
+
         /* Instancier un nouvel article */
         $post = new Post();
+
         /* Créer et traiter le formulaire */
-        $form = $this->createForm(PostType::class, $post);
+        $form = $this->createForm(PostType::class, $post, [
+            'positions' => $positions,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /* Mettre à jour les positions des articles */
+            $this->updatePositions($orderedPosts, $post);
+            /* Persister l'article dans la base de données */
             $manager->persist($post);
             $manager->flush();
             
@@ -63,13 +73,22 @@ class PostController extends AbstractController
      * @Route("/post/{id}/modify", name="post_modify")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function modify(Post $post, ObjectManager $manager, Request $request)
+    public function modify(Post $post, ObjectManager $manager, Request $request, PostRepository $postRepository)
     {
+        /* Créer un tableau des articles ordonnés */
+        $orderedPosts = $postRepository->findAllOrdered();
+        $positions = $this->getPositions($orderedPosts);
+
         /* Créer et traiter le formulaire */
-        $form = $this->createForm(PostType::class, $post);
+        $form = $this->createForm(PostType::class, $post, [
+            'positions' => $positions,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /* Mettre à jour les positions des articles */
+            $this->updatePositions($orderedPosts, $post);
+            /* Persister les modifications dans la base de données */
             $manager->persist($post);
             $manager->flush();
             
@@ -131,5 +150,56 @@ class PostController extends AbstractController
         $this->addFlash('success', "L'article <strong>{$post->getTitle()}</strong> a été supprimé avec succès.");
 
         return $this->redirectToRoute('post');
+    }
+
+    /**
+     * Crée un tableau listant les positions des articles ordonnés, en vue de
+     * fournir les choix pour la sélection de position. 
+     * 
+     * Réassigne aussi la position pour chaque paramètre, dans l'ordre
+     * séquentiel (0, 1, 2, ...). Cela est utile lorsque les articles ont été
+     * manipulés directement dans la base de données, avec une position nulle,
+     * ou avec des trous ou des doublons.
+     *
+     * @param array $orderedPosts: tableau des articles, dans l'ordre souhaité.
+     * @return array Tableau associatif avec, pour clé, le nom de l'article et,
+     * pour valeur, la position de celui-ci, sous forme d'entier numérique.
+     */
+    private function getPositions(array $orderedPosts)
+    {
+        $positions = [];
+        foreach ($orderedPosts as $orderedPosition => $orderedPost) {
+            /* Réassigner la position du paramètre */
+            $orderedPost->setPosition($orderedPosition);
+            /* Ajouter le paramètre au tableau */
+            $positions[$orderedPost->getTitle()] = $orderedPosition;
+        }
+        return $positions;
+    }
+
+    /**
+     * Met à jour les positions des paramètres d'après la position demandée
+     * pour le paramètre ajouté ou modifié.
+     *
+     * @param array $orderedPosts: tableau des articles, dans l'ordre initial.
+     * @param Parameter $post: article ayant été ajouté ou modifié.
+     * @return void
+     */
+    private function updatePositions(array $orderedPosts, Post $post)
+    {
+        /* Déplacer le paramètre dans le tableau ordonné */
+        $initialPosition = array_search($post, $orderedPosts);
+        $finalPosition = $post->getPosition() ?? count($orderedPosts);
+        if ($initialPosition !== false) {
+            array_splice($orderedPosts, $initialPosition, 1);
+        }
+        array_splice($orderedPosts, $finalPosition, 0, [$post]);
+
+        /* Réassigner toutes les positions d'après le tableau ordonné; pour les
+        articles existants, Doctrine détectera la modification éventuelle et
+        transfèrera en base de données */
+        foreach ($orderedPosts as $orderedPosition => $orderedPost) {
+            $orderedPost->setPosition($orderedPosition);
+        }
     }
 }

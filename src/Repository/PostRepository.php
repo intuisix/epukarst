@@ -19,32 +19,59 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
     }
 
-    // /**
-    //  * @return Post[] Returns an array of Post objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * Retourne un tableau contenant tous les articles ordonnés par position.
+     *
+     * @return Post[]
+     */
+    public function findAllOrdered()
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        return $this
+            ->createQueryBuilder('p')
+            ->orderBy('p.position', 'ASC')
+            ->addOrderBy('p.date', 'ASC')
+            ->getQuery()->getResult();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Post
+    /**
+     * Trouve les articles destinés au menu supérieur, en tenant compte de
+     * leurs dates de publication.
+     *
+     * @return Post[]
+     */
+    public function findTopMenuPosts()
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $this
+            ->createQueryBuilder('p')
+            ->select('p')
+            ->where('p.topMenu = TRUE')
+            ->andWhere('p.publishFromDate IS NOT NULL AND p.publishFromDate <= :today')
+            ->andWhere('p.publishToDate IS NULL OR p.publishToDate >= :today')
+            ->setParameter('today', new \DateTime())
+            ->orderBy('p.position', 'ASC')
+            ->addOrderBy('p.date', 'DESC')
+            ->addOrderBy('p.id', 'ASC')
+            ->getQuery()->getResult();
     }
-    */
+
+    /**
+     * Trouve les articles à afficher sur la page d'accueil, en tenant compte de
+     * leurs dates de publication.
+     *
+     * @return Post[]
+     */
+    public function findHomePosts()
+    {
+        return $this
+            ->createQueryBuilder('p')
+            ->select('p')
+            ->where('p.home = TRUE')
+            ->andWhere('p.publishFromDate IS NOT NULL AND p.publishFromDate <= :today')
+            ->andWhere('p.publishToDate IS NULL OR p.publishToDate >= :today')
+            ->setParameter('today', new \DateTime())
+            ->orderBy('p.position', 'ASC')
+            ->addOrderBy('p.date', 'DESC')
+            ->addOrderBy('p.id', 'ASC')
+            ->getQuery()->getResult();
+    }
 }

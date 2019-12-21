@@ -15,22 +15,10 @@ class HomeController extends AbstractController
      * 
      * @Route("/", name="home")
      */
-    public function home(PostRepository $repository)
+    public function home(PostRepository $postRepository)
     {
-        /* Sélectionner les articles à paraître sur la page d'accueil */
-        $queryBuilder = $repository->createQueryBuilder('p');
-        $queryBuilder
-            ->select('p')
-            ->where('p.home = TRUE')
-            ->andWhere('p.publishFromDate IS NOT NULL AND p.publishFromDate <= :today')
-            ->andWhere('p.publishToDate IS NULL OR p.publishToDate >= :today')
-            ->setParameter('today', new \DateTime())
-            ->orderBy('p.orderNumber', 'ASC')
-            ->addOrderBy('p.date', 'DESC')
-            ->addOrderBy('p.id', 'ASC');
-
         return $this->render('home/home.html.twig', [
-            'posts' => $queryBuilder->getQuery()->getResult(),
+            'posts' => $postRepository->findHomePosts(),
         ]);
     }
 
@@ -46,7 +34,7 @@ class HomeController extends AbstractController
             ->andWhere('p.publishFromDate IS NOT NULL AND p.publishFromDate <= :today')
             ->andWhere('p.publishToDate IS NULL OR p.publishToDate >= :today')
             ->setParameter('today', new \DateTime())
-            ->orderBy('p.orderNumber', 'ASC')
+            ->orderBy('p.position', 'ASC')
             ->addOrderBy('p.date', 'DESC')
             ->addOrderBy('p.id', 'ASC')
             ->setParameter('menu', $post->getId());

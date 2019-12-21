@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -23,21 +24,21 @@ class PostType extends AbstractType
             ->add('title', TextType::class, [
                 'label' => "Titre",
                 'attr' => [
-                    'placeholder' => "Entrez le titre"
+                    'placeholder' => "Titre"
                 ],
                 'required' => true,
             ])
             ->add('summary', TextType::class, [
                 'label' => "Résumé",
                 'attr' => [
-                    'placeholder' => "Entrez un résumé (facultatif)"
+                    'placeholder' => "Résumé (facultatif)"
                 ],
                 'required' => false,
             ])
             ->add('slug', TextType::class, [
                 'label' => "Slug",
                 'attr' => [
-                    'placeholder' => "Le slug sera généré automatiquement",
+                    'placeholder' => "Sera généré automatiquement",
                 ],
                 'required' => false,
             ])
@@ -63,8 +64,13 @@ class PostType extends AbstractType
                 'label' => "Sur le menu de navigation",
                 'required' => false,
             ])
-            ->add('orderNumber', IntegerType::class, [
-                'label' => "Numéro d'ordre",
+            ->add('position', ChoiceType::class, [
+                'label' => "Position",
+                'choices' => $options['positions'],
+                'choice_label' => function($choice, $key, $value) {
+                    return ($value + 1) . ". " . $key;
+                },
+                'placeholder' => "(en dernier)",
                 'required' => false,
             ])
             ->add('date', DateTimeType::class, [
@@ -100,8 +106,12 @@ class PostType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => Post::class,
-        ]);
+        $resolver
+            ->setDefaults([
+                'data_class' => Post::class,
+            ])
+            ->setRequired('positions')
+            ->setAllowedTypes('positions', 'integer[]')
+        ;
     }
 }

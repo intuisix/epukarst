@@ -26,7 +26,6 @@ class ParameterRepository extends ServiceEntityRepository
      */
     public function findAllOrdered()
     {
-//        return $this->findBy([], ['position' => 'ASC', 'name' => 'ASC']);
         return $this
             ->createQueryBuilder('p')
             ->orderBy('p.position', 'ASC')
