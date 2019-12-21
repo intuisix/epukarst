@@ -19,43 +19,37 @@ class ParameterRepository extends ServiceEntityRepository
         parent::__construct($registry, Parameter::class);
     }
 
+    /**
+     * Retourne un tableau contenant tous les paramètres ordonnés par position.
+     *
+     * @return Parameter[]
+     */
+    public function findAllOrdered()
+    {
+//        return $this->findBy([], ['position' => 'ASC', 'name' => 'ASC']);
+        return $this
+            ->createQueryBuilder('p')
+            ->orderBy('p.position', 'ASC')
+            ->addOrderBy('p.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Retourne un tableau contenant tous les paramètres favoris ordonnés par position.
+     *
+     * @param boolean $favorite
+     * @return void
+     */
     public function findFavorites(bool $favorite = true)
     {
         return $this
             ->createQueryBuilder('p')
             ->andWhere('p.favorite = :fav')
             ->setParameter('fav', $favorite)
-            ->orderBy('p.name', 'ASC')
+            ->orderBy('p.position', 'ASC')
+            ->addOrderBy('p.name', 'ASC')
             ->getQuery()
             ->getResult();
     }
-        
-    // /**
-    //  * @return Parameter[] Returns an array of Parameter objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Parameter
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

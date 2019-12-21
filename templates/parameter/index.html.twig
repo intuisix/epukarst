@@ -18,7 +18,7 @@
                 <th class="text-center">Gamme physique</th>
                 <th>Actions</th>
             </tr>
-            {% for parameter in parameters|sort((a, b) => (a.name <=> b.name)) %}
+            {% for parameter in parameters %}
                 <tr>
                     <td>{{parameter.name}}</td>
                     <td>{{parameter.title}}</td>

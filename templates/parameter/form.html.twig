@@ -25,10 +25,17 @@ modification de paramètre #}
                 {{form_row(form.physicalMaximum)}}
             </div>
             <div class="col-md-9">
+                <div class="row">
+                    <div class="col-4">
+                        {{form_row(form.position)}}
+                    </div>
+                    <div class="col">
+                        {{form_row(form.favorite)}}
+                    </div>
+                </div>
                 {{form_row(form.title)}}
                 {{form_row(form.introduction)}}
                 {{form_row(form.description)}}
-                {{form_row(form.favorite)}}
             </div>
         </div>
 

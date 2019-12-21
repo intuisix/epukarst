@@ -101,6 +101,11 @@ class Parameter
      */
     private $measurabilities;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $position;
+
     public function __construct()
     {
         $this->measures = new ArrayCollection();
@@ -265,6 +270,18 @@ class Parameter
                 $measurability->setParameter(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPosition(): ?int
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?int $position): self
+    {
+        $this->position = $position;
 
         return $this;
     }
