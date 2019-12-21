@@ -47,7 +47,8 @@ class ReadingRepository extends ServiceEntityRepository
             ->join('reading.station', 'station')
             ->join('station.basin', 'basin')
             ->join('basin.system', 'system')
-            ->orderBy('reading.fieldDateTime', 'DESC');
+            ->orderBy('reading.fieldDateTime', 'DESC')
+            ->addOrderBy('station.code', 'ASC');
 
         /* Filtrer par stations */
         if (null !== $stations) {

@@ -107,6 +107,7 @@ class ReadingController extends AbstractController
             }
         }
 
+        /* Créer et traiter le formulaire de filtre */
         $form = $this->createForm(FilterType::class, $filter);
         $form->handleRequest($request);
 
