@@ -11,7 +11,7 @@ modification d'article #}
     <div class="container mb-3">
         <h1>{{title}}</h1>
 
-        <p>Ce formulaire permet de définir un article à publier dans la partie publique du site.</p>
+        <p>Ce formulaire permet de définir un article à afficher dans la partie publique du site&nbsp;: soit sur la page d'accueil, soit sur la barre de menu principale, soit par le biais de l'article qui est indiqué comme parent, ces possibilités pouvant être combinées entre elles.</p>
 
         {{form_start(form)}}
 
@@ -24,10 +24,12 @@ modification d'article #}
                     {{form_row(form.content)}}
                 </div>
                 <div class="col-3">
-                    {{form_row(form.position)}}
-                    {{form_row(form.parent)}}
+                    <h3>Localisation</h3>
                     {{form_row(form.topMenu)}}
                     {{form_row(form.home)}}
+                    {{form_row(form.parent)}}
+                    {{form_row(form.position)}}
+                    <h3>Publication</h3>
                     {{form_row(form.author)}}
                     {{form_row(form.date)}}
                     {{form_row(form.publishFromDate)}}
@@ -35,6 +37,10 @@ modification d'article #}
                 </div>
             </div>
         </div>
+
+        <p>
+            Avez-vous précisé une date de début de publication, afin que l'article soit visible sur le site&nbsp;?
+        </p>
 
         <div class="mb-3">
             {# Afficher un bouton permettant d'enregistrer l'article #}

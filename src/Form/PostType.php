@@ -74,7 +74,7 @@ class PostType extends AbstractType
                 'required' => false,
             ])
             ->add('date', DateTimeType::class, [
-                'label' => "Date",
+                'label' => "Date de rédaction",
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
                 'required' => false,
@@ -97,7 +97,7 @@ class PostType extends AbstractType
                 'label' => "Contenu (HTML)",
                 'attr' => [
                     'placeholder' => "En utilisant des balises HTML, définissez un contenu pour l'article.",
-                    'rows' => 8,
+                    'rows' => 15,
                 ],
                 'help' => "En HTML, chaque paragraphe est commencé par <p> et terminé par </p>. Pour mettre un texte en gras, entourez-le de <b> et </b>. Pour les italiques, c'est <i> et </i>. Les hyperliens sont créés avec <a href=\"url-référencé\"> et </a>.",
             ])
