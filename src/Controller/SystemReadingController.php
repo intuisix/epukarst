@@ -158,7 +158,7 @@ class SystemReadingController extends AbstractController
             $manager->persist($systemReading);
             $manager->flush();
 
-            $this->addFlash('success', "Le relevé <strong>{$systemReading->getCode()}</strong> a été encodé avec succès.");
+            $this->addFlash('success', "Le relevé <strong>{$systemReading->getCode()}</strong> contenant <strong>{$systemReading->getStationReadings()->count()}</strong> relevés de stations a été encodé avec succès.");
 
             return $this->redirectToRoute('reading');
         }
