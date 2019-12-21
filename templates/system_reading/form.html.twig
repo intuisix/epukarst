@@ -59,15 +59,14 @@
                                         {{systemParameter.instrumentParameter.parameter.name}}
                                     </strong>
                                     <br>
-                                    {% if systemParameter.instrumentParameter.inputUnit is not null %}
-                                        {# Afficher qu'une conversion d'unité sera réalisée #}
+                                    {# Afficher qu'une conversion d'unité sera réalisée #}
+                                    {% if systemParameter.instrumentParameter.inputUnit %}
                                         [{{systemParameter.instrumentParameter.inputUnit}}]
-                                        <i class="fas fa-square-root-alt"></i>
-                                    {% else %}
-                                        {# Pas de conversion d'unité #}
-                                        {% if systemParameter.instrumentParameter.parameter.unit %}
+                                    {% elseif systemParameter.instrumentParameter.parameter.unit %}
                                             [{{systemParameter.instrumentParameter.parameter.unit}}]
-                                        {% endif %}
+                                    {% endif %}
+                                    {% if systemParameter.instrumentParameter.inputConversion is not null %}
+                                        <i class="fas fa-square-root-alt" data-toggle="tooltip" data-placement="top" data-html="true" title="La valeur sera convertie automatiquement&nbsp;:<br>y={{systemParameter.instrumentParameter.inputConversion|default('x')}}"></i>
                                     {% endif %}
                                     <br>
                                     {{systemParameter.instrumentParameter.instrument.name}}
@@ -208,4 +207,13 @@
             }
         })}}
     </td>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        {# Activer les tooltips #}
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
 {% endblock %}
