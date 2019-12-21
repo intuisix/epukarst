@@ -95,24 +95,25 @@
                 </div>
             </div>
 
+            {# Bouton permettant d'ajouter un paramètre #}
+            <button type="button" data-action="add-measure" data-toggle="tooltip" data-placement="top" data-html="true" title="La liste filtrée montrera les relevés dont <strong>au moins</strong> un paramètre correspond aux critères." class="btn btn-secondary mb-3">
+                <i class="fas fa-plus"></i> Ajouter un paramètre
+            </button>
+
             {# Afficher les sous-formulaires pour les mesures #}
             {{form_row(form.measures)}}
 
-            <div class="form-row">
-                <div class="col">
-                    {# Bouton pour appliquer le filtre #}
-                    <button type="submit" class="btn btn-success float-right">
-                        <i class="fas fa-filter"></i>
-                        Appliquer le filtre
-                    </button>
-                </div>
-            </div>
+            {# Bouton pour appliquer le filtre #}
+            <button type="submit" class="btn btn-success float-right">
+                <i class="fas fa-filter"></i>
+                Appliquer le filtre
+            </button>
 
             {{form_end(form)}}
         </div>
         <div class="col">
             {# Afficher la carte des relevés #}
-            <div id="map" style="height: 300px">Carte</div>
+            <div id="map" style="height: 300px" hidden="hidden">Carte</div>
 
             {# Afficher la liste des relevés, sous forme de table liée au
             système de pagination qui suit #}
@@ -239,18 +240,6 @@
 {% endblock %}
 
 {% block _filter_measures_label %}
-    <div class="form-row my-3">
-        <div class="col">
-            {# Afficher un bouton permettant d'ajouter un paramètre #}
-            <button type="button" data-action="add-measure" class="btn btn-secondary">
-                <i class="fas fa-plus"></i> Ajouter un paramètre
-                
-            </button>
-            <button type="button" class="btn btn-link text-info" data-toggle="popover" title="Disjonction des paramètres" data-content="La liste filtrée montrera les relevés dont au moins un paramètre correspond aux critères ci-dessous.">
-                <i class="fas fa-info-circle"></i>
-            </button>
-        </div>
-    </div>
 {% endblock %}
 
 {% block _filter_measures_widget %}
@@ -283,7 +272,7 @@
         </div>
 
         {# Afficher un bouton permettant de supprimer le paramètre #}
-        <button type="button" data-action="delete-measure" data-target="#{{id}}" class="btn btn-danger mb-3">
+        <button type="button" data-action="delete-measure" data-target="#{{id}}" class="btn btn-danger">
             <i class="fas fa-trash"></i> Supprimer ce paramètre
         </button>
     </div>
@@ -343,12 +332,14 @@
     </script>
 
     <script>
+        {# Activer les tooltips #}
         $(function () {
-            $('[data-toggle="popover"]').popover()
-        });
+            $('[data-toggle="tooltip"]').tooltip()
+        })
     </script>
 
     <script>
+        {# Répliquer l'état de la case à cocher globale de la liste relevés sur celle des relevés individuels #}
         $('#readings thead input[type="checkbox"]').click(function() {
             var checked = $(this).prop('checked');
             $('#readings tbody input[type="checkbox"]').prop('checked', checked);
