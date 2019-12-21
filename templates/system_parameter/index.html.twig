@@ -21,7 +21,7 @@
             </thead>
             <tbody>
                 {# Lister les paramètres #}
-                {% for systemParameter in system.parameters|sort((a,b) => (a.instrumentParameter.nameWithUnit <=> b.instrumentParameter.nameWithUnit)) %}
+                {% for systemParameter in system.parameters|sort((a,b) => (a.instrumentParameter.parameter.position <=> b.instrumentParameter.parameter.position)) %}
                     <tr>
                         <td>{{systemParameter.instrumentParameter.parameter.name|default}}</td>
                         <td>{{systemParameter.instrumentParameter.instrument.name|default}}</td>

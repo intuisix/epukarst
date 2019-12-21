@@ -5,7 +5,9 @@ namespace App\Form;
 use App\Entity\System;
 use App\Form\SystemRoleType;
 use App\Form\SystemPictureType;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\File;
@@ -122,6 +124,29 @@ class SystemType extends AbstractType
                 'allow_delete' => true,
             ])
         ;
+    }
+
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        /* Ordonner les bassins par codes */
+        usort(
+            $view->children['basins']->children,
+            function ($a, $b) {
+                return
+                    $a->vars['data']->getCode() <=>
+                    $b->vars['data']->getCode();
+            }
+        );
+
+        /* Ordonner les paramètres par position */
+        usort(
+            $view->children['parameters']->children,
+            function ($a, $b) {
+                return
+                    $a->vars['data']->getInstrumentParameter()->getParameter()->getPosition() <=>
+                    $b->vars['data']->getInstrumentParameter()->getParameter()->getPosition();
+            }
+        );
     }
 
     public function configureOptions(OptionsResolver $resolver)
