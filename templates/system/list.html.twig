@@ -17,6 +17,7 @@
                     <th>Bassin versant</th>
                     <th>Bassins</th>
                     <th>Paramètres</th>
+                    <th>Relevés</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -40,6 +41,11 @@
                                 <span class="badge badge-success badge-pill">{{system.parameters|length}}</span>
                             {% else %}
                                 <i class="fas fa-exclamation-triangle text-danger"></i>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if system.systemReadings|length %}
+                                <span class="badge badge-primary badge-pill">{{system.systemReadings|length}}</span>
                             {% endif %}
                         </td>
                         <td>
