@@ -37,7 +37,7 @@ class User implements UserInterface
     private $firstName;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $lastName;
 
@@ -162,7 +162,7 @@ class User implements UserInterface
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): self
+    public function setLastName(?string $lastName): self
     {
         $this->lastName = $lastName;
 
@@ -280,7 +280,8 @@ class User implements UserInterface
     /**
      * Pour UserInterface, retourne les rôles de l'utilisateur.
      */
-    public function getRoles() {
+    public function getRoles()
+    {
         /* Tous les utilisateurs connectés ont un premier rôle */
         $roles[] = 'ROLE_USER';
 
@@ -297,7 +298,8 @@ class User implements UserInterface
      * 
      * @return string
      */
-    public function getSalt() {
+    public function getSalt()
+    {
         /* Ce sel est vide car il est géré par BCrypt */
         return null;
     }
@@ -307,7 +309,8 @@ class User implements UserInterface
      *
      * @return void
      */
-    public function getUsername() {
+    public function getUsername()
+    {
         return $this->email;
     }
 
@@ -316,14 +319,12 @@ class User implements UserInterface
      *
      * @return void
      */
-    public function eraseCredentials() {
+    public function eraseCredentials()
+    {
     }
 
     public function getPicture(): ?string
     {
-        if (empty($this->picture))
-            return 'https://avatars.io/user';
-
         return $this->picture;
     }
 

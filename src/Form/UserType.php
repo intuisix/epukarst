@@ -22,55 +22,59 @@ class UserType extends AbstractType
         $builder
             ->add('firstName', TextType::class, [
                 'label' => "Prénom",
+                'required' => false,
                 'attr' => [
                     'placeholder' => "Prénom",
-                ]
+                ],
             ])
             ->add('lastName', TextType::class, [
                 'label' => "Nom",
+                'required' => false,
                 'attr' => [
                     'placeholder' => "Nom",
-                ]
+                ],
             ])
             ->add('organization', TextType::class, [
                 'label' => "Organisation",
                 'required' => false,
                 'attr' => [
                     'placeholder' => "Société, organisme ou club",
-                ]
+                ],
             ])
             ->add('email', TextType::class, [
                 'label' => "E-mail",
+                'required' => true,
                 'attr' => [
                     'placeholder' => "nom.prenom@exemple.org",
-                ]
+                ],
             ])
             ->add('phone', TelType::class, [
                 'label' => "Téléphone",
                 'required' => false,
                 'attr' => [
                     'placeholder' => "+32 999 99.99.99",
-                ]
+                ],
             ])
             ->add('displayName', TextType::class, [
                 'label' => "Pseudonyme",
                 'required' => false,
                 'attr' => [
                     'placeholder' => "Peut être complété automatiquement",
-                ]
+                ],
             ])
             ->add('description', TextareaType::class, [
                 'label' => "Description",
                 'required' => false,
                 'attr' => [
-                    'placeholder' => "Présentez brièvement l'utilisateur (facultatif)",
-                ]
+                    'placeholder' => "Brève présentation de l'utilisateur (facultatif)",
+                ],
             ])
             ->add('picture', UrlType::class, [
-                'label' => "Photo",
+                'label' => "Avatar",
+                'required' => false,
                 'attr' => [
                     'placeholder' => "https://www.exemple.org/photo",
-                ]
+                ],
             ])
             ->add('userRoles', CollectionType::class, [
                 'label' => "Rôles",
