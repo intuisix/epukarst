@@ -152,10 +152,20 @@
             Enregistrer le relevé
         </button>
 
-        {# Afficher un bouton permettant de revenir à l'index #}
+        {# Bouton permettant de revenir aux relevés de stations #}
         <a href="{{path('reading')}}" class="btn btn-cancel">
             <i class="fas fa-backspace"></i>
-            Revenir à la liste
+            Relevés de stations
+        </a>
+        {# Bouton permettant de revenir aux relevés de systèmes #}
+        <a href="{{path('system_reading')}}" class="btn btn-cancel">
+            <i class="fas fa-backspace"></i>
+            Relevés de systèmes
+        </a>
+        {# Bouton permettant de revenir aux systèmes #}
+        <a href="{{path('systems_list')}}" class="btn btn-cancel">
+            <i class="fas fa-backspace"></i>
+            Liste des systèmes
         </a>
 
         {{form_end(form)}}
