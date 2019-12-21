@@ -51,7 +51,7 @@ class SystemStationController extends AbstractController
 
         return $this->render('system_station/form.html.twig', [
             'form' => $form->createView(),
-            'title' => "Ajouter une station",
+            'title' => "Ajouter une station à {$system->getName()}",
             'system' => $system,
         ]);
     }
