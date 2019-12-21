@@ -52,8 +52,8 @@
                             <th width="20%">
                                 Station
                             </th>
-                            {# Afficher les en-têtes des paramètres #}
-                            {% for systemParameter in system.parameters %}
+                            {# Afficher les en-têtes des paramètres, en faisant attention d'utiliser la liste ordonnée, consistante avec l'ordre dans lequel le contrôleur a créé les mesures (ne pas utiliser la liste du système car elle n'est pas triée) #}
+                            {% for systemParameter in systemParameters %}
                                 <td class="text-center">
                                     <strong>
                                         {{systemParameter.instrumentParameter.parameter.name}}

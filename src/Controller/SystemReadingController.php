@@ -17,6 +17,7 @@ use App\Repository\StationRepository;
 use App\Repository\ParameterRepository;
 use App\Repository\StationKindRepository;
 use App\Repository\MeasurabilityRepository;
+use App\Repository\SystemParameterRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
@@ -49,17 +50,28 @@ class SystemReadingController extends AbstractController
      * @Route("/system-reading/encode/{code}", name="system_reading_encode")
      * @IsGranted("ROLE_USER")
      */
-    public function encode(System $system, ObjectManager $manager, Request $request, StationRepository $stationRepository, MeasurabilityRepository $instrumentParameterRepository, BasinRepository $basinRepository, StationKindRepository $stationKindRepository)
+    public function encode(System $system, ObjectManager $manager, Request $request, StationRepository $stationRepository, MeasurabilityRepository $instrumentParameterRepository, BasinRepository $basinRepository, StationKindRepository $stationKindRepository, SystemParameterRepository $systemParameterRepository)
     {
         /* Obtenir la liste des stations du système */
-        $queryBuilder = $stationRepository->createQueryBuilder('s')
+        $systemStations = $stationRepository
+            ->createQueryBuilder('s')
             ->innerJoin('s.basin', 'b')
             ->where('b.system = :system')
-            ->setParameter('system', $system->getId());
-        $systemStations = $queryBuilder->getQuery()->getResult();
+            ->setParameter('system', $system)
+            ->orderBy('s.code', 'ASC')
+            ->getQuery()->getResult();
 
-        /* Obtenir la liste de paramètres du système */
-        $systemParameters = $system->getParameters();
+        /* Obtenir la liste ordonnée de paramètres du système */
+        $systemParameters = $systemParameterRepository
+            ->createQueryBuilder('sp')
+            ->addSelect('ip')
+            ->addSelect('p')
+            ->innerJoin('sp.instrumentParameter', 'ip')
+            ->innerJoin('ip.parameter', 'p')
+            ->where('sp.system = :system')
+            ->setParameter('system', $system)
+            ->orderBy('p.position', 'ASC')
+            ->getQuery()->getResult();
 
         /* Instancier un nouveau relevé de système */
         $systemReading = new SystemReading();
@@ -155,6 +167,7 @@ class SystemReadingController extends AbstractController
             'form' => $form->createView(),
             'title' => "Encoder un relevé pour {$system->getName()}",
             'system' => $system,
+            'systemParameters' => $systemParameters,
         ]);
     }
 
@@ -194,8 +207,7 @@ class SystemReadingController extends AbstractController
     {
         return $this->render('system_reading/show.html.twig', [
             'systemReading' => $systemReading,
-            'parameters' => $parameterRepository->findBy(
-                [ 'favorite' => true ], [ 'name' => 'ASC']),
+            'parameters' => $parameterRepository->findFavorites(),
         ]);
     }
 }
