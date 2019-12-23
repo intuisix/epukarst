@@ -30,7 +30,7 @@ class ReadingController extends AbstractController
 {
     /**
      * @Route("/reading/{page<\d+>?1}", name="reading")
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("SYSTEM_VIEW")
      */
     public function index(int $page, PaginationService $pagination, ParameterRepository $parameterRepository, Request $request, SystemRepository $systemRepository, BasinRepository $basinRepository, StationRepository $stationRepository, ReadingRepository $readingRepository)
     {
@@ -164,7 +164,7 @@ class ReadingController extends AbstractController
      * Gère l'encodage d'un nouveau relevé.
      * 
      * @Route("/reading/encode", name="reading_encode")
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("SYSTEM_ENCODE")
      */
     public function encode(ObjectManager $manager, Request $request)
     {
@@ -205,7 +205,7 @@ class ReadingController extends AbstractController
      * Gère la modification d'un relevé existant.
      * 
      * @Route("/reading/{code}/modify", name="reading_modify")
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("SYSTEM_ENCODE", subject="reading")
      */
     public function modify(Reading $reading, ObjectManager $manager, Request $request)
     {
@@ -241,7 +241,7 @@ class ReadingController extends AbstractController
      * Gère la validation d'un relevé existant.
      * 
      * @Route("/reading/{code}/validate", name="reading_validate")
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("SYSTEM_VALIDATE", subject="reading")
      */
     public function validate(Reading $reading, ObjectManager $manager, Request $request)
     {
@@ -284,7 +284,7 @@ class ReadingController extends AbstractController
      * Exporte des relevés.
      * 
      * @Route("/reading/export", name="reading_export")
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("SYSTEM_EXPORT")
      *
      * @param ReadingRepository $readingRepository
      * @return Response
@@ -316,10 +316,38 @@ class ReadingController extends AbstractController
     }
 
     /**
+     * Traite la suppression d'un relevé.
+     *
+     * @Route("reading/{code}/delete", name="reading_delete")
+     * @IsGranted("SYSTEM_DELETE", subject="reading")
+     */
+    public function delete(Reading $reading, Request $request, ObjectManager $manager)
+    {
+        $form = $this->createFormBuilder()->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $manager->remove($reading);
+            $manager->flush();
+    
+            $this->addFlash('success', "Le relevé <strong>{$reading->getCode()}</strong> a été supprimé avec succès.");
+    
+            return $this->redirectToRoute('reading');
+        }
+
+        return $this->render('reading/delete.html.twig', [
+            'form' => $form->createView(),
+            'reading' => $reading,
+            'title' => "Supprimer le relevé $reading",
+        ]);
+    }
+
+    /**
      * Affiche un relevé.
      * 
      * @Route("/reading/{code}", name="reading_show")
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("SYSTEM_VIEW", subject="reading")
      */
     public function show(Reading $reading)
     {
@@ -362,33 +390,5 @@ class ReadingController extends AbstractController
             /* Persister en base de données */
             $manager->persist($measure);
         }
-    }
-
-    /**
-     * Traite la suppression d'un relevé.
-     *
-     * @Route("reading/{code}/delete", name="reading_delete")
-     * @IsGranted("ROLE_ADMIN")
-     */
-    public function delete(Reading $reading, Request $request, ObjectManager $manager)
-    {
-        $form = $this->createFormBuilder()->getForm();
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $manager->remove($reading);
-            $manager->flush();
-    
-            $this->addFlash('success', "Le relevé <strong>{$reading->getCode()}</strong> a été supprimé avec succès.");
-    
-            return $this->redirectToRoute('reading');
-        }
-
-        return $this->render('reading/delete.html.twig', [
-            'form' => $form->createView(),
-            'reading' => $reading,
-            'title' => "Supprimer le relevé $reading",
-        ]);
     }
 }

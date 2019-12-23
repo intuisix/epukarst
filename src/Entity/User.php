@@ -106,6 +106,16 @@ class User implements UserInterface
      */
     private $systemValidations;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\SystemRole", mappedBy="author", orphanRemoval=true)
+     */
+    private $systemRoles;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isAdministrator;
+
     public function __construct()
     {
         $this->userRoles = new ArrayCollection();
@@ -114,6 +124,7 @@ class User implements UserInterface
         $this->measures = new ArrayCollection();
         $this->systemReadings = new ArrayCollection();
         $this->systemValidations = new ArrayCollection();
+        $this->systemRoles = new ArrayCollection();
     }
 
     /**
@@ -491,6 +502,49 @@ class User implements UserInterface
                 $systemValidation->setValidationAuthor(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SystemRole[]
+     */
+    public function getSystemRoles(): Collection
+    {
+        return $this->systemRoles;
+    }
+
+    public function addSystemRole(SystemRole $systemRole): self
+    {
+        if (!$this->systemRoles->contains($systemRole)) {
+            $this->systemRoles[] = $systemRole;
+            $systemRole->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSystemRole(SystemRole $systemRole): self
+    {
+        if ($this->systemRoles->contains($systemRole)) {
+            $this->systemRoles->removeElement($systemRole);
+            // set the owning side to null (unless already changed)
+            if ($systemRole->getAuthor() === $this) {
+                $systemRole->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getIsAdministrator(): ?bool
+    {
+        return $this->isAdministrator;
+    }
+
+    public function setIsAdministrator(?bool $isAdministrator): self
+    {
+        $this->isAdministrator = $isAdministrator;
 
         return $this;
     }

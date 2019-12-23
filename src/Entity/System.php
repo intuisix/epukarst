@@ -135,6 +135,11 @@ class System
     private $systemReadings;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\SystemRole", mappedBy="system", orphanRemoval=true)
+     */
+    private $systemRoles;
+
+    /**
      * Construit un nouveau système.
      */
     public function __construct()
@@ -144,6 +149,7 @@ class System
         $this->userRoles = new ArrayCollection();
         $this->parameters = new ArrayCollection();
         $this->systemReadings = new ArrayCollection();
+        $this->systemRoles = new ArrayCollection();
     }
 
     public function __toString()
@@ -415,6 +421,37 @@ class System
             // set the owning side to null (unless already changed)
             if ($systemReading->getSystem() === $this) {
                 $systemReading->setSystem(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SystemRole[]
+     */
+    public function getSystemRoles(): Collection
+    {
+        return $this->systemRoles;
+    }
+
+    public function addSystemRole(SystemRole $systemRole): self
+    {
+        if (!$this->systemRoles->contains($systemRole)) {
+            $this->systemRoles[] = $systemRole;
+            $systemRole->setSystem($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSystemRole(SystemRole $systemRole): self
+    {
+        if ($this->systemRoles->contains($systemRole)) {
+            $this->systemRoles->removeElement($systemRole);
+            // set the owning side to null (unless already changed)
+            if ($systemRole->getSystem() === $this) {
+                $systemRole->setSystem(null);
             }
         }
 

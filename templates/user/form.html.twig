@@ -12,9 +12,19 @@
 
         {{form_start(form)}}
 
-        <div class="row">
-            <div class="col">
-                <div class="alert bg-light">
+        {# Barre d'onglets #}
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="identification-tab" data-toggle="tab" href="#identification" role="tab" aria-controls="identification" aria-selected="true">Identification</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="roles-tab" data-toggle="tab" href="#roles" role="tab" aria-controls="roles" aria-selected="false">Rôles</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            {# Panneau d'identification #}
+            <div class="tab-pane fade show active" id="identification" role="tabpanel" aria-labelledby="identification-tab">
+                <div class="alert">
                     <div class="form-row">
                         <div class="col">
                             {{form_row(form.firstName)}}
@@ -37,8 +47,14 @@
                     {{form_row(form.picture)}}
                 </div>
             </div>
-            <div class="col-4">
-                {{form_row(form.userRoles)}}
+            {# Panneau des rôles #}
+            <div class="tab-pane fade" id="roles" role="tabpanel" aria-labelledby="roles-tab">
+                <div class="alert">
+                    {{form_row(form.systemRoles)}}
+                    <div class="mt-3 alert alert-danger">
+                        {{form_row(form.isAdministrator)}}
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -58,7 +74,7 @@
     </div>
 {% endblock %}
 
-{% block _user_userRoles_row %}
+{% block _user_systemRoles_row %}
     {# Afficher l'ensemble des rôles d'utilisateur #}
     {{form_row(form)}}
     {# Afficher un bouton pour ajouter un rôle d'utilisateur #}
@@ -68,32 +84,43 @@
     </button>
 {% endblock %}
 
-{% block _user_userRoles_label %}
-    <h2>{{form.vars.label}}</h2>
+{% block _user_systemRoles_label %}
     <p>Accordez des permissions à l'utilisateur en lui attribuant des rôles&nbsp;:</p>
 {% endblock %}
 
-{% block _user_userRoles_entry_label %}
+{% block _user_systemRoles_entry_label %}
     {# Ne pas afficher d'étiquette #}
 {% endblock %}
 
-{% block _user_userRoles_entry_widget %}
+{% block _user_systemRoles_entry_widget %}
     <div class="alert bg-light" id="{{id}}">
+        {# Sélection du système #}
         <div class="row">
             <div class="col">
-                {# Afficher le widget de rôle #}
-                {{form_row(form.linkedRole, {'label_attr': {'hidden': 'hidden'}})}}
+                {{form_row(form.system)}}
+            </div>
+        </div>
+        {# Cases à cocher des permissions #}
+        <div class="row">
+            <div class="col">
+                {{form_row(form.canView)}}
+            </div>
+            <div class="col">
+                {{form_row(form.canExport)}}
+            </div>
+            <div class="col">
+                {{form_row(form.canEncode)}}
+            </div>
+            <div class="col">
+                {{form_row(form.canValidate)}}
+            </div>
+            <div class="col">
+                {{form_row(form.canDelete)}}
             </div>
         </div>
         <div class="row">
             <div class="col">
-                {# Afficher le widget de système #}
-                {{form_row(form.linkedSystem, {'label_attr': {'hidden': 'hidden'}})}}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                {# Afficher un bouton permettant de supprimer le rôle #}
+                {# Bouton permettant de supprimer le rôle #}
                 <button type="button" data-action="delete-userRole" data-target="#{{id}}" class="btn btn-danger float-right">
                     <i class="fas fa-trash"></i>
                     Supprimer ce rôle
@@ -106,12 +133,12 @@
 {% block javascripts %}
     <script src="/js/collection.js"></script>
     <script>
-        var userRolesCollectionResponder =
+        var systemRolesCollectionResponder =
             createCollectionResponders(
-                '#user_userRoles',
+                '#user_systemRoles',
                 'button[data-action="add-userRole"]',
                 'button[data-action="delete-userRole"]'
             );
-        userRolesCollectionResponder();
+        systemRolesCollectionResponder();
     </script>
 {% endblock %}

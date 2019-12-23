@@ -121,9 +121,15 @@
                             {% endif %}
                         </td>
                         <td>
-                            <a href="{{path('reading_modify', {'code': stationReading.code})}}"><i class="fas fa-edit text-primary"></i></a>
-                            <a href="{{path('reading_validate', {'code': stationReading.code})}}"><i class="fas fa-flag-checkered text-success"></i></a>
-                            <a href="{{path('reading_delete', {'code': stationReading.code})}}"><i class="fas fa-trash text-danger"></i></a>
+                            {% if is_granted('SYSTEM_ENCODE', stationReading) %}
+                                <a href="{{path('reading_modify', {'code': stationReading.code})}}"><i class="fas fa-edit text-primary"></i></a>
+                            {% endif %}
+                            {% if is_granted('SYSTEM_VALIDATE', stationReading) %}
+                                <a href="{{path('reading_validate', {'code': stationReading.code})}}"><i class="fas fa-flag-checkered text-success"></i></a>
+                            {% endif %}
+                            {% if is_granted('SYSTEM_DELETE', stationReading) %}
+                                <a href="{{path('reading_delete', {'code': stationReading.code})}}"><i class="fas fa-trash text-danger"></i></a>
+                            {% endif %}
                         </td>
                     </tr>
                 {% else %}
@@ -135,7 +141,7 @@
         </table>
 
         {# Ajouter un bouton pour revenir à l'index #}
-        <a href="{{ path('system_reading') }}" class="btn btn-cancel">
+        <a href="{{path('system_reading')}}" class="btn btn-cancel">
             <i class="fas fa-backspace"></i>
             Revenir à la liste
         </a>

@@ -32,7 +32,7 @@ modification de systèmes #}
                 <a class="nav-link" id="parameters-tab" data-toggle="tab" href="#parameters" role="tab" aria-controls="parameters" aria-selected="false">{{form.parameters.vars.label}}</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="roles-tab" data-toggle="tab" href="#roles" role="tab" aria-controls="roles" aria-selected="false">{{form.userRoles.vars.label}}</a>
+                <a class="nav-link" id="roles-tab" data-toggle="tab" href="#roles" role="tab" aria-controls="roles" aria-selected="false">{{form.systemRoles.vars.label}}</a>
             </li>
         </ul>
         <div class="tab-content" id="myTabContent">
@@ -77,7 +77,7 @@ modification de systèmes #}
             {# Définir le panneau des rôles #}
             <div class="tab-pane fade" id="roles" role="tabpanel" aria-labelledby="roles-tab">
                 <div class="alert">
-                    {{form_row(form.userRoles)}}
+                    {{form_row(form.systemRoles)}}
                 </div>
             </div>
         </div>
@@ -230,11 +230,11 @@ modification de systèmes #}
 {% endblock %}
 
 
-{% block _system_userRoles_label %}
+{% block _system_systemRoles_label %}
     <p>Ce permet de définir les rôles des utilisateurs associés au système.</p>
 {% endblock %}
 
-{% block _system_userRoles_row %}
+{% block _system_systemRoles_row %}
     {{form_row(form)}}
     {# Bouton permettant d'ajouter un bassin #}
     <button type="button" data-action="add-userRole" class="btn btn-secondary">
@@ -243,19 +243,33 @@ modification de systèmes #}
     </button>
 {% endblock %}
 
-{% block _system_userRoles_entry_row %}
+{% block _system_systemRoles_entry_row %}
     {# N'afficher que le widget, sans étiquette ou autre information #}
     {{form_widget(form)}}
 {% endblock %}
 
-{% block _system_userRoles_entry_widget %}
+{% block _system_systemRoles_entry_widget %}
     <div class="form-group alert bg-light" id="{{id}}">
         <div class="row">
             <div class="col">
-                {{form_row(form.linkedUser)}}
+                {{form_row(form.author)}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                {{form_row(form.canView)}}
             </div>
             <div class="col">
-                {{form_row(form.linkedRole)}}
+                {{form_row(form.canExport)}}
+            </div>
+            <div class="col">
+                {{form_row(form.canEncode)}}
+            </div>
+            <div class="col">
+                {{form_row(form.canValidate)}}
+            </div>
+            <div class="col">
+                {{form_row(form.canDelete)}}
             </div>
         </div>
         <div class="row">
@@ -301,13 +315,13 @@ modification de systèmes #}
             );
         parametersCollectionResponder();
 
-        var userRolesCollectionResponder =
+        var systemRolesCollectionResponder =
             createCollectionResponders(
-                '#system_userRoles',
+                '#system_systemRoles',
                 'button[data-action="add-userRole"]',
                 'button[data-action="delete-userRole"]',
                 'Etes-vous sûr de vouloir supprimer ce rôle ?'
             );
-        userRolesCollectionResponder();
+        systemRolesCollectionResponder();
     </script>
 {% endblock %}

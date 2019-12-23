@@ -51,7 +51,7 @@ class SystemController extends AbstractController
     /**
      * Traite la création d'un système karstique.
      * 
-     * @Route("/system/add", name="system_create")
+     * @Route("/system/create", name="system_create")
      * @IsGranted("ROLE_ADMIN")
      */
     public function create(ObjectManager $manager, Request $request)
@@ -166,23 +166,26 @@ class SystemController extends AbstractController
     }
 
     /**
-     * Met à jour les propriétés du système.
+     * Met à jour les propriétés du système karstique.
      *
      * @param System $system
      * @return void
      */
     private function update(System $system, $form, ObjectManager $manager)
     {
+        /* Lier les bassins au système */
         foreach ($system->getBasins() as $basin) {
             $basin->setSystem($system);
             $manager->persist($basin);
         }
 
+        /* Lier les photographies au système */
         foreach ($system->getPictures() as $picture) {
             $picture->setSystem($system);
             $manager->persist($picture);
         }
 
+        /* Ajouter les photographies qui viennent d'être chargées */
         $picturesAdded = false;
         foreach ($form['newPictures']->getData() as $uploadedFile)
         {
@@ -193,14 +196,16 @@ class SystemController extends AbstractController
             $picturesAdded = true;
         }
 
+        /* Lier les paramètres au système */
         foreach ($system->getParameters() as $parameter) {
             $parameter->setSystem($system);
             $manager->persist($parameter);
         }
 
-        foreach ($system->getUserRoles() as $userRole) {
-            $userRole->setLinkedSystem($system);
-            $manager->persist($userRole);
+        /* Lier les rôles au système */
+        foreach ($system->getSystemRoles() as $systemRole) {
+            $systemRole->setSystem($system);
+            $manager->persist($systemRole);
         }
 
         $manager->persist($system);

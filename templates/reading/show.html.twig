@@ -21,7 +21,7 @@
                     <dd class="col-9">{{reading.fieldDateTime|date('d/m/Y H:i')}}</dd>
                     <dt class="col-3">Relevé de système&nbsp;:</dt>
                     <dd class="col-9">
-                        {% if reading.systemReading is not null %}
+                        {% if reading.systemReading is not null and is_granted('SYSTEM_VIEW', reading) %}
                             <a href="{{path('system_reading_show', {'code': reading.systemReading.code})}}">
                                 {{reading.systemReading.code}}
                             </a>
@@ -140,20 +140,24 @@
             </table>
         </tbody>
 
-        {# Ajouter un bouton pour modifier le relevé #}
-        <a href="{{ path('reading_modify', {'code': reading.code}) }}" class="btn btn-primary">
-            <i class="fas fa-edit"></i>
-            Modifier ce relevé
-        </a>
+        {# Bouton permettant de modifier le relevé #}
+        {% if is_granted('SYSTEM_ENCODE', reading) %}
+            <a href="{{path('reading_modify', {'code': reading.code})}}" class="btn btn-primary">
+                <i class="fas fa-edit"></i>
+                Modifier ce relevé
+            </a>
+        {% endif %}
 
-        {# Ajouter un bouton pour valider le relevé #}
-        <a href="{{ path('reading_validate', {'code': reading.code}) }}" class="btn btn-success">
-            <i class="fas fa-flag-checkered"></i>
-            Valider ce relevé
-        </a>
+        {# Bouton permettant de valider le relevé #}
+        {% if is_granted('SYSTEM_VALIDATE', reading) %}
+            <a href="{{path('reading_validate', {'code': reading.code})}}" class="btn btn-success">
+                <i class="fas fa-flag-checkered"></i>
+                Valider ce relevé
+            </a>
+        {% endif %}
 
-        {# Ajouter un bouton pour revenir à l'index #}
-        <a href="{{ path('reading') }}" class="btn btn-cancel">
+        {# Bouton permettant de revenir à la liste #}
+        <a href="{{path('reading')}}" class="btn btn-cancel">
             <i class="fas fa-backspace"></i>
             Revenir à la liste
         </a>

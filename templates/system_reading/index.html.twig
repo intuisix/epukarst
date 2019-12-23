@@ -33,7 +33,9 @@
                             {{systemReading.encodingAuthor}}
                         </td>
                         <td>
-                            <a href="{{path('system_reading_show', {'code': systemReading.code})}}">{{systemReading.code}}</a>
+                            {% if is_granted('SYSTEM_VIEW', systemReading) %}
+                                <a href="{{path('system_reading_show', {'code': systemReading.code})}}">{{systemReading.code}}</a>
+                            {% endif %}
                         </td>
                         <td>
                             {{systemReading.system.name}}
@@ -44,7 +46,9 @@
                             {% endif %}
                         </td>
                         <td>
-                            <a href="{{path('system_reading_delete', {'code': systemReading.code})}}"><i class="fas fa-trash text-danger"></i></a>
+                            {% if is_granted('SYSTEM_DELETE', systemReading) %}
+                                <a href="{{path('system_reading_delete', {'code': systemReading.code})}}"><i class="fas fa-trash text-danger"></i></a>
+                            {% endif %}
                         </td>
                     </tr>
                 {% else %}
@@ -58,14 +62,18 @@
         {# Afficher le composant de pagination #}
         {{pagination.display}}
 
-        {# Afficher un bouton à menu déroulant permettant d'encoder un relevé, pour chaque système #}
-        <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <fa class="fas fa-plus"></fa> Encoder un relevé de système
-        </button>
+        {# Bouton déroulant permettant d'encoder un relevé de système #}
+        {% if is_granted('SYSTEM_ENCODE') %}
+            <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <fa class="fas fa-plus"></fa> Encoder un relevé de système
+            </button>
             <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-            {% for system in systems %}
-                <a class="dropdown-item" href="{{path('system_reading_encode', {'code': system.code})}}">{{system.name}}</a>
-            {% endfor %}
-        </div>
+                {% for system in systems %}
+                    {% if is_granted('SYSTEM_ENCODE', system) %}
+                        <a class="dropdown-item" href="{{path('system_reading_encode', {'code': system.code})}}">{{system.name}}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

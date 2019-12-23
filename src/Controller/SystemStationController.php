@@ -9,12 +9,14 @@ use App\Repository\StationRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SystemStationController extends AbstractController
 {
     /**
      * @Route("/system-station/{code}", name="system_station")
+     * @IsGranted("SYSTEM_ENCODE", subject="system")
      */
     public function index(System $system, StationRepository $stationRepository)
     {
@@ -27,6 +29,7 @@ class SystemStationController extends AbstractController
 
     /**
      * @Route("/system-station/create/{code}", name="system_station_create")
+     * @IsGranted("SYSTEM_ENCODE", subject="system")
      */
     public function create(System $system, ObjectManager $manager, Request $request)
     {
@@ -60,6 +63,7 @@ class SystemStationController extends AbstractController
 
     /**
      * @Route("/system-station/update/{code}", name="system_station_update")
+     * @IsGranted("SYSTEM_ENCODE", subject="station")
      */
     public function update(Station $station, ObjectManager $manager, Request $request)
     {
@@ -92,6 +96,7 @@ class SystemStationController extends AbstractController
 
     /**
      * @Route("/system-station/delete/{code}", name="system_station_delete")
+     * @IsGranted("SYSTEM_ENCODE", subject="station")
      */
     public function delete(Station $station, ObjectManager $manager, Request $request)
     {

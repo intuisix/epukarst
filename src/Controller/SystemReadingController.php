@@ -28,7 +28,7 @@ class SystemReadingController extends AbstractController
 {
     /**
      * @Route("/system-reading/{page<\d+>?1}", name="system_reading")
-     * @IsGranted("ROLE_ADMIN")
+     * @IsGranted("SYSTEM_VIEW")
      */
     public function index(int $page, PaginationService $pagination, SystemRepository $systemRepository)
     {
@@ -48,7 +48,7 @@ class SystemReadingController extends AbstractController
      * Gère l'encodage d'un nouveau relevé pour un système.
      * 
      * @Route("/system-reading/encode/{code}", name="system_reading_encode")
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("SYSTEM_ENCODE", subject="system")
      */
     public function encode(System $system, ObjectManager $manager, Request $request, StationRepository $stationRepository, MeasurabilityRepository $instrumentParameterRepository, BasinRepository $basinRepository, StationKindRepository $stationKindRepository, SystemParameterRepository $systemParameterRepository)
     {
@@ -175,7 +175,7 @@ class SystemReadingController extends AbstractController
      * Traite la suppression d'un relevé de système.
      *
      * @Route("system-reading/{code}/delete", name="system_reading_delete")
-     * @IsGranted("ROLE_ADMIN")
+     * @IsGranted("SYSTEM_DELETE", subject="systemReading")
      */
     public function delete(SystemReading $systemReading, Request $request, ObjectManager $manager)
     {
@@ -201,7 +201,7 @@ class SystemReadingController extends AbstractController
 
     /**
      * @Route("/system-reading/{code}", name="system_reading_show")
-     * @IsGranted("ROLE_ADMIN")
+     * @IsGranted("SYSTEM_VIEW", subject="systemReading")
      */
     public function show(SystemReading $systemReading, ParameterRepository $parameterRepository)
     {

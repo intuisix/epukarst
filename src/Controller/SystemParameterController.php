@@ -8,12 +8,14 @@ use App\Form\SystemParameterType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SystemParameterController extends AbstractController
 {
     /**
      * @Route("/system-parameter/{code}", name="system_parameter")
+     * @IsGranted("SYSTEM_ENCODE", subject="system")
      */
     public function index(System $system)
     {
@@ -25,6 +27,7 @@ class SystemParameterController extends AbstractController
 
     /**
      * @Route("/system-parameter/create/{code}", name="system_parameter_create")
+     * @IsGranted("SYSTEM_ENCODE", subject="system")
      */
     public function create(System $system, ObjectManager $manager, Request $request)
     {
@@ -56,6 +59,7 @@ class SystemParameterController extends AbstractController
 
     /**
      * @Route("/system-parameter/update/{id}", name="system_parameter_update")
+     * @IsGranted("SYSTEM_ENCODE", subject="systemParameter")
      */
     public function update(SystemParameter $systemParameter, ObjectManager $manager, Request $request)
     {
@@ -85,6 +89,7 @@ class SystemParameterController extends AbstractController
 
     /**
      * @Route("/system-parameter/delete/{id}", name="system_parameter_delete")
+     * @IsGranted("SYSTEM_ENCODE", subject="systemParameter")
      */
     public function delete(SystemParameter $systemParameter, ObjectManager $manager, Request $request)
     {

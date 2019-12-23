@@ -3,13 +3,16 @@
 namespace App\Form;
 
 use App\Entity\User;
-use App\Form\UserRoleType;
+use App\Form\SystemRoleType;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -76,19 +79,39 @@ class UserType extends AbstractType
                     'placeholder' => "https://www.exemple.org/photo",
                 ],
             ])
-            ->add('userRoles', CollectionType::class, [
+            ->add('systemRoles', CollectionType::class, [
                 'label' => "Rôles",
-                'entry_type' => UserRoleType::class,
+                'entry_type' => SystemRoleType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
             ])
+            ->add('isAdministrator', CheckboxType::class, [
+                'label' => "Administrateur du logiciel d'encodage",
+                'required' => false,
+            ])
         ;
+    }
+
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        /* Ordonner les rôles par nom de système */
+        usort(
+            $view->children['systemRoles']->children,
+            function ($a, $b) {
+                $aSystem = $a->vars['data']->getSystem();
+                $bSystem = $b->vars['data']->getSystem();
+                return
+                    (($aSystem === null) ? null : $aSystem->getName()) <=>
+                    (($bSystem === null) ? null : $bSystem->getName());
+            }
+        );
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'inputAuthor' => true,
         ]);
     }
 }

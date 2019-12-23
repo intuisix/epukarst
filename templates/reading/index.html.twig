@@ -27,37 +27,39 @@
             faire défiler le contenu. #}
             <div class="alert bg-light mb-3" style="overflow-y: scroll; height: 400px; resize: vertical" id="filter_stations">
                 {% for system in systems %}
-                    <div>
-                        <div class="form-check">
-                            <input type="checkbox" name="filter[systems][]" id="filter_systems_{{system.id}}" class="form-check-input" value="{{system.id}}" {% if system in form.vars.data.systems %}checked="checked"{% endif %} />
-                            <label for="filter_systems_{{system.id}}" class="form-check-label">
-                                <strong>{{system.name}}</strong>
-                            </label>
-                            <span class="badge badge-secondary float-right">{{system.code}}</span>
-                        </div>
-                        {% for basin in system.basins %}
-                            <div class="ml-4">
-                                <div class="form-check">
-                                    <input type="checkbox" name="filter[basins][]" id="filter_basins_{{basin.id}}" class="form-check-input" value="{{basin.id}}" {% if basin in form.vars.data.basins %}checked="checked"{% endif %} />
-                                    <label for="filter_basins_{{basin.id}}" class="form-check-label">
-                                        {{basin.name}}
-                                    </label>
-                                    <span class="badge badge-secondary  float-right">{{basin.code}}</span>
-                                </div>
-                                {% for station in basin.stations %}
-                                    <div class="ml-4">
-                                        <div class="form-check">
-                                            <input type="checkbox" id="filter_stations_{{station.id}}" class="form-check-input" name="filter[stations][]" value="{{station.id}}" {% if station in form.vars.data.stations %}checked="checked"{% endif %} />
-                                            <label class="form-check-label" for="filter_stations_{{station.id}}">
-                                                <em>{{station.name}}</em>
-                                            </label>
-                                            <span class="badge badge-secondary float-right">{{station.code}}</span>
-                                        </div>
-                                    </div>
-                                {% endfor %}
+                    {% if is_granted("SYSTEM_VIEW", system) %}
+                        <div>
+                            <div class="form-check">
+                                <input type="checkbox" name="filter[systems][]" id="filter_systems_{{system.id}}" class="form-check-input" value="{{system.id}}" {% if system in form.vars.data.systems %}checked="checked"{% endif %} />
+                                <label for="filter_systems_{{system.id}}" class="form-check-label">
+                                    <strong>{{system.name}}</strong>
+                                </label>
+                                <span class="badge badge-secondary float-right">{{system.code}}</span>
                             </div>
-                        {% endfor %}
-                    </div>
+                            {% for basin in system.basins %}
+                                <div class="ml-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="filter[basins][]" id="filter_basins_{{basin.id}}" class="form-check-input" value="{{basin.id}}" {% if basin in form.vars.data.basins %}checked="checked"{% endif %} />
+                                        <label for="filter_basins_{{basin.id}}" class="form-check-label">
+                                            {{basin.name}}
+                                        </label>
+                                        <span class="badge badge-secondary  float-right">{{basin.code}}</span>
+                                    </div>
+                                    {% for station in basin.stations %}
+                                        <div class="ml-4">
+                                            <div class="form-check">
+                                                <input type="checkbox" id="filter_stations_{{station.id}}" class="form-check-input" name="filter[stations][]" value="{{station.id}}" {% if station in form.vars.data.stations %}checked="checked"{% endif %} />
+                                                <label class="form-check-label" for="filter_stations_{{station.id}}">
+                                                    <em>{{station.name}}</em>
+                                                </label>
+                                                <span class="badge badge-secondary float-right">{{station.code}}</span>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 {% endfor %}
 
                 {# Inclure les lignes de formulaires relatifs aux systèmes
@@ -184,10 +186,18 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <a href="{{path('reading_show', {'code': reading.code })}}"><i class="fas fa-eye"></i></a>
-                                    <a href="{{path('reading_modify', {'code': reading.code})}}"><i class="fas fa-edit text-primary"></i></a>
-                                    <a href="{{path('reading_validate', {'code': reading.code})}}"><i class="fas fa-flag-checkered text-success"></i></a>
-                                    <a href="{{path('reading_delete', {'code': reading.code})}}"><i class="fas fa-trash text-danger"></i></a>
+                                    {% if is_granted('SYSTEM_VIEW', reading) %}
+                                        <a href="{{path('reading_show', {'code': reading.code })}}"><i class="fas fa-eye"></i></a>
+                                    {% endif %}
+                                    {% if is_granted('SYSTEM_ENCODE', reading) %}
+                                        <a href="{{path('reading_modify', {'code': reading.code})}}"><i class="fas fa-edit text-primary"></i></a>
+                                    {% endif %}
+                                    {% if is_granted('SYSTEM_VALIDATE', reading)%}
+                                        <a href="{{path('reading_validate', {'code': reading.code})}}"><i class="fas fa-flag-checkered text-success"></i></a>
+                                    {% endif %}
+                                    {% if is_granted('SYSTEM_DELETE', reading) %}
+                                        <a href="{{path('reading_delete', {'code': reading.code})}}"><i class="fas fa-trash text-danger"></i></a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% else %}
@@ -198,24 +208,32 @@
                     </tbody>
                 </table>
 
-                {# Afficher le composant de pagination #}
+                {# Composant de pagination #}
                 {{pagination.display}}
 
-                {# Afficher un bouton à menu déroulant permettant d'encoder un relevé, pour chaque système #}
-                <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <fa class="fas fa-plus"></fa> Encoder un relevé de système
-                </button>
+                {# Bouton à menu déroulant permettant d'encoder un relevé, pour chaque système #}
+                {% if is_granted('SYSTEM_ENCODE') %}
+                    <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <fa class="fas fa-plus"></fa> Encoder un relevé de système
+                    </button>
                     <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                    {% for system in systems %}
-                        <a class="dropdown-item" href="{{path('system_reading_encode', {'code': system.code})}}">{{system.name}}</a>
-                    {% endfor %}
-                </div>
+                        {% for system in systems %}
+                            {% if is_granted('SYSTEM_ENCODE', system) %}
+                                <a class="dropdown-item" href="{{path('system_reading_encode', {'code': system.code})}}">{{system.name}}</a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
-                {# Afficher un bouton permettant d'encoder un relevé de sation #}
-                <a class="btn btn-secondary" href="{{path('reading_encode')}}" role="button"><fa class="fas fa-plus"></fa> Encoder un relevé de station</a>
+                {# Bouton permettant d'encoder un relevé de sation #}
+                {% if is_granted('SYSTEM_ENCODE') %}
+                    <a class="btn btn-secondary" href="{{path('reading_encode')}}" role="button"><fa class="fas fa-plus"></fa> Encoder un relevé de station</a>
+                {% endif %}
 
-                {# Afficher un bouton permettant d'exporter les relevés #}
-                <button type="submit" class="btn btn-secondary" formaction="{{path('reading_export')}}"><i class="fas fa-file-excel"></i> Exporter les relevés sélectionnés</button>
+                {# Bouton permettant d'exporter les relevés #}
+                {% if is_granted('SYSTEM_EXPORT') %}
+                    <button type="submit" class="btn btn-secondary" formaction="{{path('reading_export')}}"><i class="fas fa-file-excel"></i> Exporter les relevés sélectionnés</button>
+                {% endif %}
             </form>
         </div>
     </div>

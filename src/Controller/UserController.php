@@ -63,9 +63,9 @@ class UserController extends AbstractController
             $user->setPassword($encoder->encodePassword($user, $password));
 
             /* Associer les rôles à l'utilisateur */
-            foreach ($user->getUserRoles() as $userRole) {
-                $userRole->setLinkedUser($user);
-                $manager->persist($userRole);
+            foreach ($user->getSystemRoles() as $systemRole) {
+                $systemRole->setAuthor($user);
+                $manager->persist($systemRole);
             }
 
             /* Persister l'utilisateur dans la base de données */
@@ -133,9 +133,9 @@ class UserController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             /* Associer les rôles à l'utilisateur */
-            foreach ($user->getUserRoles() as $userRole) {
-                $userRole->setLinkedUser($user);
-                $manager->persist($userRole);
+            foreach ($user->getSystemRoles() as $systemRole) {
+                $systemRole->setAuthor($user);
+                $manager->persist($systemRole);
             }
             /* Persister l'utilisateur en base de données */
             $manager->persist($user);

@@ -117,7 +117,7 @@ class SystemType extends AbstractType
                 'allow_add' => true,
                 'allow_delete' => true,
             ])
-            ->add('userRoles', CollectionType::class, [
+            ->add('systemRoles', CollectionType::class, [
                 'label' => "Rôles",
                 'entry_type' => SystemRoleType::class,
                 'allow_add' => true,
@@ -145,6 +145,18 @@ class SystemType extends AbstractType
                 return
                     $a->vars['data']->getInstrumentParameter()->getParameter()->getPosition() <=>
                     $b->vars['data']->getInstrumentParameter()->getParameter()->getPosition();
+            }
+        );
+
+        /* Ordonner les rôles par nom d'utilisateur */
+        usort(
+            $view->children['systemRoles']->children,
+            function ($a, $b) {
+                $aUser = $a->vars['data']->getAuthor();
+                $bUser = $b->vars['data']->getAuthor();
+                return
+                    (($aUser === null) ? null : $aUser->getDisplayName()) <=>
+                    (($bUser === null) ? null : $bUser->getDisplayName());
             }
         );
     }
