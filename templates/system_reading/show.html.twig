@@ -94,18 +94,7 @@
                         </td>
                         {% for parameter in parameters %}
                             <td style="text-align: right">
-                                {% set stats = stationReading.valueStats(parameter) %}
-                                {% if stats.count > 0 %}
-                                    {% if stats.count > 1 %}
-                                        <span class="badge badge-info badge-pill">{{stats.count}}</span>
-                                        {{stats.min|number_format(1, ',', ' ')}} -
-                                        {{stats.max|number_format(1, ',', ' ')}}
-                                    {% else %}
-                                        {{stats.avg|number_format(1, ',', ' ')}}
-                                    {% endif %}
-                                {% else %}
-                                    --
-                                {% endif %}
+                                {% include 'reading/_measure_stat.html.twig' with {'stats': stationReading.valueStats(parameter)} %}
                             </td>
                         {% endfor %}
                         <td style="text-align:center">

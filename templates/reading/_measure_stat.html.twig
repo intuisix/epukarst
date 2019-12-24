@@ -1,0 +1,14 @@
+{% if stats.count > 1 %}
+    {# Nombre de mesures multiples #}
+    <span class="badge badge-info badge-pill">{{stats.count}}</span>
+    {# Minimum et maximum des mesures #}
+    {{stats.min|number_format(1, ',', ' ')}}
+    -
+    {{stats.max|number_format(1, ',', ' ')}}
+{% elseif stats.count > 0 %}
+    {{stats.avg|number_format(1, ',', ' ')}}
+{% elseif stats.inval > 0 %}
+    {# Nombre de mesures invalides #}
+    <span class="badge badge-danger badge-pill">{{stats.inval}}</span>
+{% else %}
+{% endif %}

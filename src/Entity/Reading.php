@@ -308,20 +308,31 @@ class Reading
     }
 
     /**
-     * Retourne les statistiques (quantité, minimum, maximum, moyenne et somme)
-     * des mesures correspondant à un paramètre défini.
-     * 
-     * Seules les valeurs connues et valides sont prises en compte.
-     * 
-     * Par contre, le fait que les valeurs soient stabilisée ou non n'a pas
-     * d'incidence parce que les valeurs non stabilisées ont tout de même été
-     * appréciées par le contributeur de la mesure.
-     *
-     * TODO: Les statistiques pourraient prendre en compte la tolérance
-     * éventuellement associée à chaque valeur.
+     * Retourne les statistiques des mesures correspondant à un paramètre
+     * défini.
      * 
      * @param Parameter $parameter
-     * @return array
+     * @return array Un tableau associatif contenant les statistiques.
+     * 
+     * Le tableau contient les statistiques ci-dessous concernant les valeurs
+     * connues et renseignées comme valides:
+     *     - 'count': quantité de valeurs,
+     *     - 'min': plus petite valeur,
+     *     - 'max': plus grande valeur,
+     *     - 'avg': valeur moyenne,
+     *     - 'sum': somme des valeurs.
+     * 
+     * Le tableau contient les statistiques suivantes concernant les valeurs
+     * nulles ou invalides:
+     *     - 'inval': quantité de valeurs.
+     * 
+     * Le fait que les mesures soient stabilisées ou non n'a pas d'incidence
+     * parce que les valeurs non stabilisées ont tout de même été appréciées
+     * par le contributeur de la mesure.
+     *
+     * TODO: Les statistiques pourraient prendre en compte la tolérance
+     * éventuellement associée à chaque valeur. Elles ne le font actuellement
+     * pas.
      */
     public function getValueStats(Parameter $parameter)
     {
@@ -330,6 +341,7 @@ class Reading
         $min = null;
         $max = null;
         $sum = null;
+        $inval = null;
     
         /* Parcourir toutes les mesures */
         foreach ($this->measures as $measure) {
@@ -347,16 +359,19 @@ class Reading
                         $max = $value;
                     }
                     $avg = $sum / $count;
+                } else {
+                    $inval++;
                 }
             }
         }
-    
+
         return [
-            'count' => $count,
-            'min' => $min,
-            'max' => $max,
-            'avg' => $avg,
-            'sum' => $sum
+            'count' => $count,      /* Nombre de valeurs valides */
+            'min' => $min,          /* Valeur minimum */
+            'max' => $max,          /* Valeur maximum */
+            'avg' => $avg,          /* Valeur moyenne */
+            'sum' => $sum,          /* Somme des valeurs */
+            'inval' => $inval,      /* Nombre de valeurs invalides */
         ];
     }
 
