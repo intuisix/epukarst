@@ -163,16 +163,7 @@
                                     </td>
                                 {% endfor %}
                                 <td style="text-align:center">
-                                    {% if reading.validated %}
-                                        {# Le relevé est validé #}
-                                        <i class="fas fa-flag-checkered"></i>
-                                    {% elseif reading.validated is not null %}
-                                        {# Le relevé est invalidé #}
-                                        <i class="fas fa-ban"></i>
-                                    {% else %}
-                                        {# Le relevé est soumis #}
-                                        --
-                                    {% endif %}
+                                    {% include 'reading/_reading_state.html.twig' with {'validated': reading.validated} %}
                                 </td>
                                 <td>
                                     {% if is_granted('SYSTEM_OBSERVER', reading) %}

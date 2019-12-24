@@ -1,0 +1,10 @@
+{% if validated %}
+    {# Le relevé est validé #}
+    <i class="fas fa-flag-checkered"></i>
+{% elseif validated is not null %}
+    {# Le relevé est invalidé #}
+    <i class="fas fa-ban"></i>
+{% else %}
+    {# Le relevé est soumis #}
+    <i class="fas fa-question"></i>
+{% endif %}
