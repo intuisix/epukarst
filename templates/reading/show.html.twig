@@ -21,7 +21,7 @@
                     <dd class="col-9">{{reading.fieldDateTime|date('d/m/Y H:i')}}</dd>
                     <dt class="col-3">Relevé de système&nbsp;:</dt>
                     <dd class="col-9">
-                        {% if reading.systemReading is not null and is_granted('SYSTEM_VIEW', reading) %}
+                        {% if reading.systemReading is not null and is_granted('SYSTEM_OBSERVER', reading) %}
                             <a href="{{path('system_reading_show', {'code': reading.systemReading.code})}}">
                                 {{reading.systemReading.code}}
                             </a>
@@ -141,7 +141,7 @@
         </tbody>
 
         {# Bouton permettant de modifier le relevé #}
-        {% if is_granted('SYSTEM_ENCODE', reading) %}
+        {% if is_granted('SYSTEM_CONTRIBUTOR', reading) %}
             <a href="{{path('reading_modify', {'code': reading.code})}}" class="btn btn-primary">
                 <i class="fas fa-edit"></i>
                 Modifier ce relevé
@@ -149,7 +149,7 @@
         {% endif %}
 
         {# Bouton permettant de valider le relevé #}
-        {% if is_granted('SYSTEM_VALIDATE', reading) %}
+        {% if is_granted('SYSTEM_MANAGER', reading) %}
             <a href="{{path('reading_validate', {'code': reading.code})}}" class="btn btn-success">
                 <i class="fas fa-flag-checkered"></i>
                 Valider ce relevé

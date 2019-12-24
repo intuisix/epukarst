@@ -121,13 +121,13 @@
                             {% endif %}
                         </td>
                         <td>
-                            {% if is_granted('SYSTEM_ENCODE', stationReading) %}
+                            {% if is_granted('SYSTEM_CONTRIBUTOR', stationReading) %}
                                 <a href="{{path('reading_modify', {'code': stationReading.code})}}"><i class="fas fa-edit text-primary"></i></a>
                             {% endif %}
-                            {% if is_granted('SYSTEM_VALIDATE', stationReading) %}
+                            {% if is_granted('SYSTEM_MANAGER', stationReading) %}
                                 <a href="{{path('reading_validate', {'code': stationReading.code})}}"><i class="fas fa-flag-checkered text-success"></i></a>
                             {% endif %}
-                            {% if is_granted('SYSTEM_DELETE', stationReading) %}
+                            {% if is_granted('SYSTEM_MANAGER', stationReading) %}
                                 <a href="{{path('reading_delete', {'code': stationReading.code})}}"><i class="fas fa-trash text-danger"></i></a>
                             {% endif %}
                         </td>

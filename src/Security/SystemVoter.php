@@ -14,11 +14,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class SystemVoter extends Voter
 {
-    const VIEW = 'SYSTEM_VIEW';
-    const ENCODE = 'SYSTEM_ENCODE';
-    const VALIDATE = 'SYSTEM_VALIDATE';
-    const EXPORT = 'SYSTEM_EXPORT';
-    const DELETE = 'SYSTEM_DELETE';
+    const OBSERVER = 'SYSTEM_OBSERVER';
+    const CONTRIBUTOR = 'SYSTEM_CONTRIBUTOR';
+    const MANAGER = 'SYSTEM_MANAGER';
 
     private $security;
 
@@ -30,8 +28,9 @@ class SystemVoter extends Voter
     protected function supports($attribute, $subject)
     {
         return 
-            in_array($attribute, [
-                self::VIEW, self::ENCODE, self::VALIDATE, self::EXPORT, self::DELETE]) &&
+            (($attribute === self::OBSERVER) ||
+                ($attribute === self::CONTRIBUTOR) || 
+                ($attribute === self::MANAGER)) &&
             (($subject instanceof System) ||
                 ($subject instanceof Station) ||
                 ($subject instanceof SystemParameter) ||
@@ -70,15 +69,15 @@ class SystemVoter extends Voter
                 foreach ($user->getSystemRoles() as $systemRole) {
                     if (((null === $systemRole->getSystem()) ||($systemRole->getSystem() === $system)) &&
                         ($this->isGranted($systemRole, $attribute))) {
-                            return true;
+                        return true;
                     }
                 }
 
                 /* Parcourir les autorisations du système, afin de déterminer si l'autorisation est donnée explicitement pour l'utilisateur recherché ou implicitement pour tous les systèles (utilisateur null) */
                 foreach ($system->getSystemRoles() as $systemRole) {
-                    if (((null === $systemRole->getAuthor()) ||($systemRole->getAuthor() === $user)) &&
+                    if (((null === $systemRole->getUserAccount()) ||($systemRole->getUserAccount() === $user)) &&
                         ($this->isGranted($systemRole, $attribute))) {
-                            return true;
+                        return true;
                     }
                 }
 
@@ -89,17 +88,20 @@ class SystemVoter extends Voter
 
     private function isGranted(SystemRole $systemRole, $attribute)
     {
+        $role = $systemRole->getRole();
+
         switch ($attribute) {
-            case self::VIEW:
-                return $systemRole->getCanView();
-            case self::EXPORT:
-                return $systemRole->getCanExport();
-            case self::ENCODE:
-                return $systemRole->getCanEncode();
-            case self::VALIDATE:
-                return $systemRole->getCanValidate();
-            case self::DELETE:
-                return $systemRole->getCanDelete();
+            case self::OBSERVER:
+                return
+                    ($role === self::OBSERVER) ||
+                    ($role === self::CONTRIBUTOR) ||
+                    ($role === self::MANAGER);
+            case self::CONTRIBUTOR:
+                return
+                    ($role == self::MANAGER) ||
+                    ($role === self::CONTRIBUTOR);
+            case self::MANAGER:
+                return $role === self::MANAGER;
             default:
                 throw new \LogicException('Attribut inconnu');
         }

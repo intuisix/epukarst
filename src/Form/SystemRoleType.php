@@ -5,13 +5,12 @@ namespace App\Form;
 use App\Entity\Role;
 use App\Entity\User;
 use App\Entity\System;
-use App\Entity\UserRole;
 use App\Entity\SystemRole;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class SystemRoleType extends AbstractType
 {
@@ -25,32 +24,20 @@ class SystemRoleType extends AbstractType
                 'required' => false,
                 'placeholder' => "Par défaut",
             ])
-            ->add('author', EntityType::class, [
+            ->add('userAccount', EntityType::class, [
                 'class' => User::class,
                 'label' => "Utilisateur",
                 'choice_label' => 'displayName',
                 'required' => false,
                 'placeholder' => "Par défaut",
             ])
-            ->add('canView', CheckboxType::class, [
-                'label' => "Visualisation",
-                'required' => false,
-            ])
-            ->add('canEncode', CheckboxType::class, [
-                'label' => "Encodage",
-                'required' => false,
-            ])
-            ->add('canValidate', CheckboxType::class, [
-                'label' => "Validation",
-                'required' => false,
-            ])
-            ->add('canExport', CheckboxType::class, [
-                'label' => "Exportation",
-                'required' => false,
-            ])
-            ->add('canDelete', CheckboxType::class, [
-                'label' => "Suppression",
-                'required' => false,
+            ->add('role', ChoiceType::class, [
+                'choices' => [
+                    "Observateur" => 'SYSTEM_OBSERVER',
+                    "Contributeur" => 'SYSTEM_CONTRIBUTOR',
+                    "Gestionnaire" => 'SYSTEM_MANAGER',
+                ],
+                'label' => "Rôle",
             ])
         ;
     }

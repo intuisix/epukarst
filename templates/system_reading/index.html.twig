@@ -33,7 +33,7 @@
                             {{systemReading.encodingAuthor}}
                         </td>
                         <td>
-                            {% if is_granted('SYSTEM_VIEW', systemReading) %}
+                            {% if is_granted('SYSTEM_OBSERVER', systemReading) %}
                                 <a href="{{path('system_reading_show', {'code': systemReading.code})}}">{{systemReading.code}}</a>
                             {% endif %}
                         </td>
@@ -46,7 +46,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            {% if is_granted('SYSTEM_DELETE', systemReading) %}
+                            {% if is_granted('SYSTEM_MANAGER', systemReading) %}
                                 <a href="{{path('system_reading_delete', {'code': systemReading.code})}}"><i class="fas fa-trash text-danger"></i></a>
                             {% endif %}
                         </td>
@@ -63,13 +63,13 @@
         {{pagination.display}}
 
         {# Bouton déroulant permettant d'encoder un relevé de système #}
-        {% if is_granted('SYSTEM_ENCODE') %}
+        {% if is_granted('SYSTEM_CONTRIBUTOR') %}
             <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <fa class="fas fa-plus"></fa> Encoder un relevé de système
             </button>
             <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                 {% for system in systems %}
-                    {% if is_granted('SYSTEM_ENCODE', system) %}
+                    {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
                         <a class="dropdown-item" href="{{path('system_reading_encode', {'code': system.code})}}">{{system.name}}</a>
                     {% endif %}
                 {% endfor %}

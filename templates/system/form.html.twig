@@ -252,24 +252,12 @@ modification de systèmes #}
     <div class="form-group alert bg-light" id="{{id}}">
         <div class="row">
             <div class="col">
-                {{form_row(form.author)}}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                {{form_row(form.canView)}}
+                {# Sélection de l'utilisateur #}
+                {{form_row(form.userAccount)}}
             </div>
             <div class="col">
-                {{form_row(form.canExport)}}
-            </div>
-            <div class="col">
-                {{form_row(form.canEncode)}}
-            </div>
-            <div class="col">
-                {{form_row(form.canValidate)}}
-            </div>
-            <div class="col">
-                {{form_row(form.canDelete)}}
+                {# Sélection du rôle #}
+                {{form_row(form.role)}}
             </div>
         </div>
         <div class="row">

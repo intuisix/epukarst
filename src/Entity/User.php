@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Utilisateur.
@@ -72,11 +73,6 @@ class User implements UserInterface
     private $description;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\UserRole", mappedBy="linkedUser", orphanRemoval=true)
-     */
-    private $userRoles;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $picture;
@@ -107,14 +103,16 @@ class User implements UserInterface
     private $systemValidations;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\SystemRole", mappedBy="author", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\SystemRole", mappedBy="userAccount", orphanRemoval=true)
+     * 
+     * @Assert\Valid()
      */
     private $systemRoles;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="string", length=32, nullable=true)
      */
-    private $isAdministrator;
+    private $mainRole;
 
     public function __construct()
     {
@@ -125,18 +123,6 @@ class User implements UserInterface
         $this->systemReadings = new ArrayCollection();
         $this->systemValidations = new ArrayCollection();
         $this->systemRoles = new ArrayCollection();
-    }
-
-    /**
-     * Indique si l'utilisateur est administrateur.
-     */
-    public function isAdmin() : bool {
-        foreach ($this->userRoles as $userRole) {
-            if ($userRole->getLinkedRole()->getRole() === 'ROLE_ADMIN') {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -258,37 +244,6 @@ class User implements UserInterface
     }
 
     /**
-     * @return Collection|UserRole[]
-     */
-    public function getUserRoles(): Collection
-    {
-        return $this->userRoles;
-    }
-
-    public function addUserRole(UserRole $userRole): self
-    {
-        if (!$this->userRoles->contains($userRole)) {
-            $this->userRoles[] = $userRole;
-            $userRole->setLinkedUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUserRole(UserRole $userRole): self
-    {
-        if ($this->userRoles->contains($userRole)) {
-            $this->userRoles->removeElement($userRole);
-            // set the owning side to null (unless already changed)
-            if ($userRole->getLinkedUser() === $this) {
-                $userRole->setLinkedUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * Pour UserInterface, retourne les rôles de l'utilisateur.
      */
     public function getRoles()
@@ -296,9 +251,11 @@ class User implements UserInterface
         /* Tous les utilisateurs connectés ont un premier rôle */
         $roles[] = 'ROLE_USER';
 
-        /* Les autres rôles sont attribués par la base de données */
-        foreach ($this->userRoles as $role) {
-            $roles[] = $role->getLinkedRole()->getRole();
+        /* Tester le rôle d'administration */
+        if (null != $this->mainRole) {
+            $roles[] = $this->mainRole;
+        } else if ($this->displayName === "Administrateur") {
+            $roles[] = 'ROLE_ADMIN';
         }
 
         return $roles;
@@ -537,14 +494,14 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getIsAdministrator(): ?bool
+    public function getMainRole(): ?string
     {
-        return $this->isAdministrator;
+        return $this->mainRole;
     }
 
-    public function setIsAdministrator(?bool $isAdministrator): self
+    public function setMainRole(?string $mainRole): self
     {
-        $this->isAdministrator = $isAdministrator;
+        $this->mainRole = $mainRole;
 
         return $this;
     }

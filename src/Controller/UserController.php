@@ -64,7 +64,7 @@ class UserController extends AbstractController
 
             /* Associer les rôles à l'utilisateur */
             foreach ($user->getSystemRoles() as $systemRole) {
-                $systemRole->setAuthor($user);
+                $systemRole->setUserAccount($user);
                 $manager->persist($systemRole);
             }
 
@@ -134,7 +134,7 @@ class UserController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /* Associer les rôles à l'utilisateur */
             foreach ($user->getSystemRoles() as $systemRole) {
-                $systemRole->setAuthor($user);
+                $systemRole->setUserAccount($user);
                 $manager->persist($systemRole);
             }
             /* Persister l'utilisateur en base de données */

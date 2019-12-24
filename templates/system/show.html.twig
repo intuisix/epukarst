@@ -117,25 +117,27 @@
 
                 {# Boutons #}
                 {% if app.user %}
-                    {% if app.user.isAdmin %}
+                    {% if is_granted('ROLE_ADMIN') %}
                         <a href="{{path('system_modify', {'code': system.code})}}" class="btn btn-primary btn-block">
                             <i class="fas fa-plus"></i>
                             Modifier le système
                         </a>
                     {% endif %}
-                    <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary btn-block">
-                        <i class="fas fa-file-alt"></i>
-                        Encoder un relevé de système
-                    </a>
-                    <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-primary btn-block">
-                        <i class="fas fa-bullseye"></i>
-                        Définir les stations du système
-                    </a>
-                    <a href="{{path('system_parameter', {'code': system.code})}}" class="btn btn-primary btn-block">
-                        <i class="fas fa-asterisk"></i>
-                        Définir les paramètres du système
-                    </a>
-                    {% if app.user.isAdmin %}
+                    {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+                        <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary btn-block">
+                            <i class="fas fa-file-alt"></i>
+                            Encoder un relevé de système
+                        </a>
+                        <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-primary btn-block">
+                            <i class="fas fa-bullseye"></i>
+                            Définir les stations du système
+                        </a>
+                        <a href="{{path('system_parameter', {'code': system.code})}}" class="btn btn-primary btn-block">
+                            <i class="fas fa-asterisk"></i>
+                            Définir les paramètres du système
+                        </a>
+                    {% endif %}
+                    {% if is_granted('ROLE_ADMIN') %}
                         <a href="{{path('system_delete', {'code': system.code})}}" class="btn btn-danger btn-block">
                             <i class="fas fa-trash"></i>
                             Supprimer le système

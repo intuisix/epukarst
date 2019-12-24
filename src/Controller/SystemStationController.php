@@ -16,7 +16,7 @@ class SystemStationController extends AbstractController
 {
     /**
      * @Route("/system-station/{code}", name="system_station")
-     * @IsGranted("SYSTEM_ENCODE", subject="system")
+     * @IsGranted("SYSTEM_CONTRIBUTOR", subject="system")
      */
     public function index(System $system, StationRepository $stationRepository)
     {
@@ -29,7 +29,7 @@ class SystemStationController extends AbstractController
 
     /**
      * @Route("/system-station/create/{code}", name="system_station_create")
-     * @IsGranted("SYSTEM_ENCODE", subject="system")
+     * @IsGranted("SYSTEM_CONTRIBUTOR", subject="system")
      */
     public function create(System $system, ObjectManager $manager, Request $request)
     {
@@ -63,7 +63,7 @@ class SystemStationController extends AbstractController
 
     /**
      * @Route("/system-station/update/{code}", name="system_station_update")
-     * @IsGranted("SYSTEM_ENCODE", subject="station")
+     * @IsGranted("SYSTEM_CONTRIBUTOR", subject="station")
      */
     public function update(Station $station, ObjectManager $manager, Request $request)
     {
@@ -96,7 +96,7 @@ class SystemStationController extends AbstractController
 
     /**
      * @Route("/system-station/delete/{code}", name="system_station_delete")
-     * @IsGranted("SYSTEM_ENCODE", subject="station")
+     * @IsGranted("SYSTEM_CONTRIBUTOR", subject="station")
      */
     public function delete(Station $station, ObjectManager $manager, Request $request)
     {

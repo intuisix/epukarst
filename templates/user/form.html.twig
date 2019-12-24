@@ -50,10 +50,9 @@
             {# Panneau des rôles #}
             <div class="tab-pane fade" id="roles" role="tabpanel" aria-labelledby="roles-tab">
                 <div class="alert">
+                    <p>Accordez des permissions à l'utilisateur en lui attribuant des rôles&nbsp;:</p>
+                    {{form_row(form.mainRole)}}
                     {{form_row(form.systemRoles)}}
-                    <div class="mt-3 alert alert-danger">
-                        {{form_row(form.isAdministrator)}}
-                    </div>
                 </div>
             </div>
         </div>
@@ -84,38 +83,20 @@
     </button>
 {% endblock %}
 
-{% block _user_systemRoles_label %}
-    <p>Accordez des permissions à l'utilisateur en lui attribuant des rôles&nbsp;:</p>
-{% endblock %}
-
 {% block _user_systemRoles_entry_label %}
     {# Ne pas afficher d'étiquette #}
 {% endblock %}
 
 {% block _user_systemRoles_entry_widget %}
     <div class="alert bg-light" id="{{id}}">
-        {# Sélection du système #}
         <div class="row">
             <div class="col">
+                {# Sélection du système #}
                 {{form_row(form.system)}}
             </div>
-        </div>
-        {# Cases à cocher des permissions #}
-        <div class="row">
             <div class="col">
-                {{form_row(form.canView)}}
-            </div>
-            <div class="col">
-                {{form_row(form.canExport)}}
-            </div>
-            <div class="col">
-                {{form_row(form.canEncode)}}
-            </div>
-            <div class="col">
-                {{form_row(form.canValidate)}}
-            </div>
-            <div class="col">
-                {{form_row(form.canDelete)}}
+                {# Sélection du rôle #}
+                {{form_row(form.role)}}
             </div>
         </div>
         <div class="row">

@@ -30,7 +30,7 @@ class ReadingController extends AbstractController
 {
     /**
      * @Route("/reading/{page<\d+>?1}", name="reading")
-     * @IsGranted("SYSTEM_VIEW")
+     * @IsGranted("SYSTEM_OBSERVER")
      */
     public function index(int $page, PaginationService $pagination, ParameterRepository $parameterRepository, Request $request, SystemRepository $systemRepository, BasinRepository $basinRepository, StationRepository $stationRepository, ReadingRepository $readingRepository)
     {
@@ -164,7 +164,7 @@ class ReadingController extends AbstractController
      * Gère l'encodage d'un nouveau relevé.
      * 
      * @Route("/reading/encode", name="reading_encode")
-     * @IsGranted("SYSTEM_ENCODE")
+     * @IsGranted("SYSTEM_CONTRIBUTOR")
      */
     public function encode(ObjectManager $manager, Request $request)
     {
@@ -205,7 +205,7 @@ class ReadingController extends AbstractController
      * Gère la modification d'un relevé existant.
      * 
      * @Route("/reading/{code}/modify", name="reading_modify")
-     * @IsGranted("SYSTEM_ENCODE", subject="reading")
+     * @IsGranted("SYSTEM_CONTRIBUTOR", subject="reading")
      */
     public function modify(Reading $reading, ObjectManager $manager, Request $request)
     {
@@ -241,7 +241,7 @@ class ReadingController extends AbstractController
      * Gère la validation d'un relevé existant.
      * 
      * @Route("/reading/{code}/validate", name="reading_validate")
-     * @IsGranted("SYSTEM_VALIDATE", subject="reading")
+     * @IsGranted("SYSTEM_MANAGER", subject="reading")
      */
     public function validate(Reading $reading, ObjectManager $manager, Request $request)
     {
@@ -347,7 +347,7 @@ class ReadingController extends AbstractController
      * Affiche un relevé.
      * 
      * @Route("/reading/{code}", name="reading_show")
-     * @IsGranted("SYSTEM_VIEW", subject="reading")
+     * @IsGranted("SYSTEM_OBSERVER", subject="reading")
      */
     public function show(Reading $reading)
     {

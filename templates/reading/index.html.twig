@@ -27,7 +27,7 @@
             faire défiler le contenu. #}
             <div class="alert bg-light mb-3" style="overflow-y: scroll; height: 400px; resize: vertical" id="filter_stations">
                 {% for system in systems %}
-                    {% if is_granted("SYSTEM_VIEW", system) %}
+                    {% if is_granted("SYSTEM_OBSERVER", system) %}
                         <div>
                             <div class="form-check">
                                 <input type="checkbox" name="filter[systems][]" id="filter_systems_{{system.id}}" class="form-check-input" value="{{system.id}}" {% if system in form.vars.data.systems %}checked="checked"{% endif %} />
@@ -186,16 +186,16 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if is_granted('SYSTEM_VIEW', reading) %}
+                                    {% if is_granted('SYSTEM_OBSERVER', reading) %}
                                         <a href="{{path('reading_show', {'code': reading.code })}}"><i class="fas fa-eye"></i></a>
                                     {% endif %}
-                                    {% if is_granted('SYSTEM_ENCODE', reading) %}
+                                    {% if is_granted('SYSTEM_CONTRIBUTOR', reading) %}
                                         <a href="{{path('reading_modify', {'code': reading.code})}}"><i class="fas fa-edit text-primary"></i></a>
                                     {% endif %}
-                                    {% if is_granted('SYSTEM_VALIDATE', reading)%}
+                                    {% if is_granted('SYSTEM_MANAGER', reading)%}
                                         <a href="{{path('reading_validate', {'code': reading.code})}}"><i class="fas fa-flag-checkered text-success"></i></a>
                                     {% endif %}
-                                    {% if is_granted('SYSTEM_DELETE', reading) %}
+                                    {% if is_granted('SYSTEM_MANAGER', reading) %}
                                         <a href="{{path('reading_delete', {'code': reading.code})}}"><i class="fas fa-trash text-danger"></i></a>
                                     {% endif %}
                                 </td>
@@ -212,13 +212,13 @@
                 {{pagination.display}}
 
                 {# Bouton à menu déroulant permettant d'encoder un relevé, pour chaque système #}
-                {% if is_granted('SYSTEM_ENCODE') %}
+                {% if is_granted('SYSTEM_CONTRIBUTOR') %}
                     <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <fa class="fas fa-plus"></fa> Encoder un relevé de système
                     </button>
                     <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                         {% for system in systems %}
-                            {% if is_granted('SYSTEM_ENCODE', system) %}
+                            {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
                                 <a class="dropdown-item" href="{{path('system_reading_encode', {'code': system.code})}}">{{system.name}}</a>
                             {% endif %}
                         {% endfor %}
@@ -226,7 +226,7 @@
                 {% endif %}
 
                 {# Bouton permettant d'encoder un relevé de sation #}
-                {% if is_granted('SYSTEM_ENCODE') %}
+                {% if is_granted('SYSTEM_CONTRIBUTOR') %}
                     <a class="btn btn-secondary" href="{{path('reading_encode')}}" role="button"><fa class="fas fa-plus"></fa> Encoder un relevé de station</a>
                 {% endif %}
 

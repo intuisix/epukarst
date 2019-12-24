@@ -28,7 +28,7 @@ class SystemReadingController extends AbstractController
 {
     /**
      * @Route("/system-reading/{page<\d+>?1}", name="system_reading")
-     * @IsGranted("SYSTEM_VIEW")
+     * @IsGranted("SYSTEM_OBSERVER")
      */
     public function index(int $page, PaginationService $pagination, SystemRepository $systemRepository)
     {
@@ -48,7 +48,7 @@ class SystemReadingController extends AbstractController
      * Gère l'encodage d'un nouveau relevé pour un système.
      * 
      * @Route("/system-reading/encode/{code}", name="system_reading_encode")
-     * @IsGranted("SYSTEM_ENCODE", subject="system")
+     * @IsGranted("SYSTEM_CONTRIBUTOR", subject="system")
      */
     public function encode(System $system, ObjectManager $manager, Request $request, StationRepository $stationRepository, MeasurabilityRepository $instrumentParameterRepository, BasinRepository $basinRepository, StationKindRepository $stationKindRepository, SystemParameterRepository $systemParameterRepository)
     {
@@ -201,7 +201,7 @@ class SystemReadingController extends AbstractController
 
     /**
      * @Route("/system-reading/{code}", name="system_reading_show")
-     * @IsGranted("SYSTEM_VIEW", subject="systemReading")
+     * @IsGranted("SYSTEM_OBSERVER", subject="systemReading")
      */
     public function show(SystemReading $systemReading, ParameterRepository $parameterRepository)
     {

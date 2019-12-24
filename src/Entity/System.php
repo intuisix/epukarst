@@ -114,15 +114,6 @@ class System
     private $basins;
 
     /**
-     * Utilisateurs liés au système.
-     * 
-     * @ORM\OneToMany(targetEntity="App\Entity\UserRole", mappedBy="linkedSystem")
-     * 
-     * @Assert\Valid()
-     */
-    private $userRoles;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\SystemParameter", mappedBy="system", orphanRemoval=true)
      * 
      * @Assert\Valid()
@@ -136,6 +127,8 @@ class System
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\SystemRole", mappedBy="system", orphanRemoval=true)
+     * 
+     * @Assert\Valid()
      */
     private $systemRoles;
 
@@ -328,37 +321,6 @@ class System
             // set the owning side to null (unless already changed)
             if ($basin->getSystem() === $this) {
                 $basin->setSystem(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|UserRole[]
-     */
-    public function getUserRoles(): Collection
-    {
-        return $this->userRoles;
-    }
-
-    public function addUserRole(UserRole $userRole): self
-    {
-        if (!$this->userRoles->contains($userRole)) {
-            $this->userRoles[] = $userRole;
-            $userRole->setLinkedSystem($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUserRole(UserRole $userRole): self
-    {
-        if ($this->userRoles->contains($userRole)) {
-            $this->userRoles->removeElement($userRole);
-            // set the owning side to null (unless already changed)
-            if ($userRole->getLinkedSystem() === $this) {
-                $userRole->setLinkedSystem(null);
             }
         }
 

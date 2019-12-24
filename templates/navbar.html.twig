@@ -25,7 +25,7 @@
             {% endif %}
         </ul>
         <ul class="navbar-nav ml-auto">
-            {% if user.isAdmin|default(false) %}
+            {% if is_granted('ROLE_ADMIN') %}
                 {# Afficher le menu déroulant de l'administration #}
                 <li class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" id="adminDropdownLink">

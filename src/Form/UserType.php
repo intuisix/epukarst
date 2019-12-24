@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -80,13 +81,17 @@ class UserType extends AbstractType
                 ],
             ])
             ->add('systemRoles', CollectionType::class, [
-                'label' => "Rôles",
+                'label' => "Rôles sur les systèmes",
                 'entry_type' => SystemRoleType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
             ])
-            ->add('isAdministrator', CheckboxType::class, [
-                'label' => "Administrateur du logiciel d'encodage",
+            ->add('mainRole', ChoiceType::class, [
+                'label' => "Rôle principal",
+                'choices' => [
+                    "Utilisateur" => null,
+                    "Administrateur" => 'ROLE_ADMIN',
+                ],
                 'required' => false,
             ])
         ;

@@ -8,7 +8,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\SystemRoleRepository")
  * 
- * @UniqueEntity(fields={"system", "author"}, message="L'autorisation est déjà donnée pour le même système au même utilisateur. Veuillez condenser.")
+ * @UniqueEntity(fields={"system", "userAccount"}, message="L'autorisation est déjà donnée pour le même système au même utilisateur. Veuillez condenser.")
  */
 class SystemRole
 {
@@ -29,32 +29,12 @@ class SystemRole
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="systemRoles")
      * @ORM\JoinColumn(nullable=true)
      */
-    private $author;
+    private $userAccount;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="string", length=32)
      */
-    private $canView;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $canEncode;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $canValidate;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $canExport;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $canDelete;
+    private $role;
 
     public function getId(): ?int
     {
@@ -73,74 +53,26 @@ class SystemRole
         return $this;
     }
 
-    public function getAuthor(): ?User
+    public function getUserAccount(): ?User
     {
-        return $this->author;
+        return $this->userAccount;
     }
 
-    public function setAuthor(?User $author): self
+    public function setUserAccount(?User $userAccount): self
     {
-        $this->author = $author;
+        $this->userAccount = $userAccount;
 
         return $this;
     }
 
-    public function getCanView(): ?bool
+    public function getRole(): ?string
     {
-        return $this->canView;
+        return $this->role;
     }
 
-    public function setCanView(?bool $canView): self
+    public function setRole(?string $role): self
     {
-        $this->canView = $canView;
-
-        return $this;
-    }
-
-    public function getCanEncode(): ?bool
-    {
-        return $this->canEncode;
-    }
-
-    public function setCanEncode(?bool $canEncode): self
-    {
-        $this->canEncode = $canEncode;
-
-        return $this;
-    }
-
-    public function getCanValidate(): ?bool
-    {
-        return $this->canValidate;
-    }
-
-    public function setCanValidate(?bool $canValidate): self
-    {
-        $this->canValidate = $canValidate;
-
-        return $this;
-    }
-
-    public function getCanExport(): ?bool
-    {
-        return $this->canExport;
-    }
-
-    public function setCanExport(?bool $canExport): self
-    {
-        $this->canExport = $canExport;
-
-        return $this;
-    }
-
-    public function getCanDelete(): ?bool
-    {
-        return $this->canDelete;
-    }
-
-    public function setCanDelete(?bool $canDelete): self
-    {
-        $this->canDelete = $canDelete;
+        $this->role = $role;
 
         return $this;
     }
