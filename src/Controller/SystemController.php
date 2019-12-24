@@ -59,7 +59,9 @@ class SystemController extends AbstractController
         /* Instancier un nouveau système */
         $system = new System();
         /* Créer et traiter le formulaire */
-        $form = $this->createForm(SystemType::class, $system);
+        $form = $this->createForm(SystemType::class, $system, [
+            'picture_files' => SystemPicture::scanPicturesDir('images/systems'),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
