@@ -211,7 +211,7 @@
                 {% endif %}
 
                 {# Bouton permettant d'exporter les relevés #}
-                {% if is_granted('SYSTEM_EXPORT') %}
+                {% if is_granted('SYSTEM_MANAGER') %}
                     <button type="submit" class="btn btn-secondary" formaction="{{path('reading_export')}}"><i class="fas fa-file-excel"></i> Exporter les relevés sélectionnés</button>
                 {% endif %}
             </form>

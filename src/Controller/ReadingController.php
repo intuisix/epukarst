@@ -284,7 +284,7 @@ class ReadingController extends AbstractController
      * Exporte des relevés.
      * 
      * @Route("/reading/export", name="reading_export")
-     * @IsGranted("SYSTEM_EXPORT")
+     * @IsGranted("SYSTEM_MANAGER")
      *
      * @param ReadingRepository $readingRepository
      * @return Response
