@@ -156,7 +156,15 @@
             </a>
         {% endif %}
 
-        {# Bouton permettant de revenir à la liste #}
+        {# Bouton permettant de modifier le relevé #}
+        {% if is_granted('SYSTEM_CONTRIBUTOR', reading) %}
+            <a href="{{path('reading_delete', {'code': reading.code})}}" class="btn btn-danger">
+                <i class="fas fa-edit"></i>
+                Supprimer ce relevé
+            </a>
+        {% endif %}
+
+        {# Bouton permettant de revenir au relevé #}
         <a href="{{path('reading')}}" class="btn btn-cancel">
             <i class="fas fa-backspace"></i>
             Revenir à la liste

@@ -72,10 +72,10 @@ de modification de relevés #}
             Enregistrer le relevé
         </button>
 
-        {# Bouton pour revenir à l'index #}
-        <a href="{{ path('reading') }}" class="btn btn-cancel">
+        {# Bouton pour revenir au relevé #}
+        <a href="{{path('reading_show', {'code': reading.code})}}" class="btn btn-cancel">
             <i class="fas fa-backspace"></i>
-            Revenir à la liste
+            Revenir au relevé
         </a>
 
         {{form_end(form)}}

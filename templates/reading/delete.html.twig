@@ -14,6 +14,10 @@
             Cette opération est irréversible.
             <br>
             Etes-vous certain de vouloir supprimer ce relevé du <strong>{{reading.fieldDateTime|date('d/m/Y')}}</strong> relatif à la station <strong>{{reading.station}}</strong>&nbsp;?
+            {% if reading.validated %}
+                <br>
+                <strong>Attention, ce relevé est validé&nbsp;!</strong>
+            {% endif %}
         </div>
 
         {# Ajouter un bouton pour confirmer la suppression #}
@@ -22,10 +26,10 @@
             Supprimer le relevé
         </button>
 
-        {# Ajouter un bouton pour revenir à l'index #}
-        <a href="{{ path('reading') }}" class="btn btn-cancel">
+        {# Ajouter un bouton pour revenir au relevé #}
+        <a href="{{path('reading_show', {'code': reading.code})}}" class="btn btn-cancel">
             <i class="fas fa-backspace"></i>
-            Revenir à la liste
+            Revenir au relevé
         </a>
 
         {{form_end(form)}}

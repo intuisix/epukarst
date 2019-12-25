@@ -209,6 +209,17 @@ class ReadingController extends AbstractController
      */
     public function modify(Reading $reading, ObjectManager $manager, Request $request)
     {
+        if (null !== $reading->getValidated()) {
+            if ($this->isGranted('SYSTEM_MANAGER')) {
+                $this->addFlash('info', "Etant donné que le relevé <strong>{$reading->getCode()}</strong> est validé ou invalidé, vous ne pouvez plus le modifier qu'en le validant à nouveau.");
+            } else {
+                $this->addFlash('danger', "Etant donné que le relevé <strong>{$reading->getCode()}</strong> est validé ou invalidé, il ne peut plus être modifié que par un gestionnaire de <strong>{$reading->getStation()->getBasin()->getSystem()->getName()}</strong>.");
+            }
+            return $this->redirectToRoute('reading_show', [
+                'code' => $reading->getCode()
+            ]);
+        }
+
         /* Créer et traiter le formulaire */
         $form = $this->createForm(ReadingType::class, $reading);
         $form->handleRequest($request);
@@ -319,10 +330,18 @@ class ReadingController extends AbstractController
      * Traite la suppression d'un relevé.
      *
      * @Route("reading/{code}/delete", name="reading_delete")
-     * @IsGranted("SYSTEM_DELETE", subject="reading")
+     * @IsGranted("SYSTEM_CONTRIBUTOR", subject="reading")
      */
     public function delete(Reading $reading, Request $request, ObjectManager $manager)
     {
+        if ((null !== $reading->getValidated()) &&
+            (!$this->isGranted('SYSTEM_MANAGER'))) {
+            $this->addFlash('danger', "Etant donné que le relevé <strong>{$reading->getCode()}</strong> est validé ou invalidé, il ne peut être supprimé que par un gestionnaire de <strong>{$reading->getStation()->getBasin()->getSystem()->getName()}</strong>.");
+            return $this->redirectToRoute('reading_show', [
+                'code' => $reading->getCode()
+            ]);
+        }
+
         $form = $this->createFormBuilder()->getForm();
 
         $form->handleRequest($request);
