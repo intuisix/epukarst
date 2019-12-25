@@ -152,8 +152,8 @@ class SystemType extends AbstractType
         usort(
             $view->children['systemRoles']->children,
             function ($a, $b) {
-                $aUser = $a->vars['data']->getAuthor();
-                $bUser = $b->vars['data']->getAuthor();
+                $aUser = $a->vars['data']->getUserAccount();
+                $bUser = $b->vars['data']->getUserAccount();
                 return
                     (($aUser === null) ? null : $aUser->getDisplayName()) <=>
                     (($bUser === null) ? null : $bUser->getDisplayName());
