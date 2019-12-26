@@ -37,7 +37,7 @@ class AlarmController extends AbstractController
 
     /**
      * @Route("/new", name="alarm_new", methods={"GET","POST"})
-     * @IsGranted("IS_USER")
+     * @IsGranted("ROLE_USER")
      */
     public function new(Request $request): Response
     {
@@ -67,7 +67,7 @@ class AlarmController extends AbstractController
 
     /**
      * @Route("/{id}", name="alarm_show", methods={"GET"})
-     * @IsGranted("IS_USER")
+     * @IsGranted("ROLE_USER")
      */
     public function show(Alarm $alarm): Response
     {
