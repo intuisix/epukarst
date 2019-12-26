@@ -30,8 +30,8 @@ class System
      * 
      * @ORM\Column(type="string", length=255)
      * 
-     * @Assert\NotBlank(message="Veuillez renseigner un code")
-     * @Assert\Regex("/^[A-Za-z0-9\-]+$/", message="Le code ne peut contenir que des lettres, des chiffres et des tirets")
+     * @Assert\NotBlank(message="Veuillez définir le code.")
+     * @Assert\Regex("/^[A-Za-z0-9\-]+$/", message="Le code ne peut contenir que des lettres, des chiffres et des tirets.")
      */
     private $code;
 
@@ -40,7 +40,7 @@ class System
      * 
      * @ORM\Column(type="string", length=255)
      * 
-     * @Assert\NotBlank(message="Veuillez renseigner un nom")
+     * @Assert\NotBlank(message="Veuillez définir le nom.")
      */
     private $name;
 
@@ -49,7 +49,7 @@ class System
      * 
      * @ORM\Column(type="string", length=255)
      * 
-     * @Assert\NotBlank(message="Veuillez renseigner une introduction")
+     * @Assert\NotBlank(message="Veuillez définir le texte d'introduction.")
      */
     private $introduction;
 
@@ -58,7 +58,7 @@ class System
      * 
      * @ORM\Column(type="string", length=255)
      * 
-     * @Assert\NotBlank(message="Veuillez renseigner une commune")
+     * @Assert\NotBlank(message="Veuillez définir la commune.")
      */
     private $commune;
 
@@ -67,7 +67,7 @@ class System
      * 
      * @ORM\Column(type="string", length=255)
      * 
-     * @Assert\NotBlank(message="Veuillez renseigner un bassin versant")
+     * @Assert\NotBlank(message="Veuillez définir le bassin versant.")
      */
     private $basin;
 
@@ -76,7 +76,7 @@ class System
      * 
      * @ORM\Column(type="text")
      * 
-     * @Assert\NotBlank(message="Veuillez renseigner une description")
+     * @Assert\NotBlank(message="Veuillez définir la description.")
      */
     private $description;
 
@@ -234,7 +234,7 @@ class System
         return $this->description;
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 

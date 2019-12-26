@@ -12,7 +12,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InstrumentRepository")
  * @UniqueEntity(fields={"code"}, message="Un autre instrument possède déjà ce code. Veuillez en choisir un autre.")
- * @UniqueEntity(fields={"name"}, message="Un autre instrument possède déjà cette dénomination. Veuillez en choisir un autre.")
+ * @UniqueEntity(fields={"name"}, message="Un autre instrument possède déjà cette dénomination. Veuillez en choisir une autre.")
  */
 class Instrument
 {
@@ -28,7 +28,7 @@ class Instrument
      * 
      * @ORM\Column(type="string", length=255)
      * 
-     * @Assert\NotBlank(message="Veuillez renseigner un code")
+     * @Assert\NotBlank(message="Veuillez définir le code.")
      */
     private $code;
 
@@ -37,7 +37,7 @@ class Instrument
      * 
      * @ORM\Column(type="string", length=255)
      * 
-     * @Assert\NotBlank(message="Veuillez renseigner une dénomination")
+     * @Assert\NotBlank(message="Veuillez définir la dénomination.")
      */
     private $name;
 
@@ -60,7 +60,7 @@ class Instrument
      * 
      * @ORM\Column(type="text")
      * 
-     * @Assert\NotBlank(message="Veuillez renseigner une description")
+     * @Assert\NotBlank(message="Veuillez définir la description.")
      */
     private $description;
 
@@ -95,7 +95,7 @@ class Instrument
         return $this->code;
     }
 
-    public function setCode(string $code): self
+    public function setCode(?string $code): self
     {
         $this->code = $code;
 
@@ -107,7 +107,7 @@ class Instrument
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
@@ -143,7 +143,7 @@ class Instrument
         return $this->description;
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 

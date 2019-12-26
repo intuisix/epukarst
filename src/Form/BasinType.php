@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Basin;
 use Symfony\Component\Form\AbstractType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -17,21 +18,24 @@ class BasinType extends AbstractType
             ->add('code', TextType::class, [
                 'label' => "Code identifiant",
                 'attr' => [
-                    'placeholder' => 'Entrez un code unique'
+                    'placeholder' => "Entrez un code unique",
                 ],
+                'required' => true,
             ])
             ->add('name', TextType::class, [
                 'label' => "Nom",
                 'attr' => [
-                    'placeholder' => 'Entrez une dénomination'
+                    'placeholder' => "Entrez la dénomination",
                 ],
+                'required' => true,
             ])
-            ->add('description', TextareaType::class, [
-                'label' => "Description (HTML)",
+            ->add('description', CKEditorType::class, [
+                'label' => "Description",
                 'attr' => [
-                    'placeholder' => 'Entrez une description détaillée',
+                    'placeholder' => "Entrez une description du bassin",
                     'rows' => 5
                 ],
+                'required' => true,
             ])
         ;
     }

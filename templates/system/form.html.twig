@@ -17,7 +17,7 @@ modification de systèmes #}
 
         {{form_start(form)}}
 
-        {# Afficher une barre d'onglets #}
+        {# Barre d'onglets #}
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" id="identification-tab" data-toggle="tab" href="#identification" role="tab" aria-controls="identification" aria-selected="true">Identification</a>
@@ -36,7 +36,7 @@ modification de systèmes #}
             </li>
         </ul>
         <div class="tab-content" id="myTabContent">
-            {# Définir le panneau d'identification #}
+            {# Panneau d'identification #}
             <div class="tab-pane fade show active" id="identification" role="tabpanel" aria-labelledby="identification-tab">
                 <div class="alert">
                     <div class="row">
@@ -55,26 +55,30 @@ modification de systèmes #}
                     </div>
                 </div>
             </div>
-            {# Définir le panneau des photographies #}
+            {# Panneau des photographies #}
             <div class="tab-pane fade" id="pictures" role="tabpanel" aria-labelledby="pictures-tab">
                 <div class="alert">
-                    {{form_row(form.pictures)}}
+                    <p>Ce panneau permet de définir les photos du système. Le premier contrôle permet de charger une ou plusieurs photos qui n'existent pas encore dans la base de données. Les contrôles suivants concerne des photos qui existe déjà dans la base de données.<p>
+                    {# Contrôle pour l'ajout multiple de photos #}
                     {{form_row(form.newPictures)}}
+                    {# Sous-formulaire des photos #}
+                    {{form_row(form.pictures)}}
                 </div>
             </div>
-            {# Définir le panneau des bassins #}
+            {# Panneau des bassins #}
             <div class="tab-pane fade" id="basins" role="tabpanel" aria-labelledby="basins-tab">
+                <p>Ce panneau permet de définir les bassins d'alimentation faisant partie du système.</p>
                 <div class="alert">
                     {{form_row(form.basins)}}
                 </div>
             </div>
-            {# Définir le panneau des paramètres #}
+            {# Panneau des paramètres #}
             <div class="tab-pane fade" id="parameters" role="tabpanel" aria-labelledby="parameters-tab">
                 <div class="alert">
                     {{form_row(form.parameters)}}
                 </div>
             </div>
-            {# Définir le panneau des rôles #}
+            {# Panneau des rôles #}
             <div class="tab-pane fade" id="roles" role="tabpanel" aria-labelledby="roles-tab">
                 <div class="alert">
                     {{form_row(form.systemRoles)}}
@@ -82,13 +86,13 @@ modification de systèmes #}
             </div>
         </div>
 
-        {# Afficher un bouton permettant d'enregistrer le système #}
+        {# Bouton permettant d'enregistrer le système #}
         <button type="submit" class="btn btn-success">
             <i class="fas fa-check"></i>
             Enregistrer le système
         </button>
 
-        {# Afficher un bouton permettant de revenir à l'index #}
+        {# Buton permettant de revenir à l'index #}
         <a href="{{path('systems_list')}}" class="btn btn-cancel">
             <i class="fas fa-backspace"></i>
             Revenir à la liste
@@ -100,7 +104,6 @@ modification de systèmes #}
 
 
 {% block _system_basins_label %}
-    <p>Ce permet de définir les bassins d'alimentation faisant partie du système.</p>
 {% endblock %}
 
 {% block _system_basins_row %}
@@ -120,7 +123,7 @@ modification de systèmes #}
 {% block _system_basins_entry_widget %}
     <div class="form-group alert bg-light" id="{{id}}">
         <div class="row">
-            <div class="col">
+            <div class="col-4">
                 {{form_row(form.name)}}
                 {{form_row(form.code)}}
             </div>
@@ -146,7 +149,6 @@ modification de systèmes #}
 
 
 {% block _system_pictures_label %}
-    <p>Ce panneau permet de définir les photos du système.<p>
 {% endblock %}
 
 {% block _system_pictures_row %}
@@ -154,7 +156,7 @@ modification de systèmes #}
     {# Bouton permettant d'ajouter une photo #}
     <button type="button" data-action="add-picture" class="btn btn-secondary">
         <i class="fas fa-plus"></i>
-        Ajouter manuellement une photo
+        Ajouter une photo existante
     </button>
 {% endblock %}
 

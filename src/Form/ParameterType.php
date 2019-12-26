@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Parameter;
 use App\Repository\ParameterRepository;
 use Symfony\Component\Form\AbstractType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -71,17 +72,16 @@ class ParameterType extends AbstractType
                     'placeholder' => "Introduction indiquant brièvement ce que le paramètre représente"
                 ]
             ])
-            ->add('description', TextareaType::class, [
+            ->add('description', CKEditorType::class, [
                 'label' => "Description détaillée",
                 'attr' => [
-                    'placeholder' => "En format HTML, description détaillée qui permettra aux utilisateurs de savoir à quoi sert le paramètre et en quoi son suivi est utile pour la prévention des pollutions",
+                    'placeholder' => "Entrez une description détaillée qui permettra aux utilisateurs de savoir à quoi sert le paramètre et en quoi son suivi est utile pour la prévention des pollutions",
                     'rows' => 6
                 ],
-                'help' => "En HTML, chaque paragraphe est commencé par <p> et terminé par </p>. Pour mettre un texte en gras, entourez-le de <b> et </b>. Pour les italiques, c'est <i> et </i>. Les hyperliens sont créés avec <a href=\"url-référencé\"> et </a>.",
             ])
             ->add('favorite', CheckboxType::class, [
                 'label' => "Favori",
-                'help' => "S'il est marqué comme favori, ce paramètre apparaîtra dans la liste des relevés et pourra faire l'objet de filtrage.",
+                'help' => "S'il est marqué comme favori, ce paramètre apparaîtra dans les listes de relevés, dans lesquelles les mesures sont rassemblées sous forme agrégée.",
                 'required' => false
             ])
             ->add('position', ChoiceType::class, [

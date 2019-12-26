@@ -6,6 +6,7 @@ use App\Entity\Menu;
 use App\Entity\Post;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -93,13 +94,12 @@ class PostType extends AbstractType
                 'disabled' => false,
                 'required' => false,
             ])
-            ->add('content', TextareaType::class, [
-                'label' => "Contenu (HTML)",
+            ->add('content', CKEditorType::class, [
+                'label' => "Contenu",
                 'attr' => [
-                    'placeholder' => "En utilisant des balises HTML, définissez un contenu pour l'article.",
+                    'placeholder' => "Contenu de l'article, tel qu'il devra être affiché.",
                     'rows' => 15,
                 ],
-                'help' => "En HTML, chaque paragraphe est commencé par <p> et terminé par </p>. Pour mettre un texte en gras, entourez-le de <b> et </b>. Pour les italiques, c'est <i> et </i>. Les hyperliens sont créés avec <a href=\"url-référencé\"> et </a>.",
             ])
         ;
     }

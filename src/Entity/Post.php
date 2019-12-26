@@ -40,11 +40,15 @@ class Post
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * 
+     * @Assert\NotBlank(message="Veuillez définir le titre.")
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     * 
+     * @Assert\NotBlank(message="Veuillez définir le contenu.")
      */
     private $content;
 
@@ -199,7 +203,7 @@ class Post
         return $this->content;
     }
 
-    public function setContent(string $content): self
+    public function setContent(?string $content): self
     {
         $this->content = $content;
 

@@ -27,7 +27,7 @@ class Parameter
      * 
      * @ORM\Column(type="string", length=255)
      * 
-     * @Assert\NotBlank(message="Veuillez renseigner un nom")
+     * @Assert\NotBlank(message="Veuillez définir le nom.")
      */
     private $name;
 
@@ -78,21 +78,21 @@ class Parameter
      * 
      * @ORM\Column(type="text")
      * 
-     * @Assert\NotBlank(message="Veuillez renseigner une description")
+     * @Assert\NotBlank(message="Veuillez définir la description.")
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255)
      * 
-     * @Assert\NotBlank(message="Veuillez renseigner une introduction")
+     * @Assert\NotBlank(message="Veuillez définir le text d'introduction.")
      */
     private $introduction;
 
     /**
      * @ORM\Column(type="string", length=255)
      * 
-     * @Assert\NotBlank(message="Veuillez renseigner un titre")
+     * @Assert\NotBlank(message="Veuillez définir le titre.")
      */
     private $title;
 
@@ -128,7 +128,7 @@ class Parameter
             (empty($this->unit) ? "" : " [$this->unit]");
     }
 
-    public function setName(string $name): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
 
@@ -212,7 +212,7 @@ class Parameter
         return $this->description;
     }
 
-    public function setDescription(string $description): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 
@@ -224,7 +224,7 @@ class Parameter
         return $this->introduction;
     }
 
-    public function setIntroduction(string $introduction): self
+    public function setIntroduction(?string $introduction): self
     {
         $this->introduction = $introduction;
 
@@ -236,7 +236,7 @@ class Parameter
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 

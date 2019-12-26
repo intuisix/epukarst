@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\StationKind;
 use Symfony\Component\Form\AbstractType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -21,8 +22,8 @@ class StationKindType extends AbstractType
                 ],
                 'required' => true,
             ])
-            ->add('description', TextareaType::class, [
-                'label' => "Description (HTML)",
+            ->add('description', CKEditorType::class, [
+                'label' => "Description",
                 'attr' => [
                     'placeholder' => "Entrez une définition du genre de station",
                     'rows' => 5,

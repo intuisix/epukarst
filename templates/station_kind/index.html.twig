@@ -10,7 +10,6 @@
             <thead>
                 <tr>
                     <th>Dénomination</th>
-                    <th>Description</th>
                     <th>Stations</th>
                     <th>Actions</th>
                 </tr>
@@ -20,9 +19,6 @@
                     <tr>
                         <td>
                             {{stationKind.name}}
-                        </td>
-                        <td>
-                            {{stationKind.description|striptags}}
                         </td>
                         <td>
                             {% if stationKind.stations|length %}

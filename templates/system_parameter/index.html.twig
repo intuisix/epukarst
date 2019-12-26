@@ -25,7 +25,7 @@
                     <tr>
                         <td>{{systemParameter.instrumentParameter.parameter.name|default}}</td>
                         <td>{{systemParameter.instrumentParameter.instrument.name|default}}</td>
-                        <td>{{systemParameter.notes|striptags}}</td>
+                        <td>{{systemParameter.notes}}</td>
                         <td>
                             <a href="{{path('system_parameter_update', {'id': systemParameter.id})}}"><i class="fas fa-edit text-primary"></i></a>
                             <a href="{{path('system_parameter_delete', {'id': systemParameter.id})}}"><i class="fas fa-trash text-danger"></i></a>

@@ -8,6 +8,7 @@ use App\Form\MeasurabilityType;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -45,7 +46,7 @@ class InstrumentType extends AbstractType
                     'placeholder' => "Entrez le numéro de série donné par le fabricant (facultatif)",
                 ],
             ])
-            ->add('description', TextareaType::class, [
+            ->add('description', CKEditorType::class, [
                 'label' => "Description détaillée",
                 'attr' => [
                     'placeholder' => "Entrez une description détaillée de l'instrument, comme, par exemple, son utilité, ses instructions d'utilisation, ses précautions de sécurité, la façon de vérifier son bon fonctionnement, ...",

@@ -8,6 +8,7 @@ use App\Form\SystemPictureType;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\File;
@@ -66,13 +67,12 @@ class SystemType extends AbstractType
                     'placeholder' => "Entrez une introduction générale, qui sera affichée juste en-dessous du nom du système"
                 ]
             ])
-            ->add('description', TextareaType::class, [
-                'label' => "Description détaillée (HTML)",
+            ->add('description', CKEditorType::class, [
+                'label' => "Description détaillée",
                 'attr' => [
                     'rows' => 8,
-                    'placeholder' => "En utilisant le format HTML, entrez une description détaillée qui permettra aux visiteurs de découvrir les particularités du système et les raisons pour lesquelles il est étudié"
+                    'placeholder' => "Entrez une description détaillée qui permettra aux visiteurs de découvrir les particularités du système et les raisons pour lesquelles il est étudié",
                 ],
-                'help' => "En HTML, chaque paragraphe est commencé par <p> et terminé par </p>. Pour mettre un texte en gras, entourez-le de <b> et </b>. Pour les italiques, c'est <i> et </i>. Les hyperliens sont créés avec <a href=\"url-référencé\"> et </a>.",
             ])
             ->add('pictures', CollectionType::class, [
                 'label' => 'Photographies',
