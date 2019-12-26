@@ -34,7 +34,9 @@
                                 <label for="filter_systems_{{system.id}}" class="form-check-label">
                                     <strong>{{system.name}}</strong>
                                 </label>
-                                <span class="badge badge-secondary float-right">{{system.code}}</span>
+                                {% if 0 %}
+                                    <span class="badge badge-secondary float-right">{{system.code}}</span>
+                                {% endif %}
                             </div>
                             {% for basin in system.basins %}
                                 <div class="ml-4">
@@ -43,7 +45,9 @@
                                         <label for="filter_basins_{{basin.id}}" class="form-check-label">
                                             {{basin.name}}
                                         </label>
-                                        <span class="badge badge-secondary  float-right">{{basin.code}}</span>
+                                        {% if 0 %}
+                                            <span class="badge badge-secondary  float-right">{{basin.code}}</span>
+                                        {% endif %}
                                     </div>
                                     {% for station in basin.stations %}
                                         <div class="ml-4">
@@ -52,7 +56,9 @@
                                                 <label class="form-check-label" for="filter_stations_{{station.id}}">
                                                     <em>{{station.name}}</em>
                                                 </label>
-                                                <span class="badge badge-secondary float-right">{{station.code}}</span>
+                                                {% if 0 %}
+                                                    <span class="badge badge-secondary float-right">{{station.code}}</span>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     {% endfor %}
