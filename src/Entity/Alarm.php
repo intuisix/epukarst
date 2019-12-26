@@ -61,7 +61,9 @@ class Alarm
     private $notes;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Measure", inversedBy="alarms")
+     * @ORM\OneToMany(targetEntity="App\Entity\Measure", mappedBy="alarm", orphanRemoval=true)
+     * 
+     * @Assert\Valid()
      */
     private $measures;
 

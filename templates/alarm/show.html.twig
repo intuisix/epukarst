@@ -22,7 +22,7 @@
                 </tr>
                 <tr>
                     <th>Date de signalement</th>
-                    <td>{{ alarm.reportingDate ? alarm.reportingDate|date('d/m/Y') : ''}}</td>
+                    <td>{{alarm.reportingDate ? alarm.reportingDate|date('d/m/Y') : ''}}</td>
                 </tr>
                 <tr>
                     <th>Signalé par</th>
@@ -30,10 +30,59 @@
                 </tr>
                 <tr>
                     <th>Remarques</th>
-                    <td>{{alarm.notes}}</td>
+                    <td>{{alarm.notes|nl2br}}</td>
                 </tr>
             </tbody>
         </table>
+
+        {% if alarm.measures|length %}
+            <h2>Mesures problématiques</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Relevé</th>
+                        <th>Station</th>
+                        <th>Paramètre</th>
+                        <th>Unité</th>
+                        <th>Valeur mesurée</th>
+                        <th>Minimum normatif</th>
+                        <th>Maximum normatif</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for measure in alarm.measures %}
+                        {% set parameter = measure.measurability.parameter %}
+                        <tr>
+                            <td>
+                                <a href="{{path('reading_show', {'code': measure.reading})}}">
+                                    <span class="badge badge-secondary">{{measure.reading.code}}</span>
+                                </a>
+                            </td>
+                            <td>{{measure.reading.station.name}}</td>
+                            <td>{{parameter.name}}</td>
+                            <td>{{parameter.unit}}</td>
+                            <td>{{measure.value}}</td>
+                            <td>
+                                {% if parameter.normativeMinimum is not null %}
+                                    {{parameter.normativeMinimum}}
+                                    {% if measure.value < parameter.normativeMinimum %}
+                                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if parameter.normativeMaximum is not null %}
+                                    {{parameter.normativeMaximum}}
+                                    {% if measure.value > parameter.normativeMaximum %}
+                                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
 
         {% if is_granted('SYSTEM_CONTRIBUTOR', alarm) %}
             <a href="{{path('alarm_edit', {'id': alarm.id})}}" class="btn btn-primary">

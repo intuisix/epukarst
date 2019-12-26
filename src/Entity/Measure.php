@@ -84,9 +84,10 @@ class Measure
     private $conversionDone;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Alarm", mappedBy="measures")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Alarm", inversedBy="measures")
+     * @ORM\JoinColumn(nullable=true)
      */
-    private $alarms;
+    private $alarm;
 
     /**
      * Construit une mesure.
@@ -94,7 +95,6 @@ class Measure
     public function __construct(bool $conversionRequired = false)
     {
         $this->conversionRequired = $conversionRequired;
-        $this->alarms = new ArrayCollection();
     }
 
     /**
@@ -307,30 +307,14 @@ class Measure
         return $this;
     }
 
-    /**
-     * @return Collection|Alarm[]
-     */
-    public function getAlarms(): Collection
+    public function getAlarm(): ?Alarm
     {
-        return $this->alarms;
+        return $this->alarm;
     }
 
-    public function addAlarm(Alarm $alarm): self
+    public function setAlarm(?Alarm $alarm): self
     {
-        if (!$this->alarms->contains($alarm)) {
-            $this->alarms[] = $alarm;
-            $alarm->addMeasure($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAlarm(Alarm $alarm): self
-    {
-        if ($this->alarms->contains($alarm)) {
-            $this->alarms->removeElement($alarm);
-            $alarm->removeMeasure($this);
-        }
+        $this->alarm = $alarm;
 
         return $this;
     }

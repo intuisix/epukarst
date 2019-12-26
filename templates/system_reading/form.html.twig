@@ -76,6 +76,20 @@
                     </thead>
                     {# Afficher les relevés de stations #}
                     {{form_widget(form.stationReadings)}}
+                    <tfoot>
+                        <tr>
+                            <td>
+                                Valeurs normatives
+                            </td>
+                            {% for systemParameter in systemParameters %}
+                                <td class="text-center">
+                                    {{systemParameter.instrumentParameter.parameter.normativeMinimum}}
+                                    -
+                                    {{systemParameter.instrumentParameter.parameter.normativeMaximum}}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    </tfoot>
                 </table>
                 <small class="text-muted">Introduisez <strong>toutes</strong> les valeurs qui ont été mesurées, en veillant à respecter l'unité du paramètre concerné. Complétez la valeur en décochant &laquo;&nbsp;S&nbsp;&raquo; si la valeur était instable lors de la mesure, et &laquo;&nbsp;V&nbsp;&raquo; si une valeur est hors gamme ou qu'elle vous paraît invalide.</small>
             </div>

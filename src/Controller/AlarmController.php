@@ -110,7 +110,7 @@ class AlarmController extends AbstractController
             /* Supprimer l'alarme */
             $manager->remove($alarm);
             $manager->flush();
-            $this->addFlash('success', "L'alarme relative à {$alarm->getSystem()->getName()} a été supprimée avec succès.");    
+            $this->addFlash('success', "L'alarme relative à <strong>{$alarm->getSystem()->getName()}</strong> a été supprimée avec succès.");    
             return $this->redirectToRoute('alarm_index');
         }
 

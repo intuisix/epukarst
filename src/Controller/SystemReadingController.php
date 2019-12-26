@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Alarm;
 use App\Entity\System;
 use App\Entity\Measure;
 use App\Entity\Reading;
@@ -117,6 +118,9 @@ class SystemReadingController extends AbstractController
             $encodingDateTime = $systemReading->getEncodingDateTime();
             $encodingAuthor = $systemReading->getEncodingAuthor();
 
+            /* Préparer le test des valeurs normatives */
+            $alarm = null;
+
             /* Traiter chacun des relevés de station */
             foreach ($systemReading->getStationReadings() as $stationReading) {
                 $station = $stationReading->getStation();
@@ -138,6 +142,9 @@ class SystemReadingController extends AbstractController
                             ->setEncodingDateTime($encodingDateTime)
                             ->setEncodingAuthor($encodingAuthor)
                             ->setReading($stationReading);
+
+                        /* Détecter les valeurs hors normes */
+                        $alarm = $this->testNormativeLimits($measure, $alarm);
                         $manager->persist($measure);
                     }
 
@@ -156,6 +163,13 @@ class SystemReadingController extends AbstractController
 
             /* Persister le relevé de système dans la base de données */
             $manager->persist($systemReading);
+
+            /* */
+            if (null !== $alarm) {
+                $manager->persist($alarm);
+                $this->addFlash('warning', "Une alarme a été créée automatiquement car certaines valeurs dépassent les normes.");
+            }
+
             $manager->flush();
 
             $this->addFlash('success', "Le relevé <strong>{$systemReading->getCode()}</strong> contenant <strong>{$systemReading->getStationReadings()->count()}</strong> relevés de stations a été encodé avec succès.");
@@ -209,5 +223,71 @@ class SystemReadingController extends AbstractController
             'systemReading' => $systemReading,
             'parameters' => $parameterRepository->findFavorites(),
         ]);
+    }
+
+    /**
+     * Détecte si la valeur d'une mesure est hors norme et, dans ce cas,
+     * crée automatiquement une alarme.
+     *
+     * @param Measure $measure
+     * @param Alarm $alarm
+     * @return Alarm
+     */
+    private function testNormativeLimits(Measure $measure, ?Alarm $alarm): ?Alarm
+    {
+        if ($measure->getValid()) {
+            /* Obtenir la valeur et le paramètre */
+            $value = $measure->getValue();
+            $parameter = $measure->getMeasurability()->getParameter();
+            /* Tester la limite inférieure */
+            $minimum = $parameter->getNormativeMinimum();
+            if ((null !== $minimum) && ($value < $minimum)) {
+                $alarm = $this->createNormativeAlarm($alarm, $measure,
+                    " - " . $measure->getReading()->getStation()->getName() .
+                    " : " . $parameter->getTitle() .
+                    " = " . $value . " < " . $minimum . " " .
+                    $parameter->getUnit());
+            }
+            /* Tester la limite supérieure */
+            $maximum = $parameter->getNormativeMaximum();
+            if ((null !== $maximum) && ($value > $maximum)) {
+                $alarm = $this->createNormativeAlarm($alarm, $measure,
+                    " - " . $measure->getReading()->getStation()->getName() .
+                    " : " . $parameter->getTitle() .
+                    " = " . $value . " > " . $maximum . " " .
+                    $parameter->getUnit());
+            }
+        }
+        return $alarm;
+    }
+
+    /**
+     * Crée une alarme normative, si elle n'existe pas encore, et y ajoute la
+     * mesure indiquée.
+     *
+     * @param Alarm|null $alarm
+     * @param Measure $measure
+     * @param string $note
+     * @return Alarm|null
+     */
+    private function createNormativeAlarm(?Alarm $alarm, Measure $measure, string $note): ?Alarm
+    {
+        if (null === $alarm) {
+            /* Créer une nouvelle alarme */
+            $alarm = new Alarm();
+            $alarm
+                ->setSystem($measure->getReading()->getStation()->getBasin()->getSystem())
+                ->setReportingAuthor($measure->getEncodingAuthor())
+                ->setReportingDate($measure->getEncodingDateTime())
+                ->setNotes("Certaines valeurs mesurées dépassent les normes.");
+        }
+        /* Ajouter le commentaire à l'alarme */
+        if (!empty($note)) {
+            $alarm->setNotes($alarm->getNotes() . PHP_EOL . $note);
+        }
+        /* Ajouter la mesure à l'alarme */
+        $alarm->addMeasure($measure);
+        $measure->setAlarm($alarm);
+        return $alarm;
     }
 }
