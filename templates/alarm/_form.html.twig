@@ -3,13 +3,14 @@
 
     <p>Ce formulaire permet de définir une alarme de pollution relative à l'un des systèmes karstiques étudiés. Une telle alarme peut être signalée notamment dans les situations où lorsque des activités polluantes sont observées ou que des mesures dépassent les seuils normatifs.</p>
 
-    {{form_row(form.system)}}
     <div class="row">
         <div class="col">
+            {{form_row(form.system)}}
             {{form_row(form.beginningDate)}}
             {{form_row(form.endingDate)}}
         </div>
         <div class="col">
+            {{form_row(form.kind)}}
             {{form_row(form.reportingAuthor)}}
             {{form_row(form.reportingDate)}}
         </div>

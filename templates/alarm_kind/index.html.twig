@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Types d'alarme
+{% endblock %}
+
+{% block body %}
+    <div class="container mb-3">
+        <h1>Types d'alarme</h1>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Dénomination</th>
+                    <th>Alarmes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alarmKind in alarmKinds|sort((a, b) => (a.name <=> b.name)) %}
+                    <tr>
+                        <td>
+                            {{alarmKind.name}}
+                        </td>
+                        <td>
+                            {% if alarmKind.alarms|length %}
+                                <span class="badge badge-primary badge-pill">
+                                        {{alarmKind.alarms|length}}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{path('alarm_kind_modify', {'id': alarmKind.id})}}" class="text-primary"><i class="fas fa-edit"></i></a>
+                            <a href="{{path('alarm_kind_delete', {'id': alarmKind.id})}}" class="text-danger" data-action="delete"><i class="fas fa-trash"></i></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="100">Il n'y a pas de type d'alarme.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{{ path('alarm_kind_create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Ajouter un type d'alarme
+        </a>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        /* Programme une demande de confirmation chaque fois que l'on clique
+        sur un bouton de suppression de type */
+        $('a[data-action="delete"]').click(function() {
+            return confirm("Etes-vous sûr de vouloir supprimer ce type d'alarme ?");
+        });
+    </script>
+{% endblock %}

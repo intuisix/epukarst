@@ -28,6 +28,11 @@ class Alarm
     private $system;
 
     /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\AlarmKind", inversedBy="alarms")
+     */
+    private $kind;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $beginningDate;
@@ -78,6 +83,18 @@ class Alarm
     public function setSystem(?System $system): self
     {
         $this->system = $system;
+
+        return $this;
+    }
+
+    public function getKind(): ?AlarmKind
+    {
+        return $this->kind;
+    }
+
+    public function setKind(?AlarmKind $kind): self
+    {
+        $this->kind = $kind;
 
         return $this;
     }

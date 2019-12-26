@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\User;
 use App\Entity\Alarm;
 use App\Entity\System;
+use App\Entity\AlarmKind;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -54,7 +55,13 @@ class AlarmType extends AbstractType
                 'required' => true,
                 'placeholder' => "Sélectionnez un système",
             ])
-//            ->add('measures')
+            ->add('kind', EntityType::class, [
+                'label' => "Type",
+                'class' => AlarmKind::class,
+                'choice_label' => 'name',
+                'required' => false,
+                'placeholder' => "Sélectionnez un type",
+            ])
         ;
     }
 
