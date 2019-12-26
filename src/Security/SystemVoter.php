@@ -2,6 +2,7 @@
 namespace App\Security;
 
 use App\Entity\User;
+use App\Entity\Alarm;
 use App\Entity\System;
 use App\Entity\Reading;
 use App\Entity\Station;
@@ -36,6 +37,7 @@ class SystemVoter extends Voter
                 ($subject instanceof SystemParameter) ||
                 ($subject instanceof Reading) ||
                 ($subject instanceof SystemReading) ||
+                ($subject instanceof Alarm) ||
                 ($subject === null));
     }
 
@@ -45,9 +47,6 @@ class SystemVoter extends Voter
         $user = $token->getUser();
         if ($user instanceof User)
         {
-            /*if ($this->security->isGranted('ROLE_ADMIN'))
-                return true;*/
-
             if (null === $subject) {
                 return true;
             } else {
@@ -61,6 +60,8 @@ class SystemVoter extends Voter
                     $system = $subject->getSystem();
                 } else if ($subject instanceof Reading) {
                     $system = $subject->getStation()->getBasin()->getSystem();
+                } else if ($subject instanceof Alarm) {
+                    $system = $subject->getSystem();
                 } else {
                     throw new \LogicException('Classe inconnue');
                 }

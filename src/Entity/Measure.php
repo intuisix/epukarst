@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -82,11 +84,17 @@ class Measure
     private $conversionDone;
 
     /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Alarm", mappedBy="measures")
+     */
+    private $alarms;
+
+    /**
      * Construit une mesure.
      */
     public function __construct(bool $conversionRequired = false)
     {
         $this->conversionRequired = $conversionRequired;
+        $this->alarms = new ArrayCollection();
     }
 
     /**
@@ -295,6 +303,34 @@ class Measure
     public function setFieldDateTime(?\DateTimeInterface $fieldDateTime): self
     {
         $this->fieldDateTime = $fieldDateTime;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Alarm[]
+     */
+    public function getAlarms(): Collection
+    {
+        return $this->alarms;
+    }
+
+    public function addAlarm(Alarm $alarm): self
+    {
+        if (!$this->alarms->contains($alarm)) {
+            $this->alarms[] = $alarm;
+            $alarm->addMeasure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAlarm(Alarm $alarm): self
+    {
+        if ($this->alarms->contains($alarm)) {
+            $this->alarms->removeElement($alarm);
+            $alarm->removeMeasure($this);
+        }
 
         return $this;
     }

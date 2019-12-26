@@ -133,6 +133,11 @@ class System
     private $systemRoles;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Alarm", mappedBy="system")
+     */
+    private $alarms;
+
+    /**
      * Construit un nouveau système.
      */
     public function __construct()
@@ -143,6 +148,7 @@ class System
         $this->parameters = new ArrayCollection();
         $this->systemReadings = new ArrayCollection();
         $this->systemRoles = new ArrayCollection();
+        $this->alarms = new ArrayCollection();
     }
 
     public function __toString()
@@ -414,6 +420,37 @@ class System
             // set the owning side to null (unless already changed)
             if ($systemRole->getSystem() === $this) {
                 $systemRole->setSystem(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Alarm[]
+     */
+    public function getAlarms(): Collection
+    {
+        return $this->alarms;
+    }
+
+    public function addAlarm(Alarm $alarm): self
+    {
+        if (!$this->alarms->contains($alarm)) {
+            $this->alarms[] = $alarm;
+            $alarm->setSystem($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAlarm(Alarm $alarm): self
+    {
+        if ($this->alarms->contains($alarm)) {
+            $this->alarms->removeElement($alarm);
+            // set the owning side to null (unless already changed)
+            if ($alarm->getSystem() === $this) {
+                $alarm->setSystem(null);
             }
         }
 

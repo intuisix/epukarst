@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Supprimer l'alarme
+{% endblock %}
+
+{% block body %}
+    <div class="container mb-3">
+        <h1>Supprimer l'alarme</h1>
+
+        {{form_start(form)}}
+
+        <div class="alert alert-danger">
+            Cette opération est irréversible.
+            <br>
+            Etes-vous certain de vouloir supprimer l'alarme du <strong>{{alarm.reportingDate|date('d/m/Y')}}</strong> à propos de <strong>{{alarm.system.name}}</strong>&nbsp;?
+        </div>
+
+        {# Bouton pour confirmer la suppression #}
+        <button type="submit" class="btn btn-danger">
+            <i class="fa fa-trash" aria-hidden="true"></i>
+            Supprimer l'alarme
+        </button>
+
+        {# Bouton pour revenir à l'index #}
+        <a href="{{path('alarm_index')}}" class="btn btn-cancel">
+            <i class="fas fa-backspace"></i>
+            Revenir à la liste
+        </a>
+
+        {{form_end(form)}}
+    </div>
+{% endblock %}

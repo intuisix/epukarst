@@ -1,0 +1,32 @@
+<div class="container">
+    {{form_start(form)}}
+
+    <p>Ce formulaire permet de définir une alarme de pollution relative à l'un des systèmes karstiques étudiés. Une telle alarme peut être signalée notamment dans les situations où lorsque des activités polluantes sont observées ou que des mesures dépassent les seuils normatifs.</p>
+
+    {{form_row(form.system)}}
+    <div class="row">
+        <div class="col">
+            {{form_row(form.beginningDate)}}
+            {{form_row(form.endingDate)}}
+        </div>
+        <div class="col">
+            {{form_row(form.reportingAuthor)}}
+            {{form_row(form.reportingDate)}}
+        </div>
+    </div>
+    {{form_row(form.notes)}}
+
+    {# Bouton d'enregistrement #}
+    <button type="submit" class="btn btn-success">
+        <i class="fas fa-check"></i>
+        {{button_label|default('Enregistrer')}}
+    </button>
+
+    {# Bouton permettant de revenir à la liste #}
+    <a href="{{path('alarm_index')}}" class="btn btn-cancel">
+        <i class="fas fa-backspace"></i>
+        Revenir à la liste
+    </a>
+
+    {{form_end(form)}}
+</div>

@@ -16,11 +16,14 @@
             {% endfor %}
             {# Afficher les autres menus #}
             <li class="nav-item">
-                <a class="nav-link" href="{{path('system')}}">Systèmes</a>
+                <a href="{{path('system')}}" class="nav-link">Systèmes</a>
             </li>
             {% if user %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{path('reading')}}">Relevés</a>
+                    <a href="{{path('reading')}}" class="nav-link">Relevés</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{path('alarm_index')}}" class="nav-link">Alarmes</a>
                 </li>
             {% endif %}
         </ul>
@@ -32,17 +35,17 @@
                         <i class="fas fa-cogs"></i> Administration
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="adminDropdownLink">
-                        <a class="dropdown-item" href="{{path('system_reading')}}">Relevés de systèmes</a>
-                        <a class="dropdown-item" href="{{path('systems_list')}}">Systèmes étudiés</a>
+                        <a href="{{path('system_reading')}}" class="dropdown-item">Relevés de systèmes</a>
+                        <a href="{{path('systems_list')}}" class="dropdown-item">Systèmes étudiés</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{path('station_kind')}}">Genres de station</a>
+                        <a href="{{path('station_kind')}}" class="dropdown-item">Genres de station</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{path('instrument')}}">Instruments de mesure</a>
-                        <a class="dropdown-item" href="{{path('parameter')}}">Paramètres étudiés</a>
+                        <a href="{{path('instrument')}}" class="dropdown-item">Instruments de mesure</a>
+                        <a href="{{path('parameter')}}" class="dropdown-item">Paramètres étudiés</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{path('user')}}">Utilisateurs</a>
+                        <a href="{{path('user')}}" class="dropdown-item">Utilisateurs</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{path('post')}}">Articles du site public</a>
+                        <a href="{{path('post')}}" class="dropdown-item">Articles du site public</a>
                     </div>
                 </li>
             {% endif %}

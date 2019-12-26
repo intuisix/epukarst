@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Alarme{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Alarme</h1>
+
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th width="25%">Système</th>
+                    <td>{{alarm.system.name}}</td>
+                </tr>
+                <tr>
+                    <th>Date de début</th>
+                    <td>{{alarm.beginningDate ? alarm.beginningDate|date('d/m/Y') : ''}}</td>
+                </tr>
+                <tr>
+                    <th>Date de fin</th>
+                    <td>{{alarm.endingDate ? alarm.endingDate|date('d/m/Y') : ''}}</td>
+                </tr>
+                <tr>
+                    <th>Date de signalement</th>
+                    <td>{{ alarm.reportingDate ? alarm.reportingDate|date('d/m/Y') : ''}}</td>
+                </tr>
+                <tr>
+                    <th>Signalé par</th>
+                    <td>{{alarm.reportingAuthor.displayName}}</td>
+                </tr>
+                <tr>
+                    <th>Remarques</th>
+                    <td>{{alarm.notes}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% if is_granted('SYSTEM_CONTRIBUTOR', alarm) %}
+            <a href="{{path('alarm_edit', {'id': alarm.id})}}" class="btn btn-primary">
+                <i class="fas fa-edit"></i>
+                Modifier l'alarme
+            </a>
+            <a href="{{path('alarm_delete', {'id': alarm.id})}}" class="btn btn-danger">
+                <i class="fas fa-trash"></i>
+                Supprimer l'alarme
+            </a>
+        {% endif %}
+        <a href="{{path('alarm_index')}}" class="btn btn-cancel">
+            <i class="fas fa-backspace"></i>
+            Revenir à la liste
+        </a>
+    </div>
+{% endblock %}

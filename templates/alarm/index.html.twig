@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Alarmes
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Alarmes</h1>
+
+        <table class="table table-border table-striped">
+            <thead>
+                <tr>
+                    <th>Date de signalement</th>
+                    <th>Système</th>
+                    <th>Date de début</th>
+                    <th>Date de fin</th>
+                    <th>Etat</th>
+                    <th>Signalé par</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alarm in pagination.data %}
+                    <tr>
+                        <td>{{alarm.reportingDate ? alarm.reportingDate|date('d/m/Y') : ''}}</td>
+                        <td>{{alarm.system.name}}</td>
+                        <td>
+                            {% if alarm.beginningDate %}
+                                {{alarm.beginningDate|date('d/m/Y')}}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if alarm.endingDate %}
+                                {{alarm.endingDate|date('d/m/Y')}}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if alarm.endingDate is null or alarm.endingDate > date() %}
+                                <span class="badge badge-warning">En cours</span>
+                            {% else %}
+                                <span class="badge badge-success">Terminé</span>
+                            {% endif %}
+                        </td>
+                        <td>{{alarm.reportingAuthor.displayName}}</td>
+                        <td>
+                            <a href="{{path('alarm_show', {'id': alarm.id})}}" class="text-primary"><i class="fas fa-eye"></i></a>
+                            {% if is_granted('SYSTEM_CONTRIBUTOR', alarm) %}
+                                <a href="{{path('alarm_edit', {'id': alarm.id})}}" class="text-primary"><i class="fas fa-edit"></i></a>
+                                <a href="{{path('alarm_delete', {'id': alarm.id})}}" class="text-danger"><i class="fas fa-trash"></i></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="100"><em>Il n'y a pas d'alarmes.</em></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {# Navigateur de pagination #}
+        {{pagination.display}}
+
+        <a href="{{path('alarm_new')}}" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            Créer une alarme
+        </a>
+    </div>
+{% endblock %}
