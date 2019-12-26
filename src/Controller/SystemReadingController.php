@@ -175,7 +175,7 @@ class SystemReadingController extends AbstractController
      * Traite la suppression d'un relevé de système.
      *
      * @Route("system-reading/{code}/delete", name="system_reading_delete")
-     * @IsGranted("SYSTEM_DELETE", subject="systemReading")
+     * @IsGranted("SYSTEM_MANAGER", subject="systemReading")
      */
     public function delete(SystemReading $systemReading, Request $request, ObjectManager $manager)
     {
