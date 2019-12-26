@@ -132,7 +132,10 @@ class SystemController extends AbstractController
      */
     public function delete(System $system, ObjectManager $manager, Request $request)
     {
-        if (count($system->getBasins()) > 0) {
+        if ((count($system->getSystemReadings()) > 0) ||
+            (count($system->getAlarms()) > 0)) {
+            $this->addFlash('danger', "Vous ne pouvez pas supprimer le système <strong>{$system->getName()}</strong> car il possède des relevés ou des alarmes.");
+        } elseif (count($system->getBasins()) > 0) {
             $this->addFlash('danger', "Vous ne pouvez pas supprimer le système <strong>{$system->getName()}</strong> car il possède des bassins.");
         } else {
             $form = $this->createFormBuilder()->getForm();
