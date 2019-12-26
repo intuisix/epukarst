@@ -41,7 +41,7 @@ class SystemStationType extends AbstractType
                 'placeholder' => "Sélectionnez un bassin",
             ])
             ->add('kind', EntityType::class, [
-                'label' => "Genre",
+                'label' => "Type",
                 'class' => StationKind::class,
                 'choice_label' => 'name',
                 'placeholder' => "Sélectionnez un genre (facultatif)",

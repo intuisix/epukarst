@@ -1,10 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Genres de station{% endblock %}
+{% block title %}
+    Types de station
+{% endblock %}
 
 {% block body %}
     <div class="container mb-3">
-        <h1>Genres de stations</h1>
+        <h1>Types de stations</h1>
 
         <table class="table table-bordered table-striped">
             <thead>
@@ -32,12 +34,16 @@
                             <a href="{{path('station_kind_delete', {'id': stationKind.id})}}" class="text-danger" data-action="delete"><i class="fas fa-trash"></i></a>
                         </td>
                     </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="100">Il n'y a pas de type de station.</td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
 
-        <a href="{{ path('station_kind_create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Ajouter un genre de station
+        <a href="{{path('station_kind_create')}}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Ajouter un type de station
         </a>
     </div>
 {% endblock %}
@@ -45,9 +51,9 @@
 {% block javascripts %}
     <script>
         /* Programme une demande de confirmation chaque fois que l'on clique
-        sur un bouton de suppression de genre */
+        sur un bouton de suppression de type */
         $('a[data-action="delete"]').click(function() {
-            return confirm("Etes-vous sûr de vouloir supprimer ce genre de station ?");
+            return confirm("Etes-vous sûr de vouloir supprimer ce type de station ?");
         });
     </script>
 {% endblock %}

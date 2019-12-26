@@ -18,14 +18,14 @@ class StationKindType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => "Dénomination",
                 'attr' => [
-                    'placeholder' => "Entrez le nom du genre de station (p.ex. stalactite, résurgence, ...)",
+                    'placeholder' => "Stalactite, résurgence, ...",
                 ],
                 'required' => true,
             ])
             ->add('description', CKEditorType::class, [
                 'label' => "Description",
                 'attr' => [
-                    'placeholder' => "Entrez une définition du genre de station",
+                    'placeholder' => "Entrez une définition du type de station",
                     'rows' => 5,
                 ],
                 'required' => false,
