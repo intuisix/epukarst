@@ -7,6 +7,7 @@ use App\Entity\Reading;
 use App\Entity\Station;
 use App\Form\MeasureType;
 use Symfony\Component\Form\FormView;
+use App\Repository\StationRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -26,6 +27,8 @@ class ReadingType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $user = $options['user'];
+
         $builder
             ->add('station', EntityType::class, [
                 'label' => 'Station',
@@ -36,7 +39,10 @@ class ReadingType extends AbstractType
                 },
                 'group_by' => function(Station $station) {
                     return $station->getBasin()->getSystem()->getName();
-                }
+                },
+                'query_builder' => function(StationRepository $repository) use ($user) {
+                    return $repository->createQueryBuilderGranted($user);
+                },
             ])
             ->add('code', TextType::class, [
                 'label' => "Code du relevé",
@@ -55,24 +61,30 @@ class ReadingType extends AbstractType
                 'entry_type' => MeasureType::class,
                 'allow_add' => true,
                 'allow_delete' => true ])
-            ->add('encodingDateTime', DateTimeType::class, [
-                    'label' => "Date d'encodage",
-                    'date_widget' => 'single_text',
-                    'time_widget' => 'single_text',
-                    'disabled' => true,
+            ;
+
+        if ($options['encoding'] === true) {
+            $builder
+                ->add('encodingDateTime', DateTimeType::class, [
+                        'label' => "Date d'encodage",
+                        'date_widget' => 'single_text',
+                        'time_widget' => 'single_text',
+                        'disabled' => true,
+                    ])
+                ->add('encodingAuthor', TextType::class, [
+                        'label' => "Auteur de l'encodage",
+                        'disabled' => true,
+                    ])
+                ->add('encodingNotes', TextareaType::class, [
+                    'label' => "Remarques de l'encodage",
+                    'required' => false,
+                    'attr' => [
+                        'placeholder' => "Introduisez vos remarques concernant l'observation et/ou l'encodage",
+                        'rows' => 4,
+                    ],
                 ])
-            ->add('encodingAuthor', TextType::class, [
-                    'label' => "Auteur de l'encodage",
-                    'disabled' => true,
-                ])
-            ->add('encodingNotes', TextareaType::class, [
-                'label' => "Remarques de l'encodage",
-                'required' => false,
-                'attr' => [
-                    'placeholder' => "Introduisez vos remarques concernant l'observation et/ou l'encodage",
-                ],
-            ])
-        ;
+            ;
+        }
 
         if ($options['validation'] === true) {
             $builder
@@ -91,6 +103,7 @@ class ReadingType extends AbstractType
                     'required' => false,
                     'attr' => [
                         'placeholder' => "Introduisez vos remarques concernant la validation",
+                        'rows' => 4,
                     ],
                 ])
                 ->add('validated', ChoiceType::class, [
@@ -120,9 +133,14 @@ class ReadingType extends AbstractType
     
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => Reading::class,
-            'validation' => false,
-        ]);
+        $resolver
+            ->setDefaults([
+                'data_class' => Reading::class,
+                'encoding'   => true,
+                'validation' => false,
+            ])
+            ->setRequired('user')
+            ->setAllowedTypes('user', 'App\Entity\User')
+        ;
     }
 }

@@ -175,13 +175,15 @@ class ReadingController extends AbstractController
             ->setEncodingDateTime(new DateTime('now'));
 
         /* Créer et traiter le formulaire */
-        $form = $this->createForm(ReadingType::class, $reading);
+        $form = $this->createForm(ReadingType::class, $reading, [
+            'user' => $this->getUser(),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             /* Associer les mesures au relevé */
             $this->updateMeasures($reading,
-                $this->getUser(),
+                $reading->getEncodingAuthor(),
                 $reading->getEncodingDateTime(),
                 $manager);
         
@@ -221,7 +223,9 @@ class ReadingController extends AbstractController
         }
 
         /* Créer et traiter le formulaire */
-        $form = $this->createForm(ReadingType::class, $reading);
+        $form = $this->createForm(ReadingType::class, $reading, [
+            'user' => $this->getUser(),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -263,7 +267,9 @@ class ReadingController extends AbstractController
 
         /* Créer et traiter le formulaire en mode validation */
         $form = $this->createForm(ReadingType::class, $reading, [
-            'validation' => true]);
+            'user' => $this->getUser(),
+            'validation' => true,
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

@@ -1,5 +1,5 @@
 {# Ce template définit une base commune pour les formulaires d'encodage et
-de modification de relevés #}
+de modification de relevés de station #}
 
 {% extends 'base.html.twig' %}
 
@@ -13,9 +13,11 @@ de modification de relevés #}
     <div class="container mb-3">
         <h1>{{title}}</h1>
 
-        <p>
-            Ce formulaire permet d'introduire les données de relevés réalisés sur le terrain à une station d'observation déterminée. Le relevé peut correspondre à des procédés manuels, un ou plusieurs échantillons ont été pris et un ou plusieurs paramètres de nature différents ont été mesurés à un instant relativement précis. Par ailleurs, le relevé peut correspondre à une série de mesures réalisées pendant une durée plus ou moins longue et de façon programmée, grâce par exemple à l'utilisation d'échantillonneurs automatiques ou d'enregistreurs de données. Dans les deux cas, si des échantillons nécessitent une analyse ou une confirmation en laboratoire, il est possible d'ajouter plus tard de nouvelles mesures au relevé.
-        </p>
+        <p>Ce formulaire permet d'introduire les données prises sur le terrain à une station d'observation déterminée.</p>
+        <ul>
+            <li>Si le relevé concerne des mesures réalisées manuellement à un moment donné, indiquez le moment d'échantillonnage comme date de terrain globale, et celle-ci sera répliquée sur toutes les mesures que vous ajouterez&nbsp;;</li>
+            <li>Si le relevé correspond à une série de mesures (p.ex. grâce à un enregistreur de données ou un échantillonneur automatique), indiquez le moment de la prise de connaissance des mesures comme date de terrain globale, et veillez à renseigner la date plus précise de chaque mesure.</li>
+        </ul>
 
         {{form_start(form)}}
         
@@ -38,31 +40,34 @@ de modification de relevés #}
         {{form_row(form.measures)}}
 
         <h2>Commentaires</h2>
+        <p>Les remarques ci-dessous permettent de donner des informations textuelles complémentaires afin d'expliquer les circonstances des mesures.</p>
 
-        <div class="alert bg-light">
-            <div class="form-row">
-                <div class="col">
-                    {{form_row(form.encodingDateTime)}}
-                </div>
-                <div class="col">
-                    {{form_row(form.encodingAuthor)}}
+        {% if encoding|default(true) %}
+            <div class="alert bg-light">
+                <div class="row">
+                    <div class="col-3">
+                        {{form_row(form.encodingDateTime)}}
+                        {{form_row(form.encodingAuthor)}}
+                    </div>
+                    <div class="col">
+                        {{form_row(form.encodingNotes)}}
+                    </div>
                 </div>
             </div>
-            {{form_row(form.encodingNotes)}}
-        </div>
+        {% endif %}
 
         {% if validation|default(false) %}
             <div class="alert bg-light">
-                <div class="form-row">
-                    <div class="col">
+                <div class="row">
+                    <div class="col-3">
                         {{form_row(form.validationDateTime)}}
-                    </div>
-                    <div class="col">
                         {{form_row(form.validationAuthor)}}
                     </div>
+                    <div class="col">
+                        {{form_row(form.validationNotes)}}
+                        {{form_row(form.validated)}}
+                    </div>
                 </div>
-                {{form_row(form.validationNotes)}}
-                {{form_row(form.validated)}}
             </div>
         {% endif %}
 
@@ -72,10 +77,10 @@ de modification de relevés #}
             Enregistrer le relevé
         </button>
 
-        {# Bouton pour revenir au relevé #}
-        <a href="{{path('reading_show', {'code': reading.code})}}" class="btn btn-cancel">
+        {# Bouton pour revenir à la liste #}
+        <a href="{{path('reading')}}" class="btn btn-cancel">
             <i class="fas fa-backspace"></i>
-            Revenir au relevé
+            Revenir à la liste
         </a>
 
         {{form_end(form)}}
@@ -88,9 +93,12 @@ de modification de relevés #}
 {% endblock %}
 
 {% block _reading_measures_widget %}
-    <p>
-        La liste ci-dessous reprend les valeurs mesurées des paramètres et des indications basiques quant à la fiabilité de ces valeurs. Les mesures <em>stables</em> sont celles qui ont été mesurées sans difficulté, alors que les mesures <em>instables</em> sont estimées par la personne qui a réalisé la mesure. Les mesures <em>valides</em> sont celles qui sont a priori exploitables, alors que les mesures <em>invalides</em> sont celles qui doivent être écartées dans l'attente d'une vérification.
-    </p>
+    <p>La liste ci-dessous reprend les valeurs mesurées des paramètres et des indications basiques quant à la fiabilité de ces valeurs, en désignant notamment les instruments ayant servi à réaliser les mesures.</p>
+    <ul>
+        <li>Les mesures <em>stables</em> ont été mesurées sans difficulté, tandis que les mesures <em>instables</em> ont dû faire l'objet d'une estimation&nbsp;;</li>
+        <li>Les mesures <em>valides</em> sont dans les limites autorisées, ont été prises avec un appareil en ordre d'étalonnage et seront exploitées, tandis que les mesures <em>invalides</em> feront l'objet d'une vérification ou seront écartées lors de l'exploitation.</li>
+    </ul>
+    <p>Plusieurs mesures peuvent être encodées pour un même paramètre&nbsp;: cela permet par exemple de conserver une première mesure invalide et une seconde, mesurée en laboratoire, valide, ou encore de mémoriser une série issue d'un échantillonnage automatique.</p>
 
     {# Afficher le widget Twig #}
     {{ form_widget(form) }}
@@ -109,13 +117,13 @@ de modification de relevés #}
 
 {% block _reading_measures_entry_widget %}
     <div class="alert bg-light" id="{{id}}">
-        <div class="form-row">
+        <div class="row">
             <div class="col">
                 {{form_row(form.measurability)}}
                 {{form_row(form.notes)}}
             </div>
             <div class="col">
-                <div class="form-row">
+                <div class="row">
                     <div class="col">
                         {{form_row(form.fieldDateTime)}}
                     </div>
@@ -123,7 +131,7 @@ de modification de relevés #}
                         {{form_row(form.encodingDateTime)}}
                     </div>
                 </div>
-                <div class="form-row">
+                <div class="row">
                     <div class="col">
                         {{form_row(form.value)}}
                     </div>
@@ -131,7 +139,7 @@ de modification de relevés #}
                         {{form_row(form.tolerance)}}
                     </div>
                 </div>
-                <div class="form-row">
+                <div class="row">
                     <div class="col">
                         {{form_row(form.stable)}}
                     </div>
@@ -141,7 +149,7 @@ de modification de relevés #}
                 </div>
             </div>
         </div>
-        <div class="form-row">
+        <div class="row">
             <div class="col">
                 {# Bouton pour supprimer la mesure #}
                 <button type="button" data-action="delete-measure" data-target="#{{id}}" class="btn btn-danger float-right">

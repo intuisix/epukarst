@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\System;
 use App\Entity\Station;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -35,5 +36,29 @@ class StationRepository extends ServiceEntityRepository
             ->setParameter('system', $system)
             ->orderBy('s.code')
             ->getQuery()->getResult();
+    }
+
+    /**
+     * Crée un constructeur de requête énumérant les stations pour lequelles un
+     * utilisateur donné possède l'un des rôles donnés.
+     * 
+     * @param User $user
+     * @param string[] $roles
+     * @return QueryBuilder
+     */
+    public function createQueryBuilderGranted(User $user, array $roles = ['SYSTEM_CONTRIBUTOR', 'SYSTEM_MANAGER'])
+    {
+        return $this
+            ->createQueryBuilder('station')
+            ->addSelect('basin')
+            ->addSelect('system')
+            ->innerJoin('station.basin', 'basin')
+            ->innerJoin('basin.system', 'system')
+            ->innerJoin('system.systemRoles', 'role')
+            ->where('(role.userAccount IS NULL) OR (role.userAccount = :user)')
+            ->setParameter('user', $user)
+            ->andWhere('role.role IN (:roles)')
+            ->setParameter('roles', $roles)
+            ->orderBy('system.name');
     }
 }
