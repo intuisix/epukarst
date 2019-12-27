@@ -13,6 +13,7 @@
                 <tr>
                     <th>Date de signalement</th>
                     <th>Système</th>
+                    <th>Type</th>
                     <th>Date de début</th>
                     <th>Date de fin</th>
                     <th>Etat</th>
@@ -25,6 +26,7 @@
                     <tr>
                         <td>{{alarm.reportingDate ? alarm.reportingDate|date('d/m/Y') : ''}}</td>
                         <td>{{alarm.system.name}}</td>
+                        <td>{{alarm.kind.name|default}}</td>
                         <td>
                             {% if alarm.beginningDate %}
                                 {{alarm.beginningDate|date('d/m/Y')}}

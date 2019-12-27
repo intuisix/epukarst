@@ -13,16 +13,20 @@
                     <td>{{alarm.system.name}}</td>
                 </tr>
                 <tr>
+                    <th>Date de signalement</th>
+                    <td>{{alarm.reportingDate ? alarm.reportingDate|date('d/m/Y') : ''}}</td>
+                </tr>
+                <tr>
+                    <th>Type</th>
+                    <td>{{alarm.kind.name|default}}</td>
+                </tr>
+                <tr>
                     <th>Date de début</th>
                     <td>{{alarm.beginningDate ? alarm.beginningDate|date('d/m/Y') : ''}}</td>
                 </tr>
                 <tr>
                     <th>Date de fin</th>
                     <td>{{alarm.endingDate ? alarm.endingDate|date('d/m/Y') : ''}}</td>
-                </tr>
-                <tr>
-                    <th>Date de signalement</th>
-                    <td>{{alarm.reportingDate ? alarm.reportingDate|date('d/m/Y') : ''}}</td>
                 </tr>
                 <tr>
                     <th>Signalé par</th>
