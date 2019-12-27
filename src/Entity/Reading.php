@@ -341,8 +341,9 @@ class Reading
         $min = null;
         $max = null;
         $sum = null;
+        $alarms = null;
         $inval = null;
-    
+
         /* Parcourir toutes les mesures */
         foreach ($this->measures as $measure) {
             if ($measure->getParameter() === $parameter) {
@@ -352,13 +353,16 @@ class Reading
                 if (!is_null($value) && $measure->getValid()) {
                     $count++;
                     $sum += $value;
-                    if ((null == $min) || ($value < $min)) {
+                    if ((null === $min) || ($value < $min)) {
                         $min = $value;
                     }
-                    if ((null == $max) || ($value > $max)) {
+                    if ((null === $max) || ($value > $max)) {
                         $max = $value;
                     }
                     $avg = $sum / $count;
+                    if (null !== $measure->getAlarm()) {
+                        $alarms++;
+                    }
                 } else {
                     $inval++;
                 }
@@ -371,6 +375,7 @@ class Reading
             'max' => $max,          /* Valeur maximum */
             'avg' => $avg,          /* Valeur moyenne */
             'sum' => $sum,          /* Somme des valeurs */
+            'alarms' => $alarms,    /* Nombre d'alarmes */
             'inval' => $inval,      /* Nombre de valeurs invalides */
         ];
     }

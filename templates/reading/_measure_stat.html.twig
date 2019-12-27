@@ -1,3 +1,8 @@
+{% if stats.alarms > 0 %}
+    {# Au moins une alarme enregistrée #}
+    <i class="fas fa-exclamation-triangle text-warning"></i>
+{% endif %}
+
 {% if stats.count > 1 %}
     {# Nombre de mesures multiples #}
     <span class="badge badge-info badge-pill">{{stats.count}}</span>
@@ -6,9 +11,11 @@
     -
     {{stats.max|number_format(1, ',', ' ')}}
 {% elseif stats.count > 0 %}
+    {# Valeur unique #}
     {{stats.avg|number_format(1, ',', ' ')}}
 {% elseif stats.inval > 0 %}
     {# Nombre de mesures invalides #}
-    <span class="badge badge-danger badge-pill">{{stats.inval}}</span>
+    <i class="fas fa-ban text-danger"></i>
 {% else %}
+    {# Mesures inexistantes #}
 {% endif %}

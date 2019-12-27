@@ -81,13 +81,14 @@
             <thead>
                 <tr>
                     <th>Paramètre</th>
-                    <th>Valeur</th>
-                    <th>Stable</th>
-                    <th>Valide</th>
-                    <th>Instrument</th>
-                    <th>Réalisée le</th>
-                    <th>Encodée le</th>
-                    <th>Encodée par</th>
+                    <th class="text-center">Valeur</th>
+                    <th class="text-center">Stable</th>
+                    <th class="text-center">Valide</th>
+                    <th class="text-center">Alarme</th>
+                    <th class="text-center">Instrument</th>
+                    <th class="text-center">Réalisée le</th>
+                    <th class="text-center">Encodée le</th>
+                    <th class="text-center">Encodée par</th>
                     <th>Remarque</th>
                 </tr>
             </thead>
@@ -96,42 +97,51 @@
                     {% set parameter = measure.measurability.parameter %}
                     {% set instrument = measure.measurability.instrument %}
                     <tr>
-                        <td rowspan="1">{{parameter.name}}</td>
-                        <td>
+                        <td>{{parameter.name}}</td>
+                        <td class="text-center">
                             {{measure.value}} 
                             {% if measure.tolerance is not null %}
                                 &plusmn; {{measure.tolerance}} 
                             {% endif %}
                             {{parameter.unit}}
                         </td>
-                        <td style="text-align: center">
+                        <td class="text-center">
                             {% if measure.stable %}
                                 <i class="fas fa-check"></i>
                             {% else %}
                                 <i class="fas fa-exclamation"></i>
                             {% endif %}
                         </td>
-                        <td style="text-align: center">
+                        <td class="text-center">
                             {% if measure.valid %}
                                 <i class="fas fa-check text-success"></i>
                             {% else %}
                                 <i class="fas fa-ban text-danger"></i>
                             {% endif %}
                         </td>
-                        <td>
+                        <td class="text-center">
+                            {% if measure.alarm is null %}
+                                <i class="fas fa-check"></i>
+                            {% else %}
+                                <a href="{{path('alarm_show', {'id': measure.alarm.id})}}">
+                                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
                             {% if instrument is not null %}
                                 {{instrument.name}}
                             {% else %}
                                 --
                             {% endif %}
                         </td>
-                        <td>
+                        <td class="text-center">
                             {{measure.fieldDateTime|date('d/m/Y')}}
                         </td>
-                        <td>
+                        <td class="text-center">
                             {{measure.encodingDateTime|date('d/m/Y')}}
                         </td>
-                        <td>{{measure.encodingAuthor.displayName}}</td>
+                        <td class="text-center">{{measure.encodingAuthor.displayName}}</td>
                         <td>{{measure.notes}}</td>
                     </tr>
                 {% else %}
