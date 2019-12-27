@@ -59,6 +59,8 @@ class Post
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * 
+     * @Assert\GreaterThan(propertyPath="publishFromDate", message="La date de fin doit être postérieure à la date de début.")
      */
     private $publishToDate;
 
