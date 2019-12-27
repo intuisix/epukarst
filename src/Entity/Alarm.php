@@ -34,11 +34,15 @@ class Alarm
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * 
+     * @Assert\LessThanOrEqual("today", message="La date de début doit être antérieure à la date d'aujourd'hui.")
      */
     private $beginningDate;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * 
+     * @Assert\GreaterThan(propertyPath="beginningDate", message="La date de fin doit être postérieure à la date de début.")
      */
     private $endingDate;
 
