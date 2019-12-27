@@ -10,35 +10,38 @@
 
         <div class="row">
             {% for system in systems %}
-                {% set url = path('system_show', { 'slug': system.slug }) %}
-                <div class="col-md-4">
-                    <div class="card bg-light mb-3">
-                        <div class="card-header text-center">
-                            {{system.basin}} /
-                            {{system.commune}}
-                        </div>
-                        {% if system.pictures|length > 0 %}
-                            <a href="{{url}}">
-                                {# Prendre une image au hasard parmi celles du système #}
-                                <img src="{{system.pictures[random(0, system.pictures|length - 1)].fileName}}" alt="{{system.name}}" style="height: 300px; width: 100%; display:block"/>
-                            </a>
-                        {% else %}
-                            <div class="alert alert-warning">Il n'y a pas encore de photo pour ce système.</div>
-                        {% endif %}
-                        <div class="card-body">
-                            <h4 class="card-title">
-                                <a href="{{url}}">{{system.name}}</a>
-                            </h4>
-                            <p class="card-text">
-                                {{system.introduction}}
-                            </p>
-                            <a href="{{url}}" class="btn btn-link float-right">
-                                Plus d'informations
-                                <i class="fas fa-chevron-right"></i>
-                            </a>
+                {# Masquer les systèmes dont le nom comence par un point #}
+                {% if system.name|slice(0,1) != '.' %}
+                    {% set url = path('system_show', {'slug': system.slug}) %}
+                    <div class="col-md-4">
+                        <div class="card bg-light mb-3">
+                            <div class="card-header text-center">
+                                {{system.basin}} /
+                                {{system.commune}}
+                            </div>
+                            {% if system.pictures|length > 0 %}
+                                <a href="{{url}}">
+                                    {# Prendre une image au hasard parmi celles du système #}
+                                    <img src="{{system.pictures[random(0, system.pictures|length - 1)].fileName}}" alt="{{system.name}}" style="height: 300px; width: 100%; display:block"/>
+                                </a>
+                            {% else %}
+                                <div class="alert alert-warning">Il n'y a pas encore de photo pour ce système.</div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <a href="{{url}}">{{system.name}}</a>
+                                </h4>
+                                <p class="card-text">
+                                    {{system.introduction}}
+                                </p>
+                                <a href="{{url}}" class="btn btn-link float-right">
+                                    Plus d'informations
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
             {% endfor %}
         </div>
 
