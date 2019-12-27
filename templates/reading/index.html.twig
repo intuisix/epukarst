@@ -25,7 +25,7 @@
             une programmation manuelle. La division est limitée en hauteur
             et l'utilisateur a la possibilité de la redimensionner et d'en
             faire défiler le contenu. #}
-            <div class="alert bg-light mb-3" style="overflow-y: scroll; height: 400px; resize: vertical" id="filter_stations">
+            <div class="alert bg-light mb-3" style="overflow-y: scroll; height: 500px; resize: vertical" id="filter_stations">
                 {% for system in systems %}
                     {% if is_granted("SYSTEM_OBSERVER", system) %}
                         <div>
@@ -188,7 +188,9 @@
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="100">Il n'y a pas de relevés à afficher&nbsp;: vérifiez si les filtres sélectionnent au moins une station et s'ils ne sont pas trop restrictifs.</td>
+                                <td colspan="100">
+                                    <em>Il n'y a pas de relevés à afficher&nbsp;: vérifiez si les filtres sélectionnent au moins une station et s'ils ne sont pas trop restrictifs.</em>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
