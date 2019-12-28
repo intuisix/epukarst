@@ -11,7 +11,7 @@
         <div class="row">
             {% for system in systems %}
                 {# Masquer les systèmes dont le nom comence par un point #}
-                {% if system.name|slice(0,1) != '.' %}
+                {% if (system.name|slice(0,1) != '.') or is_granted('SYSTEM_OBSERVER', system) %}
                     {% set url = path('system_show', {'slug': system.slug}) %}
                     <div class="col-md-4">
                         <div class="card bg-light mb-3">
