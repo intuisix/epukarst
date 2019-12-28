@@ -53,7 +53,7 @@ class SystemVoter extends Voter
                 if ($subject instanceof System) {
                     $system = $subject;
                 } else if ($subject instanceof Station) {
-                    $system = $subject->getBasin()->getStation();
+                    $system = $subject->getBasin()->getSystem();
                 } else if ($subject instanceof SystemParameter) {
                     $system = $subject->getSystem();
                 } else if ($subject instanceof SystemReading) {
