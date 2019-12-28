@@ -162,6 +162,16 @@ class Measure
                 }
             }
         }
+
+        /* Si une alarme est spécifiée, vérifier que celle-ci concerne le même système que le relevé */
+        if (null !== $this->alarm) {
+            if ($this->alarm->getSystem() !== $this->reading->getStation()->getBasin()->getSystem()) {
+                $context
+                    ->buildViolation("L'alarme doit concerner le même système que le relevé.")
+                    ->atPath('alarm')
+                    ->addViolation();
+            }
+        }
     }
 
     public function getId(): ?int
