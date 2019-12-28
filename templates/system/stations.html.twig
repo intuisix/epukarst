@@ -15,6 +15,10 @@
                             <i class="fas fa-edit"></i>
                             Modifier
                         </a>
+                        <a href="{{path('system_station_create', {'code': system.code})}}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Ajouter une station
+                        </a>
                     {% endif %}
                 </div>
 
@@ -52,6 +56,10 @@
                                 {# Bouton de modification #}
                                 {% if is_granted('SYSTEM_CONTRIBUTOR', station) %}
                                     <a href="{{path('system_station_update', {'code': station.code})}}"><i class="fas fa-edit text-primary"></i></a>
+                                {% endif %}
+                                {# Bouton de suppression #}
+                                {% if is_granted('SYSTEM_MANAGER', station) %}
+                                    <a href="{{path('system_station_delete', {'code': station.code})}}"><i class="fas fa-trash text-danger"></i></a>
                                 {% endif %}
                             </small>
                         </h3>
