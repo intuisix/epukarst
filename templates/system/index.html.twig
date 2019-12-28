@@ -22,7 +22,7 @@
                             {% if system.pictures|length > 0 %}
                                 <a href="{{url}}">
                                     {# Prendre une image au hasard parmi celles du système #}
-                                    <img src="{{system.pictures[random(0, system.pictures|length - 1)].fileName}}" alt="{{system.name}}" style="height: 300px; width: 100%; display:block"/>
+                                    <img src="{{system.pictures[random(0, system.pictures|length - 1)].fileName}}" alt="{{system.name}}" style="height: 300px; width: 100%; object-fit: cover"/>
                                 </a>
                             {% else %}
                                 <div class="alert alert-warning">Il n'y a pas encore de photo pour ce système.</div>

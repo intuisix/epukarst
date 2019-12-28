@@ -37,18 +37,22 @@
                     </div>
                 </div>
 
+                {# Description détaillée du système #}
+                {{system.description|raw}}
+
                 {# Carousel d'images #}
                 {% if system.pictures|length > 0 %}
-                    <div id="carouselExampleIndicators" class="carousel slide mb-3" data-ride="carousel">
+                <center>
+                    <div id="systemPicturesCarousel" class="carousel slide mb-3" data-ride="carousel" style="height: 540px; width: 720px">
                         <ol class="carousel-indicators">
                             {% for picture in system.pictures %}
-                                <li data-target="#carouselExampleIndicators" data-slide-to="{{loop.index0}}" class="{% if loop.first %}active{% endif %}"></li>
+                                <li data-target="#systemPicturesCarousel" data-slide-to="{{loop.index0}}" class="{% if loop.first %}active{% endif %}"></li>
                             {% endfor %}
                         </ol>
                         <div class="carousel-inner">
                             {% for picture in system.pictures %}
                                 <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                    <img src="/{{picture.fileName}}" class="d-block w-100" alt="...">
+                                    <img src="/{{picture.fileName}}" class="d-block w-100" alt="..." style="height: 540px; width: 720px; object-fit: cover">
                                     <div class="carousel-caption d-none-d-md-block">
                                         <h5>{{system.name}}</h5>
                                         <p>{{picture.caption}}</p>
@@ -56,19 +60,17 @@
                                 </div>
                             {% endfor %}
                         </div>
-                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                        <a class="carousel-control-prev" href="#systemPicturesCarousel" role="button" data-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span class="sr-only">Previous</span>
                         </a>
-                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                        <a class="carousel-control-next" href="#systemPicturesCarousel" role="button" data-slide="next">
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
                             <span class="sr-only">Next</span>
                         </a>
                     </div>
+                </center>
                 {% endif %}
-
-                {# Description détaillée du système #}
-                {{system.description|raw}}
             </div>
 
             {# Colonne de droite #}
