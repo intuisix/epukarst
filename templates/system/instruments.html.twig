@@ -19,13 +19,17 @@
                 {# Titre #}
                 <h1>Instruments pour {{system.name}}</h1>
 
-                <p>Il est prévu que les instruments suivants soient utilisés pour les mesures dans le système&nbsp;:</p>
+                <p>Les instruments suivants sont utilisés pour les mesures dans le système&nbsp;:</p>
 
                 {% for instrument in instruments|sort((a,b) => (a.code <=> b.code)) %}
                     {# Titre #}
                     <h2 id="instrument_{{instrument.id}}">
-                        <span class="badge badge-secondary">{{instrument.code}}</span>
-                        {{instrument.name}}
+                        <span class="badge badge-secondary">
+                            {{instrument.code}}
+                        </span>
+                        <span class="mx-2">
+                            {{instrument.name}}
+                        </span>
                     </h2>
 
                     <dl class="row">
@@ -42,7 +46,7 @@
             {# Colonne de droite #}
             <div class="col-4 alert bg-light">
                 {# Boutons de navigation #}
-                {% include 'system/_show_navbar.html.twig' %}
+                {% include 'system/_navbar.html.twig' %}
 
                 {# Raccourcis vers les instruments #}
                 <div class="card mt-3">

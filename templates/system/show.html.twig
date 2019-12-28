@@ -12,10 +12,19 @@
             <div class="col mb-3">
                 {# Titre #}
                 <h1>
-                    <span class="badge badge-secondary mr-2">
+                    <span class="badge badge-secondary">
                         {{system.code}}
                     </span>
-                    {{system.name}}
+                    <span class="mx-2">
+                        {{system.name}}
+                    </span>
+                    <small>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{path('system_modify', {'code': system.code})}}">
+                                <i class="fas fa-edit text-primary"></i>
+                            </a>
+                        {% endif %}
+                    </small>
                 </h1>
 
                 {# Description introductive #}
@@ -71,7 +80,7 @@
             {% if is_granted('ROLE_USER') %}
                 <div class="col-4 alert bg-light">
                     {# Boutons de navigation #}
-                    {% include 'system/_show_navbar.html.twig' %}
+                    {% include 'system/_navbar.html.twig' %}
                 </div>
             {% endif %}
         </div>

@@ -8,27 +8,31 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                {# Bouton pour modifier les stations #}
-                {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
-                    <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-primary float-right">
-                        <i class="fas fa-edit"></i>
-                        Modifier
-                    </a>
-                {% endif %}
+                <div class="float-right">
+                    {# Bouton pour modifier les stations #}
+                    {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+                        <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-primary">
+                            <i class="fas fa-edit"></i>
+                            Modifier
+                        </a>
+                    {% endif %}
+                </div>
 
                 {# Titre #}
                 <h1>Stations de {{system.name}}</h1>
 
-                <p>Il est prévu que les mesures soient réalisés aux stations suivantes dans les bassins du système&nbsp;:</p>
+                <p>Les mesures du système sont réalisées aux stations suivantes, classées par bassin d'alimentation&nbsp;:</p>
 
                 {# Pour chaque bassin du système #}
                 {% for basin in system.basins|sort((a, b) => (a.code <=> b.code)) %}
                     {# Titre #}
                     <h2 id="basin_{{basin.code}}" class="d-flex align-items-center">
-                        <span class="badge badge-secondary mr-2">
+                        <span class="badge badge-secondary">
                             {{basin.code}}
                         </span>
-                        {{basin.name}}
+                        <span class="mx-2">
+                            {{basin.name}}
+                        </span>
                     </h2>
 
                     {# Description #}
@@ -38,16 +42,18 @@
                     {% for station in basin.stations|sort((a, b) => (a.code <=> b.code)) %}
                         {# Titre #}
                         <h3 id="station_{{station.code}}" class="d-flex align-items-center">
-                            <span class="badge badge-secondary mr-2">
+                            <span class="badge badge-secondary">
                                 {{station.code}}
                             </span>
-                            {{station.name}}
-                            {# Bouton de modification #}
-                            {% if is_granted('SYSTEM_CONTRIBUTOR', station) %}
-                                <small class="ml-2">
-                                    <a href="{{path('system_station_update', {'code': station.code})}}" target="_blank"><i class="fas fa-edit"></i></a>
-                                </small>
-                            {% endif %}
+                            <span class="mx-2">
+                                {{station.name}}
+                            </span>
+                            <small>
+                                {# Bouton de modification #}
+                                {% if is_granted('SYSTEM_CONTRIBUTOR', station) %}
+                                    <a href="{{path('system_station_update', {'code': station.code})}}"><i class="fas fa-edit text-primary"></i></a>
+                                {% endif %}
+                            </small>
                         </h3>
 
                         <dl class="row">
@@ -65,7 +71,7 @@
             {# Colonne de droite #}
             <div class="col-4 alert bg-light">
                 {# Boutons de navigation #}
-                {% include 'system/_show_navbar.html.twig' %}
+                {% include 'system/_navbar.html.twig' %}
 
                 {# Raccourcis vers les bassins et les stations #}
                 {% for basin in system.basins %}

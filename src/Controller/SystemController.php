@@ -178,7 +178,7 @@ class SystemController extends AbstractController
      */
     public function showStations(System $system)
     {
-        return $this->render('system/show_stations.html.twig', [
+        return $this->render('system/stations.html.twig', [
             'system' => $system,
         ]);
     }
@@ -199,7 +199,7 @@ class SystemController extends AbstractController
             }
         }
 
-        return $this->render('system/show_parameters.html.twig', [
+        return $this->render('system/parameters.html.twig', [
             'system' => $system,
             'parameters' => $parameters,
         ]);
@@ -221,7 +221,7 @@ class SystemController extends AbstractController
             }
         }
 
-        return $this->render('system/show_instruments.html.twig', [
+        return $this->render('system/instruments.html.twig', [
             'system' => $system,
             'instruments' => $instruments,
         ]);

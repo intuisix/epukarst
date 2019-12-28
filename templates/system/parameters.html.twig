@@ -19,14 +19,18 @@
                 {# Titre #}
                 <h1>Paramètres pour {{system.name}}</h1>
 
-                <p>Il est prévu que les paramètres suivants soient mesurés dans le système&nbsp;:</p>
+                <p>Les paramètres suivants sont mesurés sur le système&nbsp;:</p>
 
                 {# Pour chaque paramètre, triés par position #}
                 {% for parameter in parameters|sort((a,b) => (a.position <=> b.position)) %}
                     {# Titre #}
                     <h2 id="parameter_{{parameter.id}}">
-                        <badge class="badge badge-secondary">{{parameter.name}}</badge>
-                        {{parameter.title}}
+                        <span class="badge badge-secondary">
+                            {{parameter.name}}
+                        </span>
+                        <span class="mx-2">
+                            {{parameter.title}}
+                        </span>
                     </h2>
 
                     <dl class="row">
@@ -49,7 +53,7 @@
             {# Colonne de droite #}
             <div class="col-4 alert bg-light">
                 {# Boutons de navigation #}
-                {% include 'system/_show_navbar.html.twig' %}
+                {% include 'system/_navbar.html.twig' %}
 
                 {# Raccourcis vers les paramètres #}
                 <div class="card mt-3">
