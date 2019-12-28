@@ -7,16 +7,17 @@
 {% block body %}
     {# Corps de la page #}
     <div class="container mb-3">
-        <h1>
-            <span class="badge badge-secondary mr-2">
-                {{system.code}}
-            </span>
-            {{system.name}}
-        </h1>
-
         <div class="row">
             {# Colonne principale #}
-            <div class="col-md-8 mb-3">
+            <div class="col mb-3">
+                {# Titre #}
+                <h1>
+                    <span class="badge badge-secondary mr-2">
+                        {{system.code}}
+                    </span>
+                    {{system.name}}
+                </h1>
+
                 {# Description introductive #}
                 <p><big>{{system.introduction}}</big></p>
 
@@ -68,83 +69,15 @@
 
                 {# Description détaillée du système #}
                 {{system.description|raw}}
-
-                {# Description des bassins du système #}
-                {% for basin in system.basins %}
-                    <h2 id="basin_{{basin.code}}" class="d-flex align-items-center">
-                        <span class="badge badge-secondary mr-2">
-                            {{basin.code}}
-                        </span>
-                        {{basin.name}}
-                    </h2>
-                    {{basin.description|raw}}
-
-                    {# Description des stations du système #}
-                    {% for station in basin.stations %}
-                        <h3 id="station_{{station.code}}" class="d-flex align-items-center">
-                            <span class="badge badge-secondary mr-2">
-                                {{station.code}}
-                            </span>
-                            {{station.name}}
-                        </h3>
-                        {% if station.atlasCode %}
-                            <p>Code AKWA&nbsp;: {{station.atlasCode}}</p>
-                        {% endif %}
-                        {{station.description|raw}}
-                    {% endfor %}
-
-                {% endfor %}
             </div>
 
             {# Colonne de droite #}
-            <div class="col alert bg-light">
-                {# Liste des bassins et des stations #}
-                <h2>Bassins et stations</h2>
-                {% for basin in system.basins %}
-                    <div class="card my-3">
-                        <div class="card-header">
-                            <a href="#basin_{{basin.code}}">{{basin.name}}</a>
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            {% for station in basin.stations %}
-                                <li class="list-group-item">
-                                    <a href="#station_{{station.code}}" class="ml-4">{{station.name}}</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endfor %}
-
-                {# Boutons #}
-                {% if app.user %}
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <a href="{{path('system_modify', {'code': system.code})}}" class="btn btn-primary btn-block">
-                            <i class="fas fa-plus"></i>
-                            Modifier le système
-                        </a>
-                    {% endif %}
-                    {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
-                        <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary btn-block">
-                            <i class="fas fa-file-alt"></i>
-                            Encoder un relevé de système
-                        </a>
-                        <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-primary btn-block">
-                            <i class="fas fa-bullseye"></i>
-                            Définir les stations du système
-                        </a>
-                        <a href="{{path('system_parameter', {'code': system.code})}}" class="btn btn-primary btn-block">
-                            <i class="fas fa-asterisk"></i>
-                            Définir les paramètres du système
-                        </a>
-                    {% endif %}
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <a href="{{path('system_delete', {'code': system.code})}}" class="btn btn-danger btn-block">
-                            <i class="fas fa-trash"></i>
-                            Supprimer le système
-                        </a>
-                    {% endif %}
-                {% endif %}
-            </div>
+            {% if is_granted('ROLE_USER') %}
+                <div class="col-4 alert bg-light">
+                    {# Boutons de navigation #}
+                    {% include 'system/_show_navbar.html.twig' %}
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

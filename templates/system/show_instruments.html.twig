@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Instruments de {{system.name}}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {# Titre #}
+                <h1>Instruments de {{system.name}}</h1>
+
+                <p>Il est prévu que les instruments suivants soient utilisés pour les mesures dans le système&nbsp;:</p>
+
+                {% for instrument in instruments|sort((a,b) => (a.code <=> b.code)) %}
+                    {# Titre #}
+                    <h2 id="instrument_{{instrument.id}}">
+                        <span class="badge badge-secondary">{{instrument.code}}</span>
+                        {{instrument.name}}
+                    </h2>
+
+                    <dl class="row">
+                        {# Marque et modèle #}
+                        <dt class="col-3">Marque/modèle&nbsp;:</dt>
+                        <dd class="col-9">{{instrument.model|default('Néant')}}</dd>
+                    </dl>
+
+                    {# Description #}
+                    {{instrument.description|raw}}
+                {% endfor %}
+            </div>
+
+            {# Colonne de droite #}
+            <div class="col-4 alert bg-light">
+                {# Boutons de navigation #}
+                {% include 'system/_show_navbar.html.twig' %}
+
+                {# Raccourcis vers les instruments #}
+                <div class="card mt-3">
+                    <div class="card-header h4">Instruments</div>
+                    <ul class="list-group list-group-flush">
+                        {% for instrument in instruments|sort((a,b) => (a.name <=> b.name)) %}
+                            <li class="list-group-item">
+                                <a href="#instrument_{{instrument.id}}">{{instrument.name}}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

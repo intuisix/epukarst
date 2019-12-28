@@ -27,7 +27,7 @@ class SystemController extends AbstractController
     public function index(SystemRepository $systemRepository)
     {
         return $this->render('system/index.html.twig', [
-            'systems' => $systemRepository->findAll()
+            'systems' => $systemRepository->findBy([], ['name' => 'ASC'])
         ]);
     }
 
@@ -166,7 +166,64 @@ class SystemController extends AbstractController
     public function show(System $system)
     {
         return $this->render('system/show.html.twig', [
-            'system' => $system
+            'system' => $system,
+        ]);
+    }
+
+    /**
+     * Affiche les stations d'un système karstique.
+     * 
+     * @Route("/system/{slug}/stations", name="system_show_stations")
+     * @IsGranted("ROLE_USER")
+     */
+    public function showStations(System $system)
+    {
+        return $this->render('system/show_stations.html.twig', [
+            'system' => $system,
+        ]);
+    }
+
+    /**
+     * Affiche les paramètres d'un système karstique.
+     * 
+     * @Route("/system/{slug}/parameters", name="system_show_parameters")
+     * @IsGranted("ROLE_USER")
+     */
+    public function showParameters(System $system)
+    {
+        $parameters = [];
+        foreach ($system->getParameters() as $systemParameter) {
+            $parameter = $systemParameter->getInstrumentParameter()->getParameter();
+            if (!in_array($parameter, $parameters)) {
+                $parameters[] = $parameter;
+            }
+        }
+
+        return $this->render('system/show_parameters.html.twig', [
+            'system' => $system,
+            'parameters' => $parameters,
+        ]);
+    }
+
+    /**
+     * Affiche les instruments d'un système karstique.
+     * 
+     * @Route("/system/{slug}/instruments", name="system_show_instruments")
+     * @IsGranted("ROLE_USER")
+     */
+    public function showInstruments(System $system)
+    {
+        $instruments = [];
+        foreach ($system->getParameters() as $systemParameter) {
+            $instrument = $systemParameter->getInstrumentParameter()->getInstrument();
+            if (!in_array($instrument, $instruments)) {
+                $instruments[] = $instrument;
+            }
+        }
+
+        return $this->render('system/show_instruments.html.twig', [
+            'system' => $system,
+            'instruments' => $instruments,
         ]);
     }
 

@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Stations de {{system.name}}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {# Titre #}
+                <h1>Stations de {{system.name}}</h1>
+
+                <p>Il est prévu que les mesures soient réalisés aux stations suivantes dans les bassins du système&nbsp;:</p>
+
+                {# Pour chaque bassin du système #}
+                {% for basin in system.basins|sort((a, b) => (a.code <=> b.code)) %}
+                    {# Titre #}
+                    <h2 id="basin_{{basin.code}}" class="d-flex align-items-center">
+                        <span class="badge badge-secondary mr-2">
+                            {{basin.code}}
+                        </span>
+                        {{basin.name}}
+                    </h2>
+
+                    {# Description #}
+                    {{basin.description|raw}}
+
+                    {# Pour chaque station sitée dans le bassin #}
+                    {% for station in basin.stations|sort((a, b) => (a.code <=> b.code)) %}
+                        {# Titre #}
+                        <h3 id="station_{{station.code}}" class="d-flex align-items-center">
+                            <span class="badge badge-secondary mr-2">
+                                {{station.code}}
+                            </span>
+                            {{station.name}}
+                            {# Bouton de modification #}
+                            {% if is_granted('SYSTEM_CONTRIBUTOR', station) %}
+                                <small class="ml-2">
+                                    <a href="{{path('system_station_update', {'code': station.code})}}" target="_blank"><i class="fas fa-edit"></i></a>
+                                </small>
+                            {% endif %}
+                        </h3>
+
+                        <dl class="row">
+                            {# Code de l'atlas #}
+                            <dt class="col-3">Code AKWA&nbsp;:</dt>
+                            <dd class="col-9">{{station.atlasCode|default('Néant')}}</dd>
+                        </dl>
+
+                        {# Description #}
+                        {{station.description|raw}}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+
+            {# Colonne de droite #}
+            <div class="col-4 alert bg-light">
+                {# Boutons de navigation #}
+                {% include 'system/_show_navbar.html.twig' %}
+
+                {# Raccourcis vers les bassins et les stations #}
+                {% for basin in system.basins %}
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <a href="#basin_{{basin.code}}">{{basin.name}}</a>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            {% for station in basin.stations %}
+                                <li class="list-group-item">
+                                    <a href="#station_{{station.code}}" class="ml-4">{{station.name}}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

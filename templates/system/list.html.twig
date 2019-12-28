@@ -50,9 +50,12 @@
                         </td>
                         <td>
                             <a href="{{path('system_modify', {'code': system.code})}}" class="text-primary"><i class="fas fa-edit"></i></a>
-                            <a href="{{path('system_station', {'code': system.code})}}" class="text-secondary"><i class="fas fa-bullseye"></i></a>
-                            <a href="{{path('system_parameter', {'code': system.code})}}" class="text-secondary"><i class="fas fa-asterisk"></i></a>
-                            <a href="{{path('system_reading_encode', {'code': system.code})}}" class="text-secondary"><i class="fas fa-file-alt"></i></a>
+                            <a href="{{path('system_show', {'slug': system.slug})}}" class="text-secondary"><i class="fas fa-eye"></i></a>
+                            {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+                                <a href="{{path('system_station', {'code': system.code})}}" class="text-secondary"><i class="fas fa-bullseye"></i></a>
+                                <a href="{{path('system_parameter', {'code': system.code})}}" class="text-secondary"><i class="fas fa-asterisk"></i></a>
+                                <a href="{{path('system_reading_encode', {'code': system.code})}}" class="text-secondary"><i class="fas fa-file-alt"></i></a>
+                            {% endif %}
                             <a href="{{path('system_delete', {'code': system.code})}}" class="text-danger" data-action="delete"><i class="fas fa-trash"></i></a>
                         </td>
                     </tr>

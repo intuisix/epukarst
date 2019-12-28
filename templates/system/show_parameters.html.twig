@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Paramètres de {{system.name}}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                {# Titre #}
+                <h1>Paramètres de {{system.name}}</h1>
+
+                <p>Il est prévu que les paramètres suivants soient mesurés dans le système&nbsp;:</p>
+
+                {# Pour chaque paramètre, triés par position #}
+                {% for parameter in parameters|sort((a,b) => (a.position <=> b.position)) %}
+                    {# Titre #}
+                    <h2 id="parameter_{{parameter.id}}">
+                        <badge class="badge badge-secondary">{{parameter.name}}</badge>
+                        {{parameter.title}}
+                    </h2>
+
+                    <dl class="row">
+                        {# Unité #}
+                        <dt class="col-3">Unité&nbsp;:</dt>
+                        <dd class="col-9">{{parameter.unit|default('Néant')}}</dd>
+                        {# Seuils normatifs #}
+                        <dt class="col-3">Gamme normative&nbsp;:</dt>
+                        <dd class="col-9">{{parameter.normativeMinimum|default('-∞')}} - {{parameter.normativeMaximum|default('+∞')}} {{parameter.unit}}</dd>
+                        {# Seuils physiques #}
+                        <dt class="col-3">Gamme physique&nbsp;:</dt>
+                        <dd class="col-9">{{parameter.physicalMinimum|default('-∞')}} - {{parameter.physicalMaximum|default('+∞')}} {{parameter.unit}}</dd>
+                    </dl>
+
+                    {# Description #}
+                    {{parameter.description|raw}}
+                {% endfor %}
+            </div>
+
+            {# Colonne de droite #}
+            <div class="col-4 alert bg-light">
+                {# Boutons de navigation #}
+                {% include 'system/_show_navbar.html.twig' %}
+
+                {# Raccourcis vers les paramètres #}
+                <div class="card mt-3">
+                    <div class="card-header h4">Paramètres</div>
+                    <ul class="list-group list-group-flush">
+                        {% for parameter in parameters|sort((a,b) => (a.title <=> b.title)) %}
+                            <li class="list-group-item">
+                                <a href="#parameter_{{parameter.id}}">{{parameter.title}}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
