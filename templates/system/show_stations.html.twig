@@ -8,6 +8,14 @@
     <div class="container">
         <div class="row">
             <div class="col">
+                {# Bouton pour modifier les stations #}
+                {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+                    <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-primary float-right">
+                        <i class="fas fa-edit"></i>
+                        Modifier
+                    </a>
+                {% endif %}
+
                 {# Titre #}
                 <h1>Stations de {{system.name}}</h1>
 

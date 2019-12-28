@@ -1,15 +1,23 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Instruments de {{system.name}}
+    Instruments pour {{system.name}}
 {% endblock %}
 
 {% block body %}
     <div class="container">
         <div class="row">
             <div class="col">
+                {# Bouton pour modifier les paramètres et instruments #}
+                {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+                    <a href="{{path('system_parameter', {'code': system.code})}}" class="btn btn-primary float-right">
+                        <i class="fas fa-edit"></i>
+                        Modifier
+                    </a>
+                {% endif %}
+
                 {# Titre #}
-                <h1>Instruments de {{system.name}}</h1>
+                <h1>Instruments pour {{system.name}}</h1>
 
                 <p>Il est prévu que les instruments suivants soient utilisés pour les mesures dans le système&nbsp;:</p>
 
