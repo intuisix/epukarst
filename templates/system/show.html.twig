@@ -21,21 +21,15 @@
                 {# Description introductive #}
                 <p><big>{{system.introduction}}</big></p>
 
-                {# Commune et bassin versant #}
-                <div class="row">
-                    <div class="col-6">
-                        <dl>
-                            <dt>Commune&nbsp;:</dt>
-                            <dd>{{system.commune}}</dd>
-                        </dl>
-                    </div>
-                    <div class="col-6">
-                        <dl>
-                            <dt>Bassin versant&nbsp;:</dt>
-                            <dd>{{system.basin}}</dd>
-                        </dl>
-                    </div>
-                </div>
+                <dl class="row">
+                    {# Commune #}
+                    <dt class="col-3">Commune&nbsp;:</dt>
+                    <dd class="col-9">{{system.commune}}</dd>
+                    {# Bassin versant #}
+                    <dt class="col-3">Bassin versant&nbsp;:</dt>
+                    <dd class="col-9">{{system.basin}}</dd>
+                </dl>
+
 
                 {# Description détaillée du système #}
                 {{system.description|raw}}
