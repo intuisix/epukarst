@@ -75,14 +75,7 @@ class MeasureType extends AbstractType
             ->add('alarm', EntityType::class, [
                 'label' => "Alarme",
                 'class' => Alarm::class,
-                'choice_label' => function(Alarm $alarm) {
-                    $label = $alarm->getReportingDate()->format('d/m/Y');
-                    $kind = $alarm->getKind();
-                    if ($kind !== null) {
-                        $label .= " : {$kind->getName()}";
-                    }
-                    return $label;
-                },
+                'choice_label' => 'name',
                 'group_by' => 'system.name',
                 'placeholder' => "Mesure non liée à une alarme",
                 'required' => false,

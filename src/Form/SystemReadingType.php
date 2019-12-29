@@ -2,8 +2,9 @@
 
 namespace App\Form;
 
-use App\Entity\Basin;
 use App\Entity\User;
+use App\Entity\Alarm;
+use App\Entity\Basin;
 use App\Entity\System;
 use App\Entity\Reading;
 use App\Entity\Station;
@@ -39,6 +40,14 @@ class SystemReadingType extends AbstractType
                 'label' => "Date de terrain",
                 'widget' => 'single_text',
                 'required' => true,
+            ])
+            ->add('alarm', EntityType::class, [
+                'label' => "Alarme",
+                'class' => Alarm::class,
+                'choice_label' => 'name',
+                'group_by' => 'system.name',
+                'placeholder' => "Relevé non lié à une alarme",
+                'required' => false,
             ])
             ->add('stationReadings', CollectionType::class, [
                 'label' => "Stations",

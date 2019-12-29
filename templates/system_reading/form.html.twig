@@ -17,13 +17,16 @@
         {# Afficher les champs généraux #}
         <div class="alert bg-light">
             <div class="row">
-                <div class="col">
+                <div class="col-2">
                     {{form_row(form.fieldDateTime)}}
                 </div>
-                <div class="col">
+                <div class="col-2">
                     {{form_row(form.code)}}
                 </div>
                 <div class="col">
+                    {{form_row(form.alarm)}}
+                </div>
+                <div class="col-4">
                     <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-primary btn-block">
                         <i class="fas fa-bullseye"></i>
                         Définir les stations du système

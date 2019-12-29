@@ -84,6 +84,11 @@ class SystemReading
     private $stationReadings;
 
     /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Alarm", inversedBy="systemReadings")
+     */
+    private $alarm;
+
+    /**
      * Construit une instance de relevé.
      */
     public function __construct()
@@ -288,6 +293,18 @@ class SystemReading
                 $stationReading->setSystemReading(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAlarm(): ?Alarm
+    {
+        return $this->alarm;
+    }
+
+    public function setAlarm(?Alarm $alarm): self
+    {
+        $this->alarm = $alarm;
 
         return $this;
     }

@@ -65,15 +65,35 @@ class Alarm
     private $notes;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Measure", mappedBy="alarm", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Measure", mappedBy="alarm", orphanRemoval=false)
      * 
      * @Assert\Valid()
      */
     private $measures;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\SystemReading", mappedBy="alarm", orphanRemoval=false)
+     */
+    private $systemReadings;
+
     public function __construct()
     {
         $this->measures = new ArrayCollection();
+        $this->systemReadings = new ArrayCollection();
+    }
+
+    /**
+     * Compose un nom pour l'alarme.
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        $name = $this->reportingDate->format('d/m/Y');
+        if ($this->kind !== null) {
+            $name .= " : " . $this->kind->getName();
+        }
+        return $name;
     }
 
     public function getId(): ?int
@@ -186,6 +206,37 @@ class Alarm
     {
         if ($this->measures->contains($measure)) {
             $this->measures->removeElement($measure);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SystemReading[]
+     */
+    public function getSystemReadings(): Collection
+    {
+        return $this->systemReadings;
+    }
+
+    public function addSystemReading(SystemReading $systemReading): self
+    {
+        if (!$this->systemReadings->contains($systemReading)) {
+            $this->systemReadings[] = $systemReading;
+            $systemReading->setAlarm($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSystemReading(SystemReading $systemReading): self
+    {
+        if ($this->systemReadings->contains($systemReading)) {
+            $this->systemReadings->removeElement($systemReading);
+            // set the owning side to null (unless already changed)
+            if ($systemReading->getAlarm() === $this) {
+                $systemReading->setAlarm(null);
+            }
         }
 
         return $this;
