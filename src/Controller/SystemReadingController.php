@@ -362,10 +362,12 @@ class SystemReadingController extends AbstractController
                         ->setEncodingDateTime($encodingDateTime)
                         ->setEncodingAuthor($encodingAuthor)
                         ->setReading($stationReading);
-
-                    /* Détecter les valeurs hors normes */
-                    $alarm = $this->testNormativeLimits($measure, $systemReading, $manager);
                     $manager->persist($measure);
+
+                    /* Détecter les valeurs hors normes, si la mesure n'a pas déjà été liée à une alarme */
+                    if (null === $measure->getAlarm()) {
+                        $this->testNormativeLimits($measure, $systemReading, $manager);
+                    }
                 }
 
                 /* Définir les propriétés du relevé de station et la persister dans la base de données */
