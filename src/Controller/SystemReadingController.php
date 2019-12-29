@@ -54,25 +54,10 @@ class SystemReadingController extends AbstractController
     public function encode(System $system, ObjectManager $manager, Request $request, StationRepository $stationRepository, MeasurabilityRepository $instrumentParameterRepository, BasinRepository $basinRepository, StationKindRepository $stationKindRepository, SystemParameterRepository $systemParameterRepository)
     {
         /* Obtenir la liste des stations du système */
-        $systemStations = $stationRepository
-            ->createQueryBuilder('s')
-            ->innerJoin('s.basin', 'b')
-            ->where('b.system = :system')
-            ->setParameter('system', $system)
-            ->orderBy('s.code', 'ASC')
-            ->getQuery()->getResult();
+        $systemStations = $stationRepository->findSystemStations($system);
 
         /* Obtenir la liste ordonnée de paramètres du système */
-        $systemParameters = $systemParameterRepository
-            ->createQueryBuilder('sp')
-            ->addSelect('ip')
-            ->addSelect('p')
-            ->innerJoin('sp.instrumentParameter', 'ip')
-            ->innerJoin('ip.parameter', 'p')
-            ->where('sp.system = :system')
-            ->setParameter('system', $system)
-            ->orderBy('p.position', 'ASC')
-            ->getQuery()->getResult();
+        $systemParameters = $systemParameterRepository->findSystemParameters($system);
 
         /* Instancier un nouveau relevé de système */
         $systemReading = new SystemReading();
@@ -90,15 +75,10 @@ class SystemReadingController extends AbstractController
 
                 /* Pour chaque paramètre, ajouter une nouvelle mesure au relevé de station en activant la conversion de valeur */
                 foreach ($systemParameters as $systemParameter) {
-                    $measure = new Measure(true);
-                    $measure
-                        ->setMeasurability($systemParameter->getInstrumentParameter())
-                        ->setValue(null)
-                        ->setStable(true)
-                        ->setValid(true);
+                    $measure = $this->createMeasure($systemParameter, true);
                     $stationReading->addMeasure($measure);
                 }
-    
+
                 /* Ajouter la station au relevé */
                 $systemReading->addStationReading($stationReading);
             }
@@ -113,68 +93,14 @@ class SystemReadingController extends AbstractController
 
         /* Vérifier le soumission et la validité du formulaire */
         if ($form->isSubmitted() && $form->isValid()) {
-            /* Obtenir des informations du relevé de système */
-            $fieldDateTime = $systemReading->getFieldDateTime();
-            $encodingDateTime = $systemReading->getEncodingDateTime();
-            $encodingAuthor = $systemReading->getEncodingAuthor();
-
-            /* Préparer le test des valeurs normatives */
-            $alarm = null;
-
-            /* Traiter chacun des relevés de station */
-            foreach ($systemReading->getStationReadings() as $stationReading) {
-                $station = $stationReading->getStation();
-
-                /* Supprimer les mesures pour lesquelles aucune valeur n'a été encodée */
-                foreach ($stationReading->getMeasures() as $measure) {
-                    if (null === $measure->getValue()) {
-                        $stationReading->removeMeasure($measure);
-                    }
-                }
-
-                /* Traiter les mesures restantes */
-                $measures = $stationReading->getMeasures();
-                if ((0 != $measures->count()) || !empty($stationReading->getEncodingNotes())) {
-                    /* Définir les propriétés de chaque mesure et persister ces dernières dans la base de données */
-                    foreach ($measures as $measure) {
-                        $measure
-                            ->setFieldDateTime($fieldDateTime)
-                            ->setEncodingDateTime($encodingDateTime)
-                            ->setEncodingAuthor($encodingAuthor)
-                            ->setReading($stationReading);
-
-                        /* Détecter les valeurs hors normes */
-                        $alarm = $this->testNormativeLimits($measure, $alarm);
-                        $manager->persist($measure);
-                    }
-
-                    /* Définir les propriétés du relevé de station et la persister dans la base de données */
-                    $stationReading
-                        ->setFieldDateTime($fieldDateTime)
-                        ->setEncodingDateTime($encodingDateTime)
-                        ->setEncodingAuthor($encodingAuthor)
-                        ->setSystemReading($systemReading);
-                    $manager->persist($stationReading);
-                } else {
-                    /* Enlever le relevé de station car il est vide et aucune remarque n'a été fournie */
-                    $systemReading->removeStationReading($stationReading);
-                }
-            }
-
-            /* Persister le relevé de système dans la base de données */
-            $manager->persist($systemReading);
-
-            /* */
-            if (null !== $alarm) {
-                $manager->persist($alarm);
-                $this->addFlash('warning', "Une alarme a été créée automatiquement car certaines valeurs dépassent les normes.");
-            }
-
-            $manager->flush();
+            /* Mémoriser le relevé de système */
+            $this->storeSystemReading($systemReading, $manager);
 
             $this->addFlash('success', "Le relevé <strong>{$systemReading->getCode()}</strong> contenant <strong>{$systemReading->getStationReadings()->count()}</strong> relevés de stations a été encodé avec succès.");
 
-            return $this->redirectToRoute('reading');
+            return $this->redirectToRoute('system_reading_show', [
+                'code' => $systemReading->getCode(),
+            ]);
         }
 
         return $this->render('system_reading/form.html.twig', [
@@ -182,6 +108,73 @@ class SystemReadingController extends AbstractController
             'title' => "Encoder un relevé pour {$system->getName()}",
             'system' => $system,
             'systemParameters' => $systemParameters,
+            'conversions_enabled' => true,
+        ]);
+    }
+
+    /**
+     * @Route("/system-reading/{code}/edit", name="system_reading_edit")
+     * @IsGranted("SYSTEM_CONTRIBUTOR", subject="systemReading")
+     */
+    public function edit(SystemReading $systemReading, Request $request, ObjectManager $manager, SystemParameterRepository $systemParameterRepository)
+    {
+        $system = $systemReading->getSystem();
+        /* Obtenir la liste ordonnée de paramètres du système */
+        $systemParameters = $systemParameterRepository->findSystemParameters($system);
+
+        /* Traiter les relevés de stations: dans chacun d'eux, les mesures ne sont pas nécessairement dans le même ordre que les paramètres du système, or cet ordre est important car les paramètres sont en en-tête des colonnes du formulaire. Il se peut également qu'il n'y ait pas de mesure pour certains paramètres, ou qu'il y ait plusieurs mesures pour d'autres. */
+        foreach ($systemReading->getStationReadings() as $stationReading) {
+            /* Déplacer les mesures du relevé vers un tableau temporaire */
+            $stationMeasures = [];
+            foreach ($stationReading->getMeasures() as $stationMeasure) {
+                $stationMeasures[] = $stationMeasure;
+                $stationReading->removeMeasure($stationMeasure);
+            }
+
+            /* Reconstituer le tableau de mesures du relevé, dans l'ordre des paramètres du système et en insérant des mesures vides pour les paramètres n'ayant pas de mesure */
+            foreach ($systemParameters as $systemParameter) {
+                $key = $this->findParameterInMeasures($systemParameter, $stationMeasures);
+                if (null !== $key) {
+                    $measure = $stationMeasures[$key];
+                    array_splice($stationMeasures, $key, 1);
+                } else {
+                    /* Créer une mesure sans activer la conversion de valeur */
+                    $measure = $this->createMeasure($systemParameter, false);
+                }
+                $stationReading->addMeasure($measure);
+            }
+
+            /* Restaurer les mesures supplémentaires. Elles ne seront pas affichées, mais au moins elles ne seront pas perdues! */
+            foreach ($stationMeasures as $stationMeasure) {
+                $stationReading->addMeasure($measure);
+                throw \Exception("Des mesures supplémentaires ont été trouvées.");
+            }
+        }
+
+        /* Créer et traiter le formulaire */
+        $form = $this->createForm(SystemReadingType::class, $systemReading, [
+            'showEncoding' => true,
+            'showValidation' => false,
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /* Mémoriser le relevé de système */
+            $this->storeSystemReading($systemReading, $manager);
+
+            $this->addFlash('success', "Le relevé <strong>{$systemReading->getCode()}</strong> contenant <strong>{$systemReading->getStationReadings()->count()}</strong> relevés de stations a été mis à jour avec succès.");
+
+            return $this->redirectToRoute('system_reading_show', [
+                'code' => $systemReading->getCode(),
+            ]);
+        }
+
+        return $this->render('system_reading/form.html.twig', [
+            'form' => $form->createView(),
+            'title' => "Modifier le relevé {$systemReading->getCode()}",
+            'system' => $system,
+            'systemParameters' => $systemParameters,
+            'conversions_enabled' => false,
         ]);
     }
 
@@ -226,14 +219,48 @@ class SystemReadingController extends AbstractController
     }
 
     /**
+     * Crée une mesure vide et liée à un paramètre de système.
+     *
+     * @param SystemParameter $systemParameter
+     * @return Measure
+     */
+    private function createMeasure(SystemParameter $systemParameter, bool $conversionRequired)
+    {
+        $measure = new Measure($conversionRequired);
+        $measure
+            ->setMeasurability($systemParameter->getInstrumentParameter())
+            ->setValue(null)
+            ->setStable(true)
+            ->setValid(true);
+        return $measure;
+    }
+
+    /**
+     * Trouve un paramètre de système parmi un tableau de mesures.
+     *
+     * @param SystemParameter $systemParameter
+     * @param Measure[] $measures
+     * @return integer|string|null
+     */
+    private function findParameterInMeasures(SystemParameter $systemParameter, array $measures)
+    {
+        foreach ($measures as $key => $measure) {
+            if ($measure->getMeasurability() === $systemParameter->getInstrumentParameter()) {
+                return $key;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Détecte si la valeur d'une mesure est hors norme et, dans ce cas,
-     * crée automatiquement une alarme.
+     * crée automatiquement une alarme liée au relevé de système.
      *
      * @param Measure $measure
-     * @param Alarm $alarm
-     * @return Alarm
+     * @param SystemReading $systemReading
+     * @param ObjectManager $manager
      */
-    private function testNormativeLimits(Measure $measure, ?Alarm $alarm): ?Alarm
+    private function testNormativeLimits(Measure $measure, SystemReading $systemReading, ObjectManager $manager)
     {
         if ($measure->getValid()) {
             /* Obtenir la valeur et le paramètre */
@@ -242,36 +269,37 @@ class SystemReadingController extends AbstractController
             /* Tester la limite inférieure */
             $minimum = $parameter->getNormativeMinimum();
             if ((null !== $minimum) && ($value < $minimum)) {
-                $alarm = $this->createNormativeAlarm($alarm, $measure,
+                $this->createNormativeAlarm($systemReading, $measure,
                     " - " . $measure->getReading()->getStation()->getName() .
                     " : " . $parameter->getTitle() .
                     " = " . $value . " < " . $minimum . " " .
-                    $parameter->getUnit());
+                    $parameter->getUnit(), $manager);
             }
             /* Tester la limite supérieure */
             $maximum = $parameter->getNormativeMaximum();
             if ((null !== $maximum) && ($value > $maximum)) {
-                $alarm = $this->createNormativeAlarm($alarm, $measure,
+                $this->createNormativeAlarm($systemReading, $measure,
                     " - " . $measure->getReading()->getStation()->getName() .
                     " : " . $parameter->getTitle() .
                     " = " . $value . " > " . $maximum . " " .
-                    $parameter->getUnit());
+                    $parameter->getUnit(), $manager);
             }
         }
-        return $alarm;
     }
 
     /**
      * Crée une alarme normative, si elle n'existe pas encore, et y ajoute la
      * mesure indiquée.
      *
-     * @param Alarm|null $alarm
+     * @param SystemReading $systemReading
      * @param Measure $measure
      * @param string $note
-     * @return Alarm|null
+     * @param ObjectManager $manager
+     * @return void
      */
-    private function createNormativeAlarm(?Alarm $alarm, Measure $measure, string $note): ?Alarm
+    private function createNormativeAlarm(SystemReading $systemReading, Measure $measure, string $note, ObjectManager $manager)
     {
+        $alarm = $systemReading->getAlarm();
         if (null === $alarm) {
             /* Créer une nouvelle alarme */
             $alarm = new Alarm();
@@ -280,6 +308,10 @@ class SystemReadingController extends AbstractController
                 ->setReportingAuthor($measure->getEncodingAuthor())
                 ->setReportingDate($measure->getEncodingDateTime())
                 ->setNotes("Certaines valeurs mesurées dépassent les normes.");
+            /* Lier l'alarme au relevé de système */
+            $systemReading->setAlarm($alarm);
+
+            $this->addFlash('warning', "Une alarme a été créée automatiquement car certaines valeurs dépassent les normes.");
         }
         /* Ajouter le commentaire à l'alarme */
         if (!empty($note)) {
@@ -288,6 +320,69 @@ class SystemReadingController extends AbstractController
         /* Ajouter la mesure à l'alarme */
         $alarm->addMeasure($measure);
         $measure->setAlarm($alarm);
+        /* Ajouter l'alarme à la base de données */
+        $manager->persist($alarm);
         return $alarm;
+    }
+
+    /**
+     * Mémorise ou met à jour le relevé de système dans la base de données, en
+     * y supprimant les mesures non complétées et les stations ne comportant
+     * ni mesures ni remarques.
+     *
+     * @param SystemReading $systemReading
+     * @param ObjectManager $manager
+     * @return void
+     */
+    private function storeSystemReading(SystemReading $systemReading, ObjectManager $manager)
+    {
+        /* Mettre en cache des informations du relevé de système */
+        $fieldDateTime = $systemReading->getFieldDateTime();
+        $encodingDateTime = $systemReading->getEncodingDateTime();
+        $encodingAuthor = $systemReading->getEncodingAuthor();
+
+        /* Traiter chacun des relevés de station */
+        foreach ($systemReading->getStationReadings() as $stationReading) {
+            $station = $stationReading->getStation();
+
+            /* Supprimer les mesures pour lesquelles aucune valeur n'a été encodée */
+            foreach ($stationReading->getMeasures() as $measure) {
+                if (null === $measure->getValue()) {
+                    $stationReading->removeMeasure($measure);
+                }
+            }
+
+            /* Traiter les mesures restantes */
+            $measures = $stationReading->getMeasures();
+            if ((0 != $measures->count()) || !empty($stationReading->getEncodingNotes())) {
+                /* Définir les propriétés de chaque mesure et persister ces dernières dans la base de données */
+                foreach ($measures as $measure) {
+                    $measure
+                        ->setFieldDateTime($fieldDateTime)
+                        ->setEncodingDateTime($encodingDateTime)
+                        ->setEncodingAuthor($encodingAuthor)
+                        ->setReading($stationReading);
+
+                    /* Détecter les valeurs hors normes */
+                    $alarm = $this->testNormativeLimits($measure, $systemReading, $manager);
+                    $manager->persist($measure);
+                }
+
+                /* Définir les propriétés du relevé de station et la persister dans la base de données */
+                $stationReading
+                    ->setFieldDateTime($fieldDateTime)
+                    ->setEncodingDateTime($encodingDateTime)
+                    ->setEncodingAuthor($encodingAuthor)
+                    ->setSystemReading($systemReading);
+                $manager->persist($stationReading);
+            } else {
+                /* Enlever le relevé de station car il est vide et aucune remarque n'a été fournie */
+                $systemReading->removeStationReading($stationReading);
+            }
+        }
+
+        /* Persister le relevé de système dans la base de données */
+        $manager->persist($systemReading);
+        $manager->flush();
     }
 }

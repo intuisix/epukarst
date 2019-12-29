@@ -61,4 +61,21 @@ class StationRepository extends ServiceEntityRepository
             ->setParameter('roles', $roles)
             ->orderBy('system.name');
     }
+
+    /**
+     * Trouve les stations appartenant à un système donné.
+     * 
+     * @param System $system
+     * @return Station[]
+     */
+    public function findSystemStations(System $system)
+    {
+        return $this
+            ->createQueryBuilder('s')
+            ->innerJoin('s.basin', 'b')
+            ->where('b.system = :system')
+            ->setParameter('system', $system)
+            ->orderBy('s.code', 'ASC')
+            ->getQuery()->getResult();
+    }
 }

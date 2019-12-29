@@ -63,12 +63,12 @@
                                     </strong>
                                     <br>
                                     {# Afficher qu'une conversion d'unité sera réalisée #}
-                                    {% if systemParameter.instrumentParameter.inputUnit %}
+                                    {% if systemParameter.instrumentParameter.inputUnit and conversions_enabled %}
                                         [{{systemParameter.instrumentParameter.inputUnit}}]
                                     {% elseif systemParameter.instrumentParameter.parameter.unit %}
                                             [{{systemParameter.instrumentParameter.parameter.unit}}]
                                     {% endif %}
-                                    {% if systemParameter.instrumentParameter.inputConversion is not null %}
+                                    {% if systemParameter.instrumentParameter.inputConversion is not null and conversions_enabled %}
                                         <i class="fas fa-square-root-alt" data-toggle="tooltip" data-placement="top" data-html="true" title="La valeur sera convertie automatiquement&nbsp;:<br>y={{systemParameter.instrumentParameter.inputConversion|default('x')}}"></i>
                                     {% endif %}
                                     <br>

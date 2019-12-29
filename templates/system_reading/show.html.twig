@@ -119,6 +119,20 @@
                 {% endfor %}
             </tbody>
         </table>
+        {# Bouton permettant de modifier le relevé #}
+        {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
+            <a href="{{path('system_reading_edit', {'code': systemReading.code})}}" class="btn btn-primary">
+                <i class="fas fa-edit"></i>
+                Modifier ce relevé
+            </a>
+        {% endif %}
+        {# Bouton permettant de modifier le relevé #}
+        {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
+            <a href="{{path('system_reading_delete', {'code': systemReading.code})}}" class="btn btn-danger">
+                <i class="fas fa-edit"></i>
+                Supprimer ce relevé
+            </a>
+        {% endif %}
         {# Bouton permettant de revenir à la page précédente #}
         {% include '_back.html.twig' %}
     </div>

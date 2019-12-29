@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\System;
 use App\Entity\SystemParameter;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method SystemParameter|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +20,24 @@ class SystemParameterRepository extends ServiceEntityRepository
         parent::__construct($registry, SystemParameter::class);
     }
 
-    // /**
-    //  * @return SystemParameter[] Returns an array of SystemParameter objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * Trouve les paramètres d'un système donné et les trie par ordre de
+     * position.
+     *
+     * @param System $system
+     * @return SystemParameter[]
+     */
+    public function findSystemParameters(System $system)
     {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        return $this
+            ->createQueryBuilder('sp')
+            ->addSelect('ip')
+            ->addSelect('p')
+            ->innerJoin('sp.instrumentParameter', 'ip')
+            ->innerJoin('ip.parameter', 'p')
+            ->where('sp.system = :system')
+            ->setParameter('system', $system)
+            ->orderBy('p.position', 'ASC')
+            ->getQuery()->getResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?SystemParameter
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
