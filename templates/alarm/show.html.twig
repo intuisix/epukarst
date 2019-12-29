@@ -42,17 +42,17 @@
         </table>
 
         {% if alarm.measures|length %}
-            <h2>Mesures problématiques</h2>
+            <h2>Mesures liées</h2>
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th>Relevé</th>
                         <th>Station</th>
-                        <th>Paramètre</th>
-                        <th>Unité</th>
-                        <th>Valeur mesurée</th>
-                        <th>Minimum normatif</th>
-                        <th>Maximum normatif</th>
+                        <th class="text-center">Paramètre</th>
+                        <th class="text-center">Unité</th>
+                        <th class="text-center">Valeur mesurée</th>
+                        <th class="text-center">Minimum normatif</th>
+                        <th class="text-center">Maximum normatif</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -65,10 +65,10 @@
                                 </a>
                             </td>
                             <td>{{measure.reading.station.name}}</td>
-                            <td>{{parameter.name}}</td>
-                            <td>{{parameter.unit}}</td>
-                            <td>{{measure.value}}</td>
-                            <td>
+                            <td class="text-center">{{parameter.name}}</td>
+                            <td class="text-center">{{parameter.unit}}</td>
+                            <td class="text-center">{{measure.value}}</td>
+                            <td class="text-center">
                                 {% if parameter.normativeMinimum is not null %}
                                     {{parameter.normativeMinimum}}
                                     {% if measure.value < parameter.normativeMinimum %}
@@ -76,13 +76,47 @@
                                     {% endif %}
                                 {% endif %}
                             </td>
-                            <td>
+                            <td class="text-center">
                                 {% if parameter.normativeMaximum is not null %}
                                     {{parameter.normativeMaximum}}
                                     {% if measure.value > parameter.normativeMaximum %}
                                         <i class="fas fa-exclamation-triangle text-warning"></i>
                                     {% endif %}
                                 {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+        {% if alarm.systemReadings|length %}
+            <h2>Relevés de système liés</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Date de terrain</th>
+                        <th>Date d'encodage</th>
+                        <th>Encodé par</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for systemReading in alarm.systemReadings %}
+                        <tr>
+                            <td>
+                                <a href="{{path('system_reading_show', {'code': systemReading.code})}}">
+                                    <span class="badge badge-secondary">{{systemReading.code}}</span>
+                                </a>
+                            </td>
+                            <td>
+                                {{systemReading.fieldDateTime|date('d/m/Y')}}
+                            </td>
+                            <td>
+                                {{systemReading.encodingDateTime|date('d/m/Y')}}
+                            </td>
+                            <td>
+                                {{systemReading.encodingAuthor}}
                             </td>
                         </tr>
                     {% endfor %}
