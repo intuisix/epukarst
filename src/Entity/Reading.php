@@ -159,7 +159,7 @@ class Reading
             }
             /* Formater le code en utilisant celui de la station comme préfixe (même si d'autres préfixes ont été rencontrés durant l'examen des autres relevés) */
             $this->code = $this->station->getCode() . '-' .
-                sprintf("%04u", $highestNumber + 1);
+                sprintf("%03u", $highestNumber + 1);
         }
     }
 
