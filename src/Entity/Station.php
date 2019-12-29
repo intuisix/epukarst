@@ -90,25 +90,28 @@ class Station
     public function update()
     {
         if (empty($this->code)) {
-            /* Calculer le code suivant dans la séquence en parcourant les autres stations */
+            /* Trouver le numéro (suffixe de code) le plus élevé parmi toutes les stations, dans tous les bassins du système */
+            $system = $this->basin->getSystem();
             $highestNumber = 0;
-            foreach ($this->basin->getStations() as $station) {
-                $code = $station->getCode();
-                /* Rechercher le début du nombre situé en fin de chaîne */
-                $i = strlen($code);
-                while ($i > 0 && is_numeric($code[$i - 1])) {
-                    $i--;
-                }
-                /* Déterminer si ce nombre est le plus élevé rencontré */
-                if (($i > 0) && ($code[$i - 1] == '-')) {
-                    $number = (int)substr($code, $i);
-                    if ($number > $highestNumber) {
-                        $highestNumber = $number;
+            foreach ($system->getBasins() as $basin) {
+                foreach ($basin->getStations() as $station) {
+                    $code = $station->getCode();
+                    /* Rechercher le début du nombre situé en fin de chaîne */
+                    $i = strlen($code);
+                    while ($i > 0 && is_numeric($code[$i - 1])) {
+                        $i--;
+                    }
+                    /* Déterminer si ce nombre est le plus élevé rencontré */
+                    if (($i > 0) && ($code[$i - 1] == '-')) {
+                        $number = (int)substr($code, $i);
+                        if ($number > $highestNumber) {
+                            $highestNumber = $number;
+                        }
                     }
                 }
             }
-            /* Formater le code en utilisant celui du bassin comme préfixe (même si d'autres préfixes ont été rencontrés durant l'examen des autres stations) */
-            $this->code = $this->basin->getCode() . '-' .
+            /* Formater le code de station en utilisant celui du système comme préfixe (peu importe si d'autres préfixes ont pu être rencontrés durant l'examen des autres stations) */
+            $this->code = $system->getCode() . '-' .
                 sprintf("%02u", $highestNumber + 1);
         }
     }
