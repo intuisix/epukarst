@@ -103,6 +103,11 @@ class AlarmController extends AbstractController
      */
     public function delete(Alarm $alarm, Request $request, ObjectManager $manager): Response
     {
+        if ((0 !== count($alarm->getMeasures())) || (0 !== count($alarm->getSystemReadings()))) {
+            $this->addFlash('danger', "L'alarme du <strong>{$alarm->getReportingDate()->format('d/m/Y')}</strong> relative à <strong>{$alarm->getSystem()->getName()}</strong> ne peut pas être supprimée car elle est liée à des relevés ou à des mesures.");
+            return $this->redirectToRoute('alarm_index');
+        }
+
         /* Créer et traiter le formulaire de confirmation */
         $form = $this->createFormBuilder()->getForm();
         $form->handleRequest($request);
@@ -110,7 +115,7 @@ class AlarmController extends AbstractController
             /* Supprimer l'alarme */
             $manager->remove($alarm);
             $manager->flush();
-            $this->addFlash('success', "L'alarme relative à <strong>{$alarm->getSystem()->getName()}</strong> a été supprimée avec succès.");    
+            $this->addFlash('success', "L'alarme du <strong>{$alarm->getReportingDate()->format('d/m/Y')}</strong> relative à <strong>{$alarm->getSystem()->getName()}</strong> a été supprimée avec succès.");
             return $this->redirectToRoute('alarm_index');
         }
 
