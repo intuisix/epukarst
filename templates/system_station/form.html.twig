@@ -38,12 +38,8 @@
                 <i class="fas fa-check"></i>
                 Enregistrer la station
             </button>
-
-            {# Bouton permettant de revenir à l'index #}
-            <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-cancel">
-                <i class="fas fa-backspace"></i>
-                Retourner à la liste
-            </a>
+            {# Bouton permettant de revenir en arrière #}
+            {% include '_back.html.twig' %}
         </div>
 
         {{form_end(form)}}

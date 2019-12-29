@@ -43,17 +43,13 @@ modification d'article #}
         </p>
 
         <div class="mb-3">
-            {# Afficher un bouton permettant d'enregistrer l'article #}
+            {# Bouton permettant d'enregistrer l'article #}
             <button type="submit" class="btn btn-success">
                 <i class="fas fa-check"></i>
                 Enregistrer l'article
             </button>
-
-            {# Afficher un bouton permettant de revenir à l'index #}
-            <a href="{{path('post')}}" class="btn btn-cancel">
-                <i class="fas fa-backspace"></i>
-                Retourner à la liste
-            </a>
+            {# Bouton permettant de revenir à la page précédente #}
+            {% include '_back.html.twig' %}
         </div>
 
         {{form_end(form)}}

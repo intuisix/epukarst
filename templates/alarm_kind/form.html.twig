@@ -29,17 +29,13 @@ modification d'un type d'alarme #}
         </div>
 
         <div class="mb-3">
-            {# Afficher un bouton permettant d'enregistrer le genre d'alarme #}
+            {# Bouton permettant d'enregistrer le type d'alarme #}
             <button type="submit" class="btn btn-success">
                 <i class="fas fa-check"></i>
                 Enregistrer le genre d'alarme
             </button>
-
-            {# Afficher un bouton permettant de revenir à l'index #}
-            <a href="{{ path('alarm_kind') }}" class="btn btn-cancel">
-                <i class="fas fa-backspace"></i>
-                Retourner à la liste
-            </a>
+            {# Bouton permettant de revenir à la page précédente #}
+            {% include '_back.html.twig' %}
         </div>
 
         {{form_end(form)}}

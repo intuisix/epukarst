@@ -1,9 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Alarme{% endblock %}
+{% block title %}
+    Alarme
+{% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="container mb-3">
         <h1>Alarme</h1>
 
         <table class="table table-bordered">
@@ -98,9 +100,7 @@
                 Supprimer l'alarme
             </a>
         {% endif %}
-        <a href="{{path('alarm_index')}}" class="btn btn-cancel">
-            <i class="fas fa-backspace"></i>
-            Revenir à la liste
-        </a>
+        {# Bouton permettant de revenir à la page précédente #}
+        {% include '_back.html.twig' %}
     </div>
 {% endblock %}

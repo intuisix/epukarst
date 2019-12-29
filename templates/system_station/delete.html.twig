@@ -21,12 +21,8 @@
             <i class="fa fa-trash" aria-hidden="true"></i>
             Supprimer la station
         </button>
-
-        {# Ajouter un bouton pour revenir à l'index #}
-        <a href="{{path('system_station', {'code': station.basin.system.code})}}" class="btn btn-cancel">
-            <i class="fas fa-backspace"></i>
-            Revenir à la liste
-        </a>
+        {# Bouton permettant de revenir à la page précédente #}
+        {% include '_back.html.twig' %}
 
         {{form_end(form)}}
     </div>

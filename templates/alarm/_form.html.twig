@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container mb-3">
     {{form_start(form)}}
 
     <p>Ce formulaire permet de définir une alarme de pollution relative à l'un des systèmes karstiques étudiés. Une telle alarme peut être signalée notamment dans les situations où lorsque des activités polluantes sont observées ou que des mesures dépassent les seuils normatifs.</p>
@@ -22,12 +22,8 @@
         <i class="fas fa-check"></i>
         {{button_label|default('Enregistrer')}}
     </button>
-
-    {# Bouton permettant de revenir à la liste #}
-    <a href="{{path('alarm_index')}}" class="btn btn-cancel">
-        <i class="fas fa-backspace"></i>
-        Revenir à la liste
-    </a>
+    {# Bouton permettant de revenir à la page précédente #}
+    {% include '_back.html.twig' %}
 
     {{form_end(form)}}
 </div>

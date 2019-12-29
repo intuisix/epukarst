@@ -20,17 +20,13 @@
             {% endif %}
         </div>
 
-        {# Ajouter un bouton pour confirmer la suppression #}
+        {# Bouton permettant de confirmer la suppression #}
         <button type="submit" class="btn btn-danger">
             <i class="fa fa-trash" aria-hidden="true"></i>
             Supprimer le relevé
         </button>
-
-        {# Ajouter un bouton pour revenir au relevé #}
-        <a href="{{path('reading_show', {'code': reading.code})}}" class="btn btn-cancel">
-            <i class="fas fa-backspace"></i>
-            Revenir au relevé
-        </a>
+        {# Bouton permettant de revenir à la page précédente #}
+        {% include '_back.html.twig' %}
 
         {{form_end(form)}}
     </div>

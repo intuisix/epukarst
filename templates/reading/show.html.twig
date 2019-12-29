@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Relevé {{reading.code}}
+    Relevé de station {{reading.code}}
 {% endblock %}
 
 {% block body %}
     <div class="container mb-3">
-        <h1>Relevé {{reading.code}}</h1>
+        <h1>Relevé de station {{reading.code}}</h1>
 
         <div class="card mb-3">
             <div class="card-body">
@@ -157,7 +157,6 @@
                 Modifier ce relevé
             </a>
         {% endif %}
-
         {# Bouton permettant de valider le relevé #}
         {% if is_granted('SYSTEM_MANAGER', reading) %}
             <a href="{{path('reading_validate', {'code': reading.code})}}" class="btn btn-success">
@@ -165,7 +164,6 @@
                 Valider ce relevé
             </a>
         {% endif %}
-
         {# Bouton permettant de modifier le relevé #}
         {% if is_granted('SYSTEM_CONTRIBUTOR', reading) %}
             <a href="{{path('reading_delete', {'code': reading.code})}}" class="btn btn-danger">
@@ -173,11 +171,7 @@
                 Supprimer ce relevé
             </a>
         {% endif %}
-
-        {# Bouton permettant de revenir au relevé #}
-        <a href="{{path('reading')}}" class="btn btn-cancel">
-            <i class="fas fa-backspace"></i>
-            Revenir à la liste
-        </a>
+            {# Bouton permettant de revenir à la page précédente #}
+            {% include '_back.html.twig' %}
     </div>
 {% endblock %}

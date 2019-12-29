@@ -91,12 +91,8 @@ modification de systèmes #}
             <i class="fas fa-check"></i>
             Enregistrer le système
         </button>
-
-        {# Buton permettant de revenir à l'index #}
-        <a href="{{path('systems_list')}}" class="btn btn-cancel">
-            <i class="fas fa-backspace"></i>
-            Revenir à la liste
-        </a>
+        {# Bouton permettant de revenir à la page précédente #}
+        {% include '_back.html.twig' %}
 
         {{form_end(form)}}
     </div>

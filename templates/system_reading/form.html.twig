@@ -160,27 +160,13 @@
             </div>
         {% endif %}
 
-        {# Afficher un bouton permettant d'enregistrer le relevé #}
+        {# Bouton permettant d'enregistrer le relevé #}
         <button type="submit" class="btn btn-success">
             <i class="fas fa-check"></i>
             Enregistrer le relevé
         </button>
-
-        {# Bouton permettant de revenir aux relevés de stations #}
-        <a href="{{path('reading')}}" class="btn btn-cancel">
-            <i class="fas fa-backspace"></i>
-            Relevés de stations
-        </a>
-        {# Bouton permettant de revenir aux relevés de systèmes #}
-        <a href="{{path('system_reading')}}" class="btn btn-cancel">
-            <i class="fas fa-backspace"></i>
-            Relevés de systèmes
-        </a>
-        {# Bouton permettant de revenir aux systèmes #}
-        <a href="{{path('systems_list')}}" class="btn btn-cancel">
-            <i class="fas fa-backspace"></i>
-            Liste des systèmes
-        </a>
+        {# Bouton permettant de revenir à la page précédente #}
+        {% include '_back.html.twig' %}
 
         {{form_end(form)}}
     </div>

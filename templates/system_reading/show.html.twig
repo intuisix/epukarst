@@ -119,11 +119,7 @@
                 {% endfor %}
             </tbody>
         </table>
-
-        {# Ajouter un bouton pour revenir à l'index #}
-        <a href="{{path('system_reading')}}" class="btn btn-cancel">
-            <i class="fas fa-backspace"></i>
-            Revenir à la liste
-        </a>
+        {# Bouton permettant de revenir à la page précédente #}
+        {% include '_back.html.twig' %}
     </div>
 {% endblock %}

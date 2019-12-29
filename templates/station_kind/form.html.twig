@@ -29,17 +29,13 @@ modification d'un genre de station #}
         </div>
 
         <div class="mb-3">
-            {# Afficher un bouton permettant d'enregistrer le genre de station #}
+            {# Bouton permettant d'enregistrer le type de station #}
             <button type="submit" class="btn btn-success">
                 <i class="fas fa-check"></i>
                 Enregistrer le genre de station
             </button>
-
-            {# Afficher un bouton permettant de revenir à l'index #}
-            <a href="{{ path('station_kind') }}" class="btn btn-cancel">
-                <i class="fas fa-backspace"></i>
-                Retourner à la liste
-            </a>
+            {# Bouton permettant de revenir à la page précédente #}
+            {% include '_back.html.twig' %}
         </div>
 
         {{form_end(form)}}
