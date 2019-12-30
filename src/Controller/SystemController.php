@@ -66,7 +66,7 @@ class SystemController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             /* Mettre à jour les propriétés du système */
-            $picturesAdded = $this->update($system, $form, $manager);
+            $picturesAdded = $this->storeSystem($system, $form, $manager);
 
             $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été créé avec succès.");
 
@@ -103,7 +103,7 @@ class SystemController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             /* Mettre à jour les propriétés du système */
-            $picturesAdded = $this->update($system, $form, $manager);
+            $picturesAdded = $this->storeSystem($system, $form, $manager);
 
             $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été modifié avec succès.");
 
@@ -174,7 +174,7 @@ class SystemController extends AbstractController
      * Affiche les stations d'un système karstique.
      * 
      * @Route("/system/{slug}/stations", name="system_show_stations")
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("SYSTEM_OBSERVER", subject="system")
      */
     public function showStations(System $system)
     {
@@ -187,7 +187,7 @@ class SystemController extends AbstractController
      * Affiche les paramètres d'un système karstique.
      * 
      * @Route("/system/{slug}/parameters", name="system_show_parameters")
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("SYSTEM_OBSERVER", subject="system")
      */
     public function showParameters(System $system)
     {
@@ -209,7 +209,7 @@ class SystemController extends AbstractController
      * Affiche les instruments d'un système karstique.
      * 
      * @Route("/system/{slug}/instruments", name="system_show_instruments")
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("SYSTEM_OBSERVER", subject="system")
      */
     public function showInstruments(System $system)
     {
@@ -228,12 +228,12 @@ class SystemController extends AbstractController
     }
 
     /**
-     * Met à jour les propriétés du système karstique.
+     * Mémorise le système karstique dans la base de données.
      *
      * @param System $system
      * @return void
      */
-    private function update(System $system, $form, ObjectManager $manager)
+    private function storeSystem(System $system, $form, ObjectManager $manager)
     {
         /* Lier les bassins au système */
         foreach ($system->getBasins() as $basin) {

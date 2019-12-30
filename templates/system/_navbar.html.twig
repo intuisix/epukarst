@@ -4,29 +4,25 @@
         <i class="fas fa-eye"></i>
         Système
     </a>
-    {# Boutons pour voir les stations #}
-    <a href="{{path('system_show_stations', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
-        <i class="fas fa-bullseye"></i>
-        Bassins et stations
-    </a>
-    {# Boutons pour voir les instruments #}
-    <a href="{{path('system_show_instruments', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
-        <i class="fas fa-ruler"></i>
-        Instruments de mesure
-    </a>
-    {# Boutons pour voir les paramètres #}
-    <a href="{{path('system_show_parameters', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
-        <i class="fas fa-asterisk"></i>
-        Paramètres de mesure
-    </a>
 
-    {# Bouton pour modifier le système #}
-    {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{path('system_modify', {'code': system.code})}}" class="btn btn-primary btn-block">
-            <i class="fas fa-edit"></i>
-            Modifier le système
+    {% if is_granted("SYSTEM_OBSERVER", system) %}
+        {# Boutons pour voir les stations #}
+        <a href="{{path('system_show_stations', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
+            <i class="fas fa-bullseye"></i>
+            Bassins et stations
+        </a>
+        {# Boutons pour voir les instruments #}
+        <a href="{{path('system_show_instruments', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
+            <i class="fas fa-ruler"></i>
+            Instruments de mesure
+        </a>
+        {# Boutons pour voir les paramètres #}
+        <a href="{{path('system_show_parameters', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
+            <i class="fas fa-asterisk"></i>
+            Paramètres de mesure
         </a>
     {% endif %}
+
     {# Bouton pour encoder un relevé de système #}
     {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
         <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary btn-block">
@@ -34,8 +30,14 @@
             Encoder un relevé de système
         </a>
     {% endif %}
-    {# Bouton pour supprimer le système #}
+
     {% if is_granted('ROLE_ADMIN') %}
+        {# Bouton pour modifier le système #}
+        <a href="{{path('system_modify', {'code': system.code})}}" class="btn btn-primary btn-block">
+            <i class="fas fa-edit"></i>
+            Modifier le système
+        </a>
+        {# Bouton pour supprimer le système #}
         <a href="{{path('system_delete', {'code': system.code})}}" class="btn btn-danger btn-block">
             <i class="fas fa-trash"></i>
             Supprimer le système
