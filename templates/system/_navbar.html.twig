@@ -21,13 +21,18 @@
             <i class="fas fa-asterisk"></i>
             Paramètres de mesure
         </a>
+        {# Boutons pour voir les relevés #}
+        <a href="{{path('system_show_readings', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
+            <i class="fas fa-file-alt"></i>
+            Relevés du système
+        </a>
     {% endif %}
 
     {# Bouton pour encoder un relevé de système #}
     {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
         <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary btn-block">
-            <i class="fas fa-file-alt"></i>
-            Encoder un relevé de système
+            <i class="fas fa-plus"></i>
+            Encoder un relevé
         </a>
     {% endif %}
 
