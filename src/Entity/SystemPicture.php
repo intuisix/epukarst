@@ -150,7 +150,7 @@ class SystemPicture
             if ('.' != $value[0]) {
                 $path = $dir . DIRECTORY_SEPARATOR . $value;
                 if (is_dir($path)) {
-                    scanPicturesDir($path, $results);
+                    SystemPicture::scanPicturesDir($path, $results);
                 } else {
                     $results[] = $path;
                 }

@@ -25,9 +25,7 @@ class SystemPictureType extends AbstractType
             ->add('fileName', ChoiceType::class, [
                 'label' => "Nom du fichier",
                 'disabled' => false,
-                'attr' => [
-                    'placeholder' => "Entrez le nom du fichier"
-                ],
+                'placeholder' => "Sélectionnez un fichier",
                 'choices' => $files,
                 'choice_label' => function($key) use ($files) {
                     return $key;
