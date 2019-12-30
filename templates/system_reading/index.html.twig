@@ -11,10 +11,10 @@
         <table width="100%" class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>Terrain</th>
-                    <th>Encodage</th>
-                    <th>Auteur</th>
                     <th>Code</th>
+                    <th>Relevé le</th>
+                    <th>Encodé le</th>
+                    <th>Encodé par</th>
                     <th>Système</th>
                     <th>Stations</th>
                     <th>Actions</th>
@@ -23,6 +23,15 @@
             <tbody>
                 {% for systemReading in pagination.data %}
                     <tr>
+                        <td>
+                            {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
+                                <a href="{{path('system_reading_show', {'code': systemReading.code})}}">
+                                    <span class="badge badge-secondary">{{systemReading.code}}</span>
+                                </a>
+                            {% else %}
+                                <span class="badge badge-secondary">{{systemReading.code}}</span>
+                            {% endif %}
+                        </td>
                         <td>
                             {{systemReading.fieldDateTime|date('d/m/Y')}}
                         </td>
@@ -33,11 +42,6 @@
                             {{systemReading.encodingAuthor}}
                         </td>
                         <td>
-                            {% if is_granted('SYSTEM_OBSERVER', systemReading) %}
-                                <a href="{{path('system_reading_show', {'code': systemReading.code})}}">{{systemReading.code}}</a>
-                            {% endif %}
-                        </td>
-                        <td>
                             {{systemReading.system.name}}
                         </td>
                         <td>
@@ -46,6 +50,14 @@
                             {% endif %}
                         </td>
                         <td>
+                            {% if is_granted('SYSTEM_OBSERVER', systemReading) %}
+                                <a href="{{path('system_reading_show', {'code': systemReading.code})}}">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            {% endif %}
+                            {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
+                                <a href="{{path('system_reading_edit', {'code': systemReading.code})}}"><i class="fas fa-edit text-primary"></i></a>
+                            {% endif %}
                             {% if is_granted('SYSTEM_MANAGER', systemReading) %}
                                 <a href="{{path('system_reading_delete', {'code': systemReading.code})}}"><i class="fas fa-trash text-danger"></i></a>
                             {% endif %}
