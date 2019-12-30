@@ -1,102 +1,92 @@
-{% extends 'base.html.twig' %}
+{% extends 'system/base.html.twig' %}
 
 {% block title %}
     Stations de {{system.name}}
 {% endblock %}
 
-{% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <div class="float-right">
-                    {# Bouton pour modifier les stations #}
-                    {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
-                        <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-primary">
-                            <i class="fas fa-edit"></i>
-                            Modifier
-                        </a>
-                        <a href="{{path('system_station_create', {'code': system.code})}}" class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            Ajouter une station
-                        </a>
-                    {% endif %}
-                </div>
-
-                {# Titre #}
-                <h1>Stations de {{system.name}}</h1>
-
-                <p>Les mesures du système sont réalisées aux stations suivantes, classées par bassin d'alimentation&nbsp;:</p>
-
-                {# Pour chaque bassin du système #}
-                {% for basin in system.basins|sort((a, b) => (a.code <=> b.code)) %}
-                    {# Titre #}
-                    <h2 id="basin_{{basin.code}}" class="d-flex align-items-center">
-                        <span class="badge badge-secondary">
-                            {{basin.code}}
-                        </span>
-                        <span class="mx-2">
-                            {{basin.name}}
-                        </span>
-                    </h2>
-
-                    {# Description #}
-                    {{basin.description|raw}}
-
-                    {# Pour chaque station sitée dans le bassin #}
-                    {% for station in basin.stations|sort((a, b) => (a.code <=> b.code)) %}
-                        {# Titre #}
-                        <h3 id="station_{{station.code}}" class="d-flex align-items-center">
-                            <span class="badge badge-secondary">
-                                {{station.code}}
-                            </span>
-                            <span class="mx-2">
-                                {{station.name}}
-                            </span>
-                            <small>
-                                {# Bouton de modification #}
-                                {% if is_granted('SYSTEM_CONTRIBUTOR', station) %}
-                                    <a href="{{path('system_station_update', {'code': station.code})}}"><i class="fas fa-edit text-primary"></i></a>
-                                {% endif %}
-                                {# Bouton de suppression #}
-                                {% if is_granted('SYSTEM_MANAGER', station) %}
-                                    <a href="{{path('system_station_delete', {'code': station.code})}}"><i class="fas fa-trash text-danger"></i></a>
-                                {% endif %}
-                            </small>
-                        </h3>
-
-                        <dl class="row">
-                            {# Code de l'atlas #}
-                            <dt class="col-3">Code AKWA&nbsp;:</dt>
-                            <dd class="col-9">{{station.atlasCode|default('Néant')}}</dd>
-                        </dl>
-
-                        {# Description #}
-                        {{station.description|raw}}
-                    {% endfor %}
-                {% endfor %}
-            </div>
-
-            {# Colonne de droite #}
-            <div class="col-4 alert bg-light">
-                {# Boutons de navigation #}
-                {% include 'system/_navbar.html.twig' %}
-
-                {# Raccourcis vers les bassins et les stations #}
-                {% for basin in system.basins %}
-                    <div class="card mt-3">
-                        <div class="card-header">
-                            <a href="#basin_{{basin.code}}">{{basin.name}}</a>
-                        </div>
-                        <ul class="list-group list-group-flush">
-                            {% for station in basin.stations %}
-                                <li class="list-group-item">
-                                    <a href="#station_{{station.code}}" class="ml-4">{{station.name}}</a>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                {% endfor %}
-            </div>
-        </div>
+{% block content %}
+    <div class="float-right">
+        {# Bouton pour modifier les stations #}
+        {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+            <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-primary">
+                <i class="fas fa-edit"></i>
+                Modifier
+            </a>
+            <a href="{{path('system_station_create', {'code': system.code})}}" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Ajouter une station
+            </a>
+        {% endif %}
     </div>
+
+    {# Titre #}
+    <h1>Stations de {{system.name}}</h1>
+
+    <p>Les mesures du système sont réalisées aux stations suivantes, classées par bassin d'alimentation&nbsp;:</p>
+
+    {# Pour chaque bassin du système #}
+    {% for basin in system.basins|sort((a, b) => (a.code <=> b.code)) %}
+        {# Titre #}
+        <h2 id="basin_{{basin.code}}" class="d-flex align-items-center">
+            <span class="badge badge-secondary">
+                {{basin.code}}
+            </span>
+            <span class="mx-2">
+                {{basin.name}}
+            </span>
+        </h2>
+
+        {# Description #}
+        {{basin.description|raw}}
+
+        {# Pour chaque station sitée dans le bassin #}
+        {% for station in basin.stations|sort((a, b) => (a.code <=> b.code)) %}
+            {# Titre #}
+            <h3 id="station_{{station.code}}" class="d-flex align-items-center">
+                <span class="badge badge-secondary">
+                    {{station.code}}
+                </span>
+                <span class="mx-2">
+                    {{station.name}}
+                </span>
+                <small>
+                    {# Bouton de modification #}
+                    {% if is_granted('SYSTEM_CONTRIBUTOR', station) %}
+                        <a href="{{path('system_station_update', {'code': station.code})}}"><i class="fas fa-edit text-primary"></i></a>
+                    {% endif %}
+                    {# Bouton de suppression #}
+                    {% if is_granted('SYSTEM_MANAGER', station) %}
+                        <a href="{{path('system_station_delete', {'code': station.code})}}"><i class="fas fa-trash text-danger"></i></a>
+                    {% endif %}
+                </small>
+            </h3>
+
+            <dl class="row">
+                {# Code de l'atlas #}
+                <dt class="col-3">Code AKWA&nbsp;:</dt>
+                <dd class="col-9">{{station.atlasCode|default('Néant')}}</dd>
+            </dl>
+
+            {# Description #}
+            {{station.description|raw}}
+        {% endfor %}
+    {% endfor %}
+{% endblock %}
+
+{% block index %}
+    {# Raccourcis vers les bassins et les stations #}
+    {% for basin in system.basins %}
+        <div class="card mt-3">
+            <div class="card-header">
+                <a href="#basin_{{basin.code}}">{{basin.name}}</a>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for station in basin.stations %}
+                    <li class="list-group-item">
+                        <a href="#station_{{station.code}}" class="ml-4">{{station.name}}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
 {% endblock %}

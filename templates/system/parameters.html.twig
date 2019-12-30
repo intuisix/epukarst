@@ -1,72 +1,62 @@
-{% extends 'base.html.twig' %}
+{% extends 'system/base.html.twig' %}
 
 {% block title %}
     Paramètres pour {{system.name}}
 {% endblock %}
 
-{% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                {# Bouton pour modifier les paramètres et instruments #}
-                {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
-                    <a href="{{path('system_parameter', {'code': system.code})}}" class="btn btn-primary float-right">
-                        <i class="fas fa-edit"></i>
-                        Modifier
-                    </a>
-                {% endif %}
+{% block content %}
+    {# Bouton pour modifier les paramètres et instruments #}
+    {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+        <a href="{{path('system_parameter', {'code': system.code})}}" class="btn btn-primary float-right">
+            <i class="fas fa-edit"></i>
+            Modifier
+        </a>
+    {% endif %}
 
-                {# Titre #}
-                <h1>Paramètres pour {{system.name}}</h1>
+    {# Titre #}
+    <h1>Paramètres pour {{system.name}}</h1>
 
-                <p>Les paramètres suivants sont mesurés sur le système&nbsp;:</p>
+    <p>Les paramètres suivants sont mesurés sur le système&nbsp;:</p>
 
-                {# Pour chaque paramètre, triés par position #}
-                {% for parameter in parameters|sort((a,b) => (a.position <=> b.position)) %}
-                    {# Titre #}
-                    <h2 id="parameter_{{parameter.id}}">
-                        <span class="badge badge-secondary">
-                            {{parameter.name}}
-                        </span>
-                        <span class="mx-2">
-                            {{parameter.title}}
-                        </span>
-                    </h2>
+    {# Pour chaque paramètre, triés par position #}
+    {% for parameter in parameters|sort((a,b) => (a.position <=> b.position)) %}
+        {# Titre #}
+        <h2 id="parameter_{{parameter.id}}">
+            <span class="badge badge-secondary">
+                {{parameter.name}}
+            </span>
+            <span class="mx-2">
+                {{parameter.title}}
+            </span>
+        </h2>
 
-                    <dl class="row">
-                        {# Unité #}
-                        <dt class="col-3">Unité&nbsp;:</dt>
-                        <dd class="col-9">{{parameter.unit|default('Néant')}}</dd>
-                        {# Seuils normatifs #}
-                        <dt class="col-3">Gamme normative&nbsp;:</dt>
-                        <dd class="col-9">{{parameter.normativeMinimum|default('-∞')}} - {{parameter.normativeMaximum|default('+∞')}} {{parameter.unit}}</dd>
-                        {# Seuils physiques #}
-                        <dt class="col-3">Gamme physique&nbsp;:</dt>
-                        <dd class="col-9">{{parameter.physicalMinimum|default('-∞')}} - {{parameter.physicalMaximum|default('+∞')}} {{parameter.unit}}</dd>
-                    </dl>
+        <dl class="row">
+            {# Unité #}
+            <dt class="col-3">Unité&nbsp;:</dt>
+            <dd class="col-9">{{parameter.unit|default('Néant')}}</dd>
+            {# Seuils normatifs #}
+            <dt class="col-3">Gamme normative&nbsp;:</dt>
+            <dd class="col-9">{{parameter.normativeMinimum|default('-∞')}} - {{parameter.normativeMaximum|default('+∞')}} {{parameter.unit}}</dd>
+            {# Seuils physiques #}
+            <dt class="col-3">Gamme physique&nbsp;:</dt>
+            <dd class="col-9">{{parameter.physicalMinimum|default('-∞')}} - {{parameter.physicalMaximum|default('+∞')}} {{parameter.unit}}</dd>
+        </dl>
 
-                    {# Description #}
-                    {{parameter.description|raw}}
-                {% endfor %}
-            </div>
+        {# Description #}
+        {{parameter.description|raw}}
+    {% endfor %}
+{% endblock %}
 
-            {# Colonne de droite #}
-            <div class="col-4 alert bg-light">
-                {# Boutons de navigation #}
-                {% include 'system/_navbar.html.twig' %}
-
-                {# Raccourcis vers les paramètres #}
-                <div class="card mt-3">
-                    <div class="card-header h4">Paramètres</div>
-                    <ul class="list-group list-group-flush">
-                        {% for parameter in parameters|sort((a,b) => (a.title <=> b.title)) %}
-                            <li class="list-group-item">
-                                <a href="#parameter_{{parameter.id}}">{{parameter.title}}</a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
+{% block index %}
+    {# Raccourcis vers les paramètres #}
+    <div class="card mt-3">
+        <div class="card-header h4">Paramètres</div>
+        <ul class="list-group list-group-flush">
+            {% for parameter in parameters|sort((a,b) => (a.title <=> b.title)) %}
+                <li class="list-group-item">
+                    <a href="#parameter_{{parameter.id}}">{{parameter.title}}</a>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 {% endblock %}

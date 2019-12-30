@@ -1,88 +1,71 @@
-{% extends 'base.html.twig' %}
+{% extends 'system/base.html.twig' %}
 
 {% block title %}
     {{system.name}}
 {% endblock %}
 
-{% block body %}
-    {# Corps de la page #}
-    <div class="container mb-3">
-        <div class="row">
-            {# Colonne principale #}
-            <div class="col mb-3">
-                {# Titre #}
-                <h1>
-                    <span class="badge badge-secondary">
-                        {{system.code}}
-                    </span>
-                    <span class="mx-2">
-                        {{system.name}}
-                    </span>
-                    <small>
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <a href="{{path('system_modify', {'code': system.code})}}">
-                                <i class="fas fa-edit text-primary"></i>
-                            </a>
-                        {% endif %}
-                    </small>
-                </h1>
-
-                {# Description introductive #}
-                <p><big>{{system.introduction}}</big></p>
-
-                <dl class="row">
-                    {# Commune #}
-                    <dt class="col-3">Commune&nbsp;:</dt>
-                    <dd class="col-9">{{system.commune}}</dd>
-                    {# Bassin versant #}
-                    <dt class="col-3">Bassin versant&nbsp;:</dt>
-                    <dd class="col-9">{{system.basin}}</dd>
-                </dl>
-
-
-                {# Description détaillée du système #}
-                {{system.description|raw}}
-
-                {# Carousel d'images #}
-                {% if system.pictures|length > 0 %}
-                <center>
-                    <div id="systemPicturesCarousel" class="carousel slide mb-3" data-ride="carousel" style="height: 540px; width: 720px">
-                        <ol class="carousel-indicators">
-                            {% for picture in system.pictures %}
-                                <li data-target="#systemPicturesCarousel" data-slide-to="{{loop.index0}}" class="{% if loop.first %}active{% endif %}"></li>
-                            {% endfor %}
-                        </ol>
-                        <div class="carousel-inner">
-                            {% for picture in system.pictures %}
-                                <div class="carousel-item {% if loop.first %}active{% endif %}">
-                                    <img src="/{{picture.fileName}}" class="d-block w-100" alt="..." style="height: 540px; width: 720px; object-fit: cover">
-                                    <div class="carousel-caption d-none-d-md-block">
-                                        <h5>{{system.name}}</h5>
-                                        <p>{{picture.caption}}</p>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                        <a class="carousel-control-prev" href="#systemPicturesCarousel" role="button" data-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#systemPicturesCarousel" role="button" data-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Next</span>
-                        </a>
-                    </div>
-                </center>
-                {% endif %}
-            </div>
-
-            {# Colonne de droite #}
-            {% if is_granted('ROLE_USER') %}
-                <div class="col-4 alert bg-light">
-                    {# Boutons de navigation #}
-                    {% include 'system/_navbar.html.twig' %}
-                </div>
+{% block content %}
+    {# Titre #}
+    <h1>
+        <span class="badge badge-secondary">
+            {{system.code}}
+        </span>
+        <span class="mx-2">
+            {{system.name}}
+        </span>
+        <small>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{path('system_modify', {'code': system.code})}}">
+                    <i class="fas fa-edit text-primary"></i>
+                </a>
             {% endif %}
-        </div>
-    </div>
+        </small>
+    </h1>
+
+    {# Description introductive #}
+    <p><big>{{system.introduction}}</big></p>
+
+    <dl class="row">
+        {# Commune #}
+        <dt class="col-3">Commune&nbsp;:</dt>
+        <dd class="col-9">{{system.commune}}</dd>
+        {# Bassin versant #}
+        <dt class="col-3">Bassin versant&nbsp;:</dt>
+        <dd class="col-9">{{system.basin}}</dd>
+    </dl>
+
+    {# Description détaillée du système #}
+    {{system.description|raw}}
+
+    {# Carousel d'images #}
+    {% if system.pictures|length > 0 %}
+        <center>
+            <div id="systemPicturesCarousel" class="carousel slide mb-3" data-ride="carousel" style="height: 540px; width: 720px">
+                <ol class="carousel-indicators">
+                    {% for picture in system.pictures %}
+                        <li data-target="#systemPicturesCarousel" data-slide-to="{{loop.index0}}" class="{% if loop.first %}active{% endif %}"></li>
+                    {% endfor %}
+                </ol>
+                <div class="carousel-inner">
+                    {% for picture in system.pictures %}
+                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                            <img src="/{{picture.fileName}}" class="d-block w-100" alt="..." style="height: 540px; width: 720px; object-fit: cover">
+                            <div class="carousel-caption d-none-d-md-block">
+                                <h5>{{system.name}}</h5>
+                                <p>{{picture.caption}}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <a class="carousel-control-prev" href="#systemPicturesCarousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#systemPicturesCarousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </center>
+    {% endif %}
 {% endblock %}

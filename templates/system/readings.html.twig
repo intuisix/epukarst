@@ -1,90 +1,78 @@
-{% extends 'base.html.twig' %}
+{% extends 'system/base.html.twig' %}
 
 {% block title %}
     Relevés de {{system.name}}
 {% endblock %}
 
-{% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                {# Bouton pour modifier les relevés #}
-                {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
-                    <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary float-right">
-                        <i class="fas fa-plus"></i>
-                        Encoder un relevé
-                    </a>
-                {% endif %}
+{% block content %}
+    {# Bouton pour ajouter un relevé #}
+    {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+        <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary float-right">
+            <i class="fas fa-plus"></i>
+            Encoder un relevé
+        </a>
+    {% endif %}
 
-                {# Titre #}
-                <h1>Relevés de {{system.name}}</h1>
+    {# Titre #}
+    <h1>Relevés de {{system.name}}</h1>
 
-                <p>Les système a fait l'objet des relevés suivants&nbsp;:</p>
+    <p>Les système a fait l'objet des relevés suivants&nbsp;:</p>
 
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <th>Code</th>
-                        <th>Relevé le</th>
-                        <th>Encodé le</th>
-                        <th>Encodé par</th>
-                        <th>Stations</th>
-                        <th>Actions</th>
-                    </thead>
-                    <tbody>
-                        {# Pour chaque relevé, triés par date de terrain #}
-                        {% for systemReading in system.systemReadings|sort((a,b) => -(a.fieldDateTime <=> b.fieldDateTime)) %}
-                            <tr>
-                                <td>
-                                    {% if is_granted('SYSTEM_OBSERVER', systemReading) %}
-                                        <a href="{{path('system_reading_show', {'code': systemReading.code})}}">
-                                            <span class="badge badge-secondary">{{systemReading.code}}</span>
-                                        </a>
-                                    {% else %}
-                                        <span class="badge badge-secondary">{{systemReading.code}}</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {{systemReading.fieldDateTime|date('d/m/Y')}}
-                                </td>
-                                <td>
-                                    {{systemReading.encodingDateTime|date('d/m/Y')}}
-                                </td>
-                                <td>
-                                    {{systemReading.encodingAuthor}}
-                                </td>
-                                <td>
-                                    {% if systemReading.stationReadings|length %}
-                                        <span class="badge badge-primary badge-pill">{{systemReading.stationReadings|length}}</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if is_granted('SYSTEM_OBSERVER', systemReading) %}
-                                        <a href="{{path('system_reading_show', {'code': systemReading.code})}}">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                    {% endif %}
-                                    {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
-                                        <a href="{{path('system_reading_edit', {'code': systemReading.code})}}"><i class="fas fa-edit text-primary"></i></a>
-                                    {% endif %}
-                                    {% if is_granted('SYSTEM_MANAGER', systemReading) %}
-                                        <a href="{{path('system_reading_delete', {'code': systemReading.code})}}"><i class="fas fa-trash text-danger"></i></a>
-                                    {% endif %}
-                                </td>
-                            </tr>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <th>Code</th>
+            <th>Relevé le</th>
+            <th>Encodé le</th>
+            <th>Encodé par</th>
+            <th>Stations</th>
+            <th>Actions</th>
+        </thead>
+        <tbody>
+            {# Pour chaque relevé, triés par date de terrain #}
+            {% for systemReading in system.systemReadings|sort((a,b) => -(a.fieldDateTime <=> b.fieldDateTime)) %}
+                <tr>
+                    <td>
+                        {% if is_granted('SYSTEM_OBSERVER', systemReading) %}
+                            <a href="{{path('system_reading_show', {'code': systemReading.code})}}">
+                                <span class="badge badge-secondary">{{systemReading.code}}</span>
+                            </a>
                         {% else %}
-                            <tr>
-                                <td colspan="100">Il n'y a pas de relevés pour ce système.</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            {# Colonne de droite #}
-            <div class="col-4 alert bg-light">
-                {# Boutons de navigation #}
-                {% include 'system/_navbar.html.twig' %}
-            </div>
-        </div>
-    </div>
+                            <span class="badge badge-secondary">{{systemReading.code}}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{systemReading.fieldDateTime|date('d/m/Y')}}
+                    </td>
+                    <td>
+                        {{systemReading.encodingDateTime|date('d/m/Y')}}
+                    </td>
+                    <td>
+                        {{systemReading.encodingAuthor}}
+                    </td>
+                    <td>
+                        {% if systemReading.stationReadings|length %}
+                            <span class="badge badge-primary badge-pill">{{systemReading.stationReadings|length}}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if is_granted('SYSTEM_OBSERVER', systemReading) %}
+                            <a href="{{path('system_reading_show', {'code': systemReading.code})}}">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        {% endif %}
+                        {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
+                            <a href="{{path('system_reading_edit', {'code': systemReading.code})}}"><i class="fas fa-edit text-primary"></i></a>
+                        {% endif %}
+                        {% if is_granted('SYSTEM_MANAGER', systemReading) %}
+                            <a href="{{path('system_reading_delete', {'code': systemReading.code})}}"><i class="fas fa-trash text-danger"></i></a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="100">Il n'y a pas de relevés pour ce système.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

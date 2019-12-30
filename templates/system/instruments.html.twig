@@ -1,65 +1,55 @@
-{% extends 'base.html.twig' %}
+{% extends 'system/base.html.twig' %}
 
 {% block title %}
     Instruments pour {{system.name}}
 {% endblock %}
 
-{% block body %}
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                {# Bouton pour modifier les paramètres et instruments #}
-                {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
-                    <a href="{{path('system_parameter', {'code': system.code})}}" class="btn btn-primary float-right">
-                        <i class="fas fa-edit"></i>
-                        Modifier
-                    </a>
-                {% endif %}
+{% block content %}
+    {# Bouton pour modifier les paramètres et instruments #}
+    {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+        <a href="{{path('system_parameter', {'code': system.code})}}" class="btn btn-primary float-right">
+            <i class="fas fa-edit"></i>
+            Modifier
+        </a>
+    {% endif %}
 
-                {# Titre #}
-                <h1>Instruments pour {{system.name}}</h1>
+    {# Titre #}
+    <h1>Instruments pour {{system.name}}</h1>
 
-                <p>Les instruments suivants sont utilisés pour les mesures dans le système&nbsp;:</p>
+    <p>Les instruments suivants sont utilisés pour les mesures dans le système&nbsp;:</p>
 
-                {% for instrument in instruments|sort((a,b) => (a.code <=> b.code)) %}
-                    {# Titre #}
-                    <h2 id="instrument_{{instrument.id}}">
-                        <span class="badge badge-secondary">
-                            {{instrument.code}}
-                        </span>
-                        <span class="mx-2">
-                            {{instrument.name}}
-                        </span>
-                    </h2>
+    {% for instrument in instruments|sort((a,b) => (a.code <=> b.code)) %}
+        {# Titre #}
+        <h2 id="instrument_{{instrument.id}}">
+            <span class="badge badge-secondary">
+                {{instrument.code}}
+            </span>
+            <span class="mx-2">
+                {{instrument.name}}
+            </span>
+        </h2>
 
-                    <dl class="row">
-                        {# Marque et modèle #}
-                        <dt class="col-3">Marque/modèle&nbsp;:</dt>
-                        <dd class="col-9">{{instrument.model|default('Néant')}}</dd>
-                    </dl>
+        <dl class="row">
+            {# Marque et modèle #}
+            <dt class="col-3">Marque/modèle&nbsp;:</dt>
+            <dd class="col-9">{{instrument.model|default('Néant')}}</dd>
+        </dl>
 
-                    {# Description #}
-                    {{instrument.description|raw}}
-                {% endfor %}
-            </div>
+        {# Description #}
+        {{instrument.description|raw}}
+    {% endfor %}
+{% endblock %}
 
-            {# Colonne de droite #}
-            <div class="col-4 alert bg-light">
-                {# Boutons de navigation #}
-                {% include 'system/_navbar.html.twig' %}
-
-                {# Raccourcis vers les instruments #}
-                <div class="card mt-3">
-                    <div class="card-header h4">Instruments</div>
-                    <ul class="list-group list-group-flush">
-                        {% for instrument in instruments|sort((a,b) => (a.name <=> b.name)) %}
-                            <li class="list-group-item">
-                                <a href="#instrument_{{instrument.id}}">{{instrument.name}}</a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
+{% block index %}
+    {# Raccourcis vers les instruments #}
+    <div class="card mt-3">
+        <div class="card-header h4">Instruments</div>
+        <ul class="list-group list-group-flush">
+            {% for instrument in instruments|sort((a,b) => (a.name <=> b.name)) %}
+                <li class="list-group-item">
+                    <a href="#instrument_{{instrument.id}}">{{instrument.name}}</a>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 {% endblock %}
