@@ -15,6 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * 
  * @UniqueEntity(fields={"name"}, message="Un autre système possède déjà ce nom. Veuillez en choisir un autre.")
  * @UniqueEntity(fields={"code"}, message="Un autre système possède déjà ce code. Veuillez en choisir un autre.")
+ * @UniqueEntity(fields={"slug"}, message="Un autre système possède déjà ce slug. Veuillez en choisir un autre.")
  */
 class System
 {
@@ -84,6 +85,8 @@ class System
      * Slogan utilisé dans l'URL qui permet d'afficher les informations à propos du système.
      * 
      * @ORM\Column(type="string", length=255)
+     * 
+     * @Assert\Regex("/^[a-z0-9]+[a-z0-9\-]*$/", message="Cette valeur n'est pas valide.")
      */
     private $slug;
 
