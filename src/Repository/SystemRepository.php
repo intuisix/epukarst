@@ -19,32 +19,13 @@ class SystemRepository extends ServiceEntityRepository
         parent::__construct($registry, System::class);
     }
 
-    // /**
-    //  * @return System[] Returns an array of System objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * Trouve tous les systèmes, triés par nom.
+     *
+     * @return System[]
+     */
+    public function findAllOrdered()
     {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        return $this->findBy([], ['name' => 'ASC']);
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?System
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

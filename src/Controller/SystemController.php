@@ -27,7 +27,7 @@ class SystemController extends AbstractController
     public function index(SystemRepository $systemRepository)
     {
         return $this->render('system/index.html.twig', [
-            'systems' => $systemRepository->findBy([], ['name' => 'ASC'])
+            'systems' => $systemRepository->findAllOrdered(),
         ]);
     }
 

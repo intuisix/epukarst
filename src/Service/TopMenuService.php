@@ -3,23 +3,46 @@
 namespace App\Service;
 
 use App\Repository\PostRepository;
+use App\Repository\SystemRepository;
 
 /**
  * Service mettant à disposition du template de base du site, la liste des
- * articles à placer sur la barre de navigation.
+ * articles et des systèmes à placer sur la barre de navigation.
  */
 class TopMenuService
 {
-    private $repository;
+    private $postRepository;
+    private $systemRepository;
 
-    public function __construct(PostRepository $postRepository)
+    /**
+     * Construit une instance.
+     *
+     * @param PostRepository $postRepository
+     * @param SystemRepository $systemRepository
+     */
+    public function __construct(PostRepository $postRepository, SystemRepository $systemRepository)
     {
-        $this->repository = $postRepository;
+        $this->postRepository = $postRepository;
+        $this->systemRepository = $systemRepository;
     }
 
+    /**
+     * Fournit les articles à afficher sur la barre de menus.
+     *
+     * @return Post[]
+     */
     public function getPosts()
     {
-        /* Sélectionner les articles à paraître sur la barre de navigation */
-        return $this->repository->findTopMenuPosts();
+        return $this->postRepository->findTopMenuPosts();
+    }
+
+    /**
+     * Fournit les systèmes à afficher sur la barre de menus.
+     *
+     * @return System[]
+     */
+    public function getSystems()
+    {
+        return $this->systemRepository->findAllOrdered();
     }
 }

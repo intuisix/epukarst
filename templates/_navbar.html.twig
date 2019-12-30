@@ -15,9 +15,21 @@
                 </li>
             {% endfor %}
             {# Afficher les autres menus #}
-            <li class="nav-item">
-                <a href="{{path('system')}}" class="nav-link">Systèmes</a>
+            <li class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" id="navbarSystems" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Systèmes
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarSystems">
+                    <a href="{{path('system')}}" class="dropdown-item">Aperçu</a>
+                    <div class="dropdown-divider"></div>
+                    {% for system in topMenu.systems %}
+                        {% if (system.name|slice(0,1) != '.') or is_granted('SYSTEM_OBSERVER', system) %}
+                            <a class="dropdown-item" href="{{path('system_show', {'slug': system.slug})}}">{{system.name}}</a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </li>
+
             {% if user %}
                 <li class="nav-item">
                     <a href="{{path('reading')}}" class="nav-link">Relevés</a>
