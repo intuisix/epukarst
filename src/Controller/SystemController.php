@@ -76,7 +76,9 @@ class SystemController extends AbstractController
                     'code' => $system->getCode(),
                 ]);
             } else {
-                return $this->redirectToRoute('systems_list');
+                return $this->redirectToRoute('system_show', [
+                    'slug' => $system->getSlug(),
+                ]);
             }
         }
 
@@ -113,7 +115,9 @@ class SystemController extends AbstractController
                     'code' => $system->getCode(),
                 ]);
             } else {
-                return $this->redirectToRoute('systems_list');
+                return $this->redirectToRoute('system_show', [
+                    'slug' => $system->getSlug(),
+                ]);
             }
         }
 
@@ -155,7 +159,7 @@ class SystemController extends AbstractController
             }
         }
 
-        return $this->redirectToRoute('systems_list');
+        return $this->redirectToRoute('system');
     }
 
     /**
