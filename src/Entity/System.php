@@ -159,6 +159,30 @@ class System
         return $this->name;
     }
 
+    public function getBasinCount(): int
+    {
+        return count($this->basins);
+    }
+
+    public function getStationCount(): int
+    {
+        $count = 0;
+        foreach ($this->basins as $basin) {
+            $count += count($basin->getStations());
+        }
+        return $count;
+    }
+
+    public function getReadingCount(): int
+    {
+        return count($this->systemReadings);
+    }
+
+    public function getAlarmCount(): int
+    {
+        return count($this->alarms);
+    }
+
     /**
      * Met à jour les propriétés du système avant qu'il ne soit mémorisé dans
      * la base de données.

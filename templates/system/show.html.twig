@@ -69,3 +69,19 @@
         </center>
     {% endif %}
 {% endblock %}
+
+{% block index %}
+    <div class="card my-3">
+        <div class="card-body">
+            <h5 class="card-title">
+                {{system.name}}
+            </h5>
+            <ul>
+                <li>{{system.basinCount}} bassin(s)</li>
+                <li>{{system.stationCount}} station(s)</li>
+                <li>{{system.readingCount}} relevé(s)</li>
+                <li>{{system.alarmCount}} alarme(s)</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
