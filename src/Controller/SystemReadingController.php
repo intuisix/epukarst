@@ -118,6 +118,11 @@ class SystemReadingController extends AbstractController
      */
     public function edit(SystemReading $systemReading, Request $request, ObjectManager $manager, SystemParameterRepository $systemParameterRepository)
     {
+        if ($systemReading->countValidatedReadings()) {
+            $this->addFlash('danger', "Ce relevé de système ne peut pas être modifié car au moins un de ses relevés de station a été validé.<br>Faites les modifications sur les relevés de station individuellement.");
+            return $this->redirect($request->headers->get('referer'));
+        }
+
         $system = $systemReading->getSystem();
         /* Obtenir la liste ordonnée de paramètres du système */
         $systemParameters = $systemParameterRepository->findSystemParameters($system);
@@ -147,7 +152,10 @@ class SystemReadingController extends AbstractController
             /* Restaurer les mesures supplémentaires. Elles ne seront pas affichées, mais au moins elles ne seront pas perdues! */
             foreach ($stationMeasures as $stationMeasure) {
                 $stationReading->addMeasure($measure);
-                throw \Exception("Des mesures supplémentaires ont été trouvées.");
+
+                /* Cas spécial non géré pour l'instant */
+                $this->addFlash('danger', "Ce relevé de système ne peut être modifié car il contient des mesures excédentaires par rapport aux paramètres actuellement assignés au système.<br>Faites les modifications sur les relevés de station directement.");
+                return $this->redirect($request->headers->get('referer'));
             }
         }
 
@@ -195,7 +203,7 @@ class SystemReadingController extends AbstractController
             $manager->flush();
     
             $this->addFlash('success', "Le relevé <strong>{$systemReading->getCode()}</strong> a été supprimé avec succès.");
-    
+
             return $this->redirectToRoute('system_reading');
         }
 

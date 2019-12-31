@@ -107,6 +107,23 @@ class SystemReading
     }
 
     /**
+     * Retourne le nombre de relevés de station, faisant partie de ce relevé de
+     * système, qui ont été validés.
+     * 
+     * @return int
+     */
+    public function countValidatedReadings(): int
+    {
+        $count = 0;
+        foreach ($this->stationReadings as $stationReading) {
+            if (true === $stationReading->getValidated()) {
+                ++$count;
+            }
+        }
+        return $count;
+    }
+
+    /**
      * Met à jour les propriétés du relevé de système avant la mémorisation en
      * base de données.
      *
