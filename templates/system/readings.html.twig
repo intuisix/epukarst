@@ -29,7 +29,7 @@
         </thead>
         <tbody>
             {# Pour chaque relevé, triés par date de terrain #}
-            {% for systemReading in system.systemReadings|sort((a,b) => -(a.fieldDateTime <=> b.fieldDateTime)) %}
+            {% for systemReading in system.systemReadings|sort((a,b) => -(a.code <=> b.code)) %}
                 <tr>
                     <td>
                         {% if is_granted('SYSTEM_OBSERVER', systemReading) %}

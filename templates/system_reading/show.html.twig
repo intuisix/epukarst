@@ -81,7 +81,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for stationReading in systemReading.stationReadings %}
+                {% for stationReading in systemReading.stationReadings|sort((a,b) => (a.code <=> b.code)) %}
                     <tr>
                         <td>
                             <a href="{{path('reading_show', {'code': stationReading.code })}}">{{stationReading.code}}</a>
