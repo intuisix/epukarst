@@ -285,6 +285,7 @@
 {% endblock %}
 
 {% block javascripts %}
+{% if 0 %} {# Code à réactiver lorsque la cartographie sera mise en oeuvre #}
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
     integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
     crossorigin=""></script>
@@ -311,6 +312,7 @@
 	}).addTo(mymap);
 {% endif %}
     </script>
+{% endif %}
 
     <script>
         {# Faire en sorte que si l'utilisateur change l'état d'un élément de la
