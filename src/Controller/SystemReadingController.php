@@ -194,17 +194,25 @@ class SystemReadingController extends AbstractController
      */
     public function delete(SystemReading $systemReading, Request $request, ObjectManager $manager)
     {
-        $form = $this->createFormBuilder()->getForm();
+        if ($systemReading->countValidatedReadings()) {
+            $this->addFlash('danger', "Ce relevé de système ne peut pas être supprimé car au moins un de ses relevés de station a été validé.<br>Supprimez les relevés de station non validés individuellement.");
+            return $this->redirect($request->headers->get('referer'));
+        }
 
+        /* Créer et traiter le formulaire de confirmation */
+        $form = $this->createFormBuilder()->getForm();
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /* Supprimer le relevé de système et son contenu */
             $manager->remove($systemReading);
             $manager->flush();
     
             $this->addFlash('success', "Le relevé <strong>{$systemReading->getCode()}</strong> a été supprimé avec succès.");
 
-            return $this->redirectToRoute('system_reading');
+            return $this->redirectToRoute('system_show_readings', [
+                'slug' => $systemReading->getSystem()->getSlug(),
+            ]);
         }
 
         return $this->render('system_reading/delete.html.twig', [
