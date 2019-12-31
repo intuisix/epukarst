@@ -18,15 +18,23 @@
                     <th>Date de fin</th>
                     <th>Etat</th>
                     <th>Signalé par</th>
+                    <th>Relevés</th>
+                    <th>Mesures</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for alarm in pagination.data %}
                     <tr>
-                        <td>{{alarm.reportingDate ? alarm.reportingDate|date('d/m/Y') : ''}}</td>
-                        <td>{{alarm.system.name}}</td>
-                        <td>{{alarm.kind.name|default}}</td>
+                        <td>
+                            {{alarm.reportingDate|date('d/m/Y')}}
+                        </td>
+                        <td>
+                            {{alarm.system.name}}
+                        </td>
+                        <td>
+                            {{alarm.kind.name|default}}
+                        </td>
                         <td>
                             {% if alarm.beginningDate %}
                                 {{alarm.beginningDate|date('d/m/Y')}}
@@ -44,7 +52,23 @@
                                 <span class="badge badge-success">Terminé</span>
                             {% endif %}
                         </td>
-                        <td>{{alarm.reportingAuthor.displayName}}</td>
+                        <td>
+                            {{alarm.reportingAuthor.displayName}}
+                        </td>
+                        <td>
+                            {% if alarm.systemReadings|length %}
+                                <span class="badge badge-warning badge-pill">
+                                    {{alarm.systemReadings|length}}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if alarm.measures|length %}
+                                <span class="badge badge-warning badge-pill">
+                                    {{alarm.measures|length}}
+                                </span>
+                            {% endif %}
+                        </td>
                         <td>
                             <a href="{{path('alarm_show', {'id': alarm.id})}}" class="text-primary"><i class="fas fa-eye"></i></a>
                             {% if is_granted('SYSTEM_CONTRIBUTOR', alarm) %}
