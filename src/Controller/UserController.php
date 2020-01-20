@@ -4,15 +4,19 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Entity\UserPassword;
 use App\Form\UserPasswordType;
 use Symfony\Component\Mime\Email;
 use App\Service\PaginationService;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Form\FormError;
 use App\Service\PasswordGeneratorService;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -154,35 +158,79 @@ class UserController extends AbstractController
 
     /**
      * Traite le changement du mot de passe de l'utilisateur.
+     * 
+     * Cette requête est autorisée:
+     * - aux administrateurs, qui peuvent modifier les mots de passe de tous
+     *   utilisateurs,
+     * - aux non-administrateurs, qui peuvent modifier seulement leur propre
+     *   mot de passe.
      *
      * @Route("/user/{id}/password", name="user_password")
-     * @IsGranted("ROLE_ADMIN")
+     * @Security("is_granted('ROLE_ADMIN') or user === account")
      *
-     * @param User $user
+     * @param User $account
      * @param ObjectManager $manager
      * @param Request $request
      * @return void
      */
-    public function setPassword(User $user, ObjectManager $manager, Request $request, UserPasswordEncoderInterface $encoder)
+    public function setPassword(User $account, ObjectManager $manager, Request $request, UserPasswordEncoderInterface $encoder, MailerInterface $mailer)
     {
-        $form = $this->createForm(UserPasswordType::class, $user);
+        /* Déterminer l'utilisateur réalisant le changement de mot de passe: ce peut être soit un administrateur, soitl'utilisateur lui-même */
+        $currentUser = $this->getUser();
+        $onBehalf = $account !== $currentUser;
 
+        /* Créer les données du formulaire */
+        $passwordData = new UserPassword();
+
+        /* Créer le formulaire, en spécifiant si l'utilisateur est en train de changer son propre mot de passe ou celui d'un autre */
+        $form = $this->createForm(UserPasswordType::class, $passwordData, [
+            'onBehalf' => $onBehalf]);
+
+        /* Traiter le formulaire */
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
-            /* Hacher le mot de passe */
-            $user->setPassword($encoder->encodePassword($user, $user->getPassword()));
-            $manager->persist($user);
-            $manager->flush();
+            /* Vérifier le mot de passe actuel */
+            if (password_verify($passwordData->getCurrentPassword(), $currentUser->getPassword())) {
+                /* Hacher le nouveau mot de passe */
+                $account->setPassword($encoder->encodePassword($account, $passwordData->getWishedPassword()));
+                $manager->persist($account);
+                $manager->flush();
 
-            $this->addFlash('success', "Le mot de passe de <strong>$user</strong> a été enregistré avec succès.");
+                /* Transmettre un e-mail à l'utilisateur */
+                $mailerName = $_ENV['MAILER_NAME'];
+                $mailerEmail = $_ENV['MAILER_EMAIL'];
+                $email = (new TemplatedEmail())
+                    ->from(new Address($mailerEmail, $mailerName))
+                    ->to($account->getEmail())
+                    ->bcc(new Address($mailerEmail, $mailerName))
+                    ->priority(Email::PRIORITY_HIGH)
+                    ->subject("Votre mot de passe Epu-Karst a été changé")
+                    ->htmlTemplate('user/emails/passwordChanged.html.twig')
+                    ->context([
+                        'user' => $account,
+                        'host' => $currentUser,
+                        'mailerName' => $mailerName,
+                        'password' => $passwordData->getRevealInEmail() ? $passwordData->getWishedPassword() : null,
+                    ]);
+                $mailer->send($email);
 
-            return $this->redirectToRoute('user');
+                /* Ajouter un flash de succès et rediriger soit vers la gestion des utilisateurs, soit vers la page d'accueil */
+                if ($onBehalf) {
+                    $this->addFlash('success', "Le mot de passe de <strong>$account</strong> a été enregistré avec succès.");
+                    return $this->redirectToRoute('user');
+                } else {
+                    $this->addFlash('success', "Votre mot de passe a été enregistré avec succès.");
+                    return $this->redirectToRoute('home');
+                }
+            } else {
+                $form->get('currentPassword')->addError(
+                    new FormError("Le mot de passe que vous avez introduit n'est pas votre mot de passe actuel."));
+            }
         }
 
         return $this->render('user/password.html.twig', [
             'form' => $form->createView(),
-            'title' => "Modifier le mot de passe de $user",
+            'title' => ($account !== $currentUser) ? "Modifier le mot de passe de $account" : "Modifier votre mot de passe",
         ]);
     }
 

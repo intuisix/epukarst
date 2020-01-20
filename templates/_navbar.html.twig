@@ -8,13 +8,13 @@
 
     <div class="collapse navbar-collapse" id="navbarColor03">
         <ul class="navbar-nav mr-auto">
-            {# Afficher les menus configurés #}
+            {# Menus configurés #}
             {% for post in topMenu.posts %}
                 <li class="nav-item">
                     <a href="{{path('home_post', {'slug': post.slug})}}" class="nav-link">{{post.title}}</a>
                 </li>
             {% endfor %}
-            {# Afficher les autres menus #}
+            {# Autres menus #}
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" id="navbarSystems" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 Systèmes
@@ -41,7 +41,7 @@
         </ul>
         <ul class="navbar-nav ml-auto">
             {% if is_granted('ROLE_ADMIN') %}
-                {# Afficher le menu déroulant de l'administration #}
+                {# Menu déroulant de l'administration #}
                 <li class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" id="adminDropdownLink">
                         <i class="fas fa-cogs"></i> Administration
@@ -63,7 +63,7 @@
                 </li>
             {% endif %}
             {% if user %}
-                {# Afficher le menu déroulant de l'utilisateur #}
+                {# Menu déroulant de l'utilisateur #}
                 <li class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" id="accountDropdownLink">
                         {% if user.picture %}
@@ -74,6 +74,11 @@
                         {{user.displayName}}
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdownLink">
+                        {# Commande de changement de mot de passe #}
+                        <a href="{{path('user_password', {'id': user.id})}}" class="dropdown-item">Votre mot de passe</a>
+                        {# Séparateur #}
+                        <div class="dropdown-divider"></div>
+                        {# Commande de déconnexion #}
                         <a href="{{path('user_logout')}}" class="dropdown-item">Vous déconnecter</a>
                     </div>
                 </li>
