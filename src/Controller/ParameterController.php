@@ -50,6 +50,8 @@ class ParameterController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /* Mettre à jour les positions des paramètres */
             $this->updatePositions($orderedParameters, $parameter);
+            $this->updateChoices($parameter, $manager);
+
             /* Persister le paramètre en base de données */
             $manager->persist($parameter);
             $manager->flush();
@@ -87,6 +89,8 @@ class ParameterController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /* Mettre à jour les positions des paramètres */
             $this->updatePositions($orderedParameters, $parameter);
+            $this->updateChoices($parameter, $manager);
+
             /* Persister les modifications dans la base de données */
             $manager->persist($parameter);
             $manager->flush();
@@ -181,6 +185,15 @@ class ParameterController extends AbstractController
         transfèrera en base de données */
         foreach ($orderedParameters as $orderedPosition => $orderedParameter) {
             $orderedParameter->setPosition($orderedPosition);
+        }
+    }
+
+    private function updateChoices(Parameter $parameter, ObjectManager $manager)
+    {
+        /* Persister les choix du paramètre */
+        foreach ($parameter->getChoices() as $choice) {
+            $choice->setParameter($parameter);
+            $manager->persist($choice);
         }
     }
 }

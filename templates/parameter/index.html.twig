@@ -16,6 +16,7 @@
                 <th class="text-center">Unité</th>
                 <th class="text-center">Gamme normative</th>
                 <th class="text-center">Gamme physique</th>
+                <th class="text-center">Type</th>
                 <th>Actions</th>
             </tr>
             {% for parameter in parameters %}
@@ -46,6 +47,13 @@
                         -
                         {% if parameter.physicalMaximum is not null %}
                             {{parameter.physicalMaximum|number_format(1, ',', ' ')}}
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if parameter.choices|length %}
+                            <i class="fas fa-tags"></i>
+                        {% else %}
+                            <i class="fas fa-chart-line"></i>
                         {% endif %}
                     </td>
                     <td>

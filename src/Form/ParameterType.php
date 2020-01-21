@@ -3,8 +3,10 @@
 namespace App\Form;
 
 use App\Entity\Parameter;
+use Symfony\Component\Form\FormView;
 use App\Repository\ParameterRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormInterface;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -13,7 +15,11 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
+/**
+ * Formulaire permettant de définir un paramètre.
+ */
 class ParameterType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -93,7 +99,26 @@ class ParameterType extends AbstractType
                 'placeholder' => "(en dernier)",
                 'required' => false,
             ])
+            ->add('choices', CollectionType::class, [
+                'label' => "Liste de choix",
+                'entry_type' => ParameterChoiceType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+            ])
         ;
+    }
+
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        /* Ordonner les choix par valeur */
+        usort(
+            $view->children['choices']->children,
+            function ($a, $b) {
+                return
+                    $a->vars['data']->getValue() <=>
+                    $b->vars['data']->getValue();
+            }
+        );
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -106,10 +106,18 @@ class Parameter
      */
     private $position;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ParameterChoice", mappedBy="parameter", orphanRemoval=true)
+     * 
+     * @Assert\Valid()
+     */
+    private $choices;
+
     public function __construct()
     {
         $this->measures = new ArrayCollection();
         $this->measurabilities = new ArrayCollection();
+        $this->choices = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -282,6 +290,37 @@ class Parameter
     public function setPosition(?int $position): self
     {
         $this->position = $position;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ParameterChoice[]
+     */
+    public function getChoices(): Collection
+    {
+        return $this->choices;
+    }
+
+    public function addChoice(ParameterChoice $choice): self
+    {
+        if (!$this->choices->contains($choice)) {
+            $this->choices[] = $choice;
+            $choice->setParameter($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChoice(ParameterChoice $choice): self
+    {
+        if ($this->choices->contains($choice)) {
+            $this->choices->removeElement($choice);
+            // set the owning side to null (unless already changed)
+            if ($choice->getParameter() === $this) {
+                $choice->setParameter(null);
+            }
+        }
 
         return $this;
     }
