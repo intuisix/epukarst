@@ -324,4 +324,17 @@ class Parameter
 
         return $this;
     }
+
+    public function getChoicesArray()
+    {
+        if (count($this->choices)) {
+            $choices = [];
+            foreach ($this->choices as $choice) {
+                $choices[$choice->getLabel()] = $choice->getValue();
+            }
+            return $choices;
+        } else {
+            return null;
+        }
+    }
 }

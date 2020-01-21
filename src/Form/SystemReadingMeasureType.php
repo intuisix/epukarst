@@ -4,10 +4,13 @@ namespace App\Form;
 
 use App\Entity\Measure;
 use App\Entity\Measurability;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -23,10 +26,6 @@ class SystemReadingMeasureType extends AbstractType
                 'choice_label' => 'nameWithUnit',
                 'attr' => [ 'hidden' => 'hidden' ],
             ])
-            ->add('value', NumberType::class, [
-                'label' => null,
-                'required' => false,
-            ])
             ->add('stable', CheckboxType::class, [
                 'label' => "S",
                 'required' => false,
@@ -37,6 +36,10 @@ class SystemReadingMeasureType extends AbstractType
                 'required' => false,
                 'attr' => [ 'tabindex' => -1 ],
             ])
+            ->addEventListener(
+                FormEvents::PRE_SET_DATA,
+                [ $this, 'onPreSetData' ]
+            )
         ;
     }
 
@@ -45,5 +48,35 @@ class SystemReadingMeasureType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Measure::class,
         ]);
+    }
+
+    /**
+     * Adapte le type de contrôle affiché sur le formulaire en fonction du
+     * paramètre mesuré: liste déroulante dans le cas où le paramètre comporte
+     * des choix, ou saisie numérique sinon.
+     *
+     * @param FormEvent $event
+     * @return void
+     */
+    public function onPreSetData(FormEvent $event)
+    {
+        $form = $event->getForm();
+        $measure = $event->getData();
+        $choices = $measure->getMeasurability()->getParameter()->getChoicesArray();
+
+        if ($choices !== null) {
+            $form
+                ->add('value', ChoiceType::class, [
+                    'label' => null,
+                    'required' => false,
+                    'choices' => $choices,
+                ]);
+        } else {
+            $form
+                ->add('value', NumberType::class, [
+                    'label' => null,
+                    'required' => false,
+                ]);
+        }
     }
 }
