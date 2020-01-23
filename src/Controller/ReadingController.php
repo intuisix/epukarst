@@ -11,17 +11,18 @@ use App\Form\FilterType;
 use App\Form\ReadingType;
 use App\Entity\FilterMeasure;
 use App\Service\PaginationService;
-use App\Service\ReadingExporterService;
 use App\Repository\BasinRepository;
 use App\Repository\SystemRepository;
 use App\Repository\ReadingRepository;
 use App\Repository\StationRepository;
 use App\Repository\ParameterRepository;
+use App\Service\ReadingExporterService;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,78 +35,11 @@ class ReadingController extends AbstractController
      */
     public function index(int $page, PaginationService $pagination, ParameterRepository $parameterRepository, Request $request, SystemRepository $systemRepository, BasinRepository $basinRepository, StationRepository $stationRepository, ReadingRepository $readingRepository)
     {
+        /* Obtenir l'objet de session */
         $session = $request->getSession();
 
-        /* Instancier un filtre */
-        $filter = new Filter();
-
-        /* Désérialiser les systèmes */
-        if ($session->has('systems')) {
-            $systemIds = $session->get('systems');
-            foreach ($systemIds as $systemId) {
-                $system = $systemRepository->findOneById($systemId);
-                if ($system != null) {
-                    $filter->addSystem($system);
-                }
-            }
-        }
-
-        /* Désérialiser les bassins */
-        if ($session->has('basins')) {
-            $basinIds = $session->get('basins');
-            foreach ($basinIds as $basinId) {
-                $basin = $basinRepository->findOneById($basinId);
-                if (null != $basin) {
-                    $filter->addBasin($basin);
-                }
-            }
-        }
-
-        /* Désérialiser les stations */
-        if ($session->has('stations')) {
-            $stationIds = $session->get('stations');
-            foreach ($stationIds as $stationId) {
-                $station = $stationRepository->findOneById($stationId);
-                if (null != $station) {
-                    $filter->addStation($station);
-                }
-            }
-        }
-
-        /* Désérialiser les dates */
-        if ($session->has('minimumDate')) {
-            $filter->setMinimumDate($session->get('minimumDate'));
-        }
-        if ($session->has('maximumDate')) {
-            $filter->setMaximumDate($session->get('maximumDate'));
-        }
-
-        /* Désérialiser les états */
-        if ($session->has('validated')) {
-            $filter->setValidated($session->get('validated'));
-        }
-        if ($session->has('invalidated')) {
-            $filter->setInvalidated($session->get('invalidated'));
-        }
-        if ($session->has('submitted')) {
-            $filter->setSubmitted($session->get('submitted'));
-        }
-
-        /* Désérialiser les mesures */
-        if ($session->has('measures')) {
-            $measures = $session->get('measures');
-            foreach ($measures as $parameterId => $measure) {
-                $parameter = $parameterRepository->findOneById($parameterId);
-                if (null != $parameter) {
-                    $filterMeasure = new FilterMeasure();
-                    $filterMeasure
-                        ->setParameter($parameter)
-                        ->setMinimumValue($measure['minimumValue'])
-                        ->setMaximumValue($measure['maximumValue']);
-                    $filter->addMeasure($filterMeasure);
-                }
-            }
-        }
+        /* Charger un filtre basé sur les informations de session */
+        $filter = $this->getFilter($session, $systemRepository, $basinRepository, $stationRepository);
 
         /* Créer et traiter le formulaire de filtre */
         $form = $this->createForm(FilterType::class, $filter);
@@ -306,14 +240,22 @@ class ReadingController extends AbstractController
      * @param ReadingRepository $readingRepository
      * @return Response
      */
-    public function export(ReadingRepository $readingRepository, ReadingExporterService $exporter, ParameterRepository $parameterRepository, Request $request)
+    public function export(ReadingRepository $readingRepository, ReadingExporterService $exporter, ParameterRepository $parameterRepository, Request $request, SystemRepository $systemRepository, BasinRepository $basinRepository, StationRepository $stationRepository)
     {
-        /* Déterminer, à partir de la requête, les relevés à exporter, puis les
-        trier par ordre chronologique */
-        $ids = array_keys($request->request->get('readings'));
-        $exporter->setReadings($readingRepository->findBy(
-            ['code' => $ids],
-            ['fieldDateTime' => 'ASC']));
+        /* Tester s'il faut exporter tous les relevés ou seulement ceux qui sont sélectionnés individuellement */
+        if ($request->request->get('all-readings') ||
+            $request->request->get('readings') === null) {
+            /* Charger un filtre basé sur les informations de session, puis obtenir tous les relevés correspondant au filtre, par ordre chronologique */
+            $session = $request->getSession();
+            $filter = $this->getFilter($session, $systemRepository, $basinRepository, $stationRepository);
+            $exporter->setReadings($readingRepository->getQueryBuilder($filter)->getQuery()->getResult());
+        } else {
+            /* Déterminer les relevés sélectionnés pour l'exportation, et les obtenir par ordre chronologique */
+            $ids = array_keys($request->request->get('readings'));
+            $exporter->setReadings($readingRepository->findBy(
+                ['code' => $ids],
+                ['fieldDateTime' => 'ASC']));
+        }
 
         /* Charger la liste des paramètres à exporter */
         $exporter->setParameters($parameterRepository->findAllOrdered());
@@ -379,6 +321,91 @@ class ReadingController extends AbstractController
         return $this->render('reading/show.html.twig', [
             'reading' => $reading
         ]);
+    }
+
+    /**
+     * Instancie un objet filtre d'après les informations mémorisées dans la session.
+     *
+     * @param Session $session
+     * @param SystemRepository $systemRepository
+     * @param BasinRepository $basinRepository
+     * @param StationRepository $stationRepository
+     * @return Filter
+     */
+    private function getFilter(Session $session, SystemRepository $systemRepository, BasinRepository $basinRepository, StationRepository $stationRepository)
+    {
+        /* Instancier un filtre */
+        $filter = new Filter();
+
+        /* Désérialiser les systèmes */
+        if ($session->has('systems')) {
+            $systemIds = $session->get('systems');
+            foreach ($systemIds as $systemId) {
+                $system = $systemRepository->findOneById($systemId);
+                if ($system != null) {
+                    $filter->addSystem($system);
+                }
+            }
+        }
+
+        /* Désérialiser les bassins */
+        if ($session->has('basins')) {
+            $basinIds = $session->get('basins');
+            foreach ($basinIds as $basinId) {
+                $basin = $basinRepository->findOneById($basinId);
+                if (null != $basin) {
+                    $filter->addBasin($basin);
+                }
+            }
+        }
+
+        /* Désérialiser les stations */
+        if ($session->has('stations')) {
+            $stationIds = $session->get('stations');
+            foreach ($stationIds as $stationId) {
+                $station = $stationRepository->findOneById($stationId);
+                if (null != $station) {
+                    $filter->addStation($station);
+                }
+            }
+        }
+
+        /* Désérialiser les dates */
+        if ($session->has('minimumDate')) {
+            $filter->setMinimumDate($session->get('minimumDate'));
+        }
+        if ($session->has('maximumDate')) {
+            $filter->setMaximumDate($session->get('maximumDate'));
+        }
+
+        /* Désérialiser les états */
+        if ($session->has('validated')) {
+            $filter->setValidated($session->get('validated'));
+        }
+        if ($session->has('invalidated')) {
+            $filter->setInvalidated($session->get('invalidated'));
+        }
+        if ($session->has('submitted')) {
+            $filter->setSubmitted($session->get('submitted'));
+        }
+
+        /* Désérialiser les mesures */
+        if ($session->has('measures')) {
+            $measures = $session->get('measures');
+            foreach ($measures as $parameterId => $measure) {
+                $parameter = $parameterRepository->findOneById($parameterId);
+                if (null != $parameter) {
+                    $filterMeasure = new FilterMeasure();
+                    $filterMeasure
+                        ->setParameter($parameter)
+                        ->setMinimumValue($measure['minimumValue'])
+                        ->setMaximumValue($measure['maximumValue']);
+                    $filter->addMeasure($filterMeasure);
+                }
+            }
+        }
+
+        return $filter;
     }
 
     /**

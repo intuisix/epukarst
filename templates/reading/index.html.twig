@@ -129,7 +129,7 @@
                 <table width="100%" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th width="10"><input type="checkbox"/></th>
+                            <th width="10"><input type="checkbox" name="all-readings"/></th>
                             <th width="100">Relevé</th>
                             <th width="200">Système<br><em>Station</em></th>
                             {% for parameter in parameters %}
@@ -347,10 +347,14 @@
     </script>
 
     <script>
-        {# Répliquer l'état de la case à cocher globale de la liste relevés sur celle des relevés individuels #}
+        {# Lorsque l'utilisateur clique sur la case à cocher globale de la liste de relevés, répliquer l'état de cette case sur les cases à cocher de tous les relevés #}
         $('#readings thead input[type="checkbox"]').click(function() {
             var checked = $(this).prop('checked');
             $('#readings tbody input[type="checkbox"]').prop('checked', checked);
+        });
+        {# Lorsque l'utilisateur clique sur la case à cocher d'un relevé, décocher la case à cocher globale de la liste de relevés #}
+        $('#readings tbody input[type="checkbox"]').click(function() {
+            $('#readings thead input[type="checkbox"]').prop('checked', false);
         });
     </script>
 
