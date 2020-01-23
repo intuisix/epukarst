@@ -316,7 +316,7 @@ class ReadingController extends AbstractController
             ['fieldDateTime' => 'ASC']));
 
         /* Charger la liste des paramètres à exporter */
-        $exporter->setParameters($parameterRepository->findAll());
+        $exporter->setParameters($parameterRepository->findAllOrdered());
 
         /* Exporter les relevés dans une feuille de calcul en mémoire */
         $spreadsheet = $exporter->getSpreadsheet();
