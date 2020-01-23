@@ -6,8 +6,31 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class ReadingExporterService
 {
+    /**
+     * Liste des relevés à exporter.
+     *
+     * @var ArrayCollection
+     */
     private $readings;
+
+    /**
+     * Liste des paramètres à exporter.
+     *
+     * @var ArrayCollection
+     */
     private $parameters;
+
+    /**
+     * Définit si les valeurs minimum et maximum, ainsi que le nombre de valeurs seront exportées.
+     *
+     * @var bool
+     */
+    private $withMinMax;
+
+    public function __construct()
+    {
+        $this->withMinMax = (bool)($_ENV['EXPORT_MIN_MAX'] ?? false);
+    }
 
     public function getReadings()
     {
@@ -77,22 +100,29 @@ class ReadingExporterService
         foreach ($this->parameters as $parameter) {
             $name = $parameter->getNameWithUnit();
             $firstColumn = $column;
-            /* Nombre */
-            $sheet->setCellValueByColumnAndRow($column, $row, "$name NB");
-            $sheet->getStyleByColumnAndRow($column, $row)->getAlignment()->setWrapText(true);
-            $column++;
-            /* Minimum */
-            $sheet->setCellValueByColumnAndRow($column, $row, "$name MIN");
-            $sheet->getStyleByColumnAndRow($column, $row)->getAlignment()->setWrapText(true);
-            $column++;
-            /* Moyenne */
-            $sheet->setCellValueByColumnAndRow($column, $row, "$name MOY");
-            $sheet->getStyleByColumnAndRow($column, $row)->getAlignment()->setWrapText(true);
-            $column++;
-            /* Maximum */
-            $sheet->setCellValueByColumnAndRow($column, $row, "$name MAX");
-            $sheet->getStyleByColumnAndRow($column, $row)->getAlignment()->setWrapText(true);
-            $column++;
+            if ($this->withMinMax) {
+                /* Nombre */
+                $sheet->setCellValueByColumnAndRow($column, $row, "$name NB");
+                $sheet->getStyleByColumnAndRow($column, $row)->getAlignment()->setWrapText(true);
+                $column++;
+                /* Minimum */
+                $sheet->setCellValueByColumnAndRow($column, $row, "$name MIN");
+                $sheet->getStyleByColumnAndRow($column, $row)->getAlignment()->setWrapText(true);
+                $column++;
+                /* Moyenne */
+                $sheet->setCellValueByColumnAndRow($column, $row, "$name MOY");
+                $sheet->getStyleByColumnAndRow($column, $row)->getAlignment()->setWrapText(true);
+                $column++;
+                /* Maximum */
+                $sheet->setCellValueByColumnAndRow($column, $row, "$name MAX");
+                $sheet->getStyleByColumnAndRow($column, $row)->getAlignment()->setWrapText(true);
+                $column++;
+            } else {
+                /* Moyenne */
+                $sheet->setCellValueByColumnAndRow($column, $row, $name);
+                $sheet->getStyleByColumnAndRow($column, $row)->getAlignment()->setWrapText(true);
+                $column++;
+            }
         }
 
         /* Geler la rangée des en-têtes de colonnes */
@@ -142,23 +172,30 @@ class ReadingExporterService
             $column = $firstValueColumn;
             foreach ($this->parameters as $parameter) {
                 $stats = $reading->getValueStats($parameter);
-                /* Nombre */
-                $count = $stats['count'];
-                $sheet->setCellValueByColumnAndRow($column, $row,
-                    (0 != $count) ? $count : null);
-                $column++;
-                /* Valeur minimum */
-                $sheet->setCellValueByColumnAndRow($column, $row,
-                    $parameter->formatValue($stats['min'], true));
-                $column++;
-                /* Valeur moyenne */
-                $sheet->setCellValueByColumnAndRow($column, $row,
-                    $parameter->formatValue($stats['avg'], true));
-                $column++;
-                    /* Valeur maximum */
-                $sheet->setCellValueByColumnAndRow($column, $row,
-                    $parameter->formatValue($stats['max'], true));
-                $column++;
+                if ($this->withMinMax) {
+                    /* Nombre */
+                    $count = $stats['count'];
+                    $sheet->setCellValueByColumnAndRow($column, $row,
+                        (0 != $count) ? $count : null);
+                    $column++;
+                    /* Minimum */
+                    $sheet->setCellValueByColumnAndRow($column, $row,
+                        $parameter->formatValue($stats['min'], true));
+                    $column++;
+                    /* Moyenne */
+                    $sheet->setCellValueByColumnAndRow($column, $row,
+                        $parameter->formatValue($stats['avg'], true));
+                    $column++;
+                    /* Maximum */
+                    $sheet->setCellValueByColumnAndRow($column, $row,
+                        $parameter->formatValue($stats['max'], true));
+                    $column++;
+                } else {
+                    /* Moyenne */
+                    $sheet->setCellValueByColumnAndRow($column, $row,
+                        $parameter->formatValue($stats['avg'], true));
+                    $column++;
+                }
             }
         }
 
