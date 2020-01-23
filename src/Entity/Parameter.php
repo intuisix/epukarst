@@ -348,11 +348,18 @@ class Parameter
      * Formate une valeur du paramètre, en utilisant de préférence les
      * étiquettes figurant dans la liste de choix de celui-ci.
      *
-     * @param float $value
-     * @return string
+     * @param ?float $value
+     * @param bool $asFloat indique si la valeur restera en virgule flottante si aucune étiquette ne lui correspond
+     * @return string|float|null
      */
-    public function formatValue(float $value)
+    public function formatValue(?float $value, bool $asFloat = false)
     {
+        if ($value === null) {
+            /* Retourner null */
+            return null;
+        }
+
+        /* Déterminer si une choix correspond à la valeur */
         foreach ($this->choices as $choice) {
             $choiceValue = $choice->getValue();
             $epsilon = 0.00001;
@@ -362,6 +369,14 @@ class Parameter
                 return $choice->getLabel();
             }
         }
-        return number_format($value, 1, ',', ' ');
+
+        /* Aucune valeur ne correspond à l'étiquette */
+        if ($asFloat) {
+            /* Retourner le nombre lui-même */
+            return $value;
+        } else {
+            /* Retourner le nombre formaté */
+            return number_format($value, 1, ',', ' ');
+        }
     }
 }

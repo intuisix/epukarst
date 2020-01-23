@@ -149,15 +149,15 @@ class ReadingExporterService
                 $column++;
                 /* Valeur minimum */
                 $sheet->setCellValueByColumnAndRow($column, $row,
-                    $stats['min']);
+                    $parameter->formatValue($stats['min'], true));
                 $column++;
                 /* Valeur moyenne */
                 $sheet->setCellValueByColumnAndRow($column, $row,
-                    $stats['avg']);
+                    $parameter->formatValue($stats['avg'], true));
                 $column++;
                     /* Valeur maximum */
                 $sheet->setCellValueByColumnAndRow($column, $row,
-                    $stats['max']);
+                    $parameter->formatValue($stats['max'], true));
                 $column++;
             }
         }
