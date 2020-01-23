@@ -325,6 +325,12 @@ class Parameter
         return $this;
     }
 
+    /**
+     * Retourne un tableau contenant les choix à disposer dans une liste
+     * déroulante.
+     *
+     * @return array|null
+     */
     public function getChoicesArray()
     {
         if (count($this->choices)) {
@@ -336,5 +342,26 @@ class Parameter
         } else {
             return null;
         }
+    }
+
+    /**
+     * Formate une valeur du paramètre, en utilisant de préférence les
+     * étiquettes figurant dans la liste de choix de celui-ci.
+     *
+     * @param float $value
+     * @return string
+     */
+    public function formatValue(float $value)
+    {
+        foreach ($this->choices as $choice) {
+            $choiceValue = $choice->getValue();
+            $epsilon = 0.00001;
+            if (($value >= ($choiceValue - $epsilon) &&
+                ($value <= ($choiceValue + $epsilon)))) {
+                /* Retourner l'étiquette */
+                return $choice->getLabel();
+            }
+        }
+        return number_format($value, 1, ',', ' ');
     }
 }

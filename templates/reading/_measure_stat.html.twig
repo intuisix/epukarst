@@ -7,12 +7,12 @@
     {# Nombre de mesures multiples #}
     <span class="badge badge-info badge-pill">{{stats.count}}</span>
     {# Minimum et maximum des mesures #}
-    {{stats.min|number_format(1, ',', ' ')}}
+    {{parameter.formatValue(stats.min)}}
     -
-    {{stats.max|number_format(1, ',', ' ')}}
+    {{parameter.formatValue(stats.max)}}
 {% elseif stats.count > 0 %}
     {# Valeur unique #}
-    {{stats.avg|number_format(1, ',', ' ')}}
+    {{parameter.formatValue(stats.avg)}}
 {% elseif stats.inval > 0 %}
     {# Nombre de mesures invalides #}
     <i class="fas fa-ban text-danger"></i>

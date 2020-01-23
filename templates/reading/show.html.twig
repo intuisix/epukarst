@@ -99,7 +99,7 @@
                     <tr>
                         <td>{{parameter.name}}</td>
                         <td class="text-center">
-                            {{measure.value}} 
+                            {{parameter.formatValue(measure.value)}}
                             {% if measure.tolerance is not null %}
                                 &plusmn; {{measure.tolerance}} 
                             {% endif %}

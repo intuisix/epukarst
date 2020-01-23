@@ -94,7 +94,7 @@
                         </td>
                         {% for parameter in parameters %}
                             <td style="text-align: right">
-                                {% include 'reading/_measure_stat.html.twig' with {'stats': stationReading.valueStats(parameter)} %}
+                                {% include 'reading/_measure_stat.html.twig' with {'stats': stationReading.valueStats(parameter), 'parameter': parameter} %}
                             </td>
                         {% endfor %}
                         <td style="text-align:center">
