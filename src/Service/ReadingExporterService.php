@@ -27,10 +27,19 @@ class ReadingExporterService
      */
     private $withMinMax;
 
-    public function __construct()
-    {
-        $this->withMinMax = (bool)($_ENV['EXPORT_MIN_MAX'] ?? false);
-    }
+    /**
+     * Document.
+     *
+     * @var Spreadsheet
+     */
+    private $spreadsheet;
+
+    /**
+     * Classeur.
+     *
+     * @var \PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet
+     */
+    private $worksheet;
 
     public function getReadings()
     {
@@ -54,117 +63,62 @@ class ReadingExporterService
         return $this;
     }
 
-    public function getSpreadsheet()
+    /**
+     * Génère le document.
+     *
+     * @return Spreadsheet
+     */
+    public function getSpreadsheet(): Spreadsheet
     {
-        $spreadsheet = new Spreadsheet();
+        $withMinMax = (bool)($_ENV['EXPORT_MIN_MAX'] ?? false);
 
-        /* @var $sheet \PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet */
-        $sheet = $spreadsheet->getActiveSheet();
-
-        $column = 1;
-        $row = 1;
+        $this->spreadsheet = new Spreadsheet();
+        $this->worksheet = $this->spreadsheet->getActiveSheet();
 
         /* Créer la rangée des en-têtes */
-
-        $dateTimeColumn = $column;
-        $sheet->setCellValueByColumnAndRow($dateTimeColumn, $row, "Date de terrain");
-        $sheet->getColumnDimensionByColumn($dateTimeColumn)->setAutoSize(true);
-        $column++;
-
-        $codeColumn = $column;
-        $sheet->setCellValueByColumnAndRow($codeColumn, $row, "Code");
-        $sheet->getColumnDimensionByColumn($codeColumn)->setAutoSize(true);
-        $column++;
-
-        $systemColumn = $column;
-        $sheet->setCellValueByColumnAndRow($systemColumn, $row, "Système");
-        $sheet->getColumnDimensionByColumn($systemColumn)->setAutoSize(true);
-        $column++;
-
-        $basinColumn = $column;
-        $sheet->setCellValueByColumnAndRow($basinColumn, $row, "Bassin");
-        $sheet->getColumnDimensionByColumn($basinColumn)->setAutoSize(true);
-        $column++;
-
-        $stationColumn = $column;
-        $sheet->setCellValueByColumnAndRow($stationColumn, $row, "Station");
-        $sheet->getColumnDimensionByColumn($stationColumn)->setAutoSize(true);
-        $column++;
-
-        $stateColumn = $column;
-        $sheet->setCellValueByColumnAndRow($stateColumn, $row, "Etat");
-        $sheet->getColumnDimensionByColumn($stateColumn)->setAutoSize(true);
-        $column++;
+        $row = $column = 1;
+        $this->setHeader($dateTimeColumn = $column++, $row, "Terrain", true);
+        $this->setHeader($codeColumn = $column++, $row, "Code", true);
+        $this->setHeader($systemColumn = $column++, $row, "Système", true);
+        $this->setHeader($basinColumn = $column++, $row, "Bassin", true);
+        $this->setHeader($stationColumn = $column++, $row, "Station", true);
+        $this->setHeader($stateColumn = $column++, $row, "Etat", true);
 
         $firstValueColumn = $column;
         foreach ($this->parameters as $parameter) {
             $name = $parameter->getNameWithUnit();
             $firstColumn = $column;
-            if ($this->withMinMax) {
-                /* Nombre */
-                $sheet->setCellValueByColumnAndRow($column, $row, "$name NB");
-                $sheet->getStyleByColumnAndRow($column, $row)->getAlignment()->setWrapText(true);
-                $column++;
-                /* Minimum */
-                $sheet->setCellValueByColumnAndRow($column, $row, "$name MIN");
-                $sheet->getStyleByColumnAndRow($column, $row)->getAlignment()->setWrapText(true);
-                $column++;
-                /* Moyenne */
-                $sheet->setCellValueByColumnAndRow($column, $row, "$name MOY");
-                $sheet->getStyleByColumnAndRow($column, $row)->getAlignment()->setWrapText(true);
-                $column++;
-                /* Maximum */
-                $sheet->setCellValueByColumnAndRow($column, $row, "$name MAX");
-                $sheet->getStyleByColumnAndRow($column, $row)->getAlignment()->setWrapText(true);
-                $column++;
+            if ($withMinMax) {
+                /* Nombre, minimum, moyenne et maximum */
+                $this->setHeader($column++, $row, "$name\nnombre", false);
+                $this->setHeader($column++, $row, "$name\nminimum", false);
+                $this->setHeader($column++, $row, "$name\nmoyen", false);
+                $this->setHeader($column++, $row, "$name\nmaximum", false);
             } else {
-                /* Moyenne */
-                $sheet->setCellValueByColumnAndRow($column, $row, $name);
-                $sheet->getStyleByColumnAndRow($column, $row)->getAlignment()->setWrapText(true);
-                $column++;
+                /* Moyenne seule */
+                $this->setHeader($column++, $row, $name, false);
             }
         }
 
         /* Geler la rangée des en-têtes de colonnes */
-        $sheet->freezePane('A2');
+        $this->worksheet->freezePane('A2');
 
         /* Créer une rangée pour chaque relevé */
         foreach ($this->readings as $reading) {
             $row++;
-
             $station = $reading->getStation();
             $basin = $station->getBasin();
             $system = $basin->getSystem();
             $fieldDateTime = $reading->getFieldDateTime();
             $validated = $reading->getValidated();
 
-            /* Date de terrain */
-            $sheet->setCellValueByColumnAndRow($dateTimeColumn, $row,
-                \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($fieldDateTime));
-            $sheet->getStyleByColumnAndRow($dateTimeColumn, $row)
-                ->getNumberFormat()
-                ->setFormatCode('d/mm/yyyy hh:mm');
-
-            /* Code */
-            $sheet->setCellValueExplicitByColumnAndRow($codeColumn, $row,
-                $reading->getCode(),
-                \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING
-            );
-
-            /* Système */
-            $sheet->setCellValueByColumnAndRow($systemColumn, $row,
-                $system->getName());
-
-            /* Bassin */
-            $sheet->setCellValueByColumnAndRow($basinColumn, $row,
-                $basin->getName());
-
-            /* Station */
-            $sheet->setCellValueByColumnAndRow($stationColumn, $row,
-                $station->getName());
-
-            /* Etat */
-            $sheet->setCellValueByColumnAndRow($stateColumn, $row,
+            /* Volet */
+            $this->setDateTime($dateTimeColumn, $row, $fieldDateTime);
+            $this->setString($codeColumn, $row, $reading->getCode());
+            $this->setString($systemColumn, $row, $system->getName());
+            $this->setString($basinColumn, $row, $basin->getName());
+            $this->setString($stationColumn, $row, $station->getName());
+            $this->setString($stateColumn, $row,
                 (null === $validated) ? "Soumis" :
                 ($validated ? "Validé" : "Invalidé"));
 
@@ -172,36 +126,85 @@ class ReadingExporterService
             $column = $firstValueColumn;
             foreach ($this->parameters as $parameter) {
                 $stats = $reading->getValueStats($parameter);
-                if ($this->withMinMax) {
-                    /* Nombre */
-                    $count = $stats['count'];
-                    $sheet->setCellValueByColumnAndRow($column, $row,
-                        (0 != $count) ? $count : null);
-                    $column++;
-                    /* Minimum */
-                    $sheet->setCellValueByColumnAndRow($column, $row,
+                if ($withMinMax) {
+                    /* Nombre, minimum, moyenne et maximum */
+                    $this->setCell($column++, $row,
+                        (0 != $stats['count']) ? $stats['count'] : null);
+                    $this->setCell($column++, $row,
                         $parameter->formatValue($stats['min'], true));
-                    $column++;
-                    /* Moyenne */
-                    $sheet->setCellValueByColumnAndRow($column, $row,
+                    $this->setCell($column++, $row,
                         $parameter->formatValue($stats['avg'], true));
-                    $column++;
-                    /* Maximum */
-                    $sheet->setCellValueByColumnAndRow($column, $row,
+                    $this->setCell($column++, $row,
                         $parameter->formatValue($stats['max'], true));
-                    $column++;
                 } else {
-                    /* Moyenne */
-                    $sheet->setCellValueByColumnAndRow($column, $row,
+                    /* Moyenne seule */
+                    $this->setCell($column++, $row,
                         $parameter->formatValue($stats['avg'], true));
-                    $column++;
                 }
             }
         }
 
         /* Définir un filtre automatique sur l'entièreté de la feuille */
-        $sheet->setAutoFilter($sheet->calculateWorksheetDimension());
+        $this->worksheet->setAutoFilter($this->worksheet->calculateWorksheetDimension());
 
-        return $spreadsheet;
+        return $this->spreadsheet;
+    }
+
+    /**
+     * Remplit le contenu d'un en-tête de colonne.
+     *
+     * @param int $column
+     * @param int $row
+     * @param string $text
+     * @param boolean $autoSize
+     * @return void
+     */
+    private function setHeader(int $column, int $row, string $text, bool $autoSize)
+    {
+        $this->worksheet->setCellValueByColumnAndRow($column, $row, $text);
+        $this->worksheet->getStyleByColumnAndRow($column, $row)->getAlignment()->setWrapText(true);
+        $this->worksheet->getColumnDimensionByColumn($column)->setAutoSize($autoSize);
+    }
+
+    /**
+     * Remplit une cellule avec le type "standard".
+     *
+     * @param integer $column
+     * @param integer $row
+     * @param [type] $value
+     * @return void
+     */
+    private function setCell(int $column, int $row, $value)
+    {
+        $this->worksheet->setCellValueByColumnAndRow($column, $row, $value);
+    }
+
+    /**
+     * Remplit le contenu d'une cellule avec le type "texte".
+     *
+     * @param integer $column
+     * @param integer $row
+     * @param [type] $value
+     * @return void
+     */
+    private function setString(int $column, int $row, $value)
+    {
+        $this->worksheet->setCellValueExplicitByColumnAndRow($column, $row, $value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
+    }
+
+    /**
+     * Remplit le contenu d'une cellule avec le type "date et heure".
+     *
+     * @param integer $column
+     * @param integer $row
+     * @param [type] $value
+     * @return void
+     */
+    private function setDateTime(int $column, int $row, $value)
+    {
+        $this->worksheet->setCellValueByColumnAndRow($column, $row, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($value));
+        $this->worksheet->getStyleByColumnAndRow($column, $row)
+            ->getNumberFormat()
+            ->setFormatCode('d/mm/yyyy hh:mm');
     }
 }
