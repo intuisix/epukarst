@@ -82,6 +82,7 @@ class ReadingExporterService
         $this->setHeader($systemColumn = $column++, $row, "Système", true);
         $this->setHeader($basinColumn = $column++, $row, "Bassin", true);
         $this->setHeader($stationColumn = $column++, $row, "Station", true);
+        $this->setHeader($atlasColumn = $column++, $row, "Atlas", true);
         $this->setHeader($stateColumn = $column++, $row, "Etat", true);
 
         $firstValueColumn = $column;
@@ -118,6 +119,7 @@ class ReadingExporterService
             $this->setString($systemColumn, $row, $system->getName());
             $this->setString($basinColumn, $row, $basin->getName());
             $this->setString($stationColumn, $row, $station->getName());
+            $this->setString($atlasColumn, $row, $station->getAtlasCode());
             $this->setString($stateColumn, $row,
                 (null === $validated) ? "Soumis" :
                 ($validated ? "Validé" : "Invalidé"));
