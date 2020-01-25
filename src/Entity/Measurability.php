@@ -76,12 +76,18 @@ class Measurability
     private $inputConversion;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Control", mappedBy="instrumentParameter", orphanRemoval=true)
+     */
+    private $controls;
+
+    /**
      * Construit l'objet.
      */
     public function __construct()
     {
         $this->measures = new ArrayCollection();
         $this->systemParameters = new ArrayCollection();
+        $this->controls = new ArrayCollection();
     }
 
     /**
@@ -359,6 +365,37 @@ class Measurability
     public function setInputConversion(?string $inputConversion): self
     {
         $this->inputConversion = $inputConversion;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Control[]
+     */
+    public function getControls(): Collection
+    {
+        return $this->controls;
+    }
+
+    public function addControl(Control $control): self
+    {
+        if (!$this->controls->contains($control)) {
+            $this->controls[] = $control;
+            $control->setInstrumentParameter($this);
+        }
+
+        return $this;
+    }
+
+    public function removeControl(Control $control): self
+    {
+        if ($this->controls->contains($control)) {
+            $this->controls->removeElement($control);
+            // set the owning side to null (unless already changed)
+            if ($control->getInstrumentParameter() === $this) {
+                $control->setInstrumentParameter(null);
+            }
+        }
 
         return $this;
     }

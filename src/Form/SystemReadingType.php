@@ -55,6 +55,12 @@ class SystemReadingType extends AbstractType
                 'allow_add' => false,
                 'allow_delete' => false,
             ])
+            ->add('controls', CollectionType::class, [
+                'label' => "Contrôles",
+                'entry_type' => SystemReadingControlType::class,
+                'allow_add' => false,
+                'allow_delete' => false,
+            ])
         ;
 
         if ($options['showEncoding']) {

@@ -119,6 +119,28 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        {% if systemReading.controls|length %}
+            <h2>Mesures de contrôle</h2>
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        {% for control in systemReading.controls %}
+                            <th>{{control.instrumentParameter.parameter.nameWithUnit}}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {% for control in systemReading.controls %}
+                            <td>{{control.instrumentParameter.parameter.formatValue(control.value)}}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        {% endif %}
+
         {# Bouton permettant de modifier le relevé #}
         {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
             <a href="{{path('system_reading_edit', {'code': systemReading.code})}}" class="btn btn-primary">

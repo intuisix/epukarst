@@ -89,11 +89,17 @@ class SystemReading
     private $alarm;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Control", mappedBy="systemReading")
+     */
+    private $controls;
+
+    /**
      * Construit une instance de relevé.
      */
     public function __construct()
     {
         $this->stationReadings = new ArrayCollection();
+        $this->controls = new ArrayCollection();
     }
 
     /**
@@ -322,6 +328,37 @@ class SystemReading
     public function setAlarm(?Alarm $alarm): self
     {
         $this->alarm = $alarm;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Control[]
+     */
+    public function getControls(): Collection
+    {
+        return $this->controls;
+    }
+
+    public function addControl(Control $control): self
+    {
+        if (!$this->controls->contains($control)) {
+            $this->controls[] = $control;
+            $control->setSystemReading($this);
+        }
+
+        return $this;
+    }
+
+    public function removeControl(Control $control): self
+    {
+        if ($this->controls->contains($control)) {
+            $this->controls->removeElement($control);
+            // set the owning side to null (unless already changed)
+            if ($control->getSystemReading() === $this) {
+                $control->setSystemReading(null);
+            }
+        }
 
         return $this;
     }

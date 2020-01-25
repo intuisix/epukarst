@@ -1,3 +1,14 @@
+{#
+Template pour l'affichage du formulaire d'encodage ou de validation d'un
+relevé de système.
+
+Attention: chaque fois que l'on affiche la liste des paramètre, il faut
+utiliser la liste ordonnée donnée par le contrôleur comme 'systemParameters'.
+Cette liste est en effet consistante avec l'ordre dans lequel le contrôleur a
+créé les mesures. Il ne faut pas absolument pas utiliser la liste du système,
+car celle-ci n'est pas triée.
+#}
+
 {% extends 'base.html.twig' %}
 
 {% block title %}
@@ -7,23 +18,26 @@
 {% form_theme form _self %}
 
 {% block body %}
-    <div class="container mb-3">
+    <div class="mx-3 my-3">
         <h1>{{title}}</h1>
 
-        <p>Ce formulaire permet l'encodage rapide des mesures pour toutes les stations d'un système, en leur attribuant la même date de terrain et les mêmes instruments de mesure. Avant de commencer à encoder des mesures, vérifiez ci-dessous si la liste des stations et la liste des paramètres sont complètes, et adaptez-les en cas de besoin&nbsp;!</p>
+        <p>Ce formulaire permet l'encodage rapide des mesures pour toutes les stations d'un système, en leur attribuant la même date de terrain et les mêmes instruments de mesure. Avant de commencer, vérifiez ci-dessous si la liste des stations et la liste des paramètres sont complètes, et adaptez-les en cas de besoin&nbsp;!</p>
 
         {{form_start(form)}}
 
-        {# Afficher les champs généraux #}
+        {# Informations générales #}
         <div class="alert bg-light">
             <div class="row">
                 <div class="col-2">
+                    {# Date et heure de terrain #}
                     {{form_row(form.fieldDateTime)}}
                 </div>
                 <div class="col-2">
+                    {# Code du relevé de système #}
                     {{form_row(form.code)}}
                 </div>
                 <div class="col">
+                    {# Sélection de l'alarme #}
                     {{form_row(form.alarm)}}
                 </div>
                 <div class="col-4">
@@ -39,65 +53,103 @@
             </div>
         </div>
 
-        {% if form.stationReadings|length == 0 %}
-            <div class="alert alert-warning">
-                Pour pouvoir encoder des mesures, vous devez d'abord assigner des stations et des paramètres au système.
-            </div>
-            {# Afficher les relevés de stations #}
-            {{form_widget(form.stationReadings)}}
-        {% else %}
-            {# Afficher le tableau d'encodage des mesures avec en colonnes les paramètres, en lignes les stations, et en cellules les mesures #}
+        {# Valeurs de contrôles #}
+        {% if form.controls|length %}
             <div class="alert bg-light">
+                <h4>Mesures de contrôle</h4>
                 <table cellpadding="3" width="100%">
                     <thead>
                         <tr>
-                            {# Afficher les en-têtes de station #}
-                            <th width="20%">
-                                Station
-                            </th>
-                            {# Afficher les en-têtes des paramètres, en faisant attention d'utiliser la liste ordonnée, consistante avec l'ordre dans lequel le contrôleur a créé les mesures (ne pas utiliser la liste du système car elle n'est pas triée) #}
+                            <td width="20%">&nbsp;</td>
                             {% for systemParameter in systemParameters %}
                                 <td class="text-center">
+                                    {# Nom du paramètre #}
                                     <strong>
                                         {{systemParameter.instrumentParameter.parameter.name}}
                                     </strong>
                                     <br>
-                                    {# Afficher qu'une conversion d'unité sera réalisée #}
-                                    {% if systemParameter.instrumentParameter.inputUnit and conversions_enabled %}
-                                        [{{systemParameter.instrumentParameter.inputUnit}}]
-                                    {% elseif systemParameter.instrumentParameter.parameter.unit %}
-                                            [{{systemParameter.instrumentParameter.parameter.unit}}]
-                                    {% endif %}
-                                    {% if systemParameter.instrumentParameter.inputConversion is not null and conversions_enabled %}
-                                        <i class="fas fa-square-root-alt" data-toggle="tooltip" data-placement="top" data-html="true" title="La valeur sera convertie automatiquement&nbsp;:<br>y={{systemParameter.instrumentParameter.inputConversion|default('x')}}"></i>
-                                    {% endif %}
-                                    <br>
-                                    {{systemParameter.instrumentParameter.instrument.name}}
+                                    {# Unité du paramètre #}
+                                    {{systemParameter.instrumentParameter.parameter.unit}}
                                 </td>
                             {% endfor %}
                         </tr>
                     </thead>
-                    {# Afficher les relevés de stations #}
-                    {{form_widget(form.stationReadings)}}
-                    <tfoot>
+                    <tbody>
                         <tr>
-                            <td>
-                                Valeurs normatives
-                            </td>
+                            <td>Valeur</td>
+                            {{form_widget(form.controls)}}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        {# Relevés de stations #}
+        {% if form.stationReadings|length == 0 %}
+            <div class="alert alert-warning">
+                Pour pouvoir encoder des mesures, vous devez d'abord assigner des stations et des paramètres au système.
+            </div>
+            {{form_widget(form.stationReadings)}}
+        {% else %}
+            <div class="alert bg-light">
+                <h4>Mesures aux stations</h4>
+                {# Tableau d'encodage des mesures avec en colonnes les paramètres, en lignes les stations, et en cellules les mesures #}
+                <table cellpadding="3" width="100%">
+                    <thead>
+                        <tr>
+                            <td width="20%">&nbsp;</td>
                             {% for systemParameter in systemParameters %}
                                 <td class="text-center">
+                                    {# Nom du paramètre #}
+                                    <strong>
+                                        {{systemParameter.instrumentParameter.parameter.name}}
+                                    </strong>
+
+                                    <br>
+                                    {# Unité du paramètre #}
+                                    {% if systemParameter.instrumentParameter.inputConversion is not null and conversions_enabled %}
+                                        {# Avec conversion #}
+                                        {{systemParameter.instrumentParameter.inputUnit}}
+                                        {# Icône de conversion #}
+                                        <i class="fas fa-square-root-alt" data-toggle="tooltip" data-placement="top" data-html="true" title="La valeur sera convertie automatiquement&nbsp;:<br>y={{systemParameter.instrumentParameter.inputConversion|default('x')}}"></i>
+                                    {% else %}
+                                        {# Avec conversion #}
+                                        {{systemParameter.instrumentParameter.parameter.unit}}
+                                    {% endif %}
+                                    <br>
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>Instrument</td>
+                            {% for systemParameter in systemParameters %}
+                                <td class="text-center">
+                                    {# Nom de l'instrument #}
+                                    {{systemParameter.instrumentParameter.instrument.name}}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>Valeurs normatives</td>
+                            {% for systemParameter in systemParameters %}
+                                <td class="text-center">
+                                    {# Minimum normatif #}
                                     {{systemParameter.instrumentParameter.parameter.normativeMinimum}}
                                     -
+                                    {# Maximum normatif #}
                                     {{systemParameter.instrumentParameter.parameter.normativeMaximum}}
                                 </td>
                             {% endfor %}
                         </tr>
-                    </tfoot>
+                    </thead>
+                    {# Relevés de stations #}
+                    {{form_widget(form.stationReadings)}}
                 </table>
-                <small class="text-muted">Introduisez <strong>toutes</strong> les valeurs qui ont été mesurées, en veillant à respecter l'unité du paramètre concerné. Complétez la valeur en décochant &laquo;&nbsp;S&nbsp;&raquo; si la valeur était instable lors de la mesure, et &laquo;&nbsp;V&nbsp;&raquo; si une valeur est hors gamme ou qu'elle vous paraît invalide.</small>
+                <small class="text-muted">Introduisez <strong>toutes</strong> les valeurs qui ont été mesurées, en veillant à respecter l'unité du paramètre concerné&nbsp;.<br>Décochez &laquo;&nbsp;S&nbsp;&raquo; si la valeur était instable lors de la mesure, et &laquo;&nbsp;V&nbsp;&raquo; si une valeur invalide (p.ex. elle est hors gamme, ou l'instrument n'est pas en ordre d'étalonnage).</small>
             </div>
 
             <div class="alert bg-light">
+                <h4>Remarques</h4>
                 <table cellpadding="3" width="100%">
                     <thead>
                         <tr>
@@ -130,7 +182,7 @@
             </div>
         {% endif %}
 
-        {# Afficher les informations d'encodage #}
+        {# Informations d'encodage #}
         {% if form.encodingNotes is defined %}
             <div class="alert bg-light">
                 <div class="row">
@@ -146,7 +198,7 @@
             </div>
         {% endif %}
 
-        {# Afficher les informations de validation #}
+        {# Informations de validation #}
         {% if form.validationNotes is defined %}
             <div class="alert bg-light">
                 <div class="row">
@@ -175,11 +227,18 @@
     </div>
 {% endblock %}
 
+{# Modèle d'une valeur de contrôle #}
+{% block _system_reading_controls_entry_row %}
+    <td>
+        {{form_widget(form.value)}}
+    </td>
+{% endblock %}
+
 {# Modèle d'un relevé de station #}
 {% block _system_reading_stationReadings_entry_row %}
     <tbody id="{{id}}">
         <tr>
-            {# Afficher les cellules statiques relatives à la station #}
+            {# Cellules statiques relatives à la station #}
             <td class="align-top">
                 {{form.vars.value.station.name}}
                 <br>
@@ -191,7 +250,7 @@
                 </small>
             </td>
 
-            {# Afficher les mesures du relevé de station #}
+            {# Mesures du relevé de station #}
             {{form_widget(form.measures)}}
         </tr>
     </tbody>

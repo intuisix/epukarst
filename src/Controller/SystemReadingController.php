@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Alarm;
 use App\Entity\System;
+use App\Entity\Control;
 use App\Entity\Measure;
 use App\Entity\Reading;
 use App\Entity\Station;
@@ -66,13 +67,23 @@ class SystemReadingController extends AbstractController
             ->setEncodingDateTime(new \DateTime('now'))
             ->setEncodingAuthor($this->getUser());
 
+        /* Pour chaque paramètre du système, ajouter un contrôle */
+        if (!empty($systemParameters)) {
+            foreach ($systemParameters as $systemParameter) {
+                $control = new Control();
+                $control
+                    ->setSystemReading($systemReading)
+                    ->setInstrumentParameter($systemParameter->getInstrumentParameter());
+                $systemReading->addControl($control);
+            }
+        }
+
+        /* Pour chaque station du système, ajouter un relevé de station au relevé de système */
         if (!empty($systemStations) && !empty($systemParameters)) {
-            /* Pour chaque station du système, ajouter un relevé de station à celui du système */
             foreach ($systemStations as $station) {
                 /* Créer le relevé de station */
                 $stationReading = new Reading();
                 $stationReading->setStation($station);
-
                 /* Pour chaque paramètre, ajouter une nouvelle mesure au relevé de station en activant la conversion de valeur */
                 foreach ($systemParameters as $systemParameter) {
                     $measure = $this->createMeasure($systemParameter, true);
@@ -396,6 +407,16 @@ class SystemReadingController extends AbstractController
             } else {
                 /* Enlever le relevé de station car il est vide et aucune remarque n'a été fournie */
                 $systemReading->removeStationReading($stationReading);
+            }
+        }
+
+        /* Traiter chacune des valeurs de contrôle */
+        foreach ($systemReading->getControls() as $control) {
+            if (null === $control->getValue()) {
+                $systemReading->removeControl($control);
+            } else {
+                $control->setDateTime($fieldDateTime);
+                $manager->persist($control);
             }
         }
 
