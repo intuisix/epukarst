@@ -70,10 +70,7 @@ class SystemReadingController extends AbstractController
         /* Pour chaque paramètre du système, ajouter un contrôle */
         if (!empty($systemParameters)) {
             foreach ($systemParameters as $systemParameter) {
-                $control = new Control();
-                $control
-                    ->setSystemReading($systemReading)
-                    ->setInstrumentParameter($systemParameter->getInstrumentParameter());
+                $control = $this->createControl($systemParameter);
                 $systemReading->addControl($control);
             }
         }
@@ -134,40 +131,14 @@ class SystemReadingController extends AbstractController
             return $this->redirect($request->headers->get('referer'));
         }
 
-        $system = $systemReading->getSystem();
         /* Obtenir la liste ordonnée de paramètres du système */
+        $system = $systemReading->getSystem();
         $systemParameters = $systemParameterRepository->findSystemParameters($system);
 
-        /* Traiter les relevés de stations: dans chacun d'eux, les mesures ne sont pas nécessairement dans le même ordre que les paramètres du système, or cet ordre est important car les paramètres sont en en-tête des colonnes du formulaire. Il se peut également qu'il n'y ait pas de mesure pour certains paramètres, ou qu'il y ait plusieurs mesures pour d'autres. */
-        foreach ($systemReading->getStationReadings() as $stationReading) {
-            /* Déplacer les mesures du relevé vers un tableau temporaire */
-            $stationMeasures = [];
-            foreach ($stationReading->getMeasures() as $stationMeasure) {
-                $stationMeasures[] = $stationMeasure;
-                $stationReading->removeMeasure($stationMeasure);
-            }
-
-            /* Reconstituer le tableau de mesures du relevé, dans l'ordre des paramètres du système et en insérant des mesures vides pour les paramètres n'ayant pas de mesure */
-            foreach ($systemParameters as $systemParameter) {
-                $key = $this->findParameterInMeasures($systemParameter, $stationMeasures);
-                if (null !== $key) {
-                    $measure = $stationMeasures[$key];
-                    array_splice($stationMeasures, $key, 1);
-                } else {
-                    /* Créer une mesure sans activer la conversion de valeur */
-                    $measure = $this->createMeasure($systemParameter, false);
-                }
-                $stationReading->addMeasure($measure);
-            }
-
-            /* Restaurer les mesures supplémentaires. Elles ne seront pas affichées, mais au moins elles ne seront pas perdues! */
-            foreach ($stationMeasures as $stationMeasure) {
-                $stationReading->addMeasure($measure);
-
+        if ((false == $this->loadControls($systemReading, $systemParameters)) ||(false == $this->loadMeasures($systemReading, $systemParameters))) {
                 /* Cas spécial non géré pour l'instant */
                 $this->addFlash('danger', "Ce relevé de système ne peut être modifié car il contient des mesures excédentaires par rapport aux paramètres actuellement assignés au système.<br>Faites les modifications sur les relevés de station directement.");
                 return $this->redirect($request->headers->get('referer'));
-            }
         }
 
         /* Créer et traiter le formulaire */
@@ -246,7 +217,82 @@ class SystemReadingController extends AbstractController
     }
 
     /**
-     * Crée une mesure vide et liée à un paramètre de système.
+     * Crée une valeur de contrôle vide liée à un paramètre de système.
+     *
+     * @param SystemParameter $systemParameter
+     * @return Control
+     */
+    private function createControl(SystemParameter $systemParameter)
+    {
+        $control = new Control();
+        $control
+            ->setInstrumentParameter($systemParameter->getInstrumentParameter());
+        return $control;
+    }
+
+    /**
+     * Trouve un paramètre de système parmi un tableau de valeurs de contrôle.
+     *
+     * @param SystemParameter $systemParameter
+     * @param Control[] $controls
+     * @return integer|string|null
+     */
+    private function findParameterInControls(SystemParameter $systemParameter, array $controls)
+    {
+        foreach ($controls as $key => $control) {
+            if ($control->getInstrumentParameter() === $systemParameter->getInstrumentParameter()) {
+                return $key;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Charge les valeurs de contrôle contenues dans un relevé de système, dans
+     * l'ordre de la liste des paramètres du système, et en insérant les
+     * éventuelles valeurs manquantes pour qu'elles puissent être saisies par
+     * l'utilisateur.
+     *
+     * @param SystemReading $systemReading
+     * @param array $systemParameters
+     * @return bool
+     */
+    private function loadControls(SystemReading $systemReading, array $systemParameters) : bool
+    {
+        $success = true;
+
+        /* Déplacer toutes les mesures de contrôle vers un tableau temporaire */
+        $controls = [];
+        foreach ($systemReading->getControls() as $control) {
+            $controls[] = $control;
+            $systemReading->removeControl($control);
+        }
+
+        /* Recréer le tableau dans le relevé de système, dans l'ordre, et en y
+        insérant les mesures manquantes */
+        foreach ($systemParameters as $systemParameter) {
+            $key = $this->findParameterInControls($systemParameter, $controls);
+            if (null !== $key) {
+                $control = $controls[$key];
+                array_splice($controls, $key, 1);
+            } else {
+                $control = $this->createControl($systemParameter);
+            }
+            $systemReading->addControl($control);
+        }
+
+        /* Restaurer les mesures supplémentaires. Elles ne seront pas affichées,
+        mais au moins elles ne seront pas perdues! */
+        foreach ($controls as $control) {
+            $constol->addMeasure($control);
+            $success = false;
+        }
+
+        return $success;
+    }
+
+    /**
+     * Crée une mesure vide liée à un paramètre de système.
      *
      * @param SystemParameter $systemParameter
      * @return Measure
@@ -277,6 +323,52 @@ class SystemReadingController extends AbstractController
             }
         }
         return null;
+    }
+
+    /**
+     * Charge les mesures de stations contenues dans un relevé de système, dans
+     * l'ordre de la liste des paramètres du système, et en insérant les
+     * éventuelles valeurs manquantes pour qu'elles puissent être saisies par
+     * l'utilisateur.
+     *
+     * @param SystemReading $systemReading
+     * @param array $systemParameters
+     * @return boolean
+     */
+    private function loadMeasures(SystemReading $systemReading, array $systemParameters) : bool
+    {
+        $success = true;
+
+        /* Traiter les relevés de stations: dans chacun d'eux, les mesures ne sont pas nécessairement dans le même ordre que les paramètres du système, or cet ordre est important car les paramètres sont en en-tête des colonnes du formulaire. Il se peut également qu'il n'y ait pas de mesure pour certains paramètres, ou qu'il y ait plusieurs mesures pour d'autres. */
+        foreach ($systemReading->getStationReadings() as $stationReading) {
+            /* Déplacer les mesures du relevé vers un tableau temporaire */
+            $stationMeasures = [];
+            foreach ($stationReading->getMeasures() as $stationMeasure) {
+                $stationMeasures[] = $stationMeasure;
+                $stationReading->removeMeasure($stationMeasure);
+            }
+
+            /* Reconstituer le tableau de mesures du relevé, dans l'ordre des paramètres du système et en insérant des mesures vides pour les paramètres n'ayant pas de mesure */
+            foreach ($systemParameters as $systemParameter) {
+                $key = $this->findParameterInMeasures($systemParameter, $stationMeasures);
+                if (null !== $key) {
+                    $measure = $stationMeasures[$key];
+                    array_splice($stationMeasures, $key, 1);
+                } else {
+                    /* Créer une mesure sans activer la conversion de valeur */
+                    $measure = $this->createMeasure($systemParameter, false);
+                }
+                $stationReading->addMeasure($measure);
+            }
+
+            /* Restaurer les mesures supplémentaires. Elles ne seront pas affichées, mais au moins elles ne seront pas perdues! */
+            foreach ($stationMeasures as $stationMeasure) {
+                $stationReading->addMeasure($measure);
+                $success = false;
+            }
+        }
+
+        return $success;
     }
 
     /**
@@ -414,8 +506,11 @@ class SystemReadingController extends AbstractController
         foreach ($systemReading->getControls() as $control) {
             if (null === $control->getValue()) {
                 $systemReading->removeControl($control);
+                $manager->remove($control);
             } else {
-                $control->setDateTime($fieldDateTime);
+                $control
+                    ->setSystemReading($systemReading)
+                    ->setDateTime($fieldDateTime);
                 $manager->persist($control);
             }
         }

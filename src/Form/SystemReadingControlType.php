@@ -19,6 +19,7 @@ class SystemReadingControlType extends AbstractType
         $builder
             ->add('value', NumberType::class, [
                 'label' => "Valeur",
+                'required' => false,
             ])
         ;
     }
