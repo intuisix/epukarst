@@ -79,14 +79,7 @@ class SystemReadingController extends AbstractController
         if (!empty($systemStations) && !empty($systemParameters)) {
             foreach ($systemStations as $station) {
                 /* Créer le relevé de station */
-                $stationReading = new Reading();
-                $stationReading->setStation($station);
-                /* Pour chaque paramètre, ajouter une nouvelle mesure au relevé de station en activant la conversion de valeur */
-                foreach ($systemParameters as $systemParameter) {
-                    $measure = $this->createMeasure($systemParameter, true);
-                    $stationReading->addMeasure($measure);
-                }
-
+                $stationReading = $this->createStationReading($station, $systemParameter);
                 /* Ajouter la station au relevé */
                 $systemReading->addStationReading($stationReading);
             }
@@ -124,18 +117,20 @@ class SystemReadingController extends AbstractController
      * @Route("/system-reading/{code}/edit", name="system_reading_edit")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="systemReading")
      */
-    public function edit(SystemReading $systemReading, Request $request, ObjectManager $manager, SystemParameterRepository $systemParameterRepository)
+    public function edit(SystemReading $systemReading, Request $request, ObjectManager $manager, StationRepository $stationRepository, SystemParameterRepository $systemParameterRepository)
     {
         if ($systemReading->countValidatedReadings()) {
             $this->addFlash('danger', "Ce relevé de système ne peut pas être modifié car au moins un de ses relevés de station a été validé.<br>Faites les modifications sur les relevés de station individuellement.");
             return $this->redirect($request->headers->get('referer'));
         }
 
-        /* Obtenir la liste ordonnée de paramètres du système */
+        /* Obtenir la liste ordonnée de paramètres et des stations du système */
         $system = $systemReading->getSystem();
+        $systemStations = $stationRepository->findSystemStations($system);
         $systemParameters = $systemParameterRepository->findSystemParameters($system);
 
-        if ((false == $this->loadControls($systemReading, $systemParameters)) ||(false == $this->loadMeasures($systemReading, $systemParameters))) {
+        if ((false == $this->loadControls($systemReading, $systemParameters)) ||
+            (false == $this->loadStationReadings($systemReading, $systemStations, $systemParameters))) {
                 /* Cas spécial non géré pour l'instant */
                 $this->addFlash('danger', "Ce relevé de système ne peut être modifié car il contient des mesures excédentaires par rapport aux paramètres actuellement assignés au système.<br>Faites les modifications sur les relevés de station directement.");
                 return $this->redirect($request->headers->get('referer'));
@@ -248,13 +243,13 @@ class SystemReadingController extends AbstractController
     }
 
     /**
-     * Charge les valeurs de contrôle contenues dans un relevé de système, dans
+     * Charge les mesures de contrôle contenues dans un relevé de système, dans
      * l'ordre de la liste des paramètres du système, et en insérant les
-     * éventuelles valeurs manquantes pour qu'elles puissent être saisies par
+     * éventuelles mesures manquantes pour qu'elles puissent être saisies par
      * l'utilisateur.
      *
      * @param SystemReading $systemReading
-     * @param array $systemParameters
+     * @param SystemParameter[] $systemParameters
      * @return bool
      */
     private function loadControls(SystemReading $systemReading, array $systemParameters) : bool
@@ -326,46 +321,131 @@ class SystemReadingController extends AbstractController
     }
 
     /**
-     * Charge les mesures de stations contenues dans un relevé de système, dans
-     * l'ordre de la liste des paramètres du système, et en insérant les
-     * éventuelles valeurs manquantes pour qu'elles puissent être saisies par
-     * l'utilisateur.
+     * Charge les mesures contenues dans un relevé de station, dans l'ordre
+     * de la liste des paramètres du système, et en insérant les éventuelles
+     * mesures manquantes pour qu'elles puissent être saisies par l'utilisateur.
      *
-     * @param SystemReading $systemReading
-     * @param array $systemParameters
-     * @return boolean
+     * @param Reading $stationReading
+     * @param SystemParameter[] $systemParameters
+     * @return boolean false s'il existe plusieurs mesures pour l'un des
+     * paramètres ou s'il existe des mesures qui concernent des paramètres
+     * autres que ceux spécifiés par dans la liste.
      */
-    private function loadMeasures(SystemReading $systemReading, array $systemParameters) : bool
+    private function loadMeasures(Reading $stationReading, array $systemParameters) : bool
     {
         $success = true;
 
-        /* Traiter les relevés de stations: dans chacun d'eux, les mesures ne sont pas nécessairement dans le même ordre que les paramètres du système, or cet ordre est important car les paramètres sont en en-tête des colonnes du formulaire. Il se peut également qu'il n'y ait pas de mesure pour certains paramètres, ou qu'il y ait plusieurs mesures pour d'autres. */
+        /* Déplacer les mesures du relevé vers un tableau temporaire */
+        $stationMeasures = [];
+        foreach ($stationReading->getMeasures() as $stationMeasure) {
+            $stationMeasures[] = $stationMeasure;
+            $stationReading->removeMeasure($stationMeasure);
+        }
+
+        /* Reconstituer le tableau de mesures du relevé, dans l'ordre des paramètres du système et en insérant des mesures vides pour les paramètres n'ayant pas de mesure */
+        foreach ($systemParameters as $systemParameter) {
+            $key = $this->findParameterInMeasures($systemParameter, $stationMeasures);
+            if (null !== $key) {
+                $measure = $stationMeasures[$key];
+                array_splice($stationMeasures, $key, 1);
+            } else {
+                /* Créer une mesure sans activer la conversion de valeur */
+                $measure = $this->createMeasure($systemParameter, false);
+            }
+            $stationReading->addMeasure($measure);
+        }
+
+        /* Restaurer les mesures supplémentaires. Elles ne seront pas affichées, mais au moins elles ne seront pas perdues! */
+        foreach ($stationMeasures as $stationMeasure) {
+            $stationReading->addMeasure($measure);
+            $success = false;
+        }
+
+        return $success;
+    }
+
+    /**
+     * Crée un relevé de station avec des mesures vides pour chacun des
+     * paramètres du système.
+     * 
+     * @param Station $station
+     * @param array $systemParameters
+     * @return StationReading
+     */
+    private function createStationReading(Station $station, array $systemParameters)
+    {
+        $stationReading = new Reading();
+        $stationReading->setStation($station);
+        /* Pour chaque paramètre, ajouter une nouvelle mesure au relevé de station en activant la conversion de valeur */
+        foreach ($systemParameters as $systemParameter) {
+            $measure = $this->createMeasure($systemParameter, true);
+            $stationReading->addMeasure($measure);
+        }
+        return $stationReading;
+    }
+
+    /**
+     * Trouve le relevé de station correspondant à la station donnée, dans le
+     * tableau donné.
+     *
+     * @param Station $station
+     * @param array $stationReadings
+     * @return StationReading|null
+     */
+    private function findStationInReadings(Station $station, array $stationReadings)
+    {
+        foreach ($stationReadings as $key => $stationReading) {
+            if ($stationReading->getStation() === $station) {
+                return $key;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Charge les relevés de station contenus dans un relevé de système, dans
+     * l'ordre de la liste des stations du système, et en insérant les
+     * éventuels relevés manquants pour qu'ils puissent être saisis par
+     * l'utilisateur.
+     *
+     * @param SystemReading $systemReading
+     * @param array $systemStations
+     * @param array $systemParameters
+     * @return boolean false si une station est présente plusieurs fois parmi
+     * les relevés, ou si une station liée de relevé de station est absente de
+     * la liste des stations du système.
+     */
+    private function loadStationReadings(SystemReading $systemReading, array $systemStations, array $systemParameters)
+    {
+        $success = true;
+
+        /* Déplacer les relevés de stations dans un tableau temporaire */
+        $stationReadings = [];
         foreach ($systemReading->getStationReadings() as $stationReading) {
-            /* Déplacer les mesures du relevé vers un tableau temporaire */
-            $stationMeasures = [];
-            foreach ($stationReading->getMeasures() as $stationMeasure) {
-                $stationMeasures[] = $stationMeasure;
-                $stationReading->removeMeasure($stationMeasure);
-            }
-
-            /* Reconstituer le tableau de mesures du relevé, dans l'ordre des paramètres du système et en insérant des mesures vides pour les paramètres n'ayant pas de mesure */
-            foreach ($systemParameters as $systemParameter) {
-                $key = $this->findParameterInMeasures($systemParameter, $stationMeasures);
-                if (null !== $key) {
-                    $measure = $stationMeasures[$key];
-                    array_splice($stationMeasures, $key, 1);
-                } else {
-                    /* Créer une mesure sans activer la conversion de valeur */
-                    $measure = $this->createMeasure($systemParameter, false);
-                }
-                $stationReading->addMeasure($measure);
-            }
-
-            /* Restaurer les mesures supplémentaires. Elles ne seront pas affichées, mais au moins elles ne seront pas perdues! */
-            foreach ($stationMeasures as $stationMeasure) {
-                $stationReading->addMeasure($measure);
+            /* Traiter les mesures de la station */
+            if (!$this->loadMeasures($stationReading, $systemParameters)) {
                 $success = false;
             }
+            $stationReadings[] = $stationReading;
+            $systemReading->removeStationReading($stationReading);
+        }
+
+        /* Reconstituer le tableau des relevés de station */
+        foreach ($systemStations as $systemStation) {
+            $key = $this->findStationInReadings($systemStation, $stationReadings);
+            if (null !== $key) {
+                $stationReading = $stationReadings[$key];
+                array_splice($stationReadings, $key, 1);
+            } else {
+                $stationReading = $this->createStationReading($systemStation, $systemParameters);
+            }
+            $systemReading->addStationReading($stationReading);
+        }
+
+        /* Restaurer les relevés de stations supplémentaires */
+        foreach ($stationReadings as $stationReading) {
+            $systemReading->addStationReading($stationReading);
+            $success = false;
         }
 
         return $success;
