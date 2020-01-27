@@ -79,7 +79,7 @@ class SystemReadingController extends AbstractController
         if (!empty($systemStations) && !empty($systemParameters)) {
             foreach ($systemStations as $station) {
                 /* Créer le relevé de station */
-                $stationReading = $this->createStationReading($station, $systemParameter);
+                $stationReading = $this->createStationReading($station, $systemParameters);
                 /* Ajouter la station au relevé */
                 $systemReading->addStationReading($stationReading);
             }
@@ -554,27 +554,36 @@ class SystemReadingController extends AbstractController
             /* Traiter les mesures restantes */
             $measures = $stationReading->getMeasures();
             if ((0 != $measures->count()) || !empty($stationReading->getEncodingNotes())) {
-                /* Définir les propriétés de chaque mesure et persister ces dernières dans la base de données */
+                /* Copier la date de terrain globale sur le relevé de station, tout en conservant l'heure spécifique */
+                $stationDateTime = $stationReading->getFieldDateTime();
+                $stationDateTime->setDate(
+                    $fieldDateTime->format('Y'),
+                    $fieldDateTime->format('m'),
+                    $fieldDateTime->format('d'));
+
+                /* Traiter chaque mesure du relevé de station */
                 foreach ($measures as $measure) {
+                    /* Définir les propriétés de la mesure */
                     $measure
-                        ->setFieldDateTime($fieldDateTime)
+                        ->setFieldDateTime($stationDateTime)
                         ->setEncodingDateTime($encodingDateTime)
                         ->setEncodingAuthor($encodingAuthor)
                         ->setReading($stationReading);
+                    /* Mémoriser la mesure dans la base de données */
                     $manager->persist($measure);
-
                     /* Détecter les valeurs hors normes, si la mesure n'a pas déjà été liée à une alarme */
                     if (null === $measure->getAlarm()) {
                         $this->testNormativeLimits($measure, $systemReading, $manager);
                     }
                 }
 
-                /* Définir les propriétés du relevé de station et la persister dans la base de données */
+                /* Définir les propriétés du relevé de station */
                 $stationReading
-                    ->setFieldDateTime($fieldDateTime)
+                    ->setFieldDateTime($stationDateTime)
                     ->setEncodingDateTime($encodingDateTime)
                     ->setEncodingAuthor($encodingAuthor)
                     ->setSystemReading($systemReading);
+                /* Mémoriser le relevé de station en base de données */
                 $manager->persist($stationReading);
             } else {
                 /* Enlever le relevé de station car il est vide et aucune remarque n'a été fournie */

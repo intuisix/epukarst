@@ -90,7 +90,7 @@
                             {{stationReading.station.name}}
                         </td>
                         <td>
-                            {{stationReading.fieldDateTime|date('d/m/Y')}}
+                            {{stationReading.fieldDateTime|date('d/m/Y H:i:s')}}
                         </td>
                         {% for parameter in parameters %}
                             <td style="text-align: right">

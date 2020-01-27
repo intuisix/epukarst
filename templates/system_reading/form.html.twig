@@ -56,18 +56,25 @@ car celle-ci n'est pas triée.
         {# Valeurs de contrôles #}
         {% if form.controls|length %}
             <div class="alert bg-light">
-                <h4>Mesures de contrôle</h4>
+                <h2>Mesures de contrôle</h2>
+                <p>Introduisez les éventuelles valeurs des mesures de contrôle des instruments, réalisées dans le cadre de ce relevé.</p>
                 <table cellpadding="3" width="100%">
                     <thead>
                         <tr>
-                            <td width="20%">&nbsp;</td>
+                            <td width="200">&nbsp;</td>
+                            {% for systemParameter in systemParameters %}
+                                <th width="100" class="text-center">
+                                    {# Nom du paramètre #}
+                                    {{systemParameter.instrumentParameter.parameter.name}}
+                                </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <thead>
+                        <tr>
+                            <td>Unité</td>
                             {% for systemParameter in systemParameters %}
                                 <td class="text-center">
-                                    {# Nom du paramètre #}
-                                    <strong>
-                                        {{systemParameter.instrumentParameter.parameter.name}}
-                                    </strong>
-                                    <br>
                                     {# Unité du paramètre #}
                                     {{systemParameter.instrumentParameter.parameter.unit}}
                                 </td>
@@ -92,31 +99,47 @@ car celle-ci n'est pas triée.
             {{form_widget(form.stationReadings)}}
         {% else %}
             <div class="alert bg-light">
-                <h4>Mesures aux stations</h4>
+                <h2>Mesures aux stations</h2>
+                <p>Ci-dessous, introduisez toutes les valeurs qui ont été mesurées, même lorsqu'un problème a été rencontré sur la mesure, en veillant à respecter l'unité du paramètre concerné. Décochez &laquo;&nbsp;S&nbsp;&raquo; lorsque la valeur était instable lors de la mesure, et/ou décochez &laquo;&nbsp;V&nbsp;&raquo; lorsque la valeur mesurée est hors gamme ou si l'instrument n'est pas en ordre d'étalonnage.</p>
                 {# Tableau d'encodage des mesures avec en colonnes les paramètres, en lignes les stations, et en cellules les mesures #}
                 <table cellpadding="3" width="100%">
                     <thead>
                         <tr>
-                            <td width="20%">&nbsp;</td>
+                            <td width="200">&nbsp;</td>
+                            {% for systemParameter in systemParameters %}
+                                <th width="100" class="text-center">
+                                    {# Nom du paramètre #}
+                                    {{systemParameter.instrumentParameter.parameter.name}}
+                                </th>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>Unité</td>
+                                {% for systemParameter in systemParameters %}
+                                    <td class="text-center">
+                                        {# Unité du paramètre #}
+                                        {% if systemParameter.instrumentParameter.inputConversion is not null and conversions_enabled %}
+                                            {# Avec conversion #}
+                                            {{systemParameter.instrumentParameter.inputUnit}}
+                                            {# Icône de conversion #}
+                                            <i class="fas fa-square-root-alt" data-toggle="tooltip" data-placement="top" data-html="true" title="La valeur sera convertie automatiquement&nbsp;:<br>y={{systemParameter.instrumentParameter.inputConversion|default('x')}}"></i>
+                                        {% else %}
+                                            {# Avec conversion #}
+                                            {{systemParameter.instrumentParameter.parameter.unit}}
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Norme</td>
                             {% for systemParameter in systemParameters %}
                                 <td class="text-center">
-                                    {# Nom du paramètre #}
-                                    <strong>
-                                        {{systemParameter.instrumentParameter.parameter.name}}
-                                    </strong>
-
-                                    <br>
-                                    {# Unité du paramètre #}
-                                    {% if systemParameter.instrumentParameter.inputConversion is not null and conversions_enabled %}
-                                        {# Avec conversion #}
-                                        {{systemParameter.instrumentParameter.inputUnit}}
-                                        {# Icône de conversion #}
-                                        <i class="fas fa-square-root-alt" data-toggle="tooltip" data-placement="top" data-html="true" title="La valeur sera convertie automatiquement&nbsp;:<br>y={{systemParameter.instrumentParameter.inputConversion|default('x')}}"></i>
-                                    {% else %}
-                                        {# Avec conversion #}
-                                        {{systemParameter.instrumentParameter.parameter.unit}}
-                                    {% endif %}
-                                    <br>
+                                    {# Minimum normatif #}
+                                    {{systemParameter.instrumentParameter.parameter.normativeMinimum}}
+                                    -
+                                    {# Maximum normatif #}
+                                    {{systemParameter.instrumentParameter.parameter.normativeMaximum}}
                                 </td>
                             {% endfor %}
                         </tr>
@@ -129,38 +152,22 @@ car celle-ci n'est pas triée.
                                 </td>
                             {% endfor %}
                         </tr>
-                        <tr>
-                            <td>Valeurs normatives</td>
-                            {% for systemParameter in systemParameters %}
-                                <td class="text-center">
-                                    {# Minimum normatif #}
-                                    {{systemParameter.instrumentParameter.parameter.normativeMinimum}}
-                                    -
-                                    {# Maximum normatif #}
-                                    {{systemParameter.instrumentParameter.parameter.normativeMaximum}}
-                                </td>
-                            {% endfor %}
-                        </tr>
                     </thead>
                     {# Relevés de stations #}
                     {{form_widget(form.stationReadings)}}
+                    <tfoot>
+                    </tfoot>
                 </table>
-                <small class="text-muted">Introduisez <strong>toutes</strong> les valeurs qui ont été mesurées, en veillant à respecter l'unité du paramètre concerné&nbsp;.<br>Décochez &laquo;&nbsp;S&nbsp;&raquo; si la valeur était instable lors de la mesure, et &laquo;&nbsp;V&nbsp;&raquo; si une valeur invalide (p.ex. elle est hors gamme, ou l'instrument n'est pas en ordre d'étalonnage).</small>
             </div>
 
             <div class="alert bg-light">
-                <h4>Remarques</h4>
+                <h2>Remarques aux stations</h2>
+                <p>Introduisez les éventuelles remarques propres aux mesures réalisées sur chaque station.</p>
                 <table cellpadding="3" width="100%">
-                    <thead>
-                        <tr>
-                            <th width="20%">Station</th>
-                            <th>Remarque</th>
-                        </tr>
-                    </thead>
                     {% for stationReading in form.children.stationReadings %}
                         <tbody>
                             <tr>
-                                <td class="align-top">
+                                <td width="200" class="align-top">
                                     {{stationReading.vars.data.station.name}}
                                     <br>
                                     <small>
@@ -170,9 +177,14 @@ car celle-ci n'est pas triée.
                                         {{stationReading.vars.value.station.atlasCode}}
                                     </small>
                                 </td>
+                                <td width="100" class="align-top">
+                                    {# Heure du relevé de station #}
+                                    {{form_widget(stationReading.children.fieldDateTime)}}
+                                </td>
                                 <td>
+                                    {# Remarque du relevé de station #}
                                     {{form_widget(stationReading.children.encodingNotes, {
-                                        'attr' : {'rows': 1}
+                                        'attr' : {'rows': 2}
                                     })}}
                                 </td>
                             </tr>
@@ -249,7 +261,6 @@ car celle-ci n'est pas triée.
                     {{form.vars.value.station.atlasCode}}
                 </small>
             </td>
-
             {# Mesures du relevé de station #}
             {{form_widget(form.measures)}}
         </tr>
