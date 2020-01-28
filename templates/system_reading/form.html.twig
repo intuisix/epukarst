@@ -69,14 +69,21 @@ car celle-ci n'est pas triée.
                                 </th>
                             {% endfor %}
                         </tr>
-                    </thead>
-                    <thead>
                         <tr>
                             <td>Unité</td>
                             {% for systemParameter in systemParameters %}
                                 <td class="text-center">
                                     {# Unité du paramètre #}
                                     {{systemParameter.instrumentParameter.parameter.unit}}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <td>Instrument</td>
+                            {% for systemParameter in systemParameters %}
+                                <td class="text-center">
+                                    {# Nom de l'instrument #}
+                                    {{systemParameter.instrumentParameter.instrument.code}}
                                 </td>
                             {% endfor %}
                         </tr>
