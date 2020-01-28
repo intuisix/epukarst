@@ -61,6 +61,8 @@ class Station
 
     /**
      * @ORM\Column(type="text")
+     * 
+     * @Assert\NotBlank(message="Veuillez définir la description.")
      */
     private $description;
 
