@@ -22,6 +22,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
+/**
+ * Contrôleur permettant la gestion des comptes d'utilisateurs: création, liste,
+ * modification, activation, changement ou réinitialisation de mot de passe, et
+ * suppression.
+ */
 class UserController extends AbstractController
 {
     /**
@@ -124,35 +129,42 @@ class UserController extends AbstractController
      * @Route("/user/{id}/modify", name="user_modify")
      * @IsGranted("ROLE_ADMIN")
      * 
-     * @param User $user
+     * @param User $account
      * @param ObjectManager $manager
      * @param Request $request
      * @return Response
      */
-    public function modify(User $user, ObjectManager $manager, Request $request)
+    public function modify(User $account, ObjectManager $manager, Request $request)
     {
-        $form = $this->createForm(UserType::class, $user);
+        if (!$this->isGranted($account->getMainRole())) {
+            $this->addFlash('danger', "Vous ne pouvez pas modifier l'utilisateur <strong>$account</strong> car son rôle est plus élevé que le vôtre.");
+            return $this->redirectToRoute('user');
+        }
+
+        $form = $this->createForm(UserType::class, $account, [
+            'superAdmin' => $this->isGranted('ROLE_SUPER_ADMIN'),
+        ]);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             /* Associer les rôles à l'utilisateur */
-            foreach ($user->getSystemRoles() as $systemRole) {
-                $systemRole->setUserAccount($user);
+            foreach ($account->getSystemRoles() as $systemRole) {
+                $systemRole->setUserAccount($account);
                 $manager->persist($systemRole);
             }
             /* Persister l'utilisateur en base de données */
-            $manager->persist($user);
+            $manager->persist($account);
             $manager->flush();
 
-            $this->addFlash('success', "L'utilisateur <strong>$user</strong> a été enregistré avec succès.");
+            $this->addFlash('success', "L'utilisateur <strong>$account</strong> a été enregistré avec succès.");
 
             return $this->redirectToRoute('user');
         }
 
         return $this->render('user/form.html.twig', [
             'form' => $form->createView(),
-            'title' => "Modifier l'utilisateur $user",
+            'title' => "Modifier l'utilisateur $account",
         ]);
     }
 
@@ -175,6 +187,11 @@ class UserController extends AbstractController
      */
     public function setPassword(User $account, ObjectManager $manager, Request $request, UserPasswordEncoderInterface $encoder, MailerInterface $mailer)
     {
+        if (!$this->isGranted($account->getMainRole())) {
+            $this->addFlash('danger', "Vous ne pouvez pas changer le mot de passe l'utilisateur <strong>$account</strong> car son rôle est plus élevé que le vôtre.");
+            return $this->redirectToRoute('user');
+        }
+
         /* Déterminer l'utilisateur réalisant le changement de mot de passe: ce peut être soit un administrateur, soitl'utilisateur lui-même */
         $currentUser = $this->getUser();
         $onBehalf = $account !== $currentUser;

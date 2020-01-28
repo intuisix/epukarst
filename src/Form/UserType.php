@@ -19,10 +19,31 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
+/**
+ * Formulaire permettant l'introduction des données d'un compte d'utilisateur.
+ */
 class UserType extends AbstractType
 {
+    /**
+     * Construit le formulaire.
+     *
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /* Construire le contenu de la liste déroulante des rôles */
+        $roles = [
+            "Utilisateur" => null,
+            "Administrateur" => 'ROLE_ADMIN',
+        ];
+        if ($options['superAdmin'] === true) {
+            /* Cooptation possible d'un autre super-utilisateur */
+            $roles["Super-Administrateur"] = 'ROLE_SUPER_ADMIN';
+        }
+
+        /* Construire le formulaire */
         $builder
             ->add('firstName', TextType::class, [
                 'label' => "Prénom",
@@ -88,15 +109,20 @@ class UserType extends AbstractType
             ])
             ->add('mainRole', ChoiceType::class, [
                 'label' => "Rôle principal",
-                'choices' => [
-                    "Utilisateur" => null,
-                    "Administrateur" => 'ROLE_ADMIN',
-                ],
+                'choices' => $roles,
                 'required' => false,
             ])
         ;
     }
 
+    /**
+     * Finit la vue du formulaire.
+     *
+     * @param FormView $view
+     * @param FormInterface $form
+     * @param array $options
+     * @return void
+     */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         /* Ordonner les rôles par nom de système */
@@ -112,11 +138,19 @@ class UserType extends AbstractType
         );
     }
 
+    /**
+     * Configure les options du formulaire.
+     *
+     * @param OptionsResolver $resolver
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => User::class,
-            'inputAuthor' => true,
-        ]);
+        $resolver
+            ->setDefaults([
+                'data_class' => User::class,
+                'superAdmin' => false,
+            ])
+            ->setAllowedTypes('superAdmin', 'boolean');
     }
 }
