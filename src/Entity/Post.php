@@ -66,6 +66,8 @@ class Post
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * 
+     * @Assert\Regex("/^[a-z0-9]+[a-z0-9\-]*$/", message="Cette valeur n'est pas valide.")
      */
     private $slug;
 
