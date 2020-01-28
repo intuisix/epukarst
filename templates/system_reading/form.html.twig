@@ -57,7 +57,7 @@ car celle-ci n'est pas triée.
         {% if form.controls|length %}
             <div class="alert bg-light">
                 <h2>Mesures de contrôle</h2>
-                <p>Introduisez les éventuelles valeurs des mesures de contrôle des instruments, réalisées dans le cadre de ce relevé.</p>
+                <p>Introduisez les éventuelles valeurs des mesures de contrôle qui ont été réalisées dans le cadre de ce relevé.</p>
                 <table cellpadding="3" width="100%">
                     <thead>
                         <tr>
@@ -100,7 +100,7 @@ car celle-ci n'est pas triée.
         {% else %}
             <div class="alert bg-light">
                 <h2>Mesures aux stations</h2>
-                <p>Ci-dessous, introduisez toutes les valeurs qui ont été mesurées, même lorsqu'un problème a été rencontré sur la mesure, en veillant à respecter l'unité du paramètre concerné. Décochez &laquo;&nbsp;S&nbsp;&raquo; lorsque la valeur était instable lors de la mesure, et/ou décochez &laquo;&nbsp;V&nbsp;&raquo; lorsque la valeur mesurée est hors gamme ou si l'instrument n'est pas en ordre d'étalonnage.</p>
+                <p>Pour chaque station, introduisez les valeurs qui ont été mesurées. Décochez &laquo;&nbsp;S&nbsp;&raquo; lorsque la valeur était instable lors de la mesure, et/ou décochez &laquo;&nbsp;V&nbsp;&raquo; lorsque la valeur mesurée est hors gamme ou si l'instrument n'est pas en ordre d'étalonnage.</p>
                 {# Tableau d'encodage des mesures avec en colonnes les paramètres, en lignes les stations, et en cellules les mesures #}
                 <table cellpadding="3" width="100%">
                     <thead>
@@ -135,11 +135,24 @@ car celle-ci n'est pas triée.
                             <td>Norme</td>
                             {% for systemParameter in systemParameters %}
                                 <td class="text-center">
-                                    {# Minimum normatif #}
-                                    {{systemParameter.instrumentParameter.parameter.normativeMinimum}}
-                                    -
-                                    {# Maximum normatif #}
-                                    {{systemParameter.instrumentParameter.parameter.normativeMaximum}}
+                                    {# Valeurs normatives #}
+                                    {% if systemParameter.instrumentParameter.parameter.normativeMinimum is not null or systemParameter.instrumentParameter.parameter.normativeMaximum is not null %}
+                                        {# Minimum normatif #}
+                                        {% if systemParameter.instrumentParameter.parameter.normativeMinimum is null %}
+                                            -&infin;
+                                        {% else %}
+                                            {{systemParameter.instrumentParameter.parameter.formatValue(systemParameter.instrumentParameter.parameter.normativeMinimum)}}
+                                        {% endif %}
+                                        -
+                                        {# Maximum normatif #}
+                                        {% if systemParameter.instrumentParameter.parameter.normativeMaximum is null %}
+                                            &infin;
+                                        {% else %}
+                                            {{systemParameter.instrumentParameter.parameter.formatValue(systemParameter.instrumentParameter.parameter.normativeMaximum)}}
+                                        {% endif %}
+                                        {# Unité, après conversion éventuelle, du paramètre #}
+                                        {{systemParameter.instrumentParameter.parameter.unit}}
+                                    {% endif %}
                                 </td>
                             {% endfor %}
                         </tr>
@@ -162,8 +175,15 @@ car celle-ci n'est pas triée.
 
             <div class="alert bg-light">
                 <h2>Remarques aux stations</h2>
-                <p>Introduisez les éventuelles remarques propres aux mesures réalisées sur chaque station.</p>
+                <p>Pour chaque station, introduisez l'heure des relevés et les éventuelles remarques.</p>
                 <table cellpadding="3" width="100%">
+                    <thead>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <th>Heure</th>
+                            <th>Remarque</th>
+                        </tr>
+                    </thead>
                     {% for stationReading in form.children.stationReadings %}
                         <tbody>
                             <tr>
@@ -197,6 +217,8 @@ car celle-ci n'est pas triée.
         {# Informations d'encodage #}
         {% if form.encodingNotes is defined %}
             <div class="alert bg-light">
+                <h2>Remarques d'encodage</h2>
+                <p>Introduisez les éventuelles remarques générales du relevé.</p>
                 <div class="row">
                     <div class="col-3">
                         {{form_row(form.encodingDateTime)}}
@@ -213,6 +235,8 @@ car celle-ci n'est pas triée.
         {# Informations de validation #}
         {% if form.validationNotes is defined %}
             <div class="alert bg-light">
+                <h2>Remarques de validation</h2>
+                <p>Introduisez les éventuelles remarques générales de validation du relevé.</p>
                 <div class="row">
                     <div class="col-3">
                         {{form_row(form.validationDateTime)}}
