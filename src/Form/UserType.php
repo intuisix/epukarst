@@ -35,7 +35,7 @@ class UserType extends AbstractType
     {
         /* Construire le contenu de la liste déroulante des rôles */
         $roles = [
-            "Utilisateur" => null,
+            "Utilisateur" => 'ROLE_USER',
             "Administrateur" => 'ROLE_ADMIN',
         ];
         if ($options['superAdmin'] === true) {
@@ -110,7 +110,7 @@ class UserType extends AbstractType
             ->add('mainRole', ChoiceType::class, [
                 'label' => "Rôle principal",
                 'choices' => $roles,
-                'required' => false,
+                'required' => true,
             ])
         ;
     }

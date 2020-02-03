@@ -248,16 +248,8 @@ class User implements UserInterface
      */
     public function getRoles()
     {
-        /* Tous les utilisateurs connectés ont un premier rôle */
-        $roles[] = 'ROLE_USER';
-
-        /* Tester le rôle d'administration */
-        if (null != $this->mainRole) {
-            $roles[] = $this->mainRole;
-        } else if ($this->displayName === "Administrateur") {
-            $roles[] = 'ROLE_ADMIN';
-        }
-
+        /* Retourner uniquement le rôle principal de l'utilisateur */
+        $roles[] = $this->mainRole;
         return $roles;
     }
 
