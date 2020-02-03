@@ -265,7 +265,9 @@ class UserController extends AbstractController
     public function delete(User $user, ObjectManager $manager, Request $request)
     {
         if ($user === $this->getUser()) {
-            $this->addFlash('danger', "Vous ne pouvez pas supprimer vous-même votre compte d'utilisateur.");
+            $this->addFlash('danger', "Vous ne pouvez pas supprimer votre propre compte d'utilisateur.");
+        } else if (!$this->isGranted($account->getMainRole())) {
+            $this->addFlash('danger', "Vous ne pouvez pas supprimer l'utilisateur <strong>$account</strong> car son rôle est plus élevé que le vôtre.");
         } else {
             $form = $this->createFormBuilder()->getForm();
 
