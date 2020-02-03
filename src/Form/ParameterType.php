@@ -67,7 +67,7 @@ class ParameterType extends AbstractType
                 ]
             ])
             ->add('title', TextType::class, [
-                'label' => "Titre",
+                'label' => "Nom complet",
                 'attr' => [
                     'placeholder' => "Appellation usuelle non abrégée"
                 ]

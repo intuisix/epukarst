@@ -17,12 +17,18 @@ modification de paramètre #}
 
         <div class="row">
             <div class="col-3">
+                {# Nom du paramètre #}
                 {{form_row(form.name)}}
+                {# Unité #}
                 {{form_row(form.unit)}}
-                {{form_row(form.normativeMinimum)}}
-                {{form_row(form.normativeMaximum)}}
+                {# Minimum physique #}
                 {{form_row(form.physicalMinimum)}}
+                {# Maximum physique #}
                 {{form_row(form.physicalMaximum)}}
+                {# Minimum normatif #}
+                {{form_row(form.normativeMinimum)}}
+                {# Maximum normatif #}
+                {{form_row(form.normativeMaximum)}}
             </div>
             <div class="col">
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
