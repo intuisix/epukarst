@@ -66,7 +66,7 @@ class AlarmKindController extends AbstractController
             $manager->persist($alarmKind);
             $manager->flush();
             
-            $this->addFlash('success', "Le genre d'alarme <strong>{$alarmKind->getName()}</strong> a été créé avec succès.");
+            $this->addFlash('success', "Le genre d'alarme <strong>{$alarmKind->getName()}</strong> a été modifié avec succès.");
     
             return $this->redirectToRoute('alarm_kind');
         }
