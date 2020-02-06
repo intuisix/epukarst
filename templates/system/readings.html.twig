@@ -63,7 +63,7 @@
                         {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
                             <a href="{{path('system_reading_edit', {'code': systemReading.code})}}"><i class="fas fa-edit text-primary"></i></a>
                         {% endif %}
-                        {% if is_granted('SYSTEM_MANAGER', systemReading) %}
+                        {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
                             <a href="{{path('system_reading_delete', {'code': systemReading.code})}}"><i class="fas fa-trash text-danger"></i></a>
                         {% endif %}
                     </td>

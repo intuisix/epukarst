@@ -167,12 +167,12 @@ class SystemReadingController extends AbstractController
      * Traite la suppression d'un relevé de système.
      *
      * @Route("system-reading/{code}/delete", name="system_reading_delete")
-     * @IsGranted("SYSTEM_MANAGER", subject="systemReading")
+     * @IsGranted("SYSTEM_CONTRIBUTOR", subject="systemReading")
      */
     public function delete(SystemReading $systemReading, Request $request, ObjectManager $manager)
     {
         if ($systemReading->countValidatedReadings()) {
-            $this->addFlash('danger', "Ce relevé de système ne peut pas être supprimé car au moins un de ses relevés de station a été validé.<br>Supprimez les relevés de station non validés individuellement.");
+            $this->addFlash('danger', "Le relevé <strong>{$systemReading->getCode()}</strong> ne peut pas être supprimé car au moins un de ses relevés de station a été validé.");
             return $this->redirect($request->headers->get('referer'));
         }
 

@@ -101,13 +101,14 @@
                             {% include 'reading/_reading_state.html.twig' with {'validated': stationReading.validated} %}
                         </td>
                         <td>
+                            <a href="{{path('reading_show', {'code': stationReading.code })}}"><i class="fas fa-eye text-primary"></i></a>
                             {% if is_granted('SYSTEM_CONTRIBUTOR', stationReading) %}
                                 <a href="{{path('reading_modify', {'code': stationReading.code})}}"><i class="fas fa-edit text-primary"></i></a>
                             {% endif %}
                             {% if is_granted('SYSTEM_MANAGER', stationReading) %}
                                 <a href="{{path('reading_validate', {'code': stationReading.code})}}"><i class="fas fa-flag-checkered text-success"></i></a>
                             {% endif %}
-                            {% if is_granted('SYSTEM_MANAGER', stationReading) %}
+                            {% if is_granted('SYSTEM_CONTRIBUTOR', stationReading) %}
                                 <a href="{{path('reading_delete', {'code': stationReading.code})}}"><i class="fas fa-trash text-danger"></i></a>
                             {% endif %}
                         </td>
