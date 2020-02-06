@@ -164,7 +164,7 @@
                 Valider ce relevé
             </a>
         {% endif %}
-        {# Bouton permettant de modifier le relevé #}
+        {# Bouton permettant de supprimer le relevé #}
         {% if is_granted('SYSTEM_CONTRIBUTOR', reading) %}
             <a href="{{path('reading_delete', {'code': reading.code})}}" class="btn btn-danger">
                 <i class="fas fa-edit"></i>

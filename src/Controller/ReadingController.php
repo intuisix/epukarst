@@ -282,12 +282,9 @@ class ReadingController extends AbstractController
      */
     public function delete(Reading $reading, Request $request, ObjectManager $manager)
     {
-        if ((null !== $reading->getValidated()) &&
-            (!$this->isGranted('SYSTEM_MANAGER'))) {
-            $this->addFlash('danger', "Etant donné que le relevé <strong>{$reading->getCode()}</strong> est validé ou invalidé, il ne peut être supprimé que par un gestionnaire de <strong>{$reading->getStation()->getBasin()->getSystem()->getName()}</strong>.");
-            return $this->redirectToRoute('reading_show', [
-                'code' => $reading->getCode()
-            ]);
+        if (true === $reading->getValidated()) {
+            $this->addFlash('danger', "Le relevé <strong>{$reading->getCode()}</strong> ne peut être supprimé car il a été validé.");
+            return $this->redirect($request->headers->get('referer'));
         }
 
         $form = $this->createFormBuilder()->getForm();
