@@ -28,19 +28,19 @@ car celle-ci n'est pas triée.
         {# Informations générales #}
         <div class="alert bg-light">
             <div class="row">
-                <div class="col-2">
+                <div class="col-sm-2">
                     {# Date et heure de terrain #}
                     {{form_row(form.fieldDateTime)}}
                 </div>
-                <div class="col-2">
+                <div class="col-sm-2">
                     {# Code du relevé de système #}
                     {{form_row(form.code)}}
                 </div>
-                <div class="col">
+                <div class="col-sm">
                     {# Sélection de l'alarme #}
                     {{form_row(form.alarm)}}
                 </div>
-                <div class="col-4">
+                <div class="col-sm-4">
                     <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-primary btn-block">
                         <i class="fas fa-bullseye"></i>
                         Définir les stations du système
@@ -53,17 +53,17 @@ car celle-ci n'est pas triée.
             </div>
         </div>
 
-        {# Valeurs de contrôles #}
+        {# Valeurs des mesures de contrôle #}
         {% if form.controls|length %}
             <div class="alert bg-light">
                 <h2>Mesures de contrôle</h2>
                 <p>Introduisez les éventuelles valeurs des mesures de contrôle qui ont été réalisées dans le cadre de ce relevé.</p>
-                <table cellpadding="3" width="100%">
+                <table class="table table-borderless table-responsive" cellpadding="3" width="100%">
                     <thead>
                         <tr>
                             <td width="200">&nbsp;</td>
                             {% for systemParameter in systemParameters %}
-                                <th width="100" class="text-center">
+                                <th width="{{800/(systemParameters|length)}}" class="text-center">
                                     {# Nom du paramètre #}
                                     {{systemParameter.instrumentParameter.parameter.name}}
                                 </th>
@@ -109,12 +109,12 @@ car celle-ci n'est pas triée.
                 <h2>Mesures aux stations</h2>
                 <p>Pour chaque station, introduisez les valeurs qui ont été mesurées. Décochez &laquo;&nbsp;S&nbsp;&raquo; lorsque la valeur était instable lors de la mesure, et/ou décochez &laquo;&nbsp;V&nbsp;&raquo; lorsque la valeur mesurée est hors gamme ou si l'instrument n'est pas en ordre d'étalonnage.</p>
                 {# Tableau d'encodage des mesures avec en colonnes les paramètres, en lignes les stations, et en cellules les mesures #}
-                <table cellpadding="3" width="100%">
+                <table class="table table-borderless table-responsive"  cellpadding="3" width="100%">
                     <thead>
                         <tr>
-                            <td width="200">&nbsp;</td>
+                            <th width="200">&nbsp;</th>
                             {% for systemParameter in systemParameters %}
-                                <th width="100" class="text-center">
+                                <th width="{{800/(systemParameters|length)}}" class="text-center">
                                     {# Nom du paramètre #}
                                     {{systemParameter.instrumentParameter.parameter.name}}
                                 </th>
@@ -180,21 +180,22 @@ car celle-ci n'est pas triée.
                 </table>
             </div>
 
+            {# Remarques de station #}
             <div class="alert bg-light">
                 <h2>Remarques aux stations</h2>
-                <p>Pour chaque station, introduisez l'heure des relevés et les éventuelles remarques.</p>
-                <table cellpadding="3" width="100%">
+                <p>Pour chaque station, introduisez la date et l'heure de la prise des mesures, ainsi qu'une éventuelle remarque. Si ne vous précisez pas de date et d'heure, les mesures seront présumées avoir été prises à la même date que le relevé de système.</p>
+                <table class="table table-borderless table-responsive"  cellpadding="3" width="100%">
                     <thead>
                         <tr>
-                            <td>&nbsp;</td>
-                            <th>Heure</th>
-                            <th>Remarque</th>
+                            <th width="200">&nbsp;</th>
+                            <th width="200">Date et heure</th>
+                            <th width="600">Remarque</th>
                         </tr>
                     </thead>
                     {% for stationReading in form.children.stationReadings %}
                         <tbody>
                             <tr>
-                                <td width="200" class="align-top">
+                                <td class="align-top">
                                     {{stationReading.vars.data.station.name}}
                                     <br>
                                     <small>
@@ -224,14 +225,14 @@ car celle-ci n'est pas triée.
         {# Informations d'encodage #}
         {% if form.encodingNotes is defined %}
             <div class="alert bg-light">
-                <h2>Remarques d'encodage</h2>
+                <h2>Encodage</h2>
                 <p>Introduisez les éventuelles remarques générales du relevé.</p>
                 <div class="row">
-                    <div class="col-3">
+                    <div class="col-sm-3">
                         {{form_row(form.encodingDateTime)}}
                         {{form_row(form.encodingAuthor)}}
                     </div>
-                    <div class="col">
+                    <div class="col-sm">
                         {{form_row(form.encodingNotes, {
                             'attr': {'rows': 4}})}}
                     </div>
@@ -242,14 +243,14 @@ car celle-ci n'est pas triée.
         {# Informations de validation #}
         {% if form.validationNotes is defined %}
             <div class="alert bg-light">
-                <h2>Remarques de validation</h2>
+                <h2>Validation</h2>
                 <p>Introduisez les éventuelles remarques générales de validation du relevé.</p>
                 <div class="row">
-                    <div class="col-3">
+                    <div class="col-sm-3">
                         {{form_row(form.validationDateTime)}}
                         {{form_row(form.validationAuthor)}}
                     </div>
-                    <div class="col">
+                    <div class="col-sm">
                         {{form_row(form.validationNotes, {
                             'attr': {'rows': 4}})}}
                         {{form_row(form.validationStatus)}}
