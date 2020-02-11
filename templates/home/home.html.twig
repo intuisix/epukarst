@@ -2,14 +2,19 @@
 
 {% block title %}
     {# Titre de l'article de tête #}
-    {{posts[0].title}}
+    {{posts[0].title|default('Accueil')}}
 {% endblock %}
 
 {% block body %}
     <div class="container mb-3">
 
         {# Contenu brut de l'article de tête #}
-        {{posts[0].content|raw}}
+        {% if posts[0] is defined %}
+            {{posts[0].content|raw}}
+        {% else %}
+            <h1>Bienvenue sur Epu-Karst&nbsp;!</h1>
+            <p><em>Le logiciel Epu-Karst est installé. Commencez par créer un article pour la page d'accueil.</em></p>
+        {% endif %}
 
         {# Appels à consulter les autres articles #}
         <div class="row no-gutters" style="background-color: black; color: white">
