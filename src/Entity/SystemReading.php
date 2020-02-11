@@ -21,7 +21,9 @@ class SystemReading
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\System", inversedBy="systemReadings")
+     * @ORM\ManyToOne(
+     *     targetEntity="App\Entity\System",
+     *     inversedBy="systemReadings")
      * @ORM\JoinColumn(nullable=false)
      */
     private $system;
@@ -32,7 +34,9 @@ class SystemReading
     private $fieldDateTime;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="systemReadings")
+     * @ORM\ManyToOne(
+     *     targetEntity="App\Entity\User",
+     *     inversedBy="systemReadings")
      * @ORM\JoinColumn(nullable=false)
      */
     private $encodingAuthor;
@@ -48,7 +52,9 @@ class SystemReading
     private $encodingNotes;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="systemValidations")
+     * @ORM\ManyToOne(
+     *     targetEntity="App\Entity\User",
+     *     inversedBy="systemValidations")
      */
     private $validationAuthor;
 
@@ -69,7 +75,9 @@ class SystemReading
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Regex("/^[A-Za-z0-9\-]+$/", message="Le code ne peut contenir que des lettres, des chiffres et des tirets")
+     * 
+     * @Assert\Regex("/^[A-Za-z0-9\-]+$/",
+     *     message="Le code ne peut contenir que des lettres, des chiffres et des tirets")
      */
     private $code;
 
@@ -84,12 +92,19 @@ class SystemReading
     private $stationReadings;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Alarm", inversedBy="systemReadings")
+     * @ORM\ManyToOne(
+     *     targetEntity="App\Entity\Alarm",
+     *     inversedBy="systemReadings")
      */
     private $alarm;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Control", mappedBy="systemReading")
+     * @ORM\OneToMany(
+     *     targetEntity="App\Entity\Control",
+     *     mappedBy="systemReading",
+     *     orphanRemoval=true)
+     * 
+     * @Assert\Valid()
      */
     private $controls;
 
