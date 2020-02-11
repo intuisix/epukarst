@@ -554,12 +554,12 @@ class SystemReadingController extends AbstractController
             /* Traiter les mesures restantes */
             $measures = $stationReading->getMeasures();
             if ((0 != $measures->count()) || !empty($stationReading->getEncodingNotes())) {
-                /* Copier la date de terrain globale sur le relevé de station, tout en conservant l'heure spécifique */
+                /* Ajuster la date et l'heure du relevé de station */
                 $stationDateTime = $stationReading->getFieldDateTime();
-                $stationDateTime->setDate(
-                    $fieldDateTime->format('Y'),
-                    $fieldDateTime->format('m'),
-                    $fieldDateTime->format('d'));
+                if (null === $stationDateTime) {
+                    /* Par défaut, utiliser la même date et la même heure que relevé de système */
+                    $stationDateTime = $fieldDateTime;
+                }
 
                 /* Traiter chaque mesure du relevé de station */
                 foreach ($measures as $measure) {

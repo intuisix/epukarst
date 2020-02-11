@@ -269,7 +269,7 @@ class Reading
         return $this->fieldDateTime;
     }
 
-    public function setFieldDateTime(\DateTimeInterface $fieldDateTime): self
+    public function setFieldDateTime(?\DateTimeInterface $fieldDateTime): self
     {
         $this->fieldDateTime = $fieldDateTime;
 
