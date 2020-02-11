@@ -41,10 +41,10 @@
                         {% endif %}
                     </td>
                     <td>
-                        {{systemReading.fieldDateTime|date('d/m/Y')}}
+                        {{systemReading.fieldDateTime|localizeddate('short', 'none')}}
                     </td>
                     <td>
-                        {{systemReading.encodingDateTime|date('d/m/Y')}}
+                        {{systemReading.encodingDateTime|localizeddate('short', 'none')}}
                     </td>
                     <td>
                         {{systemReading.encodingAuthor}}
@@ -56,9 +56,7 @@
                     </td>
                     <td>
                         {% if is_granted('SYSTEM_OBSERVER', systemReading) %}
-                            <a href="{{path('system_reading_show', {'code': systemReading.code})}}">
-                                <i class="fas fa-eye"></i>
-                            </a>
+                            <a href="{{path('system_reading_show', {'code': systemReading.code})}}"><i class="fas fa-eye"></i></a>
                         {% endif %}
                         {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
                             <a href="{{path('system_reading_edit', {'code': systemReading.code})}}"><i class="fas fa-edit text-primary"></i></a>

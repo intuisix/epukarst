@@ -27,7 +27,7 @@
                 {% for alarm in pagination.data %}
                     <tr>
                         <td>
-                            {{alarm.reportingDate|date('d/m/Y')}}
+                            {{alarm.reportingDate|localizeddate('short', 'none')}}
                         </td>
                         <td>
                             {{alarm.system.name}}
@@ -37,12 +37,12 @@
                         </td>
                         <td>
                             {% if alarm.beginningDate %}
-                                {{alarm.beginningDate|date('d/m/Y')}}
+                                {{alarm.beginningDate|localizeddate('short', 'none')}}
                             {% endif %}
                         </td>
                         <td>
                             {% if alarm.endingDate %}
-                                {{alarm.endingDate|date('d/m/Y')}}
+                                {{alarm.endingDate|localizeddate('short', 'none')}}
                             {% endif %}
                         </td>
                         <td>

@@ -13,7 +13,7 @@
         <div class="alert alert-danger">
             Cette opération est irréversible.
             <br>
-            Etes-vous certain de vouloir supprimer l'alarme du <strong>{{alarm.reportingDate|date('d/m/Y')}}</strong> à propos de <strong>{{alarm.system.name}}</strong>&nbsp;?
+            Etes-vous certain de vouloir supprimer l'alarme du <strong>{{alarm.reportingDate|localizeddate('short', 'none')}}</strong> à propos de <strong>{{alarm.system.name}}</strong>&nbsp;?
         </div>
 
         {# Bouton pour confirmer la suppression #}

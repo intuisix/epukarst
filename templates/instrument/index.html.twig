@@ -25,7 +25,7 @@
                     <td>{{instrument.serialNumber}}</td>
                     <td>
                         {% for calibration in instrument.calibrations | sort((a,b) => -(a.dueDate <=> b.dueDate)) | slice(0, 1) %}
-                            {{calibration.dueDate|date('d/m/Y')}} 
+                            {{calibration.dueDate|localizeddate('short', 'none')}}
                             {% if date(calibration.dueDate) < date() %}
                                 <span class="badge badge-warning badge-pill">KO</span>
                             {% else %}

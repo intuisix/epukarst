@@ -16,7 +16,7 @@
                 </tr>
                 <tr>
                     <th>Date de signalement</th>
-                    <td>{{alarm.reportingDate ? alarm.reportingDate|date('d/m/Y') : ''}}</td>
+                    <td>{{alarm.reportingDate|localizeddate('short', 'none')}}</td>
                 </tr>
                 <tr>
                     <th>Type</th>
@@ -24,11 +24,11 @@
                 </tr>
                 <tr>
                     <th>Date de début</th>
-                    <td>{{alarm.beginningDate ? alarm.beginningDate|date('d/m/Y') : ''}}</td>
+                    <td>{{alarm.beginningDate ? alarm.beginningDate|localizeddate('short', 'none') : ''}}</td>
                 </tr>
                 <tr>
                     <th>Date de fin</th>
-                    <td>{{alarm.endingDate ? alarm.endingDate|date('d/m/Y') : ''}}</td>
+                    <td>{{alarm.endingDate ? alarm.endingDate|localizeddate('short', 'none') : ''}}</td>
                 </tr>
                 <tr>
                     <th>Signalé par</th>
@@ -110,10 +110,10 @@
                                 </a>
                             </td>
                             <td>
-                                {{systemReading.fieldDateTime|date('d/m/Y')}}
+                                {{systemReading.fieldDateTime|localizeddate('short', 'none')}}
                             </td>
                             <td>
-                                {{systemReading.encodingDateTime|date('d/m/Y')}}
+                                {{systemReading.encodingDateTime|localizeddate('short', 'none')}}
                             </td>
                             <td>
                                 {{systemReading.encodingAuthor}}

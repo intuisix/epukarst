@@ -18,7 +18,7 @@
                     <dt class="col-3">Station&nbsp;:</dt>
                     <dd class="col-9">{{reading.station.name}}</dd>
                     <dt class="col-3">Réalisé le&nbsp;:</dt>
-                    <dd class="col-9">{{reading.fieldDateTime|date('d/m/Y H:i')}}</dd>
+                    <dd class="col-9">{{reading.fieldDateTime|localizeddate('short', 'short')}}</dd>
                     <dt class="col-3">Relevé de système&nbsp;:</dt>
                     <dd class="col-9">
                         {% if reading.systemReading is not null and is_granted('SYSTEM_OBSERVER', reading) %}
@@ -37,7 +37,7 @@
             <div class="col-md-6">
                 <div class="card mb-3">
                     <div class="card-header">
-                        Encodé le <strong>{{reading.encodingDateTime|date('d/m/Y H:i')}}</strong> par <strong>{{reading.encodingAuthor.displayName}}</strong>
+                        Encodé le <strong>{{reading.encodingDateTime|localizeddate('short', 'short')}}</strong> par <strong>{{reading.encodingAuthor.displayName}}</strong>
                     </div>
                     <div class="card-body">
                         {% if reading.encodingNotes is not empty %}
@@ -59,7 +59,7 @@
                                 <i class="fas fa-ban text-danger"></i>
                                 Invalidé
                             {% endif %}
-                            le <strong>{{reading.validationDateTime|date('d/m/Y H:i')}}</strong> par <strong>{{reading.validationAuthor.displayName}}</strong>
+                            le <strong>{{reading.validationDateTime|localizeddate('short', 'short')}}</strong> par <strong>{{reading.validationAuthor.displayName}}</strong>
                         {% else %}
                             Non validé
                         {% endif %}
@@ -136,10 +136,10 @@
                             {% endif %}
                         </td>
                         <td class="text-center">
-                            {{measure.fieldDateTime|date('d/m/Y')}}
+                            {{measure.fieldDateTime|localizeddate('short', 'none')}}
                         </td>
                         <td class="text-center">
-                            {{measure.encodingDateTime|date('d/m/Y')}}
+                            {{measure.encodingDateTime|localizeddate('short', 'none')}}
                         </td>
                         <td class="text-center">{{measure.encodingAuthor.displayName}}</td>
                         <td>{{measure.notes}}</td>

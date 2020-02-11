@@ -33,20 +33,20 @@
                     <td class="text-center">{{parameter.unit}}</td>
                     <td class="text-center">
                         {% if parameter.normativeMinimum is not null %}
-                            {{parameter.normativeMinimum|number_format(1, ',', ' ')}}
+                            {{parameter.normativeMinimum|localizednumber}}
                         {% endif %}
                         -
                         {% if parameter.normativeMaximum is not null %}
-                            {{parameter.normativeMaximum|number_format(1, ',', ' ')}}
+                            {{parameter.normativeMaximum|localizednumber}}
                         {% endif %}
                     </td>
                     <td class="text-center">
                         {% if parameter.physicalMinimum is not null %}
-                            {{parameter.physicalMinimum|number_format(1, ',', ' ')}}
+                            {{parameter.physicalMinimum|localizednumber}}
                         {% endif %}
                         -
                         {% if parameter.physicalMaximum is not null %}
-                            {{parameter.physicalMaximum|number_format(1, ',', ' ')}}
+                            {{parameter.physicalMaximum|localizednumber}}
                         {% endif %}
                     </td>
                     <td class="text-center">

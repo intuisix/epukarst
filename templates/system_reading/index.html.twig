@@ -33,10 +33,10 @@
                             {% endif %}
                         </td>
                         <td>
-                            {{systemReading.fieldDateTime|date('d/m/Y')}}
+                            {{systemReading.fieldDateTime|localizeddate('short', 'none')}}
                         </td>
                         <td>
-                            {{systemReading.encodingDateTime|date('d/m/Y')}}
+                            {{systemReading.encodingDateTime|localizeddate('short', 'none')}}
                         </td>
                         <td>
                             {{systemReading.encodingAuthor}}

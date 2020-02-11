@@ -14,7 +14,7 @@
                     <dt class="col-3">Système&nbsp;:</dt>
                     <dd class="col-9">{{systemReading.system.name}}</dd>
                     <dt class="col-3">Réalisé le&nbsp;:</dt>
-                    <dd class="col-9">{{systemReading.fieldDateTime|date('d/m/Y H:i')}}</dd>
+                    <dd class="col-9">{{systemReading.fieldDateTime|localizeddate('short', 'short')}}</dd>
                 </dl>
             </div>
         </div>
@@ -23,7 +23,7 @@
             <div class="col">
                 <div class="card mb-3">
                     <div class="card-header">
-                        Encodé le <strong>{{systemReading.encodingDateTime|date('d/m/Y H:i')}}</strong> par <strong>{{systemReading.encodingAuthor.displayName}}</strong>
+                        Encodé le <strong>{{systemReading.encodingDateTime|localizeddate('short', 'short')}}</strong> par <strong>{{systemReading.encodingAuthor.displayName}}</strong>
                     </div>
                     <div class="card-body">
                         {% if systemReading.encodingNotes is not empty %}
@@ -46,7 +46,7 @@
                                     <i class="fas fa-ban text-danger"></i>
                                     Invalidé
                                 {% endif %}
-                                le <strong>{{systemReading.validationDateTime|date('d/m/Y H:i')}}</strong> par <strong>{{systemReading.validationAuthor.displayName}}</strong>
+                                le <strong>{{systemReading.validationDateTime|localizeddate('short', 'short')}}</strong> par <strong>{{systemReading.validationAuthor.displayName}}</strong>
                             {% else %}
                                 Non validé
                             {% endif %}
@@ -90,7 +90,7 @@
                             {{stationReading.station.name}}
                         </td>
                         <td>
-                            {{stationReading.fieldDateTime|date('d/m/Y H:i:s')}}
+                            {{stationReading.fieldDateTime|localizeddate('short', 'short')}}
                         </td>
                         {% for parameter in parameters %}
                             <td style="text-align: right">

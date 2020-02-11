@@ -13,7 +13,7 @@
         <div class="alert alert-danger">
             Cette opération est irréversible.
             <br>
-            Etes-vous certain de vouloir supprimer ce relevé du <strong>{{reading.fieldDateTime|date('d/m/Y')}}</strong> relatif à la station <strong>{{reading.station}}</strong>&nbsp;?
+            Etes-vous certain de vouloir supprimer ce relevé du <strong>{{reading.fieldDateTime|localizeddate('short', 'none')}}</strong> relatif à la station <strong>{{reading.station}}</strong>&nbsp;?
             {% if reading.validated %}
                 <br>
                 <strong>Attention, ce relevé est validé&nbsp;!</strong>

@@ -13,7 +13,7 @@
         <div class="alert alert-danger">
             Cette opération est irréversible.
             <br>
-            Etes-vous certain de vouloir supprimer ce relevé du <strong>{{systemReading.fieldDateTime|date('d/m/Y')}}</strong> relatif au système <strong>{{systemReading.system}}</strong>, ainsi que les {{systemReading.stationReadings|length}} relevés de stations qu'il contient&nbsp;?
+            Etes-vous certain de vouloir supprimer ce relevé du <strong>{{systemReading.fieldDateTime|localizeddate('short', 'none')}}</strong> relatif au système <strong>{{systemReading.system}}</strong>, ainsi que les {{systemReading.stationReadings|length}} relevés de stations qu'il contient&nbsp;?
         </div>
 
         {# Ajouter un bouton pour confirmer la suppression #}
