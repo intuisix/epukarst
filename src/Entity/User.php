@@ -300,13 +300,13 @@ class User implements UserInterface
      */
     public function getEncodedReadings(): Collection
     {
-        return $this->readings;
+        return $this->encodedReadings;
     }
 
     public function addEncodedReading(Reading $reading): self
     {
-        if (!$this->readings->contains($reading)) {
-            $this->readings[] = $reading;
+        if (!$this->encodedReadings->contains($reading)) {
+            $this->encodedReadings[] = $reading;
             $reading->setAuthor($this);
         }
 
@@ -315,8 +315,8 @@ class User implements UserInterface
 
     public function removeEncodedReading(Reading $reading): self
     {
-        if ($this->readings->contains($reading)) {
-            $this->readings->removeElement($reading);
+        if ($this->encodedReadings->contains($reading)) {
+            $this->encodedReadings->removeElement($reading);
             // set the owning side to null (unless already changed)
             if ($reading->getAuthor() === $this) {
                 $reading->setAuthor(null);

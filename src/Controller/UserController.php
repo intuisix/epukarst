@@ -266,10 +266,10 @@ class UserController extends AbstractController
 
         if ($account === $this->getUser()) {
             $this->addFlash('danger', "Vous ne pouvez pas supprimer votre propre compte d'utilisateur.");
-            return $this->redirect($breadcrumbs->getPrevious());
         } else if (!$this->isGranted($account->getMainRole())) {
             $this->addFlash('danger', "Vous ne pouvez pas supprimer l'utilisateur <strong>$account</strong> car son rôle est plus élevé que le vôtre.");
-            return $this->redirect($breadcrumbs->getPrevious());
+        } else if (count($account->getMeasures()) || count($account->getSystemReadings()) || count($account->getSystemValidations()) || count($account->getEncodedReadings()) || count($account->getValidatedReadings())) {
+            $this->addFlash('danger', "Vous ne pouvez pas supprimer l'utilisateur <strong>$account</strong> car il est associé à des relevés de systèmes et/ou de stations.");
         } else {
             $form = $this->createFormBuilder()->getForm();
 
@@ -291,6 +291,7 @@ class UserController extends AbstractController
                 ]);
             }
         }
+        return $this->redirect($breadcrumbs->getPrevious());
     }
 
     /**
