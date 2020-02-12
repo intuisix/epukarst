@@ -262,9 +262,9 @@ class UserController extends AbstractController
      * @param Request $request
      * @return void
      */
-    public function delete(User $user, ObjectManager $manager, Request $request)
+    public function delete(User $account, ObjectManager $manager, Request $request)
     {
-        if ($user === $this->getUser()) {
+        if ($account === $this->getUser()) {
             $this->addFlash('danger', "Vous ne pouvez pas supprimer votre propre compte d'utilisateur.");
         } else if (!$this->isGranted($account->getMainRole())) {
             $this->addFlash('danger', "Vous ne pouvez pas supprimer l'utilisateur <strong>$account</strong> car son rôle est plus élevé que le vôtre.");
@@ -274,15 +274,15 @@ class UserController extends AbstractController
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $manager->remove($user);
+                $manager->remove($account);
                 $manager->flush();
         
-                $this->addFlash('success', "L'utilisateur <strong>$user</strong> a été supprimé avec succès.");
+                $this->addFlash('success', "L'utilisateur <strong>$account</strong> a été supprimé avec succès.");
             } else {
                 return $this->render('user/delete.html.twig', [
                     'form' => $form->createView(),
-                    'user' => $user,
-                    'title' => "Supprimer le relevé $user",
+                    'user' => $account,
+                    'title' => "Supprimer l'utilisateur $account",
                 ]);
             }
         }
