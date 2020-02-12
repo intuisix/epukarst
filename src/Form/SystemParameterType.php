@@ -29,7 +29,8 @@ class SystemParameterType extends AbstractType
             ->add('notes', TextareaType::class, [
                 'label' => "Remarques",
                 'attr' => [
-                    'placeholder' => "Entrez éventuellement des remarques"
+                    'placeholder' => "Entrez éventuellement des remarques",
+                    'rows' => 10,
                 ],
                 'required' => false,
             ])
