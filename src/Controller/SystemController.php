@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\System;
 use App\Form\SystemType;
+use App\Service\Breadcrumbs;
 use App\Entity\SystemPicture;
 use App\Entity\SystemStations;
 use App\Form\SystemStationsType;
@@ -24,10 +25,13 @@ class SystemController extends AbstractController
      * 
      * @Route("/system", name="system")
      */
-    public function index(SystemRepository $systemRepository)
+    public function index(SystemRepository $systemRepository, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->reset("Index des systèmes");
+
         return $this->render('system/index.html.twig', [
             'systems' => $systemRepository->findAllOrdered(),
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -37,14 +41,17 @@ class SystemController extends AbstractController
      * @Route("/system/list/{page<\d+>?1}", name="systems_list")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function list(int $page, SystemRepository $systemRepository, PaginationService $pagination)
+    public function list(int $page, SystemRepository $systemRepository, PaginationService $pagination, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->reset("Liste des systèmes");
+
         $pagination
             ->setEntityClass(System::class)
             ->setPage($page);
 
         return $this->render('system/list.html.twig', [
             'pagination' => $pagination,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -54,8 +61,10 @@ class SystemController extends AbstractController
      * @Route("/system/create", name="system_create")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function create(ObjectManager $manager, Request $request)
+    public function create(ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Création d'un système");
+
         /* Instancier un nouveau système */
         $system = new System();
         /* Créer et traiter le formulaire */
@@ -72,13 +81,12 @@ class SystemController extends AbstractController
 
             if ($picturesAdded) {
                 $this->addFlash('info', "Veuillez maintenant compléter les légendes des photos.");
+                $breadcrumbs->removeLast();
                 return $this->redirectToRoute('system_modify', [
                     'code' => $system->getCode(),
                 ]);
             } else {
-                return $this->redirectToRoute('system_show', [
-                    'slug' => $system->getSlug(),
-                ]);
+                return $this->redirect($breadcrumbs->getPrevious());
             }
         }
 
@@ -86,6 +94,7 @@ class SystemController extends AbstractController
             'system' => $system,
             'form' => $form->createView(),
             'title' => "Ajouter un nouveau système",
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -95,8 +104,10 @@ class SystemController extends AbstractController
      * @Route("/system/{code}/modify", name="system_modify")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function modify(System $system, ObjectManager $manager, Request $request)
+    public function modify(System $system, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Modification d'un système");
+
         /* Créer et traiter le formulaire */
         $form = $this->createForm(SystemType::class, $system, [
             'picture_files' => SystemPicture::scanPicturesDir('images/systems'),
@@ -115,16 +126,15 @@ class SystemController extends AbstractController
                     'code' => $system->getCode(),
                 ]);
             } else {
-                return $this->redirectToRoute('system_show', [
-                    'slug' => $system->getSlug(),
-                ]);
+                return $this->redirect($breadcrumbs->getPrevious());
             }
         }
 
         return $this->render('system/form.html.twig', [
             'system' => $system,
             'form' => $form->createView(),
-            'title' => "Modifier le système {$system->getName()}"
+            'title' => "Modifier le système {$system->getName()}",
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -134,8 +144,10 @@ class SystemController extends AbstractController
      * @Route("/system/{code}/delete", name="system_delete")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function delete(System $system, ObjectManager $manager, Request $request)
+    public function delete(System $system, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Suppression d'un système");
+
         if ((count($system->getSystemReadings()) > 0) ||
             (count($system->getAlarms()) > 0)) {
             $this->addFlash('danger', "Vous ne pouvez pas supprimer le système <strong>{$system->getName()}</strong> car il possède des relevés ou des alarmes.");
@@ -150,16 +162,20 @@ class SystemController extends AbstractController
                 $manager->remove($system);
                 $manager->flush();
                 $this->addFlash('success', "Le système <strong>{$system->getName()}</strong> a été supprimé avec succès.");
+
+                /* Rediriger vers la liste des systèmes car celui-ci n'existe plus */
+                return $this->redirectToRoute('system_list');
             } else {
                 return $this->render('system/delete.html.twig', [
                     'form' => $form->createView(),
                     'system' => $system,
                     'title' => "Supprimer le système {$system->getName()}",
+                    'breadcrumbs' => $breadcrumbs,
                 ]);
             }
         }
 
-        return $this->redirectToRoute('system');
+        return $this->redirect($breadcrumbs->getPrevious());
     }
 
     /**
@@ -167,10 +183,13 @@ class SystemController extends AbstractController
      * 
      * @Route("/system/{slug}", name="system_show")
      */
-    public function show(System $system)
+    public function show(System $system, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->reset("Visualisation d'un système");
+
         return $this->render('system/show.html.twig', [
             'system' => $system,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -180,10 +199,13 @@ class SystemController extends AbstractController
      * @Route("/system/{slug}/stations", name="system_show_stations")
      * @IsGranted("SYSTEM_OBSERVER", subject="system")
      */
-    public function showStations(System $system)
+    public function showStations(System $system, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Liste des stations d'un système");
+
         return $this->render('system/stations.html.twig', [
             'system' => $system,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -193,8 +215,10 @@ class SystemController extends AbstractController
      * @Route("/system/{slug}/parameters", name="system_show_parameters")
      * @IsGranted("SYSTEM_OBSERVER", subject="system")
      */
-    public function showParameters(System $system)
+    public function showParameters(System $system, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Liste des paramètres d'un système");
+
         $parameters = [];
         foreach ($system->getParameters() as $systemParameter) {
             $parameter = $systemParameter->getInstrumentParameter()->getParameter();
@@ -206,6 +230,7 @@ class SystemController extends AbstractController
         return $this->render('system/parameters.html.twig', [
             'system' => $system,
             'parameters' => $parameters,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -215,8 +240,10 @@ class SystemController extends AbstractController
      * @Route("/system/{slug}/instruments", name="system_show_instruments")
      * @IsGranted("SYSTEM_OBSERVER", subject="system")
      */
-    public function showInstruments(System $system)
+    public function showInstruments(System $system, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Liste des instruments d'un système");
+
         $instruments = [];
         foreach ($system->getParameters() as $systemParameter) {
             $instrument = $systemParameter->getInstrumentParameter()->getInstrument();
@@ -228,6 +255,7 @@ class SystemController extends AbstractController
         return $this->render('system/instruments.html.twig', [
             'system' => $system,
             'instruments' => $instruments,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -240,10 +268,13 @@ class SystemController extends AbstractController
      * @param System $system
      * @return Response
      */
-    public function showReadings(System $system)
+    public function showReadings(System $system, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Liste des relevés d'un système");
+
         return $this->render('system/readings.html.twig', [
             'system' => $system,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 

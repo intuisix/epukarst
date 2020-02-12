@@ -8,6 +8,7 @@ use App\Entity\Control;
 use App\Entity\Measure;
 use App\Entity\Reading;
 use App\Entity\Station;
+use App\Service\Breadcrumbs;
 use App\Entity\SystemReading;
 use App\Entity\SystemParameter;
 use App\Form\SystemReadingType;
@@ -32,8 +33,10 @@ class SystemReadingController extends AbstractController
      * @Route("/system-reading/{page<\d+>?1}", name="system_reading")
      * @IsGranted("SYSTEM_OBSERVER")
      */
-    public function index(int $page, PaginationService $pagination, SystemRepository $systemRepository)
+    public function index(int $page, PaginationService $pagination, SystemRepository $systemRepository, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->reset("Liste des relevés d'un système");
+
         $pagination
             ->setEntityClass(SystemReading::class)
             ->setOrderBy(['fieldDateTime' => 'DESC'])
@@ -43,6 +46,7 @@ class SystemReadingController extends AbstractController
         return $this->render('system_reading/index.html.twig', [
             'pagination' => $pagination,
             'systems' => $systemRepository->findAll(),
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -52,8 +56,10 @@ class SystemReadingController extends AbstractController
      * @Route("/system-reading/encode/{code}", name="system_reading_encode")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="system")
      */
-    public function encode(System $system, ObjectManager $manager, Request $request, StationRepository $stationRepository, MeasurabilityRepository $instrumentParameterRepository, BasinRepository $basinRepository, StationKindRepository $stationKindRepository, SystemParameterRepository $systemParameterRepository)
+    public function encode(System $system, ObjectManager $manager, Request $request, StationRepository $stationRepository, MeasurabilityRepository $instrumentParameterRepository, BasinRepository $basinRepository, StationKindRepository $stationKindRepository, SystemParameterRepository $systemParameterRepository, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Création d'un relevé de système");
+
         /* Obtenir la liste des stations du système */
         $systemStations = $stationRepository->findSystemStations($system);
 
@@ -99,9 +105,7 @@ class SystemReadingController extends AbstractController
 
             $this->addFlash('success', "Le relevé <strong>{$systemReading->getCode()}</strong> contenant <strong>{$systemReading->getStationReadings()->count()}</strong> relevés de stations a été encodé avec succès.");
 
-            return $this->redirectToRoute('system_reading_show', [
-                'code' => $systemReading->getCode(),
-            ]);
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         return $this->render('system_reading/form.html.twig', [
@@ -110,18 +114,21 @@ class SystemReadingController extends AbstractController
             'system' => $system,
             'systemParameters' => $systemParameters,
             'conversions_enabled' => true,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
     /**
-     * @Route("/system-reading/{code}/edit", name="system_reading_edit")
+     * @Route("/system-reading/{code}/modify", name="system_reading_edit")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="systemReading")
      */
-    public function edit(SystemReading $systemReading, Request $request, ObjectManager $manager, StationRepository $stationRepository, SystemParameterRepository $systemParameterRepository)
+    public function modify(SystemReading $systemReading, Request $request, ObjectManager $manager, StationRepository $stationRepository, SystemParameterRepository $systemParameterRepository, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Modification d'un relevé de système");
+
         if ($systemReading->countValidatedReadings()) {
             $this->addFlash('danger', "Ce relevé de système ne peut pas être modifié car au moins un de ses relevés de station a été validé.<br>Faites les modifications sur les relevés de station individuellement.");
-            return $this->redirect($request->headers->get('referer'));
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         /* Obtenir la liste ordonnée de paramètres et des stations du système */
@@ -133,7 +140,7 @@ class SystemReadingController extends AbstractController
             (false == $this->loadStationReadings($systemReading, $systemStations, $systemParameters))) {
                 /* Cas spécial non géré pour l'instant */
                 $this->addFlash('danger', "Ce relevé de système ne peut être modifié car il contient des mesures excédentaires par rapport aux paramètres actuellement assignés au système.<br>Faites les modifications sur les relevés de station directement.");
-                return $this->redirect($request->headers->get('referer'));
+                return $this->redirect($breadcrumbs->getPrevious());
         }
 
         /* Créer et traiter le formulaire */
@@ -149,9 +156,7 @@ class SystemReadingController extends AbstractController
 
             $this->addFlash('success', "Le relevé <strong>{$systemReading->getCode()}</strong> contenant <strong>{$systemReading->getStationReadings()->count()}</strong> relevés de stations a été mis à jour avec succès.");
 
-            return $this->redirectToRoute('system_reading_show', [
-                'code' => $systemReading->getCode(),
-            ]);
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         return $this->render('system_reading/form.html.twig', [
@@ -160,6 +165,7 @@ class SystemReadingController extends AbstractController
             'system' => $system,
             'systemParameters' => $systemParameters,
             'conversions_enabled' => false,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -169,11 +175,13 @@ class SystemReadingController extends AbstractController
      * @Route("system-reading/{code}/delete", name="system_reading_delete")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="systemReading")
      */
-    public function delete(SystemReading $systemReading, Request $request, ObjectManager $manager)
+    public function delete(SystemReading $systemReading, Request $request, ObjectManager $manager, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Suppression d'un relevé de système");
+
         if ($systemReading->countValidatedReadings()) {
             $this->addFlash('danger', "Le relevé <strong>{$systemReading->getCode()}</strong> ne peut pas être supprimé car au moins un de ses relevés de station a été validé.");
-            return $this->redirect($request->headers->get('referer'));
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         /* Créer et traiter le formulaire de confirmation */
@@ -187,15 +195,14 @@ class SystemReadingController extends AbstractController
     
             $this->addFlash('success', "Le relevé <strong>{$systemReading->getCode()}</strong> a été supprimé avec succès.");
 
-            return $this->redirectToRoute('system_show_readings', [
-                'slug' => $systemReading->getSystem()->getSlug(),
-            ]);
+            return $this->redirect($breadcrumbs->getPrevious('system_reading'));
         }
 
         return $this->render('system_reading/delete.html.twig', [
             'form' => $form->createView(),
             'systemReading' => $systemReading,
             'title' => "Supprimer le relevé $systemReading",
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -203,11 +210,14 @@ class SystemReadingController extends AbstractController
      * @Route("/system-reading/{code}", name="system_reading_show")
      * @IsGranted("SYSTEM_OBSERVER", subject="systemReading")
      */
-    public function show(SystemReading $systemReading, ParameterRepository $parameterRepository)
+    public function show(SystemReading $systemReading, ParameterRepository $parameterRepository, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Visualisation d'un relevé de système", 'system_reading');
+
         return $this->render('system_reading/show.html.twig', [
             'systemReading' => $systemReading,
             'parameters' => $parameterRepository->findFavorites(),
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 

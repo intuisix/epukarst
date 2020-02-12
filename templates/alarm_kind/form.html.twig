@@ -32,10 +32,10 @@ modification d'un type d'alarme #}
             {# Bouton permettant d'enregistrer le type d'alarme #}
             <button type="submit" class="btn btn-success">
                 <i class="fas fa-check"></i>
-                Enregistrer le genre d'alarme
+                Enregistrer le type d'alarme
             </button>
             {# Bouton permettant de revenir à la page précédente #}
-            {% include '_back.html.twig' %}
+            {{breadcrumbs.displayBackButton}}
         </div>
 
         {{form_end(form)}}

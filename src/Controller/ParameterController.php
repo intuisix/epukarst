@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Parameter;
 use App\Form\ParameterType;
+use App\Service\Breadcrumbs;
 use App\Repository\ParameterRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -19,10 +20,13 @@ class ParameterController extends AbstractController
      * @Route("/parameter", name="parameter")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function index(ParameterRepository $parameterRepository)
+    public function index(ParameterRepository $parameterRepository, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->reset("Liste des paramètres");
+
         return $this->render('parameter/index.html.twig', [
             'parameters' => $parameterRepository->findAllOrdered(),
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -32,8 +36,10 @@ class ParameterController extends AbstractController
      * @Route("/parameter/create", name="parameter_create")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function create(ObjectManager $manager, Request $request, ParameterRepository $parameterRepository)
+    public function create(ObjectManager $manager, Request $request, ParameterRepository $parameterRepository, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Création d'un paramètre");
+
         /* Créer un tableau des paramètres ordonnés */
         $orderedParameters = $parameterRepository->findAllOrdered();
         $positions = $this->getPositions($orderedParameters);
@@ -58,13 +64,14 @@ class ParameterController extends AbstractController
 
             $this->addFlash('success', "Le paramètre <strong>{$parameter->getName()}</strong> a été créé avec succès.");
 
-            return $this->redirectToRoute('parameter');
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         return $this->render('parameter/form.html.twig', [
             'parameter' => $parameter,
             'form' => $form->createView(),
             'title' => "Ajouter un nouveau paramètre",
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -74,8 +81,10 @@ class ParameterController extends AbstractController
      * @Route("/parameter/{id}/modify", name="parameter_modify")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function modify(Parameter $parameter, ObjectManager $manager, Request $request, ParameterRepository $parameterRepository)
+    public function modify(Parameter $parameter, ObjectManager $manager, Request $request, ParameterRepository $parameterRepository, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Modification d'un paramètre");
+
         /* Créer un tableau des paramètres ordonnés */
         $orderedParameters = $parameterRepository->findAllOrdered();
         $positions = $this->getPositions($orderedParameters);
@@ -97,13 +106,14 @@ class ParameterController extends AbstractController
 
             $this->addFlash('success', "Le paramètre <strong>{$parameter->getName()}</strong> a été modifié avec succès.");
 
-            return $this->redirectToRoute('parameter');
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         return $this->render('parameter/form.html.twig', [
             'parameter' => $parameter,
             'form' => $form->createView(),
             'title' => "Modifier le paramètre {$parameter->getName()}",
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -113,8 +123,10 @@ class ParameterController extends AbstractController
      * @Route("/parameter/{id}/delete", name="parameter_delete")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function delete(Parameter $parameter, ObjectManager $manager, Request $request)
+    public function delete(Parameter $parameter, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Suppression d'un paramètre");
+
         /* Créer et traiter le formulaire de confirmation */
         $form = $this->createFormBuilder()->getForm();
         $form->handleRequest($request);
@@ -125,13 +137,14 @@ class ParameterController extends AbstractController
     
             $this->addFlash('success', "Le paramètre <strong>{$parameter->getName()}</strong> a été supprimé avec succès.");
     
-            return $this->redirectToRoute('parameter');
+            return $this->redirect($breadcrumbs->getPrevious('parameter'));
         }
 
         return $this->render('parameter/delete.html.twig', [
             'form' => $form->createView(),
             'parameter' => $parameter,
             'title' => "Supprimer le paramètre {$parameter->getName()}",
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 

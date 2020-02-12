@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Instrument;
 use App\Form\InstrumentType;
+use App\Service\Breadcrumbs;
 use App\Repository\InstrumentRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -19,10 +20,13 @@ class InstrumentController extends AbstractController
      * @Route("/instrument", name="instrument")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function index(InstrumentRepository $instrumentRepository)
+    public function index(InstrumentRepository $instrumentRepository, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->reset("Liste des instruments");
+
         return $this->render('instrument/index.html.twig', [
-            'instruments' => $instrumentRepository->findAll()
+            'instruments' => $instrumentRepository->findAll(),
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -32,8 +36,10 @@ class InstrumentController extends AbstractController
      * @Route("/instrument/create", name="instrument_create")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function create(ObjectManager $manager, Request $request)
+    public function create(ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Créer un instrument");
+
         /* Instancier un nouvel instrument */
         $instrument = new Instrument();
         /* Créer et traiter le formulaire */
@@ -58,13 +64,14 @@ class InstrumentController extends AbstractController
             
             $this->addFlash('success', "L'instrument <strong>{$instrument->getName()}</strong> a été créé avec succès.");
     
-            return $this->redirectToRoute('instrument');
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         return $this->render('instrument/form.html.twig', [
             'instrument' => $instrument,
             'form' => $form->createView(),
             'title' => 'Ajouter un nouvel instrument',
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -74,8 +81,10 @@ class InstrumentController extends AbstractController
      * @Route("/instrument/{code}/modify", name="instrument_modify")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function modify(Instrument $instrument, ObjectManager $manager, Request $request)
+    public function modify(Instrument $instrument, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Modifier un instrument");
+
         /* Créer et traiter le formulaire */
         $form = $this->createForm(InstrumentType::class, $instrument);
         $form->handleRequest($request);
@@ -98,13 +107,14 @@ class InstrumentController extends AbstractController
             
             $this->addFlash('success', "L'instrument <strong>{$instrument->getName()}</strong> a été modifié avec succès.");
     
-            return $this->redirectToRoute('instrument');
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         return $this->render('instrument/form.html.twig', [
             'instrument' => $instrument,
             'form' => $form->createView(),
-            'title' => "Modifier l'instrument {$instrument->getName()}"
+            'title' => "Modifier l'instrument {$instrument->getName()}",
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -114,8 +124,10 @@ class InstrumentController extends AbstractController
      * @Route("/instrument/{code}/delete", name="instrument_delete")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function delete(Instrument $instrument, ObjectManager $manager, Request $request)
+    public function delete(Instrument $instrument, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Supprimer un instrument");
+
         /* Créer et traiter le formulaire de confirmation */
         $form = $this->createFormBuilder()->getForm();
         $form->handleRequest($request);
@@ -126,13 +138,14 @@ class InstrumentController extends AbstractController
     
             $this->addFlash('success', "L'instrument <strong>{$instrument->getName()}</strong> a été supprimé avec succès.");
     
-            return $this->redirectToRoute('instrument');
+            return $this->redirect($breadcrumbs->getPrevious('instrument'));
         }
 
         return $this->render('instrument/delete.html.twig', [
             'form' => $form->createView(),
             'instrument' => $instrument,
             'title' => "Supprimer l'instrument {$instrument->getName()}",
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 }

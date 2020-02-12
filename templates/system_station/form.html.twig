@@ -38,8 +38,8 @@
                 <i class="fas fa-check"></i>
                 Enregistrer la station
             </button>
-            {# Bouton permettant de revenir en arrière #}
-            {% include '_back.html.twig' %}
+            {# Bouton permettant de revenir à la page précédente #}
+            {{breadcrumbs.displayBackButton}}
         </div>
 
         {{form_end(form)}}

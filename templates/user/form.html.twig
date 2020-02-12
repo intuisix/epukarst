@@ -63,7 +63,7 @@
             Enregistrer l'utilisateur
         </button>
         {# Bouton permettant de revenir à la page précédente #}
-        {% include '_back.html.twig' %}
+        {{breadcrumbs.displayBackButton}}
 
         {{form_end(form)}}
     </div>

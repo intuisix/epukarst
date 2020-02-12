@@ -23,6 +23,10 @@ services:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
 
+    App\Service\Breadcrumbs:
+        $templatePath: 'breadcrumbs/_breadcrumbs.html.twig'
+        $backTemplatePath: 'breadcrumbs/_back.html.twig'
+
     App\Service\PaginationService:
         $templatePath: 'pagination.html.twig'
 

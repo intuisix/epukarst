@@ -265,7 +265,7 @@ car celle-ci n'est pas triée.
             Enregistrer le relevé
         </button>
         {# Bouton permettant de revenir à la page précédente #}
-        {% include '_back.html.twig' %}
+        {{breadcrumbs.displayBackButton}}
 
         {{form_end(form)}}
     </div>

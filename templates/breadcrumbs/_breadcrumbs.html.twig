@@ -1,0 +1,15 @@
+{# Fil d'ariane complet #}
+<br>
+<nav aria-label="breadcrumb" class="alert alert-light">
+    <ol class="breadcrumb">
+        {% for page in pages %}
+            {% if loop.last %}
+                {# Page en cours #}
+                <li class="breadcrumb-item">{{page.title}}</li>
+            {% else %}
+                {# Page antérieure #}
+                <li class="breadcrumb-item active" aria-current="page"><a href="{{page.uri}}">{{page.title}}</a></li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+</nav>

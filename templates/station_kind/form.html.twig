@@ -35,7 +35,7 @@ modification d'un genre de station #}
                 Enregistrer le genre de station
             </button>
             {# Bouton permettant de revenir à la page précédente #}
-            {% include '_back.html.twig' %}
+            {{breadcrumbs.displayBackButton}}
         </div>
 
         {{form_end(form)}}

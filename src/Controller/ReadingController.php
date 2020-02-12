@@ -9,6 +9,7 @@ use App\Entity\Reading;
 use App\Entity\Station;
 use App\Form\FilterType;
 use App\Form\ReadingType;
+use App\Service\Breadcrumbs;
 use App\Entity\FilterMeasure;
 use App\Service\PaginationService;
 use App\Repository\BasinRepository;
@@ -33,8 +34,10 @@ class ReadingController extends AbstractController
      * @Route("/reading/{page<\d+>?1}", name="reading")
      * @IsGranted("SYSTEM_OBSERVER")
      */
-    public function index(int $page, PaginationService $pagination, ParameterRepository $parameterRepository, Request $request, SystemRepository $systemRepository, BasinRepository $basinRepository, StationRepository $stationRepository, ReadingRepository $readingRepository)
+    public function index(int $page, PaginationService $pagination, ParameterRepository $parameterRepository, Request $request, SystemRepository $systemRepository, BasinRepository $basinRepository, StationRepository $stationRepository, ReadingRepository $readingRepository, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->reset("Index des relevés de station");
+
         /* Obtenir l'objet de session */
         $session = $request->getSession();
 
@@ -91,6 +94,7 @@ class ReadingController extends AbstractController
             'form' => $form->createView(),
             'systems' => $systemRepository->findAll(),
             'parameters' => $parameterRepository->findFavorites(),
+            'breadcrumbs' => null,  /* Volontairement, pas de fil d'ariane */
         ]);
     }
 
@@ -100,8 +104,10 @@ class ReadingController extends AbstractController
      * @Route("/reading/encode", name="reading_encode")
      * @IsGranted("SYSTEM_CONTRIBUTOR")
      */
-    public function encode(ObjectManager $manager, Request $request)
+    public function encode(ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Encodage d'un relevé de station");
+
         /* Instancier un nouveau relevé */
         $reading = new Reading();
         $reading
@@ -125,15 +131,14 @@ class ReadingController extends AbstractController
             $manager->flush();
             
             $this->addFlash('success', "Le relevé <strong>{$reading->getCode()}</strong> a été encodé avec succès.");
-    
-            return $this->redirectToRoute('reading_show', [
-                'code' => $reading->getCode()
-            ]);
+
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         return $this->render('reading/form.html.twig', [
             'form' => $form->createView(),
             'title' => "Encoder un nouveau relevé",
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -143,17 +148,18 @@ class ReadingController extends AbstractController
      * @Route("/reading/{code}/modify", name="reading_modify")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="reading")
      */
-    public function modify(Reading $reading, ObjectManager $manager, Request $request)
+    public function modify(Reading $reading, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Modification d'un relevé de station");
+
         if (null !== $reading->getValidated()) {
             if ($this->isGranted('SYSTEM_MANAGER')) {
                 $this->addFlash('info', "Etant donné que le relevé <strong>{$reading->getCode()}</strong> est validé ou invalidé, vous ne pouvez plus le modifier qu'en le validant à nouveau.");
             } else {
                 $this->addFlash('danger', "Etant donné que le relevé <strong>{$reading->getCode()}</strong> est validé ou invalidé, il ne peut plus être modifié que par un gestionnaire de <strong>{$reading->getStation()->getBasin()->getSystem()->getName()}</strong>.");
             }
-            return $this->redirectToRoute('reading_show', [
-                'code' => $reading->getCode()
-            ]);
+
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         /* Créer et traiter le formulaire */
@@ -173,16 +179,15 @@ class ReadingController extends AbstractController
             $manager->flush();
             
             $this->addFlash('success', "Le relevé <strong>{$reading->getCode()}</strong> a été modifié avec succès.");
-    
-            return $this->redirectToRoute('reading_show', [
-                'code' => $reading->getCode()
-            ]);
+
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         return $this->render('reading/form.html.twig', [
             'reading' => $reading,
             'form' => $form->createView(),
             'title' => "Modifier le relevé {$reading->getCode()}",
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -192,8 +197,10 @@ class ReadingController extends AbstractController
      * @Route("/reading/{code}/validate", name="reading_validate")
      * @IsGranted("SYSTEM_MANAGER", subject="reading")
      */
-    public function validate(Reading $reading, ObjectManager $manager, Request $request)
+    public function validate(Reading $reading, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Validation d'un relevé de station");
+
         /* Définir l'auteur et la date de la validation */
         $reading
             ->setValidationAuthor($this->getUser())
@@ -217,10 +224,8 @@ class ReadingController extends AbstractController
             $manager->flush();
             
             $this->addFlash('success', "Le relevé <strong>{$reading->getCode()}</strong> a été enregistré avec succès.");
-    
-            return $this->redirectToRoute('reading_show', [
-                'code' => $reading->getCode()
-            ]);
+
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         return $this->render('reading/form.html.twig', [
@@ -228,6 +233,7 @@ class ReadingController extends AbstractController
             'form' => $form->createView(),
             'title' => "Valider le relevé {$reading->getCode()}",
             'validation' => true,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -280,11 +286,14 @@ class ReadingController extends AbstractController
      * @Route("reading/{code}/delete", name="reading_delete")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="reading")
      */
-    public function delete(Reading $reading, Request $request, ObjectManager $manager)
+    public function delete(Reading $reading, Request $request, ObjectManager $manager, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Suppression d'un relevé de station");
+
         if (true === $reading->getValidated()) {
             $this->addFlash('danger', "Le relevé <strong>{$reading->getCode()}</strong> ne peut être supprimé car il a été validé.");
-            return $this->redirect($request->headers->get('referer'));
+
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         $form = $this->createFormBuilder()->getForm();
@@ -297,13 +306,14 @@ class ReadingController extends AbstractController
     
             $this->addFlash('success', "Le relevé <strong>{$reading->getCode()}</strong> a été supprimé avec succès.");
     
-            return $this->redirectToRoute('reading');
+            return $this->redirect($breadcrumbs->getPrevious('station_reading'));
         }
 
         return $this->render('reading/delete.html.twig', [
             'form' => $form->createView(),
             'reading' => $reading,
             'title' => "Supprimer le relevé $reading",
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -313,10 +323,13 @@ class ReadingController extends AbstractController
      * @Route("/reading/{code}", name="reading_show")
      * @IsGranted("SYSTEM_OBSERVER", subject="reading")
      */
-    public function show(Reading $reading)
+    public function show(Reading $reading, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Visualisation d'un relevé de station", 'station_reading');
+
         return $this->render('reading/show.html.twig', [
-            'reading' => $reading
+            'reading' => $reading,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 

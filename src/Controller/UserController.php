@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Entity\UserPassword;
+use App\Service\Breadcrumbs;
 use App\Form\UserPasswordType;
 use Symfony\Component\Mime\Email;
 use App\Service\PaginationService;
@@ -35,8 +36,10 @@ class UserController extends AbstractController
      * @Route("/user/{page<\d+>?1}", name="user")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function index(int $page, PaginationService $pagination)
+    public function index(int $page, PaginationService $pagination, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->reset("Liste des utilisateurs");
+
         $pagination
             ->setEntityClass(User::class)
             ->setOrderBy(['displayName' => 'ASC'])
@@ -44,7 +47,9 @@ class UserController extends AbstractController
         ;
 
         return $this->render('user/index.html.twig', [
-            'pagination' => $pagination ]);
+            'pagination' => $pagination,
+            'breadcrumbs' => $breadcrumbs,
+        ]);
     }
 
     /**
@@ -57,8 +62,10 @@ class UserController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function add(ObjectManager $manager, Request $request, UserPasswordEncoderInterface $encoder, MailerInterface $mailer, PasswordGeneratorService $generator)
+    public function add(ObjectManager $manager, Request $request, UserPasswordEncoderInterface $encoder, MailerInterface $mailer, PasswordGeneratorService $generator, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Création d'un utilisateur");
+
         /* Instancier un nouvel utilisateur */
         $user = new User();
 
@@ -99,27 +106,13 @@ class UserController extends AbstractController
 
             $this->addFlash('success', "L'utilisateur <strong>$user</strong> a été ajouté avec succès.");
 
-            return $this->redirectToRoute('user');
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         return $this->render('user/form.html.twig', [
             'form' => $form->createView(),
             'title' => "Ajouter un utilisateur",
-        ]);
-    }
-
-    /**
-     * Traite l'activation d'un utilisateur.
-     * 
-     * @Route("/user/{email}/activate", name="user_activate")
-     * 
-     * @param ObjectManager $manager
-     * @param Request $request
-     * @return Response
-     */
-    public function activate(User $user, ObjectManager $manager)
-    {
-        return $this->render('user/activate.html.twig', [
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -134,11 +127,13 @@ class UserController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function modify(User $account, ObjectManager $manager, Request $request)
+    public function modify(User $account, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Modification d'un utilisateur");
+
         if (!$this->isGranted($account->getMainRole())) {
             $this->addFlash('danger', "Vous ne pouvez pas modifier l'utilisateur <strong>$account</strong> car son rôle est plus élevé que le vôtre.");
-            return $this->redirectToRoute('user');
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         $form = $this->createForm(UserType::class, $account, [
@@ -159,12 +154,13 @@ class UserController extends AbstractController
 
             $this->addFlash('success', "L'utilisateur <strong>$account</strong> a été enregistré avec succès.");
 
-            return $this->redirectToRoute('user');
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         return $this->render('user/form.html.twig', [
             'form' => $form->createView(),
             'title' => "Modifier l'utilisateur $account",
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -185,11 +181,13 @@ class UserController extends AbstractController
      * @param Request $request
      * @return void
      */
-    public function setPassword(User $account, ObjectManager $manager, Request $request, UserPasswordEncoderInterface $encoder, MailerInterface $mailer)
+    public function setPassword(User $account, ObjectManager $manager, Request $request, UserPasswordEncoderInterface $encoder, MailerInterface $mailer, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Mot de passe d'un utilisateur");
+
         if (!$this->isGranted($account->getMainRole())) {
             $this->addFlash('danger', "Vous ne pouvez pas changer le mot de passe l'utilisateur <strong>$account</strong> car son rôle est plus élevé que le vôtre.");
-            return $this->redirectToRoute('user');
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         /* Déterminer l'utilisateur réalisant le changement de mot de passe: ce peut être soit un administrateur, soitl'utilisateur lui-même */
@@ -231,14 +229,13 @@ class UserController extends AbstractController
                     ]);
                 $mailer->send($email);
 
-                /* Ajouter un flash de succès et rediriger soit vers la gestion des utilisateurs, soit vers la page d'accueil */
                 if ($onBehalf) {
                     $this->addFlash('success', "Le mot de passe de <strong>$account</strong> a été enregistré avec succès.");
-                    return $this->redirectToRoute('user');
                 } else {
                     $this->addFlash('success', "Votre mot de passe a été enregistré avec succès.");
-                    return $this->redirectToRoute('home');
                 }
+
+                return $this->redirect($breadcrumbs->getPrevious());
             } else {
                 $form->get('currentPassword')->addError(
                     new FormError("Le mot de passe que vous avez introduit n'est pas votre mot de passe actuel."));
@@ -248,6 +245,7 @@ class UserController extends AbstractController
         return $this->render('user/password.html.twig', [
             'form' => $form->createView(),
             'title' => ($account !== $currentUser) ? "Modifier le mot de passe de $account" : "Modifier votre mot de passe",
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -257,17 +255,21 @@ class UserController extends AbstractController
      * @Route("/user/{id}/delete", name="user_delete")
      * @IsGranted("ROLE_ADMIN")
      *
-     * @param User $user
+     * @param User $account
      * @param ObjectManager $manager
      * @param Request $request
      * @return void
      */
-    public function delete(User $account, ObjectManager $manager, Request $request)
+    public function delete(User $account, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Suppression d'un utilisateur");
+
         if ($account === $this->getUser()) {
             $this->addFlash('danger', "Vous ne pouvez pas supprimer votre propre compte d'utilisateur.");
+            return $this->redirect($breadcrumbs->getPrevious());
         } else if (!$this->isGranted($account->getMainRole())) {
             $this->addFlash('danger', "Vous ne pouvez pas supprimer l'utilisateur <strong>$account</strong> car son rôle est plus élevé que le vôtre.");
+            return $this->redirect($breadcrumbs->getPrevious());
         } else {
             $form = $this->createFormBuilder()->getForm();
 
@@ -278,16 +280,17 @@ class UserController extends AbstractController
                 $manager->flush();
         
                 $this->addFlash('success', "L'utilisateur <strong>$account</strong> a été supprimé avec succès.");
+
+                return $this->redirect($breadcrumbs->getPrevious('user'));
             } else {
                 return $this->render('user/delete.html.twig', [
                     'form' => $form->createView(),
                     'user' => $account,
-                    'title' => "Supprimer l'utilisateur $account",
+                    'title' => "Supprimer le relevé $account",
+                    'breadcrumbs' => $breadcrumbs,
                 ]);
             }
         }
-
-        return $this->redirectToRoute('user');
     }
 
     /**
@@ -302,8 +305,9 @@ class UserController extends AbstractController
         $username = $utils->getLastUsername();
 
         return $this->render('user/login.html.twig', [
-                'hasError' => $error != null,
-                'username' => $username ]);
+            'hasError' => $error != null,
+            'username' => $username,
+        ]);
     }
 
     /**

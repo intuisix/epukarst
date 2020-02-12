@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Post;
 use App\Form\PostType;
+use App\Service\Breadcrumbs;
 use App\Repository\PostRepository;
 use App\Service\PaginationService;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,8 +19,10 @@ class PostController extends AbstractController
      * @Route("/post/{page<\d+>?1}", name="post")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function index(int $page, PostRepository $repository, PaginationService $pagination)
+    public function index(int $page, PostRepository $repository, PaginationService $pagination, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->reset("Liste des articles");
+
         $pagination
             ->setEntityClass(Post::class)
             ->setOrderBy(['position' => 'ASC', 'date' => 'DESC', 'id' => 'ASC'])
@@ -28,6 +31,7 @@ class PostController extends AbstractController
 
         return $this->render('post/index.html.twig', [
             'pagination' => $pagination,
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -35,8 +39,10 @@ class PostController extends AbstractController
      * @Route("/post/create", name="post_create")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function create(ObjectManager $manager, Request $request, PostRepository $postRepository)
+    public function create(ObjectManager $manager, Request $request, PostRepository $postRepository, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Création d'un article");
+
         /* Créer un tableau des articles ordonnés */
         $orderedPosts = $postRepository->findAllOrdered();
         $positions = $this->getPositions($orderedPosts);
@@ -59,13 +65,14 @@ class PostController extends AbstractController
             
             $this->addFlash('success', "L'article <strong>{$post->getTitle()}</strong> a été créé avec succès.");
     
-            return $this->redirectToRoute('post');
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         return $this->render('post/form.html.twig', [
             'post' => $post,
             'form' => $form->createView(),
             'title' => "Ajouter un article",
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -73,8 +80,10 @@ class PostController extends AbstractController
      * @Route("/post/{id}/modify", name="post_modify")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function modify(Post $post, ObjectManager $manager, Request $request, PostRepository $postRepository)
+    public function modify(Post $post, ObjectManager $manager, Request $request, PostRepository $postRepository, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Modification d'un article");
+
         /* Créer un tableau des articles ordonnés */
         $orderedPosts = $postRepository->findAllOrdered();
         $positions = $this->getPositions($orderedPosts);
@@ -93,14 +102,15 @@ class PostController extends AbstractController
             $manager->flush();
             
             $this->addFlash('success', "L'article <strong>{$post->getTitle()}</strong> a été modifié avec succès.");
-    
-            return $this->redirectToRoute('post');
+
+            return $this->redirect($breadcrumbs->getPrevious());
         }
 
         return $this->render('post/form.html.twig', [
             'post' => $post,
             'form' => $form->createView(),
             'title' => "Modifier l'article {$post->getTitle()}",
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 
@@ -110,14 +120,16 @@ class PostController extends AbstractController
      * @Route("/post/{id}/publish", name="post_publish")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function publish(Post $post, ObjectManager $manager)
+    public function publish(Post $post, ObjectManager $manager, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Publication d'un article");
+
         $post->publish();
         $manager->flush();
 
         $this->addFlash('success', "L'article <strong>{$post->getTitle()}</strong> a été publié avec succès.");
 
-        return $this->redirectToRoute('post');
+        return $this->redirect($breadcrumbs->getPrevious());
     }
 
     /**
@@ -126,14 +138,16 @@ class PostController extends AbstractController
      * @Route("/post/{id}/unpublish", name="post_unpublish")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function unpublish(Post $post, ObjectManager $manager)
+    public function unpublish(Post $post, ObjectManager $manager, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Dépublication d'un article");
+
         $post->unpublish();
         $manager->flush();
 
         $this->addFlash('success', "L'article <strong>{$post->getTitle()}</strong> a été dépublié avec succès.");
 
-        return $this->redirectToRoute('post');
+        return $this->redirect($breadcrumbs->getPrevious());
     }
 
     /**
@@ -142,14 +156,16 @@ class PostController extends AbstractController
      * @Route("/post/{id}/delete", name="post_delete")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function delete(Post $post, ObjectManager $manager)
+    public function delete(Post $post, ObjectManager $manager, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Suppression d'un article");
+
         $manager->remove($post);
         $manager->flush();
 
         $this->addFlash('success', "L'article <strong>{$post->getTitle()}</strong> a été supprimé avec succès.");
 
-        return $this->redirectToRoute('post');
+        return $this->redirect($breadcrumbs->getPrevious('post'));
     }
 
     /**

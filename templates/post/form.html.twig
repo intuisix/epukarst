@@ -49,7 +49,7 @@ modification d'article #}
                 Enregistrer l'article
             </button>
             {# Bouton permettant de revenir à la page précédente #}
-            {% include '_back.html.twig' %}
+            {{breadcrumbs.displayBackButton}}
         </div>
 
         {{form_end(form)}}
