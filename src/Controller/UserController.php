@@ -40,6 +40,11 @@ class UserController extends AbstractController
     {
         $breadcrumbs->reset("Liste des utilisateurs");
 
+        if (empty($_ENV['MAILER_NAME']) || empty($_ENV['MAILER_EMAIL'])) {
+            $this->addFlash('warning', "L'envoi d'e-mails ne fonctionnera pas parce que les variables MAILER_NAME et MAILER_EMAIL ne sont pas définies dans votre environnement.");
+            dump($_ENV);
+        }
+
         $pagination
             ->setEntityClass(User::class)
             ->setOrderBy(['displayName' => 'ASC'])
@@ -89,20 +94,25 @@ class UserController extends AbstractController
             $manager->flush();
 
             /* Transmettre un e-mail de bienvenue à l'utilisateur */
-            $host = $this->getUser();
-            $email = (new TemplatedEmail())
-                ->from($host->getEmail())
-                ->to($user->getEmail())
-                ->bcc($host->getEmail())
-                ->priority(Email::PRIORITY_HIGH)
-                ->subject("Bienvenue dans le programme Epu-Karst !")
-                ->htmlTemplate('user/emails/welcome.html.twig')
-                ->context([
-                    'user' => $user,
-                    'host' => $host,
-                    'password' => $password,
-                ]);
-            $mailer->send($email);
+            $creator = $this->getUser();
+            $mailerName = $_ENV['MAILER_NAME'];
+            $mailerEmail = $_ENV['MAILER_EMAIL'];
+            if (!empty($mailerName) && !empty($mailerEmail)) {
+                $sender = new Address($mailerEmail, $mailerName);
+                $email = (new TemplatedEmail())
+                    ->from($sender)
+                    ->to($user->getEmail())
+                    ->bcc($sender, $creator->getEmail())
+                    ->subject("Bienvenue dans le programme Epu-Karst !")
+                    ->htmlTemplate('user/emails/welcome.html.twig')
+                    ->context([
+                        'user' => $user,
+                        'host' => $creator,
+                        'password' => $password,
+                        'mailerName' => $mailerName,
+                    ]);
+                $mailer->send($email);
+            }
 
             $this->addFlash('success', "L'utilisateur <strong>$user</strong> a été ajouté avec succès.");
 
@@ -214,20 +224,23 @@ class UserController extends AbstractController
                 /* Transmettre un e-mail à l'utilisateur */
                 $mailerName = $_ENV['MAILER_NAME'];
                 $mailerEmail = $_ENV['MAILER_EMAIL'];
-                $email = (new TemplatedEmail())
-                    ->from(new Address($mailerEmail, $mailerName))
-                    ->to($account->getEmail())
-                    ->bcc(new Address($mailerEmail, $mailerName))
-                    ->priority(Email::PRIORITY_HIGH)
-                    ->subject("Votre mot de passe Epu-Karst a été changé")
-                    ->htmlTemplate('user/emails/passwordChanged.html.twig')
-                    ->context([
-                        'user' => $account,
-                        'host' => $currentUser,
-                        'mailerName' => $mailerName,
-                        'password' => $passwordData->getRevealInEmail() ? $passwordData->getWishedPassword() : null,
-                    ]);
-                $mailer->send($email);
+                if (!empty($mailerName) && !empty($mailerEmail)) {
+                    $sender = new Address($mailerEmail, $mailerName);
+                    $email = (new TemplatedEmail())
+                        ->from($sender)
+                        ->to($account->getEmail())
+                        ->bcc($sender)
+                        ->priority(Email::PRIORITY_HIGH)
+                        ->subject("Votre mot de passe Epu-Karst a été changé")
+                        ->htmlTemplate('user/emails/passwordChanged.html.twig')
+                        ->context([
+                            'user' => $account,
+                            'host' => $currentUser,
+                            'mailerName' => $mailerName,
+                            'password' => $passwordData->getRevealInEmail() ? $passwordData->getWishedPassword() : null,
+                        ]);
+                    $mailer->send($email);
+                }
 
                 if ($onBehalf) {
                     $this->addFlash('success', "Le mot de passe de <strong>$account</strong> a été enregistré avec succès.");
@@ -286,7 +299,7 @@ class UserController extends AbstractController
                 return $this->render('user/delete.html.twig', [
                     'form' => $form->createView(),
                     'user' => $account,
-                    'title' => "Supprimer le relevé $account",
+                    'title' => "Supprimer l'utilisateur $account",
                     'breadcrumbs' => $breadcrumbs,
                 ]);
             }

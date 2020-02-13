@@ -2,7 +2,9 @@
 
 <p>Bonjour {{user.displayName}},</p>
 
-<p>Un compte d'utilisateur vient d'être créé pour vous dans le programme Epu-Karst, avec les identifiants suivants&nbsp;:</p>
+<p>Un compte d'utilisateur vient d'être créé pour vous par {{host.displayName}} dans le programme Epu-Karst.</p>
+
+<p>Vos identifiants de connexion sont les suivants&nbsp;:</p>
 <ul>
     <li>Adresse e-mail&nbsp;: <strong>{{user.email}}</strong></li>
     <li>Mot de passe&nbsp;: <strong>{{password}}</strong></li>
@@ -12,5 +14,4 @@
 
 <p><a href="{{url('home')}}">Cliquez ici pour accéder à l'application</a></p>
 
-<p>Cordialement,<br>
-{{host.displayName}}</p>
+<p>Cordialement,<br>{{mailerName}}</p>

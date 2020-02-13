@@ -76,7 +76,7 @@ class AppFixtures extends Fixture
 
     /**
      * Retourne un commentaire aléatoire, contenant un nombre aléatoire de
-     * paragraphes séparés un saut de ligne.
+     * paragraphes séparés par un saut de ligne.
      *
      * @param integer $minParagraphCount
      * @param integer $maxParagraphCount
@@ -103,7 +103,7 @@ class AppFixtures extends Fixture
         /* Créer le compte d'administration */
         $user = new User();
         $user
-            ->setFirstName($_ENV['MAILER_NAME'])
+            ->setFirstName('Administrateur')
             ->setLastName('')
             ->setEmail($_ENV['MAILER_EMAIL'])
             ->setPassword($this->passwordEncoder->encodePassword($user, 'password'))
@@ -540,7 +540,7 @@ class AppFixtures extends Fixture
             $systemParameter = new SystemParameter();
             $systemParameter
                 ->setInstrumentParameter($measurability)
-                ->setNotes($this->getFakeNote(0, 50));
+                ->setNotes($this->getFakeNote(0, 1));
             $system->addParameter($systemParameter);
             $manager->persist($systemParameter);
         }
