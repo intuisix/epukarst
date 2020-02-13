@@ -4,6 +4,16 @@
         <i class="fas fa-eye"></i>
         Système
     </a>
+    {# Boutons pour voir les instruments #}
+    <a href="{{path('system_show_instruments', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
+        <i class="fas fa-ruler"></i>
+        Instruments
+    </a>
+    {# Boutons pour voir les paramètres #}
+    <a href="{{path('system_show_parameters', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
+        <i class="fas fa-asterisk"></i>
+        Paramètres
+    </a>
 
     {% if is_granted("SYSTEM_OBSERVER", system) %}
         {# Boutons pour voir les stations #}
@@ -11,20 +21,10 @@
             <i class="fas fa-bullseye"></i>
             Bassins et stations
         </a>
-        {# Boutons pour voir les instruments #}
-        <a href="{{path('system_show_instruments', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
-            <i class="fas fa-ruler"></i>
-            Instruments de mesure
-        </a>
-        {# Boutons pour voir les paramètres #}
-        <a href="{{path('system_show_parameters', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
-            <i class="fas fa-asterisk"></i>
-            Paramètres de mesure
-        </a>
         {# Boutons pour voir les relevés #}
         <a href="{{path('system_show_readings', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
             <i class="fas fa-file-alt"></i>
-            Relevés du système
+            Relevés
         </a>
     {% endif %}
 

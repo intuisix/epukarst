@@ -213,7 +213,6 @@ class SystemController extends AbstractController
      * Affiche les paramètres d'un système karstique.
      * 
      * @Route("/system/{slug}/parameters", name="system_show_parameters")
-     * @IsGranted("SYSTEM_OBSERVER", subject="system")
      */
     public function showParameters(System $system, Breadcrumbs $breadcrumbs)
     {
@@ -238,7 +237,6 @@ class SystemController extends AbstractController
      * Affiche les instruments d'un système karstique.
      * 
      * @Route("/system/{slug}/instruments", name="system_show_instruments")
-     * @IsGranted("SYSTEM_OBSERVER", subject="system")
      */
     public function showInstruments(System $system, Breadcrumbs $breadcrumbs)
     {
