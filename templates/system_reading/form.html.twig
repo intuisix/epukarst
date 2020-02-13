@@ -58,12 +58,12 @@ car celle-ci n'est pas triée.
             <div class="alert bg-light">
                 <h2>Mesures de contrôle</h2>
                 <p>Introduisez les éventuelles valeurs des mesures de contrôle qui ont été réalisées dans le cadre de ce relevé.</p>
-                <table class="table table-borderless table-responsive" cellpadding="3" width="100%">
+                <table class="table table-borderless table-responsive table-sm" cellpadding="3" width="100%">
                     <thead>
                         <tr>
-                            <td width="200">&nbsp;</td>
+                            <th width="200">&nbsp;</th>
                             {% for systemParameter in systemParameters %}
-                                <th width="{{800/(systemParameters|length)}}" class="text-center">
+                                <th width="150" class="text-center">
                                     {# Nom du paramètre #}
                                     {{systemParameter.instrumentParameter.parameter.name}}
                                 </th>
@@ -109,12 +109,12 @@ car celle-ci n'est pas triée.
                 <h2>Mesures aux stations</h2>
                 <p>Pour chaque station, introduisez les valeurs qui ont été mesurées. Décochez &laquo;&nbsp;S&nbsp;&raquo; lorsque la valeur était instable lors de la mesure, et/ou décochez &laquo;&nbsp;V&nbsp;&raquo; lorsque la valeur mesurée est hors gamme ou si l'instrument n'est pas en ordre d'étalonnage.</p>
                 {# Tableau d'encodage des mesures avec en colonnes les paramètres, en lignes les stations, et en cellules les mesures #}
-                <table class="table table-borderless table-responsive"  cellpadding="3" width="100%">
+                <table class="table table-borderless table-responsive table-sm" cellpadding="3">
                     <thead>
                         <tr>
                             <th width="200">&nbsp;</th>
                             {% for systemParameter in systemParameters %}
-                                <th width="{{800/(systemParameters|length)}}" class="text-center">
+                                <th width="150" class="text-center">
                                     {# Nom du paramètre #}
                                     {{systemParameter.instrumentParameter.parameter.name}}
                                 </th>
@@ -137,6 +137,15 @@ car celle-ci n'est pas triée.
                                     </td>
                                 {% endfor %}
                             </td>
+                        </tr>
+                        <tr>
+                            <td>Instrument</td>
+                            {% for systemParameter in systemParameters %}
+                                <td class="text-center">
+                                    {# Nom de l'instrument #}
+                                    {{systemParameter.instrumentParameter.instrument.code}}
+                                </td>
+                            {% endfor %}
                         </tr>
                         <tr>
                             <td>Norme</td>
@@ -163,15 +172,6 @@ car celle-ci n'est pas triée.
                                 </td>
                             {% endfor %}
                         </tr>
-                        <tr>
-                            <td>Instrument</td>
-                            {% for systemParameter in systemParameters %}
-                                <td class="text-center">
-                                    {# Nom de l'instrument #}
-                                    {{systemParameter.instrumentParameter.instrument.code}}
-                                </td>
-                            {% endfor %}
-                        </tr>
                     </thead>
                     {# Relevés de stations #}
                     {{form_widget(form.stationReadings)}}
@@ -184,12 +184,12 @@ car celle-ci n'est pas triée.
             <div class="alert bg-light">
                 <h2>Remarques aux stations</h2>
                 <p>Pour chaque station, introduisez la date et l'heure de la prise des mesures, ainsi qu'une éventuelle remarque. Si ne vous précisez pas de date et d'heure, les mesures seront présumées avoir été prises à la même date que le relevé de système.</p>
-                <table class="table table-borderless table-responsive"  cellpadding="3" width="100%">
+                <table class="table table-borderless table-responsive table-sm" cellpadding="3">
                     <thead>
                         <tr>
                             <th width="200">&nbsp;</th>
                             <th width="200">Date et heure</th>
-                            <th width="600">Remarque</th>
+                            <th width="800">Remarque</th>
                         </tr>
                     </thead>
                     {% for stationReading in form.children.stationReadings %}
