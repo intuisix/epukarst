@@ -129,9 +129,6 @@ class Measurability
                     ->atPath('minimumValue')
                     ->addViolation();
             }
-        } else {
-            /* Utiliser le minimum physique */
-            $this->minimumValue = $physicalMinimum;
         }
 
         /* Tester la valeur maximum */
@@ -149,9 +146,6 @@ class Measurability
                     ->atPath('maximumValue')
                     ->addViolation();
             }
-        } else {
-            /* Utiliser le maximum physique */
-            $this->maximumValue = $physicalMaximum;
         }
     }
 
