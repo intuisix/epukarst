@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Erreur du serveur
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Erreur du serveur</h1>
+        <p>Le serveur a rencontré une erreur interne.</p>
+        <p>Veuillez, si possible, nous faire part de ce que vous étiez en train de faire au moment où vous êtes arrivé sur l'erreur, de manière à nous puissions investiguer sur le problèe et le corriger aussi rapidement que possible.</p>
+        <p>Nous vous prions de nous en excuser pour le désagrément.</p>
+        <a href="{{path('home')}}" class="btn btn-primary">Retourner à l'accueil</a>
+    </div>
+{% endblock %}
