@@ -14,7 +14,8 @@
                 <th>Dénomination</th>
                 <th>Modèle</th>
                 <th>Numéro de série</th>
-                <th>Prochain étalonnage</th>
+                <th>Prochain<br>étalonnage</th>
+                <th width="15%">Paramètres</th>
                 <th>Actions</th>
             </tr>
             {% for instrument in instruments|sort((a, b) => (a.code <=> b.code)) %}
@@ -31,6 +32,11 @@
                             {% else %}
                                 <span class="badge badge-success badge-pill">OK</span>
                             {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for parameter in instrument.measurabilities|sort((a,b) => (a.parameter.name <=> b.parameter.name)) %}
+                            {{parameter.parameter.name}}{{loop.last ? '' : ','}}
                         {% endfor %}
                     </td>
                     <td>
