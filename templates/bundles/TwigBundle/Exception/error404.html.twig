@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Page non trouvée
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Page non trouvée</h1>
+        <p>La page demandée n'existe pas. Selon ce que vous faisiez, cela peut arriver parce que&nbsp;:</p>
+        <ul>
+            <li>un lien est erroné sur la page que vous parcouriez&nbsp;;</li>
+            <li>une information a changé d'identifiant, de code ou de slug&nbsp;;</li>
+            <li>un signet est incorrect dans votre navigateur&nbsp;;</li>
+            <li>...</li>
+        </ul>
+        <a href="{{path('home')}}" class="btn btn-primary">Retourner à l'accueil</a>
+    </div>
+{% endblock %}
