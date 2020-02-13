@@ -51,6 +51,9 @@ class Instrument
     /**
      * Numéro de série de l'instrument.
      * 
+     * Ceci peut être également un numéro de lot, raison pour laquelle on ne
+     * met pas de contrainte d'unicité.
+     * 
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $serialNumber;
@@ -228,5 +231,48 @@ class Instrument
             }
         }
         return $calibrationDueDate;
+    }
+
+    /**
+     * Crée une copie de l'instrument.
+     *
+     * Contraintes exportées: Les propriétés uniques, qui sont copiées
+     * également, devront être modifiées individuellement avant que la copie
+     * d'instrument puisse être mémorisée.
+     * 
+     * @param bool $batch spécifie si le numéro de série et les étalonnages doivent
+     * également être copiés; à défaut, ils seront vides sur la copie.
+     * @return Instrument
+     */
+    public function duplicate(bool $batch = true): Instrument
+    {
+        $copy = new Instrument();
+
+        /* Copier les propriétés générales */
+        $copy->code = $this->code;
+        $copy->name = $this->name;
+        $copy->model = $this->model;
+        $copy->description = $this->description;
+
+        /* Copier les paramètres */
+        foreach ($this->measurabilities as $original) {
+            $measurability = $original->duplicate();
+            $measurability->setInstrument($copy);
+            $copy->measurabilities[] = $measurability;
+        }
+
+        if ($batch) {
+            /* Copier le numéro de lot */
+            $copy->serialNumber = $this->serialNumber;
+
+            /* Copier les étalonnages */
+            foreach ($this->calibrations as $original) {
+                $calibration = $original->duplicate();
+                $calibration->setInstrument($copy);
+                $copy->calibrations[] = $calibration;
+            }
+        }
+
+        return $copy;
     }
 }

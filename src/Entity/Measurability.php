@@ -399,4 +399,25 @@ class Measurability
 
         return $this;
     }
+
+    /**
+     * Duplique le paramètre d'instrument.
+     *
+     * @return Measurability
+     */
+    public function duplicate(): Measurability
+    {
+        $copy = new Measurability;
+
+        $copy->instrument = $this->instrument;
+        $copy->parameter = $this->parameter;
+        $copy->minimumValue = $this->minimumValue;
+        $copy->maximumValue = $this->maximumValue;
+        $copy->tolerance = $this->tolerance;
+        $copy->notes = $this->notes;
+        $copy->inputConversion = $this->inputConversion;
+        $copy->inputUnit = $this->inputUnit;
+
+        return $copy;
+    }
 }

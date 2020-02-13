@@ -110,4 +110,22 @@ class Calibration
 
         return $this;
     }
+
+    /**
+     * Duplique l'étalonnage.
+     *
+     * @return Calibration
+     */    
+    public function duplicate(): Calibration
+    {
+        $copy = new Calibration();
+
+        $copy->instrument = $this->instrument;
+        $copy->doneDate = $this->doneDate;
+        $copy->dueDate = $this->dueDate;
+        $copy->operatorName = $this->operatorName;
+        $copy->notes = $this->notes;
+
+        return $copy;
+    }
 }

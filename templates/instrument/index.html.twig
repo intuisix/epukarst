@@ -35,6 +35,7 @@
                     </td>
                     <td>
                         <a href="{{path('instrument_modify', {'code': instrument.code})}}" class="text-primary"><i class="fas fa-edit"></i></a>
+                        <a href="{{path('instrument_duplicate', {'code': instrument.code})}}" class="text-secondary"><i class="fas fa-clone"></i></a>
                         <a href="{{path('instrument_delete', {'code': instrument.code})}}" class="text-danger"><i class="fas fa-trash"></i></a>
                     </td>
                 </tr>

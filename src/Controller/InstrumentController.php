@@ -47,20 +47,8 @@ class InstrumentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /* Persister les étalonnages */
-            foreach ($instrument->getCalibrations() as $calibration) {
-                $calibration->setInstrument($instrument);
-                $manager->persist($calibration);
-            }
-
-            /* Persister les paramètres */
-            foreach ($instrument->getMeasurabilities() as $measurability) {
-                $measurability->setInstrument($instrument);
-                $manager->persist($measurability);
-            }
-
-            $manager->persist($instrument);
-            $manager->flush();
+            /* Mémoriser l'instrument */
+            $this->storeInstrument($instrument, $manager);
             
             $this->addFlash('success', "L'instrument <strong>{$instrument->getName()}</strong> a été créé avec succès.");
     
@@ -90,20 +78,8 @@ class InstrumentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /* Persister les étalonnages */
-            foreach ($instrument->getCalibrations() as $calibration) {
-                $calibration->setInstrument($instrument);
-                $manager->persist($calibration);
-            }
-
-            /* Persister les paramètres */
-            foreach ($instrument->getMeasurabilities() as $measurability) {
-                $measurability->setInstrument($instrument);
-                $manager->persist($measurability);
-            }
-
-            $manager->persist($instrument);
-            $manager->flush();
+            /* Mémoriser l'instrument */
+            $this->storeInstrument($instrument, $manager);
             
             $this->addFlash('success', "L'instrument <strong>{$instrument->getName()}</strong> a été modifié avec succès.");
     
@@ -114,6 +90,40 @@ class InstrumentController extends AbstractController
             'instrument' => $instrument,
             'form' => $form->createView(),
             'title' => "Modifier l'instrument {$instrument->getName()}",
+            'breadcrumbs' => $breadcrumbs,
+        ]);
+    }
+
+    /**
+     * Affiche et traite le formulaire de duplication d'instrument.
+     * 
+     * @Route("/instrument/{code}/duplicate", name="instrument_duplicate")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function duplicate(Instrument $original, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    {
+        $breadcrumbs->add("Dupliquer un instrument");
+
+        /* Dupliquer l'instrument original */
+        $instrument = $original->duplicate();
+
+        /* Créer et traiter le formulaire */
+        $form = $this->createForm(InstrumentType::class, $instrument);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /* Mémoriser l'instrument */
+            $this->storeInstrument($instrument, $manager);
+            
+            $this->addFlash('success', "L'instrument <strong>{$instrument->getName()}</strong> a été créé avec succès.");
+    
+            return $this->redirect($breadcrumbs->getPrevious());
+        }
+
+        return $this->render('instrument/form.html.twig', [
+            'instrument' => $instrument,
+            'form' => $form->createView(),
+            'title' => "Dupliquer l'instrument {$instrument->getName()}",
             'breadcrumbs' => $breadcrumbs,
         ]);
     }
@@ -147,5 +157,30 @@ class InstrumentController extends AbstractController
             'title' => "Supprimer l'instrument {$instrument->getName()}",
             'breadcrumbs' => $breadcrumbs,
         ]);
+    }
+
+    /**
+     * Mémorise l'instrument dans la base de données.
+     *
+     * @param Instrument $instrument
+     * @param ObjectManager $manager
+     * @return void
+     */
+    private function storeInstrument(Instrument $instrument, ObjectManager $manager)
+    {
+        /* Persister les étalonnages */
+        foreach ($instrument->getCalibrations() as $calibration) {
+            $calibration->setInstrument($instrument);
+            $manager->persist($calibration);
+        }
+
+        /* Persister les paramètres */
+        foreach ($instrument->getMeasurabilities() as $measurability) {
+            $measurability->setInstrument($instrument);
+            $manager->persist($measurability);
+        }
+
+        $manager->persist($instrument);
+        $manager->flush();
     }
 }
