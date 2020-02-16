@@ -43,6 +43,11 @@
             {% endif %}
         </dl>
 
+        {# Description de l'instrument modèle #}
+        {% if instrument.modelInstrument is not null %}
+            {{instrument.modelInstrument.description|raw}}
+        {% endif %}
+
         {# Description #}
         {{instrument.description|raw}}
     {% endfor %}

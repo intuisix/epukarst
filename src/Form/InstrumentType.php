@@ -77,6 +77,14 @@ class InstrumentType extends AbstractType
                 'allow_add' => true,
                 'allow_delete' => true, 
             ])
+            ->add('modelInstrument', EntityType::class, [
+                'label' => "Instrument modèle",
+                'class' => Instrument::class,
+                'choice_label' => 'name',
+                'placeholder' => "Sélectionnez un modèle (facultatif)",
+                'help' => "Permet à cet instrument d'hériter de la description de son instrument modèle",
+                'required' => false,
+            ])
         ;
     }
 

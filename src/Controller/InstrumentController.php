@@ -138,25 +138,31 @@ class InstrumentController extends AbstractController
     {
         $breadcrumbs->add("Supprimer un instrument");
 
-        /* Créer et traiter le formulaire de confirmation */
-        $form = $this->createFormBuilder()->getForm();
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            /* Supprimer l'instrument */
-            $manager->remove($instrument);
-            $manager->flush();
+        if (count($instrument->getDerivedInstruments()) > 0) {
+            $this->addFlash('danger', "Vous ne pouvez pas supprimer l'instrument <strong>{$instrument->getName()}</strong> car il sert de modèle à d'autres instruments.");
+        } else {
+            /* Créer et traiter le formulaire de confirmation */
+            $form = $this->createFormBuilder()->getForm();
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                /* Supprimer l'instrument */
+                $manager->remove($instrument);
+                $manager->flush();
+
+                $this->addFlash('success', "L'instrument <strong>{$instrument->getName()}</strong> a été supprimé avec succès.");
+
+                return $this->redirect($breadcrumbs->getPrevious('instrument'));
+            }
     
-            $this->addFlash('success', "L'instrument <strong>{$instrument->getName()}</strong> a été supprimé avec succès.");
-    
-            return $this->redirect($breadcrumbs->getPrevious('instrument'));
+            return $this->render('instrument/delete.html.twig', [
+                'form' => $form->createView(),
+                'instrument' => $instrument,
+                'title' => "Supprimer l'instrument {$instrument->getName()}",
+                'breadcrumbs' => $breadcrumbs,
+            ]);
         }
 
-        return $this->render('instrument/delete.html.twig', [
-            'form' => $form->createView(),
-            'instrument' => $instrument,
-            'title' => "Supprimer l'instrument {$instrument->getName()}",
-            'breadcrumbs' => $breadcrumbs,
-        ]);
+        return $this->redirect($breadcrumbs->getPrevious());
     }
 
     /**

@@ -112,6 +112,22 @@ class Instrument
     private $requiringInstruments;
 
     /**
+     * Définit l'instrument servant de modèle.
+     * 
+     * @ORM\ManyToOne(targetEntity="App\Entity\Instrument", inversedBy="derivedInstruments")
+     * 
+     * @Assert\Expression("this.getModelInstrument() !== this", message="L'instrument ne peut pas être son propre modèle")
+     */
+    private $modelInstrument;
+
+    /**
+     * Liste des instruments basés sur celui-ci comme modèle.
+     * 
+     * @ORM\OneToMany(targetEntity="App\Entity\Instrument", mappedBy="modelInstrument")
+     */
+    private $derivedInstruments;
+
+    /**
      * Construit un instrument.
      */
     public function __construct()
@@ -121,6 +137,7 @@ class Instrument
         $this->calibrations = new ArrayCollection();
         $this->requiredInstruments = new ArrayCollection();
         $this->requiringInstruments = new ArrayCollection();
+        $this->derivedInstruments = new ArrayCollection();
     }
 
     /**
@@ -401,5 +418,48 @@ class Instrument
                 $instrument->findAllRequiredInstruments($found);
             }
         }
+    }
+
+    public function getModelInstrument(): ?self
+    {
+        return $this->modelInstrument;
+    }
+
+    public function setModelInstrument(?self $modelInstrument): self
+    {
+        $this->modelInstrument = $modelInstrument;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|self[]
+     */
+    public function getDerivedInstruments(): Collection
+    {
+        return $this->derivedInstruments;
+    }
+
+    public function addDerivedInstrument(self $derivedInstrument): self
+    {
+        if (!$this->derivedInstruments->contains($derivedInstrument)) {
+            $this->derivedInstruments[] = $derivedInstrument;
+            $derivedInstrument->setModelInstrument($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDerivedInstrument(self $derivedInstrument): self
+    {
+        if ($this->derivedInstruments->contains($derivedInstrument)) {
+            $this->derivedInstruments->removeElement($derivedInstrument);
+            // set the owning side to null (unless already changed)
+            if ($derivedInstrument->getModelInstrument() === $this) {
+                $derivedInstrument->setModelInstrument(null);
+            }
+        }
+
+        return $this;
     }
 }

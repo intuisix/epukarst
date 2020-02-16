@@ -37,13 +37,35 @@ modification de relevés #}
                 <div class="alert">
                     <div class="row">
                         <div class="col-4">
+                            {# Code de l'instrument #}
                             {{form_row(form.code)}}
+                            {# Nom de l'instrument #}
                             {{form_row(form.name)}}
+                            {# Marque/modèle de l'instrument #}
                             {{form_row(form.model)}}
+                            {# Numéro de série ou de lot de l'instrument #}
                             {{form_row(form.serialNumber)}}
                         </div>
                         <div class="col">
+                            {# Description de l'instrument #}
                             {{form_row(form.description)}}
+                            <div class="row">
+                                <div class="col">
+                                    {# Instrument modèle #}
+                                    {{form_row(form.modelInstrument)}}
+                                </div>
+                                {# Liste des instruments dérivés #}
+                                {% if instrument.derivedInstruments|length %}
+                                    <div class="col">
+                                        <p>Instruments basés sur <strong>{{instrument.name}}</strong>&nbsp;:</p>
+                                        <ul>
+                                            {% for derivedInstrument in instrument.derivedInstruments|sort((a,b) => (a.name <=> b.name)) %}
+                                                <li>{{derivedInstrument.name}}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -68,14 +90,16 @@ modification de relevés #}
                         <div class="col">
                             {{form_row(form.requiredInstruments)}}
                         </div>
-                        <div class="col-4">
-                            <p>Instruments nécessitant {{instrument.name}}&nbsp;:</p>
-                            <ul>
-                                {% for requiringInstrument in instrument.requiringInstruments %}
-                                    <li>{{requiringInstrument.name}}</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
+                        {% if instrument.requiringInstruments|length %}
+                            <div class="col-4">
+                                <p>Instruments nécessitant <strong>{{instrument.name}}</strong>&nbsp;:</p>
+                                <ul>
+                                    {% for requiringInstrument in instrument.requiringInstruments|sort((a,b) => (a.name <=> b.name)) %}
+                                        <li>{{requiringInstrument.name}}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
