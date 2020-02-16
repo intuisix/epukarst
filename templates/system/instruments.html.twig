@@ -30,9 +30,17 @@
         </h2>
 
         <dl class="row">
-            {# Marque et modèle #}
-            <dt class="col-3">Marque/modèle&nbsp;:</dt>
-            <dd class="col-9">{{instrument.model|default('Néant')}}</dd>
+            {% if instrument.model is not null %}
+                {# Marque et modèle #}
+                <dt class="col-4">Marque/modèle&nbsp;:</dt>
+                <dd class="col-8">{{instrument.model}}</dd>
+            {% endif %}
+
+            {% if (instrument.serialNumber is not null) and is_granted('SYSTEM_CONTRIBUTOR', system) %}
+                {# Numéro de série #}
+                <dt class="col-4">Numéro de série/de lot&nbsp;:</dt>
+                <dd class="col-8">{{instrument.serialNumber}}</dd>
+            {% endif %}
         </dl>
 
         {# Description #}

@@ -41,7 +41,7 @@ class InstrumentType extends AbstractType
                 ],
             ])
             ->add('serialNumber', TextType::class, [
-                'label' => "Numéro de série",
+                'label' => "Numéro de série ou de lot",
                 'required' => false,
                 'attr' => [
                     'placeholder' => "Entrez le numéro de série donné par le fabricant (facultatif)",
