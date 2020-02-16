@@ -259,6 +259,14 @@ car celle-ci n'est pas triée.
             </div>
         {% endif %}
 
+        <div class="alert bg-light">
+            <h2>Pièces jointes</h2>
+            {# Nouvelles pièces jointes #}
+            {{form_row(form.newAttachments)}}
+            {# Pièces jointes #}
+            {{form_row(form.attachments)}}
+        </div>
+
         {# Bouton permettant d'enregistrer le relevé #}
         <button type="submit" class="btn btn-success">
             <i class="fas fa-check"></i>
@@ -324,7 +332,51 @@ car celle-ci n'est pas triée.
     </td>
 {% endblock %}
 
+
+{% block _system_reading_attachments_label %}
+{% endblock %}
+
+{% block _system_reading_attachments_entry_label %}
+{% endblock %}
+
+{% block _system_reading_attachments_entry_row %}
+    <div class="form-row alert bg-white" id="{{id}}">
+        <div class="col">
+            {# Nom de la pièce jointe #}
+            {{form_widget(form.name)}}
+        </div>
+        <div class="col-2">
+            {# Auteur de chargement #}
+            {{form_widget(form.uploadAuthor)}}
+        </div>
+        <div class="col-3">
+            {# Date et heure de chargement #}
+            {{form_widget(form.uploadDateTime)}}
+        </div>
+        <div class="col-3">
+            {# Bouton pour supprimer la pièce jointe #}
+            <button type="button" data-action="delete-attachment" data-target="#{{id}}" class="btn btn-danger float-right">
+                <i class="fas fa-trash"></i>
+                Supprimer cette pièce jointe
+            </button>
+        </div>
+    </div>
+{% endblock %}
+
+
 {% block javascripts %}
+    <script src="/js/collection.js"></script>
+    <script>
+        var attachmentsCollectionResponders =
+            createCollectionResponders(
+                '#system_reading_attachments',
+                null,
+                'button[data-action="delete-attachment"]',
+                'Etes-vous sûr de vouloir supprimer cette pièce jointe ?'
+            );
+        attachmentsCollectionResponders();
+    </script>
+
     <script>
         {# Activer les tooltips #}
         $(function () {

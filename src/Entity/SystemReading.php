@@ -109,12 +109,21 @@ class SystemReading
     private $controls;
 
     /**
+     * @ORM\OneToMany(
+     *     targetEntity="App\Entity\Attachment",
+     *     mappedBy="systemReading",
+     *     orphanRemoval=true)
+     */
+    private $attachments;
+
+    /**
      * Construit une instance de relevé.
      */
     public function __construct()
     {
         $this->stationReadings = new ArrayCollection();
         $this->controls = new ArrayCollection();
+        $this->attachments = new ArrayCollection();
     }
 
     /**
@@ -372,6 +381,37 @@ class SystemReading
             // set the owning side to null (unless already changed)
             if ($control->getSystemReading() === $this) {
                 $control->setSystemReading(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Attachment[]
+     */
+    public function getAttachments(): Collection
+    {
+        return $this->attachments;
+    }
+
+    public function addAttachment(Attachment $attachment): self
+    {
+        if (!$this->attachments->contains($attachment)) {
+            $this->attachments[] = $attachment;
+            $attachment->setSystemReading($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAttachment(Attachment $attachment): self
+    {
+        if ($this->attachments->contains($attachment)) {
+            $this->attachments->removeElement($attachment);
+            // set the owning side to null (unless already changed)
+            if ($attachment->getSystemReading() === $this) {
+                $attachment->setSystemReading(null);
             }
         }
 

@@ -64,7 +64,6 @@
         </div>
 
         <h2>Relevés de stations</h2>
-
         <table width="100%" class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -115,7 +114,9 @@
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="100">Il n'y a pas de relevés de station.</td>
+                        <td colspan="100">
+                            <em>Il n'y a pas de relevés de station.</em>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -123,7 +124,6 @@
 
         {% if systemReading.controls|length %}
             <h2>Mesures de contrôle</h2>
-
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -138,6 +138,28 @@
                             <td>{{control.instrumentParameter.parameter.formatValue(control.value)}}</td>
                         {% endfor %}
                     </tr>
+                </tbody>
+            </table>
+        {% endif %}
+
+        {% if systemReading.attachments|length %}
+            <h2>Pièces jointes</h2>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th width="50%">Nom</th>
+                        <th>Auteur</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for attachment in systemReading.attachments %}
+                        <tr>
+                            <td><a href="/{{attachment.fileName}}" target="_blank">{{attachment.name}}</a></td>
+                            <td>{{attachment.uploadAuthor.displayName}}</td>
+                            <td>{{attachment.uploadDateTime|localizeddate('short', 'short')}}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         {% endif %}

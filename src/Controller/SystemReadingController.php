@@ -8,6 +8,7 @@ use App\Entity\Control;
 use App\Entity\Measure;
 use App\Entity\Reading;
 use App\Entity\Station;
+use App\Entity\Attachment;
 use App\Service\Breadcrumbs;
 use App\Entity\SystemReading;
 use App\Entity\SystemParameter;
@@ -100,6 +101,8 @@ class SystemReadingController extends AbstractController
 
         /* Vérifier le soumission et la validité du formulaire */
         if ($form->isSubmitted() && $form->isValid()) {
+            /* Ajouter les nouvelles pièces jointes */
+            $this->addNewAttachments($systemReading, $form, $this->getUser(), $manager);
             /* Mémoriser le relevé de système */
             $this->storeSystemReading($systemReading, $manager);
 
@@ -151,6 +154,8 @@ class SystemReadingController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            /* Ajouter les nouvelles pièces jointes */
+            $this->addNewAttachments($systemReading, $form, $this->getUser(), $manager);
             /* Mémoriser le relevé de système */
             $this->storeSystemReading($systemReading, $manager);
 
@@ -532,6 +537,26 @@ class SystemReadingController extends AbstractController
         /* Ajouter l'alarme à la base de données */
         $manager->persist($alarm);
         return $alarm;
+    }
+
+    /**
+     * Ajoute les nouvelles pièces jointes au relevé de système.
+     *
+     * @param SystemReading $systemReading
+     * @param Form $form
+     * @param User $user
+     * @param ObjectManager $anager
+     * @return void
+     */
+    private function addNewAttachments(SystemReading $systemReading, $form, $user, ObjectManager $manager)
+    {
+        /* Ajouter les pièces jointes qui viennent d'être chargées */
+        foreach ($form['newAttachments']->getData() as $uploadedFile) {
+            $attachment = new Attachment();
+            $attachment->setUploadedFile($uploadedFile, $user);
+            $systemReading->addAttachment($attachment);
+            $manager->persist($attachment);
+        }
     }
 
     /**

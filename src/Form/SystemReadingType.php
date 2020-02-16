@@ -8,6 +8,7 @@ use App\Entity\Basin;
 use App\Entity\System;
 use App\Entity\Reading;
 use App\Entity\Station;
+use App\Form\AttachmentType;
 use App\Entity\Measurability;
 use App\Entity\SystemReading;
 use Symfony\Component\Form\FormEvent;
@@ -15,9 +16,12 @@ use App\Form\SystemReadingStationType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\All;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -60,6 +64,30 @@ class SystemReadingType extends AbstractType
                 'entry_type' => SystemReadingControlType::class,
                 'allow_add' => false,
                 'allow_delete' => false,
+            ])
+            ->add('newAttachments', FileType::class, [
+                'label' => "Ajouter des pièces jointes",
+                'help' => "Utilisez ce contrôle pour charger une ou plusieurs pièces jointes (p.ex. vos notes manuscrites, en format PDF ou JPEG, n'excédant pas 2 Mo).",
+                'attr' => [
+                    'placeholder' => "Choisissez un ou plusieurs fichiers",
+                ],
+                'multiple' => true,
+                'mapped' => false,
+                'required' => false,
+                'constraints' => [
+                    new All([
+                        new File([
+                            'maxSize' => '2048k',
+                            'maxSizeMessage' => "Les fichiers doivent faire moins de 2 Mo",
+                        ])
+                    ])
+                ]
+            ])
+            ->add('attachments', CollectionType::class, [
+                'label' => "Pièces jointes",
+                'entry_type' => AttachmentType::class,
+                'allow_add' => false,
+                'allow_delete' => true,
             ])
         ;
 
