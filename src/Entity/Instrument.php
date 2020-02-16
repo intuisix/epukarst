@@ -8,9 +8,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InstrumentRepository")
+ * @ORM\HasLifecycleCallbacks()
+ * 
  * @UniqueEntity(fields={"code"}, message="Un autre instrument possède déjà ce code. Veuillez en choisir un autre.")
  * @UniqueEntity(fields={"name"}, message="Un autre instrument possède déjà cette dénomination. Veuillez en choisir une autre.")
  */
@@ -81,11 +84,68 @@ class Instrument
      */
     private $calibrations;
 
+    /**
+     * Liste des instruments requis par cet instrument pour que les mesures
+     * puissent effectivement être réalisées avec lui. Ces instruments
+     * rassemblés récursivement forment la chaîne de mesure.
+     * 
+     * Par exemple:
+     * - pour une sonde, un instrument lié peut être le multimètre permettant
+     *   de calculer la mesure;
+     * - pour un réactif, un instrument lié peut être le spectrophotomètre
+     *   permettant de calculer la mesure, mais aussi la pipette permettant de
+     *   mélanger un échantillon dans le réactif.
+     *
+     * @ORM\ManyToMany(targetEntity="App\Entity\Instrument", inversedBy="requiringInstruments")
+     * 
+     * @Assert\Valid()
+     */
+    private $requiredInstruments;
+
+    /**
+     * Rôle inverse de $requiredInstruments.
+     * 
+     * @ORM\ManyToMany(targetEntity="App\Entity\Instrument", mappedBy="requiredInstruments")
+     * 
+     * @Assert\Valid()
+     */
+    private $requiringInstruments;
+
+    /**
+     * Construit un instrument.
+     */
     public function __construct()
     {
         $this->measures = new ArrayCollection();
         $this->measurabilities = new ArrayCollection();
         $this->calibrations = new ArrayCollection();
+        $this->requiredInstruments = new ArrayCollection();
+        $this->requiringInstruments = new ArrayCollection();
+    }
+
+    /**
+     * Nettoie un instrument avant qu'il ne soit mémorisé dans la base de
+     * données.
+     *
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function cleanupRequiredInstruments()
+    {
+        /* Eliminer les instruments liés redondants */
+        $found = [];
+        foreach ($this->requiredInstruments as $instrument) {
+            if ($instrument === $this) {
+                /* Enlever l'instrument lié à lui-même */
+                $this->requiredInstruments->removeElement($instrument);
+            } else if (in_array($instrument, $found, true)) {
+                /* Enlever l'instrument lié présent plusieurs fois */
+                $this->requiredInstruments->removeElement($instrument);
+            } else {
+                /* Conserver cet instrument */
+                $instrument->findAllRequiredInstruments($found);
+            }
+        }
     }
 
     public function getId(): ?int
@@ -274,5 +334,72 @@ class Instrument
         }
 
         return $copy;
+    }
+
+    /**
+     * @return Collection|self[]
+     */
+    public function getRequiredInstruments(): Collection
+    {
+        return $this->requiredInstruments;
+    }
+
+    public function addRequiredInstrument(self $requiredInstrument): self
+    {
+        if (!$this->requiredInstruments->contains($requiredInstrument)) {
+            $this->requiredInstruments[] = $requiredInstrument;
+        }
+
+        return $this;
+    }
+
+    public function removeRequiredInstrument(self $requiredInstrument): self
+    {
+        if ($this->requiredInstruments->contains($requiredInstrument)) {
+            $this->requiredInstruments->removeElement($requiredInstrument);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|self[]
+     */
+    public function getRequiringInstruments(): Collection
+    {
+        return $this->requiringInstruments;
+    }
+
+    public function addRequiringInstrument(self $requiringInstrument): self
+    {
+        if (!$this->requiringInstruments->contains($requiringInstrument)) {
+            $this->requiringInstruments[] = $requiringInstrument;
+            $requiringInstrument->addRequiredInstrument($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRequiringInstrument(self $requiringInstrument): self
+    {
+        if ($this->requiringInstruments->contains($requiringInstrument)) {
+            $this->requiringInstruments->removeElement($requiringInstrument);
+            $requiringInstrument->removeRequiredInstrument($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Trouve récursivement tous les instruments liés.
+     */
+    public function findAllRequiredInstruments(&$found)
+    {
+        if (!in_array($this, $found)) {
+            $found[] = $this;
+            foreach ($this->requiredInstruments as $instrument) {
+                $instrument->findAllRequiredInstruments($found);
+            }
+        }
     }
 }

@@ -242,12 +242,11 @@ class SystemController extends AbstractController
     {
         $breadcrumbs->add("Liste des instruments d'un système");
 
+        /* Trouver tous les instruments de chaque chaîne de mesure du système */
         $instruments = [];
         foreach ($system->getParameters() as $systemParameter) {
             $instrument = $systemParameter->getInstrumentParameter()->getInstrument();
-            if (!in_array($instrument, $instruments)) {
-                $instruments[] = $instrument;
-            }
+            $instrument->findAllRequiredInstruments($instruments);
         }
 
         return $this->render('system/instruments.html.twig', [

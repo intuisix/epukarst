@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -64,6 +65,17 @@ class InstrumentType extends AbstractType
                 'entry_type' => CalibrationType::class,
                 'allow_add' => true,
                 'allow_delete' => true
+            ])
+            ->add('requiredInstruments', CollectionType::class, [
+                'label' => "Liaisons",
+                'entry_type' => EntityType::class,
+                'entry_options' => [
+                    'class' => Instrument::class,
+                    'choice_label' => 'name',
+                    'placeholder' => "Sélectionnez un instrument",
+                ],
+                'allow_add' => true,
+                'allow_delete' => true, 
             ])
         ;
     }

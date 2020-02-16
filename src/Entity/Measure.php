@@ -172,16 +172,23 @@ class Measure
                 }
             }
 
-            /* Comparer la date de terrain à la date de validité de
-            l'instrument (définie au dernier étalonnage) */
+            /* Comparer la date de terrain à la date de validité de tous les
+            instruments requis dans la chaîne de mesure */
             if ((null !== $instrument)) {
-                $calibrationDueDate = $instrument->getCalibrationDueDate();
-                if ((null !== $calibrationDueDate) &&
-                    ($this->fieldDateTime > $calibrationDueDate)) {
-                    $context
-                        ->buildViolation("Cette valeur a été mesurée à l'aide d'un instrument non contrôlé depuis le {$calibrationDueDate->format('d/m/Y')}.")
-                        ->atPath('value')
-                        ->addViolation();
+                /* Déterminer la liste des instruments */
+                $requiredInstruments = [];
+                $instrument->findAllRequiredInstruments($requiredInstruments);
+                /* Vérifier pour chaque instrument */
+                foreach ($requiredInstruments as $requiredInstrument) {
+                    $calibrationDueDate = $requiredInstrument->getCalibrationDueDate();
+                    if ((null !== $calibrationDueDate) &&
+                        ($this->fieldDateTime > $calibrationDueDate)) {
+                        /* Erreur */
+                        $context
+                            ->buildViolation("Cette valeur a été mesurée à l'aide de {$requiredInstrument->getName()} non contrôlé depuis le {$calibrationDueDate->format('d/m/Y')}.")
+                            ->atPath('value')
+                            ->addViolation();
+                    }
                 }
             }
         }

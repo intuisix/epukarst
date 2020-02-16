@@ -27,6 +27,9 @@ modification de relevés #}
             <li class="nav-item">
                 <a class="nav-link" id="calibrations-tab" data-toggle="tab" href="#calibrations" role="tab" aria-controls="calibrations" aria-selected="false">{{form.calibrations.vars.label}}</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" id="requiredInstruments-tab" data-toggle="tab" href="#requiredInstruments" role="tab" aria-controls="requiredInstruments" aria-selected="false">{{form.requiredInstruments.vars.label}}</a>
+            </li>
         </ul>
         <div class="tab-content" id="myTabContent">
             {# Afficher le panneau d'identification #}
@@ -55,6 +58,25 @@ modification de relevés #}
             <div class="tab-pane fade" id="calibrations" role="tabpanel" aria-labelledby="calibrations-tab">
                 <div class="alert">
                     {{form_row(form.calibrations)}}
+                </div>
+            </div>
+            {# Afficher le panneau des instruments requis #}
+            <div class="tab-pane fade" id="requiredInstruments" role="tabpanel" aria-labelledby="requiredInstruments-tab">
+                <div class="alert">
+                    <p>Ce panneau permet de définir, pour les instruments qui nécessitent d'être combinés avec d'autres pour la prise de mesure, les liaisons avec ces instruments. Par exemple, une sonde peut nécessiter un multimètre, un réactif peut nécessiter un spectrophotomètre, etc.</p>
+                    <div class="row">
+                        <div class="col">
+                            {{form_row(form.requiredInstruments)}}
+                        </div>
+                        <div class="col-4">
+                            <p>Instruments nécessitant {{instrument.name}}&nbsp;:</p>
+                            <ul>
+                                {% for requiringInstrument in instrument.requiringInstruments %}
+                                    <li>{{requiringInstrument.name}}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -216,6 +238,44 @@ modification de relevés #}
 {% endblock %}
 
 
+{% block _instrument_requiredInstruments_label %}
+{% endblock %}
+
+{% block _instrument_requiredInstruments_widget %}
+    {# Afficher le widget #}
+    {{form_widget(form)}}
+
+    {# Afficher un bouton permettant d'ajouter un instrument requis #}
+    <button type="button" data-action="add-requiredInstrument" class="btn btn-secondary">
+        <i class="fas fa-plus"></i>
+        Ajouter une liaison
+    </button>
+{% endblock %}
+
+{% block _instrument_requiredInstruments_entry_row %}
+    {# N'afficher que le widget, sans étiquette ou autre information #}
+    {{form_widget(form)}}
+{% endblock %}
+
+{% block _instrument_requiredInstruments_entry_widget %}
+    <div class="form-group alert bg-light" id="{{id}}">
+        <div class="row">
+            <div class="col">
+                {{form_errors(form)}}
+                {{form_widget(form)}}
+            </div>
+            <div class="col">
+                {# Bouton pour supprimer la l'instrument requis #}
+                <button type="button" data-action="delete-requiredInstrument" data-target="#{{id}}" class="btn btn-danger float-right">
+                    <i class="fas fa-trash"></i>
+                    Supprimer cette liaison
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
 {% block javascripts %}
     <script src="/js/collection.js"></script>
     <script>
@@ -236,5 +296,14 @@ modification de relevés #}
                 'Etes-vous certain de vouloir supprimer ce paramètre ?'
             );
         measurabilitiesCollectionResponders();
+
+        var requiredInstrumentsCollectionResponders =
+            createCollectionResponders(
+                '#instrument_requiredInstruments',
+                'button[data-action="add-requiredInstrument"]',
+                'button[data-action="delete-requiredInstrument"]',
+                'Etes-vous certain de vouloir supprimer cette liaison ?'
+            );
+        requiredInstrumentsCollectionResponders();
     </script>
 {% endblock %}
