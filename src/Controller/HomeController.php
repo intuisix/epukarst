@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Service\Breadcrumbs;
 use App\Repository\PostRepository;
 use App\Service\PaginationService;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,8 +16,10 @@ class HomeController extends AbstractController
      * 
      * @Route("/", name="home")
      */
-    public function home(PostRepository $postRepository)
+    public function home(PostRepository $postRepository, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add("Accueil");
+
         return $this->render('home/home.html.twig', [
             'posts' => $postRepository->findHomePosts(),
         ]);
@@ -25,8 +28,10 @@ class HomeController extends AbstractController
     /**
      * @Route("/home/{slug}/{page<\d+>?1}", name="home_post")
      */
-    public function show(Post $post, int $page, PostRepository $repository, PaginationService $pagination)
+    public function show(Post $post, int $page, PostRepository $repository, PaginationService $pagination, Breadcrumbs $breadcrumbs)
     {
+        $breadcrumbs->add($post->getTitle());
+
         $queryBuilder = $repository->createQueryBuilder('p');
         $queryBuilder
             ->select('p')

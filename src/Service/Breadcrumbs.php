@@ -144,6 +144,7 @@ class Breadcrumbs
             soient présentes dans le fil d'ariane: la page en cours et la page
             précédente */
             if ($count < 2) {
+                dump($this);
                 throw new \Exception("Breadcrumbs do not contain at least two pages.");
             } else {
                 $offset = $count - 2;
