@@ -202,7 +202,7 @@
                 {# Bouton à menu déroulant permettant d'encoder un relevé, pour chaque système #}
                 {% if is_granted('SYSTEM_CONTRIBUTOR') %}
                     <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <fa class="fas fa-plus"></fa> Encoder un relevé de système
+                        <fa class="fas fa-plus"></fa> Encoder une fiche
                     </button>
                     <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                         {% for system in systems %}
@@ -213,9 +213,9 @@
                     </div>
                 {% endif %}
 
-                {# Bouton permettant d'encoder un relevé de sation #}
+                {# Bouton permettant d'encoder un relevé #}
                 {% if is_granted('SYSTEM_CONTRIBUTOR') %}
-                    <a class="btn btn-secondary" href="{{path('reading_encode')}}" role="button"><fa class="fas fa-plus"></fa> Encoder un relevé de station</a>
+                    <a class="btn btn-secondary" href="{{path('reading_encode')}}" role="button"><fa class="fas fa-plus"></fa> Encoder un relevé</a>
                 {% endif %}
 
                 {# Bouton permettant d'exporter les relevés #}

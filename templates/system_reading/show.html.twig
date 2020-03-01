@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Relevé de système {{systemReading.code}}
+     Fiche {{systemReading.code}}
 {% endblock %}
 
 {% block body %}
     <div class="container mb-3">
-        <h1>Relevé de système {{systemReading.code}}</h1>
+        <h1>Fiche {{systemReading.code}}</h1>
 
         <div class="card mb-3">
             <div class="card-body">
@@ -63,7 +63,8 @@
             {% endif %}
         </div>
 
-        <h2>Relevés de stations</h2>
+        <h2>Relevés</h2>
+        <p>La fiche contient les relevés suivants, dont chacun regroupe les mesures réalisées auprès d'une station&nbsp;:</p>
         <table width="100%" class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -115,7 +116,7 @@
                 {% else %}
                     <tr>
                         <td colspan="100">
-                            <em>Il n'y a pas de relevés de station.</em>
+                            <em>Il n'y a pas de relevés.</em>
                         </td>
                     </tr>
                 {% endfor %}
@@ -164,18 +165,18 @@
             </table>
         {% endif %}
 
-        {# Bouton permettant de modifier le relevé #}
+        {# Bouton permettant de modifier la fiche #}
         {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
             <a href="{{path('system_reading_edit', {'code': systemReading.code})}}" class="btn btn-primary">
                 <i class="fas fa-edit"></i>
-                Modifier ce relevé
+                Modifier cette fiche
             </a>
         {% endif %}
-        {# Bouton permettant de modifier le relevé #}
+        {# Bouton permettant de modifier la fiche #}
         {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
             <a href="{{path('system_reading_delete', {'code': systemReading.code})}}" class="btn btn-danger">
                 <i class="fas fa-edit"></i>
-                Supprimer ce relevé
+                Supprimer cette fiche
             </a>
         {% endif %}
         {# Bouton permettant de revenir à la page précédente #}

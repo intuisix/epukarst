@@ -8,7 +8,7 @@
     <div class="container">
         <h1>{{title}}</h1>
 
-        <p>Cette page énumère les emplacements auxlequels les relevés sont réalisés dans le système.</p>
+        <p>Cette page énumère les stations auxquelles les relevés sont réalisés au sein du système.</p>
 
         <table class="table table-bordered table-striped">
             <thead>
@@ -54,16 +54,6 @@
             <a href="{{path('system_station_create', {'code': system.code})}}" class="btn btn-primary">
                 <i class="fas fa-plus"></i>
                 Ajouter une station
-            </a>
-            {# Bouton permettant de voir les stations #}
-            <a href="{{path('system_show_stations', {'slug': system.slug})}}" class="btn btn-secondary">
-                <i class="fas fa-eye"></i>
-                Voir les stations
-            </a>
-            {# Bouton permettant de passer à l'encodage d'un relevé #}
-            <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary">
-                <i class="far fa-file-alt"></i>
-                Encoder un relevé de système
             </a>
             {# Bouton permettant de revenir à la page précédente #}
             {{breadcrumbs.displayBackButton}}

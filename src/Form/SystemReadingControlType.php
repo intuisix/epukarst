@@ -9,8 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 /**
- * Formulaire permettant la saisie d'une valeur de contrôle dans le formulaire
- * de relevé de système.
+ * Formulaire permettant la saisie d'une valeur de contrôle.
  */
 class SystemReadingControlType extends AbstractType
 {

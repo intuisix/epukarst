@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Relevé de station {{reading.code}}
+    Relevé {{reading.code}}
 {% endblock %}
 
 {% block body %}
     <div class="container mb-3">
-        <h1>Relevé de station {{reading.code}}</h1>
+        <h1>Relevé {{reading.code}}</h1>
 
         <div class="card mb-3">
             <div class="card-body">
@@ -19,7 +19,7 @@
                     <dd class="col-9">{{reading.station.name}}</dd>
                     <dt class="col-3">Réalisé le&nbsp;:</dt>
                     <dd class="col-9">{{reading.fieldDateTime|localizeddate('short', 'short')}}</dd>
-                    <dt class="col-3">Relevé de système&nbsp;:</dt>
+                    <dt class="col-3">Fiche&nbsp;:</dt>
                     <dd class="col-9">
                         {% if reading.systemReading is not null and is_granted('SYSTEM_OBSERVER', reading) %}
                             <a href="{{path('system_reading_show', {'code': reading.systemReading.code})}}">

@@ -462,7 +462,7 @@ class AppFixtures extends Fixture
     }
 
     /**
-     * Génère des relevés relatifs à une station.
+     * Génère des relevés.
      *
      * @param ObjectManager $manager
      * @param Station $station

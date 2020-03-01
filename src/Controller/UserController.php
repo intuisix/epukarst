@@ -282,7 +282,7 @@ class UserController extends AbstractController
         } else if (!$this->isGranted($account->getMainRole())) {
             $this->addFlash('danger', "Vous ne pouvez pas supprimer l'utilisateur <strong>$account</strong> car son rôle est plus élevé que le vôtre.");
         } else if (count($account->getMeasures()) || count($account->getSystemReadings()) || count($account->getSystemValidations()) || count($account->getEncodedReadings()) || count($account->getValidatedReadings())) {
-            $this->addFlash('danger', "Vous ne pouvez pas supprimer l'utilisateur <strong>$account</strong> car il est associé à des relevés de systèmes et/ou de stations.");
+            $this->addFlash('danger', "Vous ne pouvez pas supprimer l'utilisateur <strong>$account</strong> car il est associé à des fiches, des relevés ou des mesures.");
         } else {
             $form = $this->createFormBuilder()->getForm();
 

@@ -1,28 +1,26 @@
 {% extends 'system/base.html.twig' %}
 
 {% block title %}
-    Relevés de {{system.name}}
+    Fiches de {{system.name}}
 {% endblock %}
 
 {% block content %}
-    {# Bouton pour ajouter un relevé #}
+    {# Bouton pour ajouter une fiche #}
     {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
         <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary float-right">
             <i class="fas fa-plus"></i>
-            Encoder un relevé
+            Encoder une fiche
         </a>
     {% endif %}
 
     {# Titre #}
-    <h1>Relevés de {{system.name}}</h1>
-
-    <p>Les système a fait l'objet des relevés suivants&nbsp;:</p>
+    <h1>Fiches de {{system.name}}</h1>
 
     <table class="table table-bordered table-striped">
         <thead>
             <th>Code</th>
-            <th>Relevé le</th>
-            <th>Encodé le</th>
+            <th>Date de terrain</th>
+            <th>Date d'encodage</th>
             <th>Encodé par</th>
             <th>Stations</th>
             <th>Actions</th>
@@ -68,7 +66,7 @@
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="100">Il n'y a pas de relevés pour ce système.</td>
+                    <td colspan="100"><em>Il n'y a pas de fiches pour ce système.</em></td>
                 </tr>
             {% endfor %}
         </tbody>

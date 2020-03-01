@@ -36,7 +36,7 @@ class ReadingController extends AbstractController
      */
     public function index(int $page, PaginationService $pagination, ParameterRepository $parameterRepository, Request $request, SystemRepository $systemRepository, BasinRepository $basinRepository, StationRepository $stationRepository, ReadingRepository $readingRepository, Breadcrumbs $breadcrumbs)
     {
-        $breadcrumbs->reset("Index des relevés de station");
+        $breadcrumbs->reset("Index des relevés");
 
         /* Obtenir l'objet de session */
         $session = $request->getSession();
@@ -106,7 +106,7 @@ class ReadingController extends AbstractController
      */
     public function encode(ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
-        $breadcrumbs->add("Encodage d'un relevé de station");
+        $breadcrumbs->add("Encodage d'un relevé");
 
         /* Instancier un nouveau relevé */
         $reading = new Reading();
@@ -150,7 +150,7 @@ class ReadingController extends AbstractController
      */
     public function modify(Reading $reading, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
-        $breadcrumbs->add("Modification d'un relevé de station");
+        $breadcrumbs->add("Modification d'un relevé");
 
         if (null !== $reading->getValidated()) {
             if ($this->isGranted('SYSTEM_MANAGER')) {
@@ -199,7 +199,7 @@ class ReadingController extends AbstractController
      */
     public function validate(Reading $reading, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
-        $breadcrumbs->add("Validation d'un relevé de station");
+        $breadcrumbs->add("Validation d'un relevé");
 
         /* Définir l'auteur et la date de la validation */
         $reading
@@ -288,7 +288,7 @@ class ReadingController extends AbstractController
      */
     public function delete(Reading $reading, Request $request, ObjectManager $manager, Breadcrumbs $breadcrumbs)
     {
-        $breadcrumbs->add("Suppression d'un relevé de station");
+        $breadcrumbs->add("Suppression d'un relevé");
 
         if (true === $reading->getValidated()) {
             $this->addFlash('danger', "Le relevé <strong>{$reading->getCode()}</strong> ne peut être supprimé car il a été validé.");
@@ -325,7 +325,7 @@ class ReadingController extends AbstractController
      */
     public function show(Reading $reading, Breadcrumbs $breadcrumbs)
     {
-        $breadcrumbs->add("Visualisation d'un relevé de station", 'station_reading');
+        $breadcrumbs->add("Visualisation d'un relevé", 'station_reading');
 
         return $this->render('reading/show.html.twig', [
             'reading' => $reading,

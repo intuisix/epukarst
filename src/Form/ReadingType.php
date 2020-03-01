@@ -51,7 +51,7 @@ class ReadingType extends AbstractType
                     'placeholder' => "Ce code sera complété automatiquement" ],
             ])
             ->add('fieldDateTime', DateTimeType::class, [
-                'label' => "Date de terrain (globale)",
+                'label' => "Date de terrain",
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
                 'placeholder' => "Entrez la date et l'heure de terrain",

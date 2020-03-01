@@ -121,7 +121,7 @@ class AlarmController extends AbstractController
         $breadcrumbs->add("Supprimer une alarme");
 
         if ((0 !== count($alarm->getMeasures())) || (0 !== count($alarm->getSystemReadings()))) {
-            $this->addFlash('danger', "L'alarme du <strong>{$alarm->getReportingDate()->format('d/m/Y')}</strong> relative à <strong>{$alarm->getSystem()->getName()}</strong> ne peut pas être supprimée car elle est liée à des relevés ou à des mesures.");
+            $this->addFlash('danger', "L'alarme du <strong>{$alarm->getReportingDate()->format('d/m/Y')}</strong> relative à <strong>{$alarm->getSystem()->getName()}</strong> ne peut pas être supprimée car elle est liée à des fiches ou à des mesures.");
             return $this->redirect($breadcrumbs->getPrevious());
         }
 

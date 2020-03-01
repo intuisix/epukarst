@@ -1,6 +1,5 @@
 {#
-Template pour l'affichage du formulaire d'encodage ou de validation d'un
-relevé de système.
+Template pour l'affichage du formulaire d'encodage ou de validation d'une fiche.
 
 Attention: chaque fois que l'on affiche la liste des paramètre, il faut
 utiliser la liste ordonnée donnée par le contrôleur comme 'systemParameters'.
@@ -33,7 +32,7 @@ car celle-ci n'est pas triée.
                     {{form_row(form.fieldDateTime)}}
                 </div>
                 <div class="col-sm-2">
-                    {# Code du relevé de système #}
+                    {# Code #}
                     {{form_row(form.code)}}
                 </div>
                 <div class="col-sm">
@@ -98,7 +97,7 @@ car celle-ci n'est pas triée.
             </div>
         {% endif %}
 
-        {# Relevés de stations #}
+        {# Relevés #}
         {% if form.stationReadings|length == 0 %}
             <div class="alert alert-warning">
                 Pour pouvoir encoder des mesures, vous devez d'abord assigner des stations et des paramètres au système.
@@ -173,7 +172,7 @@ car celle-ci n'est pas triée.
                             {% endfor %}
                         </tr>
                     </thead>
-                    {# Relevés de stations #}
+                    {# Relevés #}
                     {{form_widget(form.stationReadings)}}
                     <tfoot>
                     </tfoot>
@@ -183,7 +182,7 @@ car celle-ci n'est pas triée.
             {# Remarques de station #}
             <div class="alert bg-light">
                 <h2>Remarques aux stations</h2>
-                <p>Pour chaque station, introduisez la date et l'heure de la prise des mesures, ainsi qu'une éventuelle remarque. Si ne vous précisez pas de date et d'heure, les mesures seront présumées avoir été prises à la même date que le relevé de système.</p>
+                <p>Pour chaque station, introduisez la date et l'heure de la prise des mesures, ainsi qu'une éventuelle remarque..</p>
                 <table class="table table-borderless table-responsive table-sm" cellpadding="3">
                     <thead>
                         <tr>
@@ -206,11 +205,11 @@ car celle-ci n'est pas triée.
                                     </small>
                                 </td>
                                 <td width="100" class="align-top">
-                                    {# Heure du relevé de station #}
+                                    {# Heure du relevé #}
                                     {{form_widget(stationReading.children.fieldDateTime)}}
                                 </td>
                                 <td>
-                                    {# Remarque du relevé de station #}
+                                    {# Remarque du relevé #}
                                     {{form_widget(stationReading.children.encodingNotes, {
                                         'attr' : {'rows': 2}
                                     })}}
@@ -286,7 +285,7 @@ car celle-ci n'est pas triée.
     </td>
 {% endblock %}
 
-{# Modèle d'un relevé de station #}
+{# Modèle d'un relevé #}
 {% block _system_reading_stationReadings_entry_row %}
     <tbody id="{{id}}">
         <tr>
@@ -301,7 +300,7 @@ car celle-ci n'est pas triée.
                     {{form.vars.value.station.atlasCode}}
                 </small>
             </td>
-            {# Mesures du relevé de station #}
+            {# Mesures du relevé #}
             {{form_widget(form.measures)}}
         </tr>
     </tbody>

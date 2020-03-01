@@ -34,24 +34,24 @@ class SystemReadingType extends AbstractType
     {
         $builder
             ->add('code', TextType::class, [
-                'label' => "Code du relevé",
+                'label' => "Code de la fiche",
                 'required' => false,
-                'attr' => [
-                    'placeholder' => 'Ce code sera attribué automatiquement',
-                ]
+                'help' => "Ce code sera généré automatiquement si vous n'indiquez rien.",
             ])
             ->add('fieldDateTime', DateType::class, [
                 'label' => "Date de terrain",
                 'widget' => 'single_text',
                 'required' => true,
+                'help' => "Indiquez la date à laquelle les dernières mesures ont été prises."
             ])
             ->add('alarm', EntityType::class, [
                 'label' => "Alarme",
                 'class' => Alarm::class,
                 'choice_label' => 'name',
                 'group_by' => 'system.name',
-                'placeholder' => "Relevé non lié à une alarme",
+                'placeholder' => "Pas d'alarme liée",
                 'required' => false,
+                'help' => "Une alarme sera créée automatiquement si une valeur est hors norme.",
             ])
             ->add('stationReadings', CollectionType::class, [
                 'label' => "Stations",

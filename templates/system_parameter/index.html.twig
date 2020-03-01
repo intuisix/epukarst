@@ -43,21 +43,6 @@
                 <i class="fas fa-plus"></i>
                 Ajouter un paramètre
             </a>
-            {# Bouton permettant de voir les paramètres #}
-            <a href="{{path('system_show_parameters', {'slug': system.slug})}}" class="btn btn-secondary">
-                <i class="fas fa-eye"></i>
-                Voir les paramètres
-            </a>
-            {# Bouton permettant de voir les instruments #}
-            <a href="{{path('system_show_instruments', {'slug': system.slug})}}" class="btn btn-secondary">
-                <i class="fas fa-eye"></i>
-                Voir les instruments
-            </a>
-            {# Bouton permettant de passer à l'encodage d'un relevé #}
-            <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary">
-                <i class="far fa-file-alt"></i>
-                Encoder un relevé de système
-            </a>
             {# Bouton permettant de revenir à la page précédente #}
             {{breadcrumbs.displayBackButton}}
         </div>

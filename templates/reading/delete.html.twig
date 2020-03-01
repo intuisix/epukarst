@@ -13,11 +13,7 @@
         <div class="alert alert-danger">
             Cette opération est irréversible.
             <br>
-            Etes-vous certain de vouloir supprimer ce relevé du <strong>{{reading.fieldDateTime|localizeddate('short', 'none')}}</strong> relatif à la station <strong>{{reading.station}}</strong>&nbsp;?
-            {% if reading.validated %}
-                <br>
-                <strong>Attention, ce relevé est validé&nbsp;!</strong>
-            {% endif %}
+            Etes-vous certain de vouloir supprimer le relevé <strong>{{reading.code}}</strong>&nbsp;?
         </div>
 
         {# Bouton permettant de confirmer la suppression #}

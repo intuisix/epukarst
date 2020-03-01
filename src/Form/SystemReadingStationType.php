@@ -20,7 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 /**
  * Formulaire permettant la saisie de l'heure, des mesures et des remarques
- * d'un relevé de station contenu dans un relevé de système.
+ * d'un relevé à l'intérieur du formulaire de fiche.
  */
 class SystemReadingStationType extends AbstractType
 {

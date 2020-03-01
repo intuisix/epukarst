@@ -36,7 +36,7 @@ class SystemReadingController extends AbstractController
      */
     public function index(int $page, PaginationService $pagination, SystemRepository $systemRepository, Breadcrumbs $breadcrumbs)
     {
-        $breadcrumbs->reset("Liste des relevés d'un système");
+        $breadcrumbs->reset("Liste des fiches");
 
         $pagination
             ->setEntityClass(SystemReading::class)
@@ -52,14 +52,14 @@ class SystemReadingController extends AbstractController
     }
 
     /**
-     * Gère l'encodage d'un nouveau relevé pour un système.
+     * Gère l'encodage d'une nouvelle fiche.
      * 
      * @Route("/system-reading/encode/{code}", name="system_reading_encode")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="system")
      */
     public function encode(System $system, ObjectManager $manager, Request $request, StationRepository $stationRepository, MeasurabilityRepository $instrumentParameterRepository, BasinRepository $basinRepository, StationKindRepository $stationKindRepository, SystemParameterRepository $systemParameterRepository, Breadcrumbs $breadcrumbs)
     {
-        $breadcrumbs->add("Création d'un relevé de système");
+        $breadcrumbs->add("Création d'une fiche");
 
         /* Obtenir la liste des stations du système */
         $systemStations = $stationRepository->findSystemStations($system);
@@ -67,14 +67,14 @@ class SystemReadingController extends AbstractController
         /* Obtenir la liste ordonnée de paramètres du système */
         $systemParameters = $systemParameterRepository->findSystemParameters($system);
 
-        /* Instancier un nouveau relevé de système */
+        /* Instancier une nouvelle fiche */
         $systemReading = new SystemReading();
         $systemReading
             ->setSystem($system)
             ->setEncodingDateTime(new \DateTime('now'))
             ->setEncodingAuthor($this->getUser());
 
-        /* Pour chaque paramètre du système, ajouter un contrôle */
+        /* Ajouter un nouveau contrôle pour chaque paramètre du système*/
         if (!empty($systemParameters)) {
             foreach ($systemParameters as $systemParameter) {
                 $control = $this->createControl($systemParameter);
@@ -82,12 +82,10 @@ class SystemReadingController extends AbstractController
             }
         }
 
-        /* Pour chaque station du système, ajouter un relevé de station au relevé de système */
+        /* Ajouter un nouveau relevé pour chaque station du système */
         if (!empty($systemStations) && !empty($systemParameters)) {
             foreach ($systemStations as $station) {
-                /* Créer le relevé de station */
                 $stationReading = $this->createStationReading($station, $systemParameters);
-                /* Ajouter la station au relevé */
                 $systemReading->addStationReading($stationReading);
             }
         }
@@ -103,17 +101,17 @@ class SystemReadingController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /* Ajouter les nouvelles pièces jointes */
             $this->addNewAttachments($systemReading, $form, $this->getUser(), $manager);
-            /* Mémoriser le relevé de système */
+            /* Mémoriser la fiche */
             $this->storeSystemReading($systemReading, $manager);
 
-            $this->addFlash('success', "Le relevé <strong>{$systemReading->getCode()}</strong> contenant <strong>{$systemReading->getStationReadings()->count()}</strong> relevés de stations a été encodé avec succès.");
+            $this->addFlash('success', "La fiche <strong>{$systemReading->getCode()}</strong> a été encodée avec succès.");
 
             return $this->redirect($breadcrumbs->getPrevious());
         }
 
         return $this->render('system_reading/form.html.twig', [
             'form' => $form->createView(),
-            'title' => "Encoder un relevé pour {$system->getName()}",
+            'title' => "Encoder une fiche pour {$system->getName()}",
             'system' => $system,
             'systemParameters' => $systemParameters,
             'conversions_enabled' => true,
@@ -127,10 +125,10 @@ class SystemReadingController extends AbstractController
      */
     public function modify(SystemReading $systemReading, Request $request, ObjectManager $manager, StationRepository $stationRepository, SystemParameterRepository $systemParameterRepository, Breadcrumbs $breadcrumbs)
     {
-        $breadcrumbs->add("Modification d'un relevé de système");
+        $breadcrumbs->add("Modification d'une fiche");
 
         if ($systemReading->countValidatedReadings()) {
-            $this->addFlash('danger', "Ce relevé de système ne peut pas être modifié car au moins un de ses relevés de station a été validé.<br>Faites les modifications sur les relevés de station individuellement.");
+            $this->addFlash('danger', "La fiche {$systemReading->getCode()} ne peut pas être modifiée car au moins un de ses relevés a été validé.");
             return $this->redirect($breadcrumbs->getPrevious());
         }
 
@@ -142,7 +140,7 @@ class SystemReadingController extends AbstractController
         if ((false == $this->loadControls($systemReading, $systemParameters)) ||
             (false == $this->loadStationReadings($systemReading, $systemStations, $systemParameters))) {
                 /* Cas spécial non géré pour l'instant */
-                $this->addFlash('danger', "Ce relevé de système ne peut être modifié car il contient des mesures excédentaires par rapport aux paramètres actuellement assignés au système.<br>Faites les modifications sur les relevés de station directement.");
+                $this->addFlash('danger', "La fiche {$systemReading->getCode()} ne peut être modifiée car elle contient des mesures excédentaires par rapport aux paramètres actuellement assignés au système.");
                 return $this->redirect($breadcrumbs->getPrevious());
         }
 
@@ -156,17 +154,17 @@ class SystemReadingController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             /* Ajouter les nouvelles pièces jointes */
             $this->addNewAttachments($systemReading, $form, $this->getUser(), $manager);
-            /* Mémoriser le relevé de système */
+            /* Mémoriser la fiche */
             $this->storeSystemReading($systemReading, $manager);
 
-            $this->addFlash('success', "Le relevé <strong>{$systemReading->getCode()}</strong> contenant <strong>{$systemReading->getStationReadings()->count()}</strong> relevés de stations a été mis à jour avec succès.");
+            $this->addFlash('success', "La fiche <strong>{$systemReading->getCode()}</strong> a été mise à jour avec succès.");
 
             return $this->redirect($breadcrumbs->getPrevious());
         }
 
         return $this->render('system_reading/form.html.twig', [
             'form' => $form->createView(),
-            'title' => "Modifier le relevé {$systemReading->getCode()}",
+            'title' => "Modifier la fiche {$systemReading->getCode()}",
             'system' => $system,
             'systemParameters' => $systemParameters,
             'conversions_enabled' => false,
@@ -175,17 +173,17 @@ class SystemReadingController extends AbstractController
     }
 
     /**
-     * Traite la suppression d'un relevé de système.
+     * Traite la suppression d'une fiche.
      *
      * @Route("system-reading/{code}/delete", name="system_reading_delete")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="systemReading")
      */
     public function delete(SystemReading $systemReading, Request $request, ObjectManager $manager, Breadcrumbs $breadcrumbs)
     {
-        $breadcrumbs->add("Suppression d'un relevé de système");
+        $breadcrumbs->add("Suppression d'une fiche");
 
         if ($systemReading->countValidatedReadings()) {
-            $this->addFlash('danger', "Le relevé <strong>{$systemReading->getCode()}</strong> ne peut pas être supprimé car au moins un de ses relevés de station a été validé.");
+            $this->addFlash('danger', "La fiche <strong>{$systemReading->getCode()}</strong> ne peut pas être supprimée car au moins un de ses relevés a été validé.");
             return $this->redirect($breadcrumbs->getPrevious());
         }
 
@@ -194,11 +192,11 @@ class SystemReadingController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /* Supprimer le relevé de système et son contenu */
+            /* Supprimer la fiche et son contenu */
             $manager->remove($systemReading);
             $manager->flush();
     
-            $this->addFlash('success', "Le relevé <strong>{$systemReading->getCode()}</strong> a été supprimé avec succès.");
+            $this->addFlash('success', "La fiche <strong>{$systemReading->getCode()}</strong> a été supprimée avec succès.");
 
             return $this->redirect($breadcrumbs->getPrevious('system_reading'));
         }
@@ -206,7 +204,7 @@ class SystemReadingController extends AbstractController
         return $this->render('system_reading/delete.html.twig', [
             'form' => $form->createView(),
             'systemReading' => $systemReading,
-            'title' => "Supprimer le relevé $systemReading",
+            'title' => "Supprimer la fiche $systemReading",
             'breadcrumbs' => $breadcrumbs,
         ]);
     }
@@ -217,7 +215,7 @@ class SystemReadingController extends AbstractController
      */
     public function show(SystemReading $systemReading, ParameterRepository $parameterRepository, Breadcrumbs $breadcrumbs)
     {
-        $breadcrumbs->add("Visualisation d'un relevé de système", 'system_reading');
+        $breadcrumbs->add("Visualisation d'une fiche", 'system_reading');
 
         return $this->render('system_reading/show.html.twig', [
             'systemReading' => $systemReading,
@@ -258,7 +256,7 @@ class SystemReadingController extends AbstractController
     }
 
     /**
-     * Charge les mesures de contrôle contenues dans un relevé de système, dans
+     * Charge les mesures de contrôle contenues dans une fiche, dans
      * l'ordre de la liste des paramètres du système, et en insérant les
      * éventuelles mesures manquantes pour qu'elles puissent être saisies par
      * l'utilisateur.
@@ -278,8 +276,7 @@ class SystemReadingController extends AbstractController
             $systemReading->removeControl($control);
         }
 
-        /* Recréer le tableau dans le relevé de système, dans l'ordre, et en y
-        insérant les mesures manquantes */
+        /* Recréer le tableau dans la fiche, dans l'ordre, et en y insérant les mesures manquantes */
         foreach ($systemParameters as $systemParameter) {
             $key = $this->findParameterInControls($systemParameter, $controls);
             if (null !== $key) {
@@ -291,8 +288,7 @@ class SystemReadingController extends AbstractController
             $systemReading->addControl($control);
         }
 
-        /* Restaurer les mesures supplémentaires. Elles ne seront pas affichées,
-        mais au moins elles ne seront pas perdues! */
+        /* Restaurer les mesures supplémentaires. Elles ne seront pas affichées, mais au moins elles ne seront pas perdues! */
         foreach ($controls as $control) {
             $constol->addMeasure($control);
             $success = false;
@@ -336,7 +332,7 @@ class SystemReadingController extends AbstractController
     }
 
     /**
-     * Charge les mesures contenues dans un relevé de station, dans l'ordre
+     * Charge les mesures contenues dans un relevé, dans l'ordre
      * de la liste des paramètres du système, et en insérant les éventuelles
      * mesures manquantes pour qu'elles puissent être saisies par l'utilisateur.
      *
@@ -350,14 +346,14 @@ class SystemReadingController extends AbstractController
     {
         $success = true;
 
-        /* Déplacer les mesures du relevé vers un tableau temporaire */
+        /* Déplacer les mesures vers un tableau temporaire */
         $stationMeasures = [];
         foreach ($stationReading->getMeasures() as $stationMeasure) {
             $stationMeasures[] = $stationMeasure;
             $stationReading->removeMeasure($stationMeasure);
         }
 
-        /* Reconstituer le tableau de mesures du relevé, dans l'ordre des paramètres du système et en insérant des mesures vides pour les paramètres n'ayant pas de mesure */
+        /* Reconstituer le tableau de mesures, dans l'ordre des paramètres du système et en insérant des mesures vides pour les paramètres n'ayant pas de mesure */
         foreach ($systemParameters as $systemParameter) {
             $key = $this->findParameterInMeasures($systemParameter, $stationMeasures);
             if (null !== $key) {
@@ -370,7 +366,7 @@ class SystemReadingController extends AbstractController
             $stationReading->addMeasure($measure);
         }
 
-        /* Restaurer les mesures supplémentaires. Elles ne seront pas affichées, mais au moins elles ne seront pas perdues! */
+        /* Restaurer les mesures supplémentaires: elles ne seront pas affichées, mais au moins elles ne seront pas perdues! */
         foreach ($stationMeasures as $stationMeasure) {
             $stationReading->addMeasure($measure);
             $success = false;
@@ -380,8 +376,8 @@ class SystemReadingController extends AbstractController
     }
 
     /**
-     * Crée un relevé de station avec des mesures vides pour chacun des
-     * paramètres du système.
+     * Crée un relevé avec des mesures vides pour chacun des paramètres du
+     * système.
      * 
      * @param Station $station
      * @param array $systemParameters
@@ -391,7 +387,7 @@ class SystemReadingController extends AbstractController
     {
         $stationReading = new Reading();
         $stationReading->setStation($station);
-        /* Pour chaque paramètre, ajouter une nouvelle mesure au relevé de station en activant la conversion de valeur */
+        /* Pour chaque paramètre, ajouter une nouvelle mesure au relevé en activant la conversion de valeur */
         foreach ($systemParameters as $systemParameter) {
             $measure = $this->createMeasure($systemParameter, true);
             $stationReading->addMeasure($measure);
@@ -400,8 +396,8 @@ class SystemReadingController extends AbstractController
     }
 
     /**
-     * Trouve le relevé de station correspondant à la station donnée, dans le
-     * tableau donné.
+     * Trouve, dans le tableau donné, le relevé correspondant à la station
+     * donnée.
      *
      * @param Station $station
      * @param array $stationReadings
@@ -418,26 +414,24 @@ class SystemReadingController extends AbstractController
     }
 
     /**
-     * Charge les relevés de station contenus dans un relevé de système, dans
-     * l'ordre de la liste des stations du système, et en insérant les
-     * éventuels relevés manquants pour qu'ils puissent être saisis par
-     * l'utilisateur.
+     * Charge les relevés contenus dans une fiche, dans l'ordre de la liste des
+     * stations du système, et en insérant les éventuels relevés manquants pour
+     * qu'ils puissent être saisis par l'utilisateur.
      *
      * @param SystemReading $systemReading
      * @param array $systemStations
      * @param array $systemParameters
      * @return boolean false si une station est présente plusieurs fois parmi
-     * les relevés, ou si une station liée de relevé de station est absente de
-     * la liste des stations du système.
+     * les relevés, ou si une station liée au relevé est absente de la liste
+     * des stations du système.
      */
     private function loadStationReadings(SystemReading $systemReading, array $systemStations, array $systemParameters)
     {
         $success = true;
 
-        /* Déplacer les relevés de stations dans un tableau temporaire */
+        /* Déplacer les relevés dans un tableau temporaire */
         $stationReadings = [];
         foreach ($systemReading->getStationReadings() as $stationReading) {
-            /* Traiter les mesures de la station */
             if (!$this->loadMeasures($stationReading, $systemParameters)) {
                 $success = false;
             }
@@ -445,7 +439,7 @@ class SystemReadingController extends AbstractController
             $systemReading->removeStationReading($stationReading);
         }
 
-        /* Reconstituer le tableau des relevés de station */
+        /* Reconstituer le tableau des relevés */
         foreach ($systemStations as $systemStation) {
             $key = $this->findStationInReadings($systemStation, $stationReadings);
             if (null !== $key) {
@@ -457,7 +451,7 @@ class SystemReadingController extends AbstractController
             $systemReading->addStationReading($stationReading);
         }
 
-        /* Restaurer les relevés de stations supplémentaires */
+        /* Restaurer les relevés supplémentaires */
         foreach ($stationReadings as $stationReading) {
             $systemReading->addStationReading($stationReading);
             $success = false;
@@ -468,7 +462,7 @@ class SystemReadingController extends AbstractController
 
     /**
      * Détecte si la valeur d'une mesure est hors norme et, dans ce cas,
-     * crée automatiquement une alarme liée au relevé de système.
+     * crée automatiquement une alarme liée à la fiche.
      *
      * @param Measure $measure
      * @param SystemReading $systemReading
@@ -522,7 +516,7 @@ class SystemReadingController extends AbstractController
                 ->setReportingAuthor($measure->getEncodingAuthor())
                 ->setReportingDate($measure->getEncodingDateTime())
                 ->setNotes("Certaines valeurs mesurées dépassent les normes.");
-            /* Lier l'alarme au relevé de système */
+            /* Lier l'alarme à la fiche */
             $systemReading->setAlarm($alarm);
 
             $this->addFlash('warning', "Une alarme a été créée automatiquement car certaines valeurs dépassent les normes.");
@@ -540,7 +534,7 @@ class SystemReadingController extends AbstractController
     }
 
     /**
-     * Ajoute les nouvelles pièces jointes au relevé de système.
+     * Ajoute les nouvelles pièces jointes à la fiche.
      *
      * @param SystemReading $systemReading
      * @param Form $form
@@ -560,9 +554,10 @@ class SystemReadingController extends AbstractController
     }
 
     /**
-     * Mémorise ou met à jour le relevé de système dans la base de données, en
-     * y supprimant les mesures non complétées et les stations ne comportant
-     * ni mesures ni remarques.
+     * Mémorise ou met à jour la fiche dans la base de données, en y supprimant:
+     * - les mesures ne contenant pas de valeur,
+     * - les stations ne comportant ni mesures ni remarques,
+     * - les contrôles ne contenant pas de valeur.
      *
      * @param SystemReading $systemReading
      * @param ObjectManager $manager
@@ -570,12 +565,12 @@ class SystemReadingController extends AbstractController
      */
     private function storeSystemReading(SystemReading $systemReading, ObjectManager $manager)
     {
-        /* Mettre en cache des informations du relevé de système */
+        /* Mettre en cache certaines informations de la fiche */
         $fieldDateTime = $systemReading->getFieldDateTime();
         $encodingDateTime = $systemReading->getEncodingDateTime();
         $encodingAuthor = $systemReading->getEncodingAuthor();
 
-        /* Traiter chacun des relevés de station */
+        /* Traiter chacun des relevés */
         foreach ($systemReading->getStationReadings() as $stationReading) {
             $station = $stationReading->getStation();
 
@@ -589,14 +584,14 @@ class SystemReadingController extends AbstractController
             /* Traiter les mesures restantes */
             $measures = $stationReading->getMeasures();
             if ((0 != $measures->count()) || !empty($stationReading->getEncodingNotes())) {
-                /* Ajuster la date et l'heure du relevé de station */
+                /* Ajuster la date et l'heure du relevé */
                 $stationDateTime = $stationReading->getFieldDateTime();
                 if (null === $stationDateTime) {
-                    /* Par défaut, utiliser la même date et la même heure que relevé de système */
+                    /* Par défaut, utiliser la même date et la même heure que la fiche */
                     $stationDateTime = $fieldDateTime;
                 }
 
-                /* Traiter chaque mesure du relevé de station */
+                /* Traiter chaque mesure du relevé */
                 foreach ($measures as $measure) {
                     /* Définir les propriétés de la mesure */
                     $measure
@@ -612,16 +607,16 @@ class SystemReadingController extends AbstractController
                     }
                 }
 
-                /* Définir les propriétés du relevé de station */
+                /* Définir les propriétés du relevé */
                 $stationReading
                     ->setFieldDateTime($stationDateTime)
                     ->setEncodingDateTime($encodingDateTime)
                     ->setEncodingAuthor($encodingAuthor)
                     ->setSystemReading($systemReading);
-                /* Mémoriser le relevé de station en base de données */
+                /* Mémoriser le relevé en base de données */
                 $manager->persist($stationReading);
             } else {
-                /* Enlever le relevé de station car il est vide et aucune remarque n'a été fournie */
+                /* Enlever le relevé car il est vide et aucune remarque n'a été fournie */
                 $systemReading->removeStationReading($stationReading);
             }
         }
@@ -639,7 +634,7 @@ class SystemReadingController extends AbstractController
             }
         }
 
-        /* Persister le relevé de système dans la base de données */
+        /* Persister la fiche dans la base de données */
         $manager->persist($systemReading);
         $manager->flush();
     }

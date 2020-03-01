@@ -117,7 +117,7 @@ class SystemReading
     private $attachments;
 
     /**
-     * Construit une instance de relevé.
+     * Construit une instance de fiche.
      */
     public function __construct()
     {
@@ -127,7 +127,7 @@ class SystemReading
     }
 
     /**
-     * Retourne le code du relevé.
+     * Retourne le code de la fiche.
      *
      * @return string
      */
@@ -137,8 +137,7 @@ class SystemReading
     }
 
     /**
-     * Retourne le nombre de relevés de station, faisant partie de ce relevé de
-     * système, qui ont été validés.
+     * Compte les relevés ayant été validés dans la fiche donnée.
      * 
      * @return int
      */
@@ -154,7 +153,7 @@ class SystemReading
     }
 
     /**
-     * Met à jour les propriétés du relevé de système avant la mémorisation en
+     * Met à jour les propriétés de la fiche avant la mémorisation en
      * base de données.
      *
      * @ORM\PrePersist()
@@ -165,7 +164,7 @@ class SystemReading
     public function update()
     {
         if (empty($this->code)) {
-            /* Calculer le code suivant dans la séquence en parcourant les autres relevés */
+            /* Calculer le code suivant dans la séquence en parcourant les autres fiches */
             $highestNumber = 0;
             foreach ($this->system->getSystemReadings() as $systemReading) {
                 $code = $systemReading->getCode();
@@ -182,7 +181,7 @@ class SystemReading
                     }
                 }
             }
-            /* Formater le code en utilisant celui du système comme préfixe (même si d'autres préfixes ont été rencontrés durant l'examen des autres relevés) */
+            /* Formater le code en utilisant celui du système comme préfixe (même si d'autres préfixes ont été rencontrés durant l'examen des autres fiches) */
             $this->code = $this->system->getCode() . '-' .
                 sprintf("%03u", $highestNumber + 1);
         }

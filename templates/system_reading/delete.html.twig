@@ -13,13 +13,13 @@
         <div class="alert alert-danger">
             Cette opération est irréversible.
             <br>
-            Etes-vous certain de vouloir supprimer ce relevé du <strong>{{systemReading.fieldDateTime|localizeddate('short', 'none')}}</strong> relatif au système <strong>{{systemReading.system}}</strong>, ainsi que les {{systemReading.stationReadings|length}} relevés de stations qu'il contient&nbsp;?
+            Etes-vous certain de vouloir supprimer la fiche <strong>{{systemReading.code}}</strong>, ainsi que les {{systemReading.stationReadings|length}} relevés qu'il contient&nbsp;?
         </div>
 
         {# Ajouter un bouton pour confirmer la suppression #}
         <button type="submit" class="btn btn-danger">
             <i class="fa fa-trash" aria-hidden="true"></i>
-            Supprimer le relevé
+            Supprimer la fiche
         </button>
         {# Bouton permettant de revenir à la page précédente #}
         {{breadcrumbs.displayBackButton}}

@@ -150,7 +150,7 @@ class SystemController extends AbstractController
 
         if ((count($system->getSystemReadings()) > 0) ||
             (count($system->getAlarms()) > 0)) {
-            $this->addFlash('danger', "Vous ne pouvez pas supprimer le système <strong>{$system->getName()}</strong> car il possède des relevés ou des alarmes.");
+            $this->addFlash('danger', "Vous ne pouvez pas supprimer le système <strong>{$system->getName()}</strong> car il possède des fiches ou des alarmes.");
         } elseif (count($system->getBasins()) > 0) {
             $this->addFlash('danger', "Vous ne pouvez pas supprimer le système <strong>{$system->getName()}</strong> car il possède des bassins.");
         } else {
@@ -257,7 +257,7 @@ class SystemController extends AbstractController
     }
 
     /**
-     * Affiche les relevés du système karstique.
+     * Affiche les fiches du système karstique.
      * 
      * @Route("/system/{slug}/readings", name="system_show_readings")
      * @IsGranted("SYSTEM_OBSERVER", subject="system")
@@ -267,7 +267,7 @@ class SystemController extends AbstractController
      */
     public function showReadings(System $system, Breadcrumbs $breadcrumbs)
     {
-        $breadcrumbs->add("Liste des relevés d'un système");
+        $breadcrumbs->add("Liste des fiches");
 
         return $this->render('system/readings.html.twig', [
             'system' => $system,

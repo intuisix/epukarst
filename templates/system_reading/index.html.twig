@@ -1,22 +1,22 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Relevés de système
+    Fiches
 {% endblock %}
 
 {% block body %}
     <div class="container">
-        <h1 class="mb-3">Relevés de systèmes</h1>
+        <h1 class="mb-3">Fiches</h1>
 
         <table width="100%" class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th>Code</th>
-                    <th>Relevé le</th>
-                    <th>Encodé le</th>
+                    <th>Date de terrain</th>
+                    <th>Date d'encodage</th>
                     <th>Encodé par</th>
                     <th>Système</th>
-                    <th>Stations</th>
+                    <th>Relevés</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -74,10 +74,10 @@
         {# Afficher le composant de pagination #}
         {{pagination.display}}
 
-        {# Bouton déroulant permettant d'encoder un relevé de système #}
+        {# Bouton déroulant permettant d'encoder une fiche #}
         {% if is_granted('SYSTEM_CONTRIBUTOR') %}
             <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <fa class="fas fa-plus"></fa> Encoder un relevé de système
+                <fa class="fas fa-plus"></fa> Encoder une fiche
             </button>
             <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                 {% for system in systems %}
