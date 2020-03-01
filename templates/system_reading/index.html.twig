@@ -7,15 +7,16 @@
 {% block body %}
     <div class="container">
         <h1 class="mb-3">Fiches</h1>
+        <p>Les fiches correspondent aux encodages réalisés de façon globale pour toutes les stations des systèmes. Chaque fiche contient des relevés, dont chacun d'eux regroupe les mesures d'une même station.</p>
 
         <table width="100%" class="table table-bordered table-striped">
             <thead>
                 <tr>
                     <th>Code</th>
                     <th>Date de terrain</th>
-                    <th>Date d'encodage</th>
-                    <th>Encodé par</th>
                     <th>Système</th>
+                    <th>Date d'encodage</th>
+                    <th>Auteur de l'encodage</th>
                     <th>Relevés</th>
                     <th>Actions</th>
                 </tr>
@@ -36,13 +37,13 @@
                             {{systemReading.fieldDateTime|localizeddate('short', 'none')}}
                         </td>
                         <td>
+                            {{systemReading.system.name}}
+                        </td>
+                        <td>
                             {{systemReading.encodingDateTime|localizeddate('short', 'none')}}
                         </td>
                         <td>
                             {{systemReading.encodingAuthor}}
-                        </td>
-                        <td>
-                            {{systemReading.system.name}}
                         </td>
                         <td>
                             {% if systemReading.stationReadings|length %}

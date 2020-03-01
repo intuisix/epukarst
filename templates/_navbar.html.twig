@@ -32,6 +32,9 @@
 
             {% if user %}
                 <li class="nav-item">
+                    <a href="{{path('system_reading')}}" class="nav-link">Fiches</a>
+                </li>
+                <li class="nav-item">
                     <a href="{{path('reading')}}" class="nav-link">Relevés</a>
                 </li>
                 <li class="nav-item">
@@ -47,7 +50,6 @@
                         <i class="fas fa-cogs"></i> Administration
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="adminDropdownLink">
-                        <a href="{{path('system_reading')}}" class="dropdown-item">Fiches</a>
                         <a href="{{path('systems_list')}}" class="dropdown-item">Systèmes</a>
                         <div class="dropdown-divider"></div>
                         <a href="{{path('alarm_kind')}}" class="dropdown-item">Types d'alarmes</a>
