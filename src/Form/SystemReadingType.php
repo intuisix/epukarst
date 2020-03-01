@@ -42,7 +42,7 @@ class SystemReadingType extends AbstractType
                 'label' => "Date de terrain",
                 'widget' => 'single_text',
                 'required' => true,
-                'help' => "Indiquez la date à laquelle les dernières mesures ont été prises."
+                'help' => "Indiquez la date de la dernière mesure."
             ])
             ->add('alarm', EntityType::class, [
                 'label' => "Alarme",

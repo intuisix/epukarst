@@ -366,6 +366,29 @@ car celle-ci n'est pas triée.
 {% block javascripts %}
     <script src="/js/collection.js"></script>
     <script>
+        {# Propage la date et l'heure de terrain de la fiche sur les relevés pour lesquels ces informations ne sont pas encore complétées #}
+        function propagateFieldDateTime()
+        {
+            $systemReadingDate = $('#system_reading_fieldDateTime').val();
+            $('[id$="fieldDateTime_date"]').each(function() {
+                $stationReadingDateControl = $(this);
+                if ('' == $stationReadingDateControl.val()) {
+                    $stationReadingDateControl.val($systemReadingDate);
+                }
+            });
+            $('[id$="fieldDateTime_time"]').each(function() {
+                $stationReadingTimeControl = $(this);
+                if ('' == $stationReadingTimeControl.val()) {
+                    $stationReadingTimeControl.val('00:00');
+                }
+            });
+        }
+
+        {# Programmer la propagation de la date et de l'heure de terrain lorsque l'utilisateur quitte le contrôle de date, ou lorsqu'il soumet le formulaire #}
+        $('#system_reading_fieldDateTime').focusout(propagateFieldDateTime);
+        $('button[type="submit"]').click(propagateFieldDateTime);
+
+        {# Traiter les boutons de suppression de pièce jointe #}
         var attachmentsCollectionResponders =
             createCollectionResponders(
                 '#system_reading_attachments',
@@ -374,9 +397,7 @@ car celle-ci n'est pas triée.
                 'Etes-vous sûr de vouloir supprimer cette pièce jointe ?'
             );
         attachmentsCollectionResponders();
-    </script>
 
-    <script>
         {# Activer les tooltips #}
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
