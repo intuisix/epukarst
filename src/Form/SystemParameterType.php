@@ -30,7 +30,7 @@ class SystemParameterType extends AbstractType
                 'label' => "Remarques",
                 'attr' => [
                     'placeholder' => "Entrez éventuellement des remarques",
-                    'rows' => 10,
+                    'rows' => 3,
                 ],
                 'required' => false,
             ])

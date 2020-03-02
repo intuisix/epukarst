@@ -1,22 +1,22 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Instruments de mesure
+    Instruments
 {% endblock %}
 
 {% block body %}
     <div class="container mb-3">
-        <h1>Instruments de mesure</h1>
+        <h1>Instruments</h1>
 
         <table class="table table-bordered table-striped">
             <tr>
-                <th>Code</th>
-                <th>Dénomination</th>
-                <th>Modèle</th>
-                <th>Numéro de série<br>ou de lot</th>
-                <th>Prochain<br>étalonnage</th>
-                <th width="15%">Paramètres</th>
-                <th>Actions</th>
+                <th width="10%">Code</th>
+                <th width="20%">Dénomination</th>
+                <th width="15%">Modèle</th>
+                <th width="15%">Numéro de série/de lot</th>
+                <th width="10%">Date limite</th>
+                <th width="20%">Paramètres</th>
+                <th width="10%">Actions</th>
             </tr>
             {% for instrument in instruments|sort((a, b) => (a.code <=> b.code)) %}
                 <tr>
@@ -40,14 +40,14 @@
                         {% endfor %}
                     </td>
                     <td>
-                        <a href="{{path('instrument_modify', {'code': instrument.code})}}" class="text-primary"><i class="fas fa-edit"></i></a>
-                        <a href="{{path('instrument_duplicate', {'code': instrument.code})}}" class="text-secondary"><i class="fas fa-clone"></i></a>
-                        <a href="{{path('instrument_delete', {'code': instrument.code})}}" class="text-danger"><i class="fas fa-trash"></i></a>
+                        <a href="{{path('instrument_modify', {'id': instrument.id})}}" class="text-primary"><i class="fas fa-edit"></i></a>
+                        <a href="{{path('instrument_duplicate', {'id': instrument.id})}}" class="text-secondary"><i class="fas fa-clone"></i></a>
+                        <a href="{{path('instrument_delete', {'id': instrument.id})}}" class="text-danger"><i class="fas fa-trash"></i></a>
                     </td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="100">Il n'y a pas d'instrument de mesure.</td>
+                    <td colspan="100"><em>Il n'y a pas d'instrument de mesure.</em></td>
                 </tr>
             {% endfor %}
         </table>

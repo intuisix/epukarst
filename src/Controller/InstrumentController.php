@@ -66,7 +66,7 @@ class InstrumentController extends AbstractController
     /**
      * Affiche et traite le formulaire de modification d'instrument.
      * 
-     * @Route("/instrument/{code}/modify", name="instrument_modify")
+     * @Route("/instrument/{id}/modify", name="instrument_modify")
      * @IsGranted("ROLE_ADMIN")
      */
     public function modify(Instrument $instrument, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
@@ -97,7 +97,7 @@ class InstrumentController extends AbstractController
     /**
      * Affiche et traite le formulaire de duplication d'instrument.
      * 
-     * @Route("/instrument/{code}/duplicate", name="instrument_duplicate")
+     * @Route("/instrument/{id}/duplicate", name="instrument_duplicate")
      * @IsGranted("ROLE_ADMIN")
      */
     public function duplicate(Instrument $original, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
@@ -131,7 +131,7 @@ class InstrumentController extends AbstractController
     /**
      * Traite la demande de suppression d'un instrument.
      *
-     * @Route("/instrument/{code}/delete", name="instrument_delete")
+     * @Route("/instrument/{id}/delete", name="instrument_delete")
      * @IsGranted("ROLE_ADMIN")
      */
     public function delete(Instrument $instrument, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
