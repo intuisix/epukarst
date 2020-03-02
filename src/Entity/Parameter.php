@@ -113,6 +113,11 @@ class Parameter
      */
     private $choices;
 
+    /**
+     * @ORM\Column(type="string", length=10, nullable=true)
+     */
+    private $displayColor;
+
     public function __construct()
     {
         $this->measures = new ArrayCollection();
@@ -378,5 +383,17 @@ class Parameter
             /* Retourner le nombre formaté */
             return number_format($value, 1, ',', ' ');
         }
+    }
+
+    public function getDisplayColor(): ?string
+    {
+        return $this->displayColor;
+    }
+
+    public function setDisplayColor(?string $displayColor): self
+    {
+        $this->displayColor = $displayColor;
+
+        return $this;
     }
 }

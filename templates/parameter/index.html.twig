@@ -10,8 +10,8 @@
 
         <table class="table table-bordered table-striped">
             <tr>
-                <th>Dénomination</th>
-                <th>Titre</th>
+                <th>Nom</th>
+                <th>Nom complet</th>
                 <th class="text-center"><i class="fas fa-star"></i></th>
                 <th class="text-center">Unité</th>
                 <th class="text-center">Gamme normative</th>
@@ -21,8 +21,18 @@
             </tr>
             {% for parameter in parameters %}
                 <tr>
-                    <td>{{parameter.name}}</td>
-                    <td>{{parameter.title}}</td>
+                    <td>
+                        {# Nom abrégé #}
+                        {{parameter.name}}
+                        {# Couleur d'affichage #}
+                        {% if parameter.displayColor %}
+                            <i class="fas fa-square" style="color: {{parameter.displayColor}}"></i>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {# Titre / Nom complet #}
+                        {{parameter.title}}
+                    </td>
                     <td class="text-center">
                         {% if parameter.favorite %}
                             <i class="fas fa-star" style="color: goldenrod"></i>

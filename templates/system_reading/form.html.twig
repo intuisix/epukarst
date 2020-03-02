@@ -110,6 +110,10 @@ car celle-ci n'est pas triée.
                 {# Tableau d'encodage des mesures avec en colonnes les paramètres, en lignes les stations, et en cellules les mesures #}
                 <table class="table table-borderless table-responsive table-sm" cellpadding="3">
                     <thead>
+                        <colgroup colspan="1"></colgroup>
+                        {% for systemParameter in systemParameters %}
+                            <colgroup colspan="3" style="background-color: {{systemParameter.instrumentParameter.parameter.displayColor|default('')}}"></colgroup>
+                        {% endfor %}
                         <tr>
                             <th width="200">&nbsp;</th>
                             {% for systemParameter in systemParameters %}

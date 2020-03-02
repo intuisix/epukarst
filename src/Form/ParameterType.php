@@ -11,6 +11,7 @@ use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -97,6 +98,10 @@ class ParameterType extends AbstractType
                     return ($value + 1) . ". " . $key;
                 },
                 'placeholder' => "(en dernier)",
+                'required' => false,
+            ])
+            ->add('displayColor', ColorType::class, [
+                'label' => "Couleur d'affichage",
                 'required' => false,
             ])
             ->add('choices', CollectionType::class, [
