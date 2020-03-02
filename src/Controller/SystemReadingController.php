@@ -10,6 +10,7 @@ use App\Entity\Reading;
 use App\Entity\Station;
 use App\Entity\Attachment;
 use App\Service\Breadcrumbs;
+use App\Entity\Measurability;
 use App\Entity\SystemReading;
 use App\Entity\SystemParameter;
 use App\Form\SystemReadingType;
@@ -61,18 +62,17 @@ class SystemReadingController extends AbstractController
     {
         $breadcrumbs->add("Création d'une fiche");
 
-        /* Obtenir la liste des stations du système */
-        $systemStations = $stationRepository->findSystemStations($system);
-
-        /* Obtenir la liste ordonnée de paramètres du système */
-        $systemParameters = $systemParameterRepository->findSystemParameters($system);
-
         /* Instancier une nouvelle fiche */
         $systemReading = new SystemReading();
         $systemReading
             ->setSystem($system)
             ->setEncodingDateTime(new \DateTime('now'))
             ->setEncodingAuthor($this->getUser());
+
+        /* Obtenir les listes ordonnées des paramètres et des stations */
+        $systemStations = $stationRepository->findSystemStations($system);
+        $systemParameters = $systemParameterRepository->findSystemParameters($system);
+        $systemParameters = $this->loadSystemParameters($systemReading, $system, $systemParameterRepository);
 
         /* Ajouter un nouveau contrôle pour chaque paramètre du système*/
         if (!empty($systemParameters)) {
@@ -132,11 +132,12 @@ class SystemReadingController extends AbstractController
             return $this->redirect($breadcrumbs->getPrevious());
         }
 
-        /* Obtenir la liste ordonnée de paramètres et des stations du système */
+        /* Obtenir les listes ordonnées des paramètres et des stations */
         $system = $systemReading->getSystem();
         $systemStations = $stationRepository->findSystemStations($system);
-        $systemParameters = $systemParameterRepository->findSystemParameters($system);
+        $systemParameters = $this->loadSystemParameters($systemReading, $system, $systemParameterRepository);
 
+        /* Charger les valeurs de contrôle et les relevés */
         if ((false == $this->loadControls($systemReading, $systemParameters)) ||
             (false == $this->loadStationReadings($systemReading, $systemStations, $systemParameters))) {
                 /* Cas spécial non géré pour l'instant */
@@ -637,5 +638,70 @@ class SystemReadingController extends AbstractController
         /* Persister la fiche dans la base de données */
         $manager->persist($systemReading);
         $manager->flush();
+    }
+
+    /**
+     * Ajoute un paramètre dans le tableau, s'il n'y est pas déjà présent.
+     *
+     * @param Measurability $instrumentParameter
+     * @param SystemParameter[] $systemParameters
+     * @return void
+     */
+    private function addSystemParameter(Measurability $instrumentParameter, &$systemParameters)
+    {
+        /* Déterminer si le paramètre est déjà présent dans le tableau */
+        foreach ($systemParameters as $parameterFromArray) {
+            if ($parameterFromArray->getInstrumentParameter() === $instrumentParameter) {
+                /* Il est déjà présent */
+                return;
+            }
+        }
+
+        /* Créer le paramètre */
+        $newSystemParameter = new SystemParameter();
+        $newSystemParameter->setInstrumentParameter($instrumentParameter);
+        $systemParameters[] = $newSystemParameter;
+    }
+
+    /**
+     * Charge le tableau des paramètres devant être affichés dans les colonnes
+     * du formulaire d'encodage.
+     *
+     * @param SystemReading $systemReading
+     * @param System $system
+     * @param SystemParameterRepository $systemParameterRepository
+     * @return void
+     */
+    private function loadSystemParameters(SystemReading $systemReading, System $system, SystemParameterRepository $systemParameterRepository)
+    {
+        /* Commencer par charger les paramètres associés au système */
+        $systemParameters = $systemParameterRepository->findSystemParameters($system);
+
+        /* Ajouter les paramètres qui ne seraient pas(plus) associés au système, mais figurent néanmoins parmi les contrôles */
+        foreach ($systemReading->getControls() as $control) {
+            $instrumentParameter = $control->getInstrumentParameter();
+            $this->addSystemParameter($instrumentParameter, $systemParameters);
+        }
+
+        /* Ajouter les paramètres qui ne seraient pas(plus) associés au système, mais figurent néanmoins parmi les mesures dans les relevés */
+        foreach ($systemReading->getStationReadings() as $stationReading) {
+            foreach ($stationReading->getMeasures() as $measure) {
+                $instrumentParameter = $measure->getMeasurability();
+                $this->addSystemParameter($instrumentParameter, $systemParameters);
+            }
+        }
+
+        /* Terminer par trier les paramètres */
+        usort($systemParameters, function(SystemParameter $a, SystemParameter $b) {
+            /* Par position de paramètre */
+            $result = $a->getInstrumentParameter()->getParameter()->getPosition() <=> $b->getInstrumentParameter()->getParameter()->getPosition();
+            if (0 === $result) {
+                /* Par code d'instrument, pour une même position */
+                $result = $a->getInstrumentParameter()->getInstrument()->getCode() <=> $b->getInstrumentParameter()->getInstrument()->getCode();
+            }
+            return $result;
+        });
+
+        return $systemParameters;
     }
 }
