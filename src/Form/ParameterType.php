@@ -11,7 +11,6 @@ use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -100,8 +99,41 @@ class ParameterType extends AbstractType
                 'placeholder' => "(en dernier)",
                 'required' => false,
             ])
-            ->add('displayColor', ColorType::class, [
+            ->add('displayColor', ChoiceType::class, [
                 'label' => "Couleur d'affichage",
+                'choices' => [
+                    'Azure' => '#f0ffff',
+                    'Beige' => '#f5f5dc',
+                    'BurlyWood' => '#deb887',
+                    'Coral' => '#ff7f50',
+                    'Cornsilk' => '#fff8dc',
+                    'Cyan' => '#00ffff',
+                    'DarkSeaGreen' => '#8fbc8f',
+                    'Gold' => '#ffd700',
+                    'Goldenrot' => '#daa520',
+                    'GreenYellow' => '#adff2f',
+                    'GreenYellow' => '#adff2f',
+                    'HotPink' => '#ff69b4',
+                    'Ivory' => '#fffff0',
+                    'Lavender' => '#e6e6fa',
+                    'LemonChiffon' => '#fffacd',
+                    'LightBlue' => '#add8e6',
+                    'LightCoral' => '#f08080',
+                    'LightCyan' => '#e0ffff',
+                    'LightGray' => '#a9a9a9',
+                    'LightGray' => '#d3d3d3',
+                    'LightGreen' => '#90ee90',
+                    'LightPink' => '#ffb6c1',
+                    'LightSalmon' => '#ffa07a',
+                    'LightYellow' => '#ffffe0',
+                    'Salmon' => '#fa8072',
+                    'SandyBrown' => '#f4a460',
+                    'Silver' => '#c0c0c0',
+                    'SkyBlue' => '#87ceeb',
+                ],
+                'choice_attr' => function ($choice, $key, $value) {
+                    return [ 'style' => 'background-color: ' . $choice ];
+                },
                 'required' => false,
             ])
             ->add('choices', CollectionType::class, [
