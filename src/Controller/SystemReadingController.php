@@ -104,9 +104,13 @@ class SystemReadingController extends AbstractController
             /* Mémoriser la fiche */
             $this->storeSystemReading($systemReading, $manager);
 
-            $this->addFlash('success', "La fiche <strong>{$systemReading->getCode()}</strong> a été encodée avec succès.");
+            $this->addFlash('success', "La fiche <strong>{$systemReading->getCode()}</strong> a été encodée avec succès.<br>Nous vous prions néanmoins de bien vouloir vérifier qu'elle a été enregistrée correctement et complètement.");
 
-            return $this->redirect($breadcrumbs->getPrevious());
+            /* Aller sur la page de visualisation */
+            $breadcrumbs->removeLast();
+            return $this->redirectToRoute('system_reading_show', [
+                'code' => $systemReading->getCode(),
+            ]);
         }
 
         return $this->render('system_reading/form.html.twig', [
@@ -158,9 +162,13 @@ class SystemReadingController extends AbstractController
             /* Mémoriser la fiche */
             $this->storeSystemReading($systemReading, $manager);
 
-            $this->addFlash('success', "La fiche <strong>{$systemReading->getCode()}</strong> a été mise à jour avec succès.");
+            $this->addFlash('success', "La fiche <strong>{$systemReading->getCode()}</strong> a été mise à jour avec succès.<br>Nous vous prions néanmoins de bien vouloir vérifier qu'elle a été enregistrée correctement et complètement.");
 
-            return $this->redirect($breadcrumbs->getPrevious());
+            /* Aller sur la page de visualisation */
+            $breadcrumbs->removeLast();
+            return $this->redirectToRoute('system_reading_show', [
+                'code' => $systemReading->getCode(),
+            ]);
         }
 
         return $this->render('system_reading/form.html.twig', [

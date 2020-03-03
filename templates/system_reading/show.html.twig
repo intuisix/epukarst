@@ -64,7 +64,7 @@
         </div>
 
         <h2>Relevés</h2>
-        <p>La fiche contient les relevés suivants, dont chacun regroupe les mesures réalisées auprès d'une station&nbsp;:</p>
+        <p>La fiche contient les relevés suivants, chacun d'entre eux regroupant les mesures réalisées auprès d'une station&nbsp;:</p>
         <table width="100%" class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -125,6 +125,7 @@
 
         {% if systemReading.controls|length %}
             <h2>Mesures de contrôle</h2>
+            <p>La fiche reprend les valeurs ci-dessous pour les contrôles réalisés sur les instruments de mesure&nbsp;:</p>
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -145,6 +146,7 @@
 
         {% if systemReading.attachments|length %}
             <h2>Pièces jointes</h2>
+            <p>Les annexes suivantes sont jointes à la fiche&nbsp;:</p>
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
