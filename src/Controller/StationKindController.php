@@ -36,7 +36,7 @@ class StationKindController extends AbstractController
     {
         $breadcrumbs->add("Création d'un type de station");
 
-        /* Instancier un nouveau genre de station */
+        /* Instancier un nouveau type de station */
         $stationKind = new StationKind();
         /* Créer et traiter le formulaire */
         $form = $this->createForm(StationKindType::class, $stationKind);
@@ -46,7 +46,7 @@ class StationKindController extends AbstractController
             $manager->persist($stationKind);
             $manager->flush();
             
-            $this->addFlash('success', "Le genre de station <strong>{$stationKind->getName()}</strong> a été créé avec succès.");
+            $this->addFlash('success', "Le type de station <strong>{$stationKind->getName()}</strong> a été créé avec succès.");
     
             return $this->redirect($breadcrumbs->getPrevious());
         }
@@ -54,7 +54,7 @@ class StationKindController extends AbstractController
         return $this->render('station_kind/form.html.twig', [
             'stationKind' => $stationKind,
             'form' => $form->createView(),
-            'title' => "Créer un nouveau genre de station",
+            'title' => "Créer un nouveau type de station",
             'breadcrumbs' => $breadcrumbs,
         ]);
     }
@@ -75,7 +75,7 @@ class StationKindController extends AbstractController
             $manager->persist($stationKind);
             $manager->flush();
             
-            $this->addFlash('success', "Le genre de station <strong>{$stationKind->getName()}</strong> a été créé avec succès.");
+            $this->addFlash('success', "Le type de station <strong>{$stationKind->getName()}</strong> a été créé avec succès.");
 
             return $this->redirect($breadcrumbs->getPrevious());
         }
@@ -83,7 +83,7 @@ class StationKindController extends AbstractController
         return $this->render('station_kind/form.html.twig', [
             'stationKind' => $stationKind,
             'form' => $form->createView(),
-            'title' => "Modifier le genre de station {$stationKind->getName()}",
+            'title' => "Modifier le type de station {$stationKind->getName()}",
             'breadcrumbs' => $breadcrumbs,
         ]);
     }
@@ -97,12 +97,12 @@ class StationKindController extends AbstractController
         $breadcrumbs->add("Suppression d'un type de station");
 
         if (count($stationKind->getStations()) > 0) {
-            $this->addFlash('danger', "Vous ne pouvez pas supprimer le genre de station <strong>{$stationKind->getName()}</strong> car il est associé à des stations.");
+            $this->addFlash('danger', "Vous ne pouvez pas supprimer le type de station <strong>{$stationKind->getName()}</strong> car il est associé à des stations.");
         } else {
             $manager->remove($stationKind);
             $manager->flush();
 
-            $this->addFlash('success', "Le genre de station <strong>{$stationKind->getName()}</strong> a été supprimé avec succès.");
+            $this->addFlash('success', "Le type de station <strong>{$stationKind->getName()}</strong> a été supprimé avec succès.");
         }
 
         return $this->redirect($breadcrumbs->getPrevious());

@@ -407,7 +407,7 @@ class AppFixtures extends Fixture
     }
 
     /**
-     * Génère des genres de stations.
+     * Génère des types de stations.
      *
      * @param ObjectManager $manager
      * @return void

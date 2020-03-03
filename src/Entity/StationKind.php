@@ -11,7 +11,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\StationKindRepository")
  * 
- * @UniqueEntity(fields={"name"}, message="Un autre genre de station possède déjà ce nom. Veuillez en choisir un autre.")
+ * @UniqueEntity(fields={"name"}, message="Un autre type de station possède déjà ce nom. Veuillez en choisir un autre.")
  */
 class StationKind
 {

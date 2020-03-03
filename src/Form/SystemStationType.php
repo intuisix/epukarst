@@ -44,7 +44,7 @@ class SystemStationType extends AbstractType
                 'label' => "Type",
                 'class' => StationKind::class,
                 'choice_label' => 'name',
-                'placeholder' => "Sélectionnez un genre (facultatif)",
+                'placeholder' => "Sélectionnez un type (facultatif)",
                 'required' => false,
             ])
             ->add('atlasCode', TextType::class, [

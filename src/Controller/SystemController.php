@@ -47,6 +47,7 @@ class SystemController extends AbstractController
 
         $pagination
             ->setEntityClass(System::class)
+            ->setOrderBy(['code' => 'ASC'])
             ->setPage($page);
 
         return $this->render('system/list.html.twig', [

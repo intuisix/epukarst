@@ -1,5 +1,5 @@
 {# Ce template définit une base commune pour les formulaires de création et de
-modification d'un genre de station #}
+modification d'un type de station #}
 
 {% extends 'base.html.twig' %}
 
@@ -11,7 +11,7 @@ modification d'un genre de station #}
     <div class="container mb-3">
         <h1>{{title}}</h1>
 
-        <p>Ce formulaire permet de définir un genre de station.</p>
+        <p>Ce formulaire permet de définir un type de station.</p>
 
         {{form_start(form)}}
 
@@ -32,7 +32,7 @@ modification d'un genre de station #}
             {# Bouton permettant d'enregistrer le type de station #}
             <button type="submit" class="btn btn-success">
                 <i class="fas fa-check"></i>
-                Enregistrer le genre de station
+                Enregistrer le type de station
             </button>
             {# Bouton permettant de revenir à la page précédente #}
             {{breadcrumbs.displayBackButton}}

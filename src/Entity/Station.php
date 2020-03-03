@@ -42,7 +42,7 @@ class Station
     private $name;
 
     /**
-     * Genre de la station.
+     * Type de la station.
      * 
      * @ORM\ManyToOne(targetEntity="App\Entity\StationKind", inversedBy="stations")
      */
