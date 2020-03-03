@@ -41,7 +41,11 @@ class SystemReadingController extends AbstractController
 
         $pagination
             ->setEntityClass(SystemReading::class)
-            ->setOrderBy(['fieldDateTime' => 'DESC'])
+            ->setOrderBy([
+                'fieldDateTime' => 'DESC',
+                'encodingDateTime' => 'DESC',
+                'code' => 'DESC',
+            ])
             ->setPage($page)
         ;
 
