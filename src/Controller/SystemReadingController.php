@@ -78,6 +78,14 @@ class SystemReadingController extends AbstractController
         $systemParameters = $systemParameterRepository->findSystemParameters($system);
         $systemParameters = $this->loadSystemParameters($systemReading, $system, $systemParameterRepository);
 
+        if (empty($systemParameters)) {
+            $this->addFlash('danger', "Pour pouvoir encoder une fiche, les paramètres à encoder doivent être définis pour le système <strong>{$system->getName()}</strong>.");
+            return $this->redirect($breadcrumbs->getPrevious());
+        } else if (empty($systemStations)) {
+            $this->addFlash('danger', "Pour pouvoir encoder une fiche, les stations à encoder doivent être définies pour le système <strong>{$system->getName()}</strong>.");
+            return $this->redirect($breadcrumbs->getPrevious());
+        }
+
         /* Ajouter un nouveau contrôle pour chaque paramètre du système*/
         if (!empty($systemParameters)) {
             foreach ($systemParameters as $systemParameter) {

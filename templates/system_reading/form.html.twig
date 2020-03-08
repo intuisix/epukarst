@@ -20,49 +20,39 @@ car celle-ci n'est pas triée.
     <div class="mx-3 my-3">
         <h1>{{title}}</h1>
 
-        <p>Ce formulaire permet l'encodage rapide des mesures pour toutes les stations d'un système, en leur attribuant la même date de terrain et les mêmes instruments de mesure. Avant de commencer, vérifiez ci-dessous si la liste des stations et la liste des paramètres sont complètes, et adaptez-les en cas de besoin&nbsp;!</p>
+        <p>Ce formulaire permet l'encodage rapide d'une fiche, contenant un relevé pour chacune des stations d'un système, et une valeur par paramètre par relevé.</p>
 
         {{form_start(form)}}
 
         {# Informations générales #}
-        <div class="alert bg-light">
+        <div class="mb-3">
             <div class="row">
-                <div class="col-sm-2">
+                <div class="col-md">
                     {# Date et heure de terrain #}
                     {{form_row(form.fieldDateTime)}}
                 </div>
-                <div class="col-sm-2">
+                <div class="col-md">
                     {# Code #}
                     {{form_row(form.code)}}
                 </div>
-                <div class="col-sm">
+                <div class="col-md">
                     {# Sélection de l'alarme #}
                     {{form_row(form.alarm)}}
-                </div>
-                <div class="col-sm-4">
-                    <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-primary btn-block">
-                        <i class="fas fa-bullseye"></i>
-                        Définir les stations du système
-                    </a>
-                    <a href="{{path('system_parameter', {'code': system.code})}}" class="btn btn-primary btn-block">
-                        <i class="fas fa-asterisk"></i>
-                        Définir les paramètres du système
-                    </a>
                 </div>
             </div>
         </div>
 
         {# Valeurs des mesures de contrôle #}
         {% if form.controls|length %}
-            <div class="alert bg-light">
+            <div class="mb-3">
                 <h2>Mesures de contrôle</h2>
                 <p>Introduisez les éventuelles valeurs des mesures de contrôle qui ont été réalisées dans le cadre de ce relevé.</p>
-                <table class="table table-borderless table-responsive table-sm" cellpadding="3" width="100%">
+                <table class="table table-borderless table-responsive table-sm" cellpadding="3">
                     <thead>
                         <tr>
                             <th width="200">&nbsp;</th>
                             {% for systemParameter in systemParameters %}
-                                <th width="150" class="text-center">
+                                <th width="150" class="text-center" style="min-width: 100px">
                                     {# Nom du paramètre #}
                                     {{systemParameter.instrumentParameter.parameter.name}}
                                 </th>
@@ -97,17 +87,12 @@ car celle-ci n'est pas triée.
             </div>
         {% endif %}
 
-        {# Relevés #}
-        {% if form.stationReadings|length == 0 %}
-            <div class="alert alert-warning">
-                Pour pouvoir encoder des mesures, vous devez d'abord assigner des stations et des paramètres au système.
-            </div>
-            {{form_widget(form.stationReadings)}}
-        {% else %}
-            <div class="alert bg-light">
+        {# Relevés aux stations #}
+        {% if form.stationReadings|length and systemParameters|length %}
+            <div class="mb-3">
                 <h2>Mesures aux stations</h2>
                 <p>Pour chaque station, introduisez les valeurs qui ont été mesurées. Décochez &laquo;&nbsp;S&nbsp;&raquo; lorsque la valeur était instable lors de la mesure, et/ou décochez &laquo;&nbsp;V&nbsp;&raquo; lorsque la valeur mesurée est hors gamme ou si l'instrument n'est pas en ordre d'étalonnage.</p>
-                {# Tableau d'encodage des mesures avec en colonnes les paramètres, en lignes les stations, et en cellules les mesures #}
+                {# Tableau d'encodage des mesures avec en colonnes les paramètres, en lignes les relevés, et en cellules les mesures #}
                 <table class="table table-borderless table-responsive table-sm" cellpadding="3">
                     <thead>
                         <colgroup colspan="1"></colgroup>
@@ -117,7 +102,7 @@ car celle-ci n'est pas triée.
                         <tr>
                             <th width="200">&nbsp;</th>
                             {% for systemParameter in systemParameters %}
-                                <th width="150" class="text-center">
+                                <th width="150" class="text-center" style="min-width: 100px">
                                     {# Nom du paramètre #}
                                     {{systemParameter.instrumentParameter.parameter.name}}
                                 </th>
@@ -184,7 +169,7 @@ car celle-ci n'est pas triée.
             </div>
 
             {# Remarques de station #}
-            <div class="alert bg-light">
+            <div class="mb-3">
                 <h2>Remarques aux stations</h2>
                 <p>Pour chaque station, introduisez la date et l'heure de la prise des mesures, ainsi qu'une éventuelle remarque..</p>
                 <table class="table table-borderless table-responsive table-sm" cellpadding="3">
@@ -192,7 +177,7 @@ car celle-ci n'est pas triée.
                         <tr>
                             <th width="200">&nbsp;</th>
                             <th width="200">Date et heure</th>
-                            <th width="800">Remarque</th>
+                            <th width="800" style="min-width: 250px">Remarque</th>
                         </tr>
                     </thead>
                     {% for stationReading in form.children.stationReadings %}
@@ -227,7 +212,7 @@ car celle-ci n'est pas triée.
 
         {# Informations d'encodage #}
         {% if form.encodingNotes is defined %}
-            <div class="alert bg-light">
+            <div class="mb-3">
                 <h2>Encodage</h2>
                 <p>Introduisez les éventuelles remarques générales du relevé.</p>
                 <div class="row">
@@ -245,7 +230,7 @@ car celle-ci n'est pas triée.
 
         {# Informations de validation #}
         {% if form.validationNotes is defined %}
-            <div class="alert bg-light">
+            <div class="mb-3">
                 <h2>Validation</h2>
                 <p>Introduisez les éventuelles remarques générales de validation du relevé.</p>
                 <div class="row">
@@ -262,7 +247,7 @@ car celle-ci n'est pas triée.
             </div>
         {% endif %}
 
-        <div class="alert bg-light">
+        <div class="mb-3">
             <h2>Pièces jointes</h2>
             {# Nouvelles pièces jointes #}
             {{form_row(form.newAttachments)}}
