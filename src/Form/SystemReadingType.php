@@ -67,7 +67,7 @@ class SystemReadingType extends AbstractType
             ])
             ->add('newAttachments', FileType::class, [
                 'label' => "Ajouter des pièces jointes",
-                'help' => "Utilisez ce contrôle pour charger une ou plusieurs pièces jointes (p.ex. vos notes manuscrites, en format PDF ou JPEG, n'excédant pas 2 Mo).",
+                'help' => "Utilisez ce contrôle pour charger une ou plusieurs pièces jointes n'excédant pas 2 Mo.",
                 'attr' => [
                     'placeholder' => "Choisissez un ou plusieurs fichiers",
                 ],
@@ -78,7 +78,7 @@ class SystemReadingType extends AbstractType
                     new All([
                         new File([
                             'maxSize' => '2048k',
-                            'maxSizeMessage' => "Les fichiers doivent faire moins de 2 Mo",
+                            'maxSizeMessage' => "Les fichiers doivent faire moins de 2.048 kilo-octets.",
                         ])
                     ])
                 ]
@@ -109,7 +109,7 @@ class SystemReadingType extends AbstractType
                     'label' => "Remarques de l'encodage",
                     'required' => false,
                     'attr' => [
-                        'placeholder' => "Entrez vos remarques concernant le système en général",
+                        'placeholder' => "Entrez vos remarques non spécifiques aux stations, concernant les observations, les mesures ou l'encodage",
                     ]
                 ])
             ;
@@ -133,7 +133,7 @@ class SystemReadingType extends AbstractType
                     'label' => "Remarques de la validation",
                     'required' => false,
                     'attr' => [
-                        'placeholder' => "Entrez vos remarques concernant le système en général",
+                        'placeholder' => "Entrez vos remarques concernant la validation",
                     ]
                 ])
                 ->add('validationStatus', ChoiceType::class, [

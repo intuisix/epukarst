@@ -177,7 +177,7 @@ car celle-ci n'est pas triée.
                         <tr>
                             <th width="200">&nbsp;</th>
                             <th width="200">Date et heure</th>
-                            <th width="800" style="min-width: 250px">Remarque</th>
+                            <th width="800" style="min-width: 300px">Remarque</th>
                         </tr>
                     </thead>
                     {% for stationReading in form.children.stationReadings %}
@@ -249,14 +249,20 @@ car celle-ci n'est pas triée.
 
         <div class="mb-3">
             <h2>Pièces jointes</h2>
-            <p>
-                Les pièces sont vos notes manuscrites, des photos, ou tout autre document qui permet d'illustrer la fiche ou de compléter les remarques.
-                <i class="fas fa-exclamation-triangle text-danger"></i>
-                <span class="text-danger">Les nouvelles pièces jointes peuvent ne pas être sauvegardées s'il y a des erreurs dans le formulaire.</span>
-                Pour éviter ce problème, il est préférable de sauvegarder la fiche, corriger les erreurs éventuelles, puis d'y revenir en modification pour ajouter les pièces jointes.
-            </p>
+            <p>Les pièces sont vos notes manuscrites, des photos, ou tout autre document qui permet d'illustrer la fiche ou de compléter les remarques.</p>
+
             {# Nouvelles pièces jointes #}
-            {{form_row(form.newAttachments)}}
+            <div class="form-row">
+                <div class="col">
+                    {{form_row(form.newAttachments)}}
+                </div>
+                <div class="col-md text-secondary small">
+                    <p><i class="fas fa-exclamation-triangle text-warning"></i>
+                        Les nouvelles pièces jointes sont susceptibles de ne pas être sauvegardées s'il y a des erreurs dans le formulaire.</span>
+                        Pour éviter ce problème, sauvegardez la fiche une première fois sans joindre de fichier, en corrigeant les erreurs éventuelles, puis modifiez la fiche en joingant les fichiers.
+                    </p>
+                </div>
+            </div>
             {# Pièces jointes #}
             {{form_row(form.attachments)}}
         </div>
@@ -334,20 +340,20 @@ car celle-ci n'est pas triée.
 {% endblock %}
 
 {% block _system_reading_attachments_entry_row %}
-    <div class="form-row alert bg-white" id="{{id}}">
+    <div class="form-row mb-2" id="{{id}}">
         <div class="col">
             {# Nom de la pièce jointe #}
             {{form_widget(form.name)}}
         </div>
-        <div class="col-2">
+        <div class="col-md-2">
             {# Auteur de chargement #}
             {{form_widget(form.uploadAuthor)}}
         </div>
-        <div class="col-3">
+        <div class="col-md-3">
             {# Date et heure de chargement #}
             {{form_widget(form.uploadDateTime)}}
         </div>
-        <div class="col-3">
+        <div class="col-md-3">
             {# Bouton pour supprimer la pièce jointe #}
             <button type="button" data-action="delete-attachment" data-target="#{{id}}" class="btn btn-danger float-right">
                 <i class="fas fa-trash"></i>

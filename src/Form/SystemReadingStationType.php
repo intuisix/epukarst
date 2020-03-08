@@ -43,7 +43,7 @@ class SystemReadingStationType extends AbstractType
                 'label' => "Remarques de l'encodage",
                 'required' => false,
                 'attr' => [
-                    'placeholder' => "Entrez vos remarques propres à cette station",
+                    'placeholder' => "Entrez vos remarques et observations propres à cette station",
                 ],
             ])
         ;
