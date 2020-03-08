@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Fiches de {{system.name}}
+    {{title}}
 {% endblock %}
 
 {% block body %}
     <div class="container mb-3">
         {# Titre #}
-        <h1>Fiches de {{system.name}}</h1>
+        <h1>{{title}}</h1>
 
         <p>La liste ci-dessous énumère les fiches du système. Ces fiches correspondent aux encodages réalisés de façon globale, à un moment donné, sur les différentes stations du système. Chaque fiche contient des relevés, chacun d'eux correspondant à une station et regroupant les mesures de celle-ci.</p>
 

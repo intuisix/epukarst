@@ -242,25 +242,6 @@ class SystemController extends AbstractController
     }
 
     /**
-     * Affiche les fiches du système karstique.
-     * 
-     * @Route("/system/{slug}/readings", name="system_show_readings")
-     * @IsGranted("SYSTEM_OBSERVER", subject="system")
-     *
-     * @param System $system
-     * @return Response
-     */
-    public function showReadings(System $system, Breadcrumbs $breadcrumbs)
-    {
-        $breadcrumbs->add("Liste des fiches");
-
-        return $this->render('system/readings.html.twig', [
-            'system' => $system,
-            'breadcrumbs' => $breadcrumbs,
-        ]);
-    }
-
-    /**
      * Mémorise le système karstique dans la base de données.
      *
      * @param System $system

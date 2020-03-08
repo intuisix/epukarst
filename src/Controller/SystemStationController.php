@@ -16,10 +16,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class SystemStationController extends AbstractController
 {
     /**
-     * @Route("/system-station/{code}", name="system_station")
+     * Affiche la liste des stations du système donné.
+     * 
+     * @Route("/system-station/list/{code}", name="system_station_list")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="system")
      */
-    public function index(System $system, StationRepository $stationRepository, Breadcrumbs $breadcrumbs)
+    public function list(System $system, StationRepository $stationRepository, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Liste des stations du système");
 
@@ -32,6 +34,8 @@ class SystemStationController extends AbstractController
     }
 
     /**
+     * Gère la création d'une nouvelle station pour un système donné.
+     * 
      * @Route("/system-station/create/{code}", name="system_station_create")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="system")
      */
@@ -67,6 +71,8 @@ class SystemStationController extends AbstractController
     }
 
     /**
+     * Gère la modificiation de la station donnée.
+     * 
      * @Route("/system-station/modify/{code}", name="system_station_update")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="station")
      */
@@ -101,6 +107,8 @@ class SystemStationController extends AbstractController
     }
 
     /**
+     * Gère la suppression d'une station donnée.
+     * 
      * @Route("/system-station/delete/{code}", name="system_station_delete")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="station")
      */

@@ -32,6 +32,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class SystemReadingController extends AbstractController
 {
     /**
+     * Affiche la liste des fiches de tous les systèmes.
+     * 
      * @Route("/system-reading/{page<\d+>?1}", name="system_reading")
      * @IsGranted("SYSTEM_OBSERVER")
      */
@@ -57,7 +59,24 @@ class SystemReadingController extends AbstractController
     }
 
     /**
-     * Gère l'encodage d'une nouvelle fiche.
+     * Affiche la liste des fiches d'un système donné.
+     * 
+     * @Route("/system-reading/list/{code}", name="system_reading_list")
+     * @IsGranted("SYSTEM_OBSERVER", subject="system")
+     */
+    public function list(System $system, Breadcrumbs $breadcrumbs)
+    {
+        $breadcrumbs->add("Liste des fiches d'un système");
+
+        return $this->render('system_reading/list.html.twig', [
+            'system' => $system,
+            'breadcrumbs' => $breadcrumbs,
+            'title' => "Fiches de {$system->getName()}",
+        ]);
+    }
+
+    /**
+     * Gère l'encodage d'une nouvelle fiche pour un système donné.
      * 
      * @Route("/system-reading/encode/{code}", name="system_reading_encode")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="system")
@@ -136,6 +155,8 @@ class SystemReadingController extends AbstractController
     }
 
     /**
+     * Gère la modification d'une fiche.
+     * 
      * @Route("/system-reading/{code}/modify", name="system_reading_edit")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="systemReading")
      */
@@ -194,7 +215,7 @@ class SystemReadingController extends AbstractController
     }
 
     /**
-     * Traite la suppression d'une fiche.
+     * Gère la suppression d'une fiche.
      *
      * @Route("system-reading/{code}/delete", name="system_reading_delete")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="systemReading")
@@ -231,6 +252,8 @@ class SystemReadingController extends AbstractController
     }
 
     /**
+     * Affiche une fiche.
+     * 
      * @Route("/system-reading/{code}", name="system_reading_show")
      * @IsGranted("SYSTEM_OBSERVER", subject="systemReading")
      */

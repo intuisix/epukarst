@@ -2,7 +2,7 @@
 <div class="float-md-right alert bg-light">
     {# Boutons pour lister les fiches #}
     {% if is_granted("SYSTEM_OBSERVER", system) %}
-        <a href="{{path('system_show_readings', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
+        <a href="{{path('system_reading_list', {'code': system.code})}}" class="btn btn-secondary btn-block">
             <i class="fas fa-file-alt"></i>
             Voir les fiches
         </a>
@@ -18,7 +18,7 @@
 
     {# Bouton pour lister les stations #}
     {% if is_granted("SYSTEM_OBSERVER", system) %}
-        <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-secondary btn-block">
+        <a href="{{path('system_station_list', {'code': system.code})}}" class="btn btn-secondary btn-block">
             <i class="fas fa-bullseye"></i>
             Voir les stations
         </a>
