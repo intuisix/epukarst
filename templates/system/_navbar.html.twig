@@ -1,63 +1,65 @@
-{# Division flottant à droite sur les périphériques moyens et plus larges #}
-<div class="float-md-right alert bg-light">
-    {# Boutons pour lister les fiches #}
-    {% if is_granted("SYSTEM_OBSERVER", system) %}
-        <a href="{{path('system_reading_list', {'code': system.code})}}" class="btn btn-secondary btn-block">
-            <i class="fas fa-file-alt"></i>
-            Voir les fiches
-        </a>
-    {% endif %}
+{# Division contenant les boutons de commande: la placer en position flottante à droite sur les périphériques moyens et plus larges #}
+{% if app.user is not null %}
+    <div class="float-md-right alert bg-light">
+        {# Boutons pour lister les fiches #}
+        {% if is_granted("SYSTEM_OBSERVER", system) %}
+            <a href="{{path('system_reading_list', {'code': system.code})}}" class="btn btn-secondary btn-block">
+                <i class="fas fa-file-alt"></i>
+                Voir les fiches
+            </a>
+        {% endif %}
 
-    {# Bouton pour encoder une fiche #}
-    {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
-        <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary btn-block">
-            <i class="fas fa-plus"></i>
-            Encoder une fiche
-        </a>
-    {% endif %}
+        {# Bouton pour encoder une fiche #}
+        {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+            <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary btn-block">
+                <i class="fas fa-plus"></i>
+                Encoder une fiche
+            </a>
+        {% endif %}
 
-    {# Bouton pour lister les stations #}
-    {% if is_granted("SYSTEM_OBSERVER", system) %}
-        <a href="{{path('system_station_list', {'code': system.code})}}" class="btn btn-secondary btn-block">
-            <i class="fas fa-bullseye"></i>
-            Voir les stations
-        </a>
-    {% endif %}
+        {# Bouton pour lister les stations #}
+        {% if is_granted("SYSTEM_OBSERVER", system) %}
+            <a href="{{path('system_station_list', {'code': system.code})}}" class="btn btn-secondary btn-block">
+                <i class="fas fa-bullseye"></i>
+                Voir les stations
+            </a>
+        {% endif %}
 
-    {# Bouton pour ajouter une station #}
-    {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
-        <a href="{{path('system_station_create', {'code': system.code})}}" class="btn btn-primary btn-block">
-            <i class="fas fa-plus"></i>
-            Ajouter une station
-        </a>
-    {% endif %}
+        {# Bouton pour ajouter une station #}
+        {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+            <a href="{{path('system_station_create', {'code': system.code})}}" class="btn btn-primary btn-block">
+                <i class="fas fa-plus"></i>
+                Ajouter une station
+            </a>
+        {% endif %}
 
-    {% if 0 %}  {# Désactivé car pris en charge par les articles #}
-        {# Boutons pour voir les instruments #}
-        <a href="{{path('system_show_instruments', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
-            <i class="fas fa-ruler"></i>
-            Instruments
-        </a>
-        {# Boutons pour voir les paramètres #}
-        <a href="{{path('system_show_parameters', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
-            <i class="fas fa-asterisk"></i>
-            Paramètres
-        </a>
-    {% endif %}
+        {% if 0 %}  {# Désactivé car pris en charge par les articles #}
+            {# Boutons pour voir les instruments #}
+            <a href="{{path('system_show_instruments', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
+                <i class="fas fa-ruler"></i>
+                Instruments
+            </a>
+            {# Boutons pour voir les paramètres #}
+            <a href="{{path('system_show_parameters', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
+                <i class="fas fa-asterisk"></i>
+                Paramètres
+            </a>
+        {% endif %}
 
-    {# Bouton pour modifier le système #}
-    {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{path('system_modify', {'code': system.code})}}" class="btn btn-primary btn-block">
-            <i class="fas fa-edit"></i>
-            Modifier le système
-        </a>
-    {% endif %}
+        {# Bouton pour modifier le système #}
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{path('system_modify', {'code': system.code})}}" class="btn btn-primary btn-block">
+                <i class="fas fa-edit"></i>
+                Modifier le système
+            </a>
+        {% endif %}
 
-    {# Bouton pour supprimer le système #}
-    {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{path('system_delete', {'code': system.code})}}" class="btn btn-danger btn-block">
-            <i class="fas fa-trash"></i>
-            Supprimer le système
-        </a>
-    {% endif %}
-</div>
+        {# Bouton pour supprimer le système #}
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{path('system_delete', {'code': system.code})}}" class="btn btn-danger btn-block">
+                <i class="fas fa-trash"></i>
+                Supprimer le système
+            </a>
+        {% endif %}
+    </div>
+{% endif %}
