@@ -195,22 +195,6 @@ class SystemController extends AbstractController
     }
 
     /**
-     * Affiche les stations d'un système karstique.
-     * 
-     * @Route("/system/{slug}/stations", name="system_show_stations")
-     * @IsGranted("SYSTEM_OBSERVER", subject="system")
-     */
-    public function showStations(System $system, Breadcrumbs $breadcrumbs)
-    {
-        $breadcrumbs->add("Liste des stations d'un système");
-
-        return $this->render('system/stations.html.twig', [
-            'system' => $system,
-            'breadcrumbs' => $breadcrumbs,
-        ]);
-    }
-
-    /**
      * Affiche les paramètres d'un système karstique.
      * 
      * @Route("/system/{slug}/parameters", name="system_show_parameters")

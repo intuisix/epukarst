@@ -35,12 +35,14 @@
     </dl>
 
     {# Description détaillée du système #}
-    {{system.description|raw}}
+    <div>
+        {{system.description|raw}}
+    </div>
 
     {# Carousel d'images #}
     {% if system.pictures|length > 0 %}
         <center>
-            <div id="systemPicturesCarousel" class="carousel slide mb-3" data-ride="carousel" style="height: 540px; width: 720px">
+            <div id="systemPicturesCarousel" class="carousel slide mb-3" data-ride="carousel" style="width: 80%">
                 <ol class="carousel-indicators">
                     {% for picture in system.pictures %}
                         <li data-target="#systemPicturesCarousel" data-slide-to="{{loop.index0}}" class="{% if loop.first %}active{% endif %}"></li>
@@ -49,8 +51,8 @@
                 <div class="carousel-inner">
                     {% for picture in system.pictures %}
                         <div class="carousel-item {% if loop.first %}active{% endif %}">
-                            <img src="/{{picture.fileName}}" class="d-block w-100" alt="..." style="height: 540px; width: 720px; object-fit: cover">
-                            <div class="carousel-caption d-none-d-md-block">
+                            <img src="/{{picture.fileName}}" class="d-block w-100" alt="{{picture.caption}}" style="object-fit: cover; width: 720px; height: 540px">
+                            <div class="carousel-caption d-none d-md-block">
                                 <h5>{{system.name}}</h5>
                                 <p>{{picture.caption}}</p>
                             </div>
@@ -68,20 +70,7 @@
             </div>
         </center>
     {% endif %}
-{% endblock %}
 
-{% block index %}
-    <div class="card my-3">
-        <div class="card-body">
-            <h5 class="card-title">
-                {{system.name}}
-            </h5>
-            <ul>
-                <li>{{system.basinCount}} bassin(s)</li>
-                <li>{{system.stationCount}} station(s)</li>
-                <li>{{system.readingCount}} fiches(s)</li>
-                <li>{{system.alarmCount}} alarme(s)</li>
-            </ul>
-        </div>
-    </div>
+    {# Descriptions des bassins et des stations #}
+    {% include 'system/_stations.html.twig' with { 'system': system } %}
 {% endblock %}

@@ -1,9 +1,36 @@
-<div>
-    {# Boutons pour voir la description #}
-    <a href="{{path('system_show', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
-        <i class="fas fa-eye"></i>
-        Système
-    </a>
+{# Division flottant à droite sur les périphériques moyens et plus larges #}
+<div class="float-md-right alert bg-light">
+    {# Boutons pour lister les fiches #}
+    {% if is_granted("SYSTEM_OBSERVER", system) %}
+        <a href="{{path('system_show_readings', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
+            <i class="fas fa-file-alt"></i>
+            Voir les fiches
+        </a>
+    {% endif %}
+
+    {# Bouton pour encoder une fiche #}
+    {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+        <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary btn-block">
+            <i class="fas fa-plus"></i>
+            Encoder une fiche
+        </a>
+    {% endif %}
+
+    {# Bouton pour lister les stations #}
+    {% if is_granted("SYSTEM_OBSERVER", system) %}
+        <a href="{{path('system_station', {'code': system.code})}}" class="btn btn-secondary btn-block">
+            <i class="fas fa-bullseye"></i>
+            Voir les stations
+        </a>
+    {% endif %}
+
+    {# Bouton pour ajouter une station #}
+    {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+        <a href="{{path('system_station_create', {'code': system.code})}}" class="btn btn-primary btn-block">
+            <i class="fas fa-plus"></i>
+            Ajouter une station
+        </a>
+    {% endif %}
 
     {% if 0 %}  {# Désactivé car pris en charge par les articles #}
         {# Boutons pour voir les instruments #}
@@ -18,34 +45,16 @@
         </a>
     {% endif %}
 
-    {% if is_granted("SYSTEM_OBSERVER", system) %}
-        {# Boutons pour voir les stations #}
-        <a href="{{path('system_show_stations', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
-            <i class="fas fa-bullseye"></i>
-            Bassins et stations
-        </a>
-        {# Boutons pour voir les fiches #}
-        <a href="{{path('system_show_readings', {'slug': system.slug})}}" class="btn btn-secondary btn-block">
-            <i class="fas fa-file-alt"></i>
-            Fiches
-        </a>
-    {% endif %}
-
-    {# Bouton pour encoder une fiche #}
-    {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
-        <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary btn-block">
-            <i class="fas fa-plus"></i>
-            Encoder une fiche
-        </a>
-    {% endif %}
-
+    {# Bouton pour modifier le système #}
     {% if is_granted('ROLE_ADMIN') %}
-        {# Bouton pour modifier le système #}
         <a href="{{path('system_modify', {'code': system.code})}}" class="btn btn-primary btn-block">
             <i class="fas fa-edit"></i>
             Modifier le système
         </a>
-        {# Bouton pour supprimer le système #}
+    {% endif %}
+
+    {# Bouton pour supprimer le système #}
+    {% if is_granted('ROLE_ADMIN') %}
         <a href="{{path('system_delete', {'code': system.code})}}" class="btn btn-danger btn-block">
             <i class="fas fa-trash"></i>
             Supprimer le système

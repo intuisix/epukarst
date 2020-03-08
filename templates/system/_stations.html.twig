@@ -1,0 +1,72 @@
+{# Pour chaque bassin du système #}
+{% for basin in system.basins|sort((a, b) => (a.code <=> b.code)) %}
+    <div class="mt-5">
+        {# Titre #}
+        <h2 id="basin_{{basin.code}}" class="d-flex align-items-center">
+            <span class="badge badge-secondary">
+                {{basin.code}}
+            </span>
+            <span class="mx-2">
+                {{basin.name}}
+            </span>
+            <small>
+                {# Bouton de modification #}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{path('system_modify', {'code': system.code})}}"><i class="fas fa-edit text-primary"></i></a>
+                {% endif %}
+            </small>
+        </h2>
+
+        {# Description #}
+        <div>
+            {{basin.description|raw}}
+        </div>
+
+        {# Pour chaque station sitée dans le bassin #}
+        {% for station in basin.stations|sort((a, b) => (a.code <=> b.code)) %}
+            <div class="mt-4">
+                {# Titre #}
+                <h3 id="station_{{station.code}}" class="d-flex align-items-center">
+                    <span class="badge badge-secondary">
+                        {{station.code}}
+                    </span>
+                    <span class="mx-2">
+                        {{station.name}}
+                    </span>
+                    <small>
+                        {# Bouton de modification #}
+                        {% if is_granted('SYSTEM_CONTRIBUTOR', station) %}
+                            <a href="{{path('system_station_update', {'code': station.code})}}"><i class="fas fa-edit text-primary"></i></a>
+                        {% endif %}
+                        {# Bouton de suppression #}
+                        {% if is_granted('SYSTEM_CONTRIBUTOR', station) %}
+                            <a href="{{path('system_station_delete', {'code': station.code})}}"><i class="fas fa-trash text-danger"></i></a>
+                        {% endif %}
+                    </small>
+                </h3>
+
+                {% if station.atlasCode or station.kind %}
+                    <dl class="row">
+                        {# Code d'atlas #}
+                        {% if station.atlasCode %}
+                            {# Code de l'atlas #}
+                            <dt class="col-3">Code AKWA&nbsp;:</dt>
+                            <dd class="col-9">{{station.atlasCode}}</dd>
+                        {% endif %}
+                        {# Type de station #}
+                        {% if station.kind %}
+                            {# Code de l'atlas #}
+                            <dt class="col-3">Type&nbsp;:</dt>
+                            <dd class="col-9">{{station.kind.name}}</dd>
+                        {% endif %}
+                    </dl>
+                {% endif %}
+
+                {# Description #}
+                <div>
+                    {{station.description|raw}}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endfor %}

@@ -1,74 +1,80 @@
-{% extends 'system/base.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}
     Fiches de {{system.name}}
 {% endblock %}
 
-{% block content %}
-    {# Bouton pour ajouter une fiche #}
-    {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
-        <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary float-right">
-            <i class="fas fa-plus"></i>
-            Encoder une fiche
-        </a>
-    {% endif %}
+{% block body %}
+    <div class="container mb-3">
+        {# Titre #}
+        <h1>Fiches de {{system.name}}</h1>
 
-    {# Titre #}
-    <h1>Fiches de {{system.name}}</h1>
+        <p>La liste ci-dessous énumère les fiches du système. Ces fiches correspondent aux encodages réalisés de façon globale, à un moment donné, sur les différentes stations du système. Chaque fiche contient des relevés, chacun d'eux correspondant à une station et regroupant les mesures de celle-ci.</p>
 
-    <table class="table table-bordered table-striped">
-        <thead>
-            <th>Code</th>
-            <th>Date de terrain</th>
-            <th>Date d'encodage</th>
-            <th>Encodé par</th>
-            <th>Stations</th>
-            <th>Actions</th>
-        </thead>
-        <tbody>
-            {# Pour chaque relevé, triés par date de terrain #}
-            {% for systemReading in system.systemReadings|sort((a,b) => -(a.code <=> b.code)) %}
-                <tr>
-                    <td>
-                        {% if is_granted('SYSTEM_OBSERVER', systemReading) %}
-                            <a href="{{path('system_reading_show', {'code': systemReading.code})}}">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <th>Code</th>
+                <th>Date de terrain</th>
+                <th>Date d'encodage</th>
+                <th>Encodé par</th>
+                <th>Relevés</th>
+                <th>Actions</th>
+            </thead>
+            <tbody>
+                {# Pour chaque relevé, triés par date de terrain #}
+                {% for systemReading in system.systemReadings|sort((a,b) => -(a.code <=> b.code)) %}
+                    <tr>
+                        <td>
+                            {% if is_granted('SYSTEM_OBSERVER', systemReading) %}
+                                <a href="{{path('system_reading_show', {'code': systemReading.code})}}">
+                                    <span class="badge badge-secondary">{{systemReading.code}}</span>
+                                </a>
+                            {% else %}
                                 <span class="badge badge-secondary">{{systemReading.code}}</span>
-                            </a>
-                        {% else %}
-                            <span class="badge badge-secondary">{{systemReading.code}}</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {{systemReading.fieldDateTime|localizeddate('short', 'none')}}
-                    </td>
-                    <td>
-                        {{systemReading.encodingDateTime|localizeddate('short', 'none')}}
-                    </td>
-                    <td>
-                        {{systemReading.encodingAuthor}}
-                    </td>
-                    <td>
-                        {% if systemReading.stationReadings|length %}
-                            <span class="badge badge-primary badge-pill">{{systemReading.stationReadings|length}}</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if is_granted('SYSTEM_OBSERVER', systemReading) %}
-                            <a href="{{path('system_reading_show', {'code': systemReading.code})}}"><i class="fas fa-eye"></i></a>
-                        {% endif %}
-                        {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
-                            <a href="{{path('system_reading_edit', {'code': systemReading.code})}}"><i class="fas fa-edit text-primary"></i></a>
-                        {% endif %}
-                        {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
-                            <a href="{{path('system_reading_delete', {'code': systemReading.code})}}"><i class="fas fa-trash text-danger"></i></a>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="100"><em>Il n'y a pas de fiches pour ce système.</em></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{systemReading.fieldDateTime|localizeddate('short', 'none')}}
+                        </td>
+                        <td>
+                            {{systemReading.encodingDateTime|localizeddate('short', 'none')}}
+                        </td>
+                        <td>
+                            {{systemReading.encodingAuthor}}
+                        </td>
+                        <td>
+                            {% if systemReading.stationReadings|length %}
+                                <span class="badge badge-primary badge-pill">{{systemReading.stationReadings|length}}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if is_granted('SYSTEM_OBSERVER', systemReading) %}
+                                <a href="{{path('system_reading_show', {'code': systemReading.code})}}"><i class="fas fa-eye"></i></a>
+                            {% endif %}
+                            {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
+                                <a href="{{path('system_reading_edit', {'code': systemReading.code})}}"><i class="fas fa-edit text-primary"></i></a>
+                            {% endif %}
+                            {% if is_granted('SYSTEM_CONTRIBUTOR', systemReading) %}
+                                <a href="{{path('system_reading_delete', {'code': systemReading.code})}}"><i class="fas fa-trash text-danger"></i></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="100"><em>Il n'y a pas de fiches pour ce système.</em></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {# Bouton pour ajouter une fiche #}
+        {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+            <a href="{{path('system_reading_encode', {'code': system.code})}}" class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                Encoder une fiche
+            </a>
+        {% endif %}
+        {# Bouton permettant de revenir à la page précédente #}
+        {{breadcrumbs.displayBackButton}}
+    </div>
 {% endblock %}

@@ -3,19 +3,9 @@
 {% block body %}
     {# Corps de la page #}
     <div class="container mb-3">
-        <div class="row">
-            {# Colonne principale #}
-            <div class="col mb-3">
-                {% block content %}{% endblock %}
-            </div>
+        {# Boutons de navigation #}
+        {% include 'system/_navbar.html.twig' %}
 
-            {# Colonne de droite #}
-            <div class="col-4 alert bg-light">
-                {# Boutons de navigation #}
-                {% include 'system/_navbar.html.twig' %}
-
-                {% block index %}{% endblock %}
-            </div>
-        </div>
+        {% block content %}{% endblock %}
     </div>
 {% endblock %}
