@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="container mb-3">
         <h1>{{title}}</h1>
 
         <p>La liste ci-dessous énumère les stations auxquelles les relevés sont réalisés au sein du système. Chaque station est identifiée par un code, définissant l'ordre dans lequel les mesures des stations sont encodées. Elle possède éventuellement un code dans l'Atlas du Karst Wallon, et est toujours reliée à un bassin d'alimentation au sein du système. Le tableau indique également le nombre de fois où la station a fait l'objet de relevés.</p>
@@ -39,8 +39,12 @@
                             {% endif %}
                         </td>
                         <td>
-                            <a href="{{path('system_station_update', {'code': station.code})}}"><i class="fas fa-edit text-primary"></i></a>
-                            <a href="{{path('system_station_delete', {'code': station.code})}}"><i class="fas fa-trash text-danger"></i></a>
+                            {% if is_granted('SYSTEM_MANAGER', station) %}
+                                <a href="{{path('system_station_update', {'code': station.code})}}"><i class="fas fa-edit text-primary"></i></a>
+                            {% endif %}
+                            {% if is_granted('SYSTEM_MANAGER', station) %}
+                                <a href="{{path('system_station_delete', {'code': station.code})}}"><i class="fas fa-trash text-danger"></i></a>
+                            {% endif %}
                         </td>
                     </tr>
                 {% else %}
@@ -49,14 +53,15 @@
             </tbody>
         </table>
 
-        <div class="mb-3">
-            {# Bouton permettant d'ajouter une station #}
+        {# Bouton permettant d'ajouter une station #}
+        {% if is_granted('SYSTEM_MANAGER', system) %}
             <a href="{{path('system_station_create', {'code': system.code})}}" class="btn btn-primary">
                 <i class="fas fa-plus"></i>
                 Ajouter une station
             </a>
-            {# Bouton permettant de revenir à la page précédente #}
-            {{breadcrumbs.displayBackButton}}
-        </div>
+        {% endif %}
+
+        {# Bouton permettant de revenir à la page précédente #}
+        {{breadcrumbs.displayBackButton}}
     </div>
 {% endblock %}

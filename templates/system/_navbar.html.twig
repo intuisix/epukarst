@@ -18,7 +18,7 @@
         {% endif %}
 
         {# Bouton pour lister les stations #}
-        {% if is_granted("SYSTEM_OBSERVER", system) %}
+        {% if is_granted("SYSTEM_MANAGER", system) %}
             <a href="{{path('system_station_list', {'code': system.code})}}" class="btn btn-secondary btn-block">
                 <i class="fas fa-bullseye"></i>
                 Voir les stations
@@ -26,7 +26,7 @@
         {% endif %}
 
         {# Bouton pour ajouter une station #}
-        {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+        {% if is_granted('SYSTEM_MANAGER', system) %}
             <a href="{{path('system_station_create', {'code': system.code})}}" class="btn btn-primary btn-block">
                 <i class="fas fa-plus"></i>
                 Ajouter une station

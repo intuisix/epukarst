@@ -13,13 +13,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+/**
+ * Contrôleur permettant la gestion des stations appartenant à un système.
+ */
 class SystemStationController extends AbstractController
 {
     /**
      * Affiche la liste des stations du système donné.
      * 
      * @Route("/system-station/list/{code}", name="system_station_list")
-     * @IsGranted("SYSTEM_CONTRIBUTOR", subject="system")
+     * @IsGranted("SYSTEM_MANAGER", subject="system")
      */
     public function list(System $system, StationRepository $stationRepository, Breadcrumbs $breadcrumbs)
     {
@@ -37,7 +40,7 @@ class SystemStationController extends AbstractController
      * Gère la création d'une nouvelle station pour un système donné.
      * 
      * @Route("/system-station/create/{code}", name="system_station_create")
-     * @IsGranted("SYSTEM_CONTRIBUTOR", subject="system")
+     * @IsGranted("SYSTEM_MANAGER", subject="system")
      */
     public function create(System $system, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
@@ -74,7 +77,7 @@ class SystemStationController extends AbstractController
      * Gère la modificiation de la station donnée.
      * 
      * @Route("/system-station/modify/{code}", name="system_station_update")
-     * @IsGranted("SYSTEM_CONTRIBUTOR", subject="station")
+     * @IsGranted("SYSTEM_MANAGER", subject="station")
      */
     public function modify(Station $station, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
@@ -110,7 +113,7 @@ class SystemStationController extends AbstractController
      * Gère la suppression d'une station donnée.
      * 
      * @Route("/system-station/delete/{code}", name="system_station_delete")
-     * @IsGranted("SYSTEM_CONTRIBUTOR", subject="station")
+     * @IsGranted("SYSTEM_MANAGER", subject="station")
      */
     public function delete(Station $station, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
     {

@@ -50,8 +50,10 @@
                         </td>
                         <td>
                             <a href="{{path('system_modify', {'code': system.code})}}" class="text-primary"><i class="fas fa-edit"></i></a>
-                            {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
+                            {% if is_granted('SYSTEM_MANAGER', system) %}
                                 <a href="{{path('system_station_list', {'code': system.code})}}" class="text-primary"><i class="fas fa-bullseye"></i></a>
+                            {% endif %}
+                            {% if is_granted('SYSTEM_CONTRIBUTOR', system) %}
                                 <a href="{{path('system_reading_list', {'code': system.code})}}" class="text-primary"><i class="fas fa-file-alt"></i></a>
                             {% endif %}
                             <a href="{{path('system_show', {'slug': system.slug})}}" class="text-secondary"><i class="fas fa-eye"></i></a>

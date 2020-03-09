@@ -35,11 +35,11 @@
                     </span>
                     <small>
                         {# Bouton de modification #}
-                        {% if is_granted('SYSTEM_CONTRIBUTOR', station) %}
+                        {% if is_granted('SYSTEM_MANAGER', station) %}
                             <a href="{{path('system_station_update', {'code': station.code})}}"><i class="fas fa-edit text-primary"></i></a>
                         {% endif %}
                         {# Bouton de suppression #}
-                        {% if is_granted('SYSTEM_CONTRIBUTOR', station) %}
+                        {% if is_granted('SYSTEM_MANAGER', station) %}
                             <a href="{{path('system_station_delete', {'code': station.code})}}"><i class="fas fa-trash text-danger"></i></a>
                         {% endif %}
                     </small>
