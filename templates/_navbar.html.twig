@@ -8,16 +8,19 @@
 
     <div class="collapse navbar-collapse" id="navbarColor03">
         <ul class="navbar-nav mr-auto">
-            {# Menus configurés #}
+            {# Articles configurés pour apparaître dans le menu #}
             {% for post in topMenu.posts %}
                 <li class="nav-item">
-                    <a href="{{path('home_post', {'slug': post.slug})}}" class="nav-link">{{post.title}}</a>
+                    <a href="{{path('home_post', {'slug': post.slug})}}" class="nav-link">
+                        {{post.title}}
+                    </a>
                 </li>
             {% endfor %}
-            {# Autres menus #}
+
+            {# Eléments de menu "Systèmes" #}
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" id="navbarSystems" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Systèmes
+                    Systèmes
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarSystems">
                     {% for system in topMenu.systems %}
@@ -28,40 +31,68 @@
                 </div>
             </li>
 
+            {# Eléments de menu disponibles à tout utilisateur connecté #}
             {% if user %}
                 <li class="nav-item">
-                    <a href="{{path('system_reading')}}" class="nav-link">Fiches</a>
+                    <a href="{{path('system_reading')}}" class="nav-link">
+                        Fiches
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{path('reading')}}" class="nav-link">Relevés</a>
+                    <a href="{{path('reading')}}" class="nav-link">
+                        Relevés
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{path('alarm_index')}}" class="nav-link">Alarmes</a>
+                    <a href="{{path('alarm_index')}}" class="nav-link">
+                        Alarmes
+                    </a>
                 </li>
             {% endif %}
         </ul>
+
         <ul class="navbar-nav ml-auto">
             {% if is_granted('ROLE_ADMIN') %}
                 {# Menu déroulant de l'administration #}
                 <li class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" id="adminDropdownLink">
-                        <i class="fas fa-cogs"></i> Administration
+                        <i class="fas fa-cogs"></i>
+                        Administration
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="adminDropdownLink">
-                        <a href="{{path('systems_list')}}" class="dropdown-item">Systèmes</a>
-                        <div class="dropdown-divider"></div>
-                        <a href="{{path('alarm_kind')}}" class="dropdown-item">Types d'alarmes</a>
-                        <a href="{{path('station_kind')}}" class="dropdown-item">Types de stations</a>
-                        <div class="dropdown-divider"></div>
-                        <a href="{{path('instrument')}}" class="dropdown-item">Instruments</a>
-                        <a href="{{path('parameter')}}" class="dropdown-item">Paramètres</a>
-                        <div class="dropdown-divider"></div>
-                        <a href="{{path('user')}}" class="dropdown-item">Utilisateurs</a>
-                        <div class="dropdown-divider"></div>
-                        <a href="{{path('post')}}" class="dropdown-item">Articles du site</a>
+                        <a href="{{path('system_list')}}" class="dropdown-item">
+                            Systèmes
+                        </a>
+                        <div class="dropdown-divider">
+                        </div>
+                        <a href="{{path('alarm_kind')}}" class="dropdown-item">
+                            Types d'alarmes
+                        </a>
+                        <a href="{{path('station_kind')}}" class="dropdown-item">
+                            Types de stations
+                        </a>
+                        <div class="dropdown-divider">
+                        </div>
+                        <a href="{{path('instrument')}}" class="dropdown-item">
+                            Instruments
+                        </a>
+                        <a href="{{path('parameter')}}" class="dropdown-item">
+                            Paramètres
+                        </a>
+                        <div class="dropdown-divider">
+                        </div>
+                        <a href="{{path('user')}}" class="dropdown-item">
+                            Utilisateurs
+                        </a>
+                        <div class="dropdown-divider">
+                        </div>
+                        <a href="{{path('post')}}" class="dropdown-item">
+                            Articles du site
+                        </a>
                     </div>
                 </li>
             {% endif %}
+
             {% if user %}
                 {# Menu déroulant de l'utilisateur #}
                 <li class="nav-item dropdown">

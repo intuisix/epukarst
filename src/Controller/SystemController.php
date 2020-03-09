@@ -18,6 +18,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+/**
+ * Contrôleur permettant la gestion des systèmes.
+ */
 class SystemController extends AbstractController
 {
     /**
@@ -38,7 +41,7 @@ class SystemController extends AbstractController
     /**
      * Affiche la liste des systèmes karstiques.
      * 
-     * @Route("/system/list/{page<\d+>?1}", name="systems_list")
+     * @Route("/system/list/{page<\d+>?1}", name="system_list")
      * @IsGranted("ROLE_ADMIN")
      */
     public function list(int $page, SystemRepository $systemRepository, PaginationService $pagination, Breadcrumbs $breadcrumbs)
