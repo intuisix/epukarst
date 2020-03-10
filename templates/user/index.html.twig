@@ -8,6 +8,10 @@
     <div class="container mb-3">
         <h1>Utilisateurs</h1>
 
+        <p>Les personnes suivantes peuvent se connecter à l'application à l'aide de leur adresse e-mail et d'un mot de passe.</p>
+        <p>Les rôles pour chacun des systèmes sont <i class="fa fa-eye"></i> <b>Observateur</b> (peut voir les relevés), <i class="fas fa-pen"></i> <b>Contributeur</b> (peut encoder des relevés) et <i class="fas fa-flag-checkered"></i> <b>Gestionnaire</b> (peut valider des relevés). Notez que les systèmes peuvent aussi attribuer un rôle par défaut aux utilisateurs, et cela n'apparaît pas dans cette liste. Le rôle le plus élevé est toujours pris en compte.</p>
+        <p>Les <i class="fas fa-user-cog"></i> <b>Administrateurs</b> ont le contrôle sur tous les réglages de l'application, et les <i class="fas fa-medkit"></i> <b>Super-Administrateurs</b> sont des comptes de secours.</p>
+
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -15,6 +19,8 @@
                     <th>Nom</th>
                     <th>Prénom</th>
                     <th>Organisation</th>
+                    <th class="text-center"><i class="fas fa-user"></i></th>
+                    <th>Systèmes</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -32,6 +38,30 @@
                         </td>
                         <td>
                             {{user.organization}}
+                        </td>
+                        <td class="text-center">
+                            {% if user.mainRole == 'ROLE_SUPER_ADMIN' %}
+                                <i class="fas fa-medkit"></i>
+                            {% elseif user.mainRole == 'ROLE_ADMIN' %}
+                                <i class="fas fa-user-cog"></i>
+                            {% elseif user.mainRole == 'ROLE_USER' %}
+                                <i class="fas fa-user"></i>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% for systemRole in user.systemRoles %}
+                                {# Rôle #}
+                                {% if systemRole.role == 'SYSTEM_OBSERVER' %}
+                                    <i class="fas fa-eye"></i>
+                                {% elseif systemRole.role == 'SYSTEM_CONTRIBUTOR' %}
+                                    <i class="fas fa-pen"></i>
+                                {% elseif systemRole.role == 'SYSTEM_MANAGER' %}
+                                    <i class="fas fa-flag-checkered"></i>
+                                {% endif %}
+                                {# Système #}
+                                {{systemRole.system.name|default('Tous')}}
+                                <br>
+                            {% endfor %}
                         </td>
                         <td>
                             <a href="{{path('user_modify', {'id': user.id})}}" class="text-primary"><i class="fas fa-edit"></i></a>
