@@ -609,10 +609,11 @@ class SystemReadingController extends AbstractController
      */
     private function storeSystemReading(SystemReading $systemReading, ObjectManager $manager)
     {
-        /* Mettre en cache certaines informations de la fiche */
+        /* Obtenir la date de terrain de la fiche */
         $fieldDateTime = $systemReading->getFieldDateTime();
-        $encodingDateTime = $systemReading->getEncodingDateTime();
-        $encodingAuthor = $systemReading->getEncodingAuthor();
+        /* Construire la date d'encodage et l'auteur pour les nouveaux relevés et les nouvelles mesures */
+        $encodingDateTime = new \DateTime('now');
+        $encodingAuthor = $this->getUser();
 
         /* Traiter chacun des relevés */
         foreach ($systemReading->getStationReadings() as $stationReading) {
@@ -633,16 +634,23 @@ class SystemReadingController extends AbstractController
                 if (null === $stationDateTime) {
                     /* Par défaut, utiliser la même date et la même heure que la fiche */
                     $stationDateTime = $fieldDateTime;
+                    $stationReading->setFieldDateTime($stationDateTime);
                 }
 
                 /* Traiter chaque mesure du relevé */
                 foreach ($measures as $measure) {
-                    /* Définir les propriétés de la mesure */
-                    $measure
-                        ->setFieldDateTime($stationDateTime)
-                        ->setEncodingDateTime($encodingDateTime)
-                        ->setEncodingAuthor($encodingAuthor)
-                        ->setReading($stationReading);
+                    /* Associer la mesure au relevé */
+                    $measure->setReading($stationReading);
+                    /* Définir la date de terrain de la mesure */
+                    $measure->setFieldDateTime($stationDateTime);
+                    /* Définir la date d'encodage de la mesure */
+                    if (null === $measure->getEncodingDateTime()) {
+                        $measure->setEncodingDateTime($encodingDateTime);
+                    }
+                    /* Définir l'auteur de l'encodage de la mesure */
+                    if (null === $measure->getEncodingAuthor()) {
+                        $measure->setEncodingAuthor($encodingAuthor);
+                    }
                     /* Mémoriser la mesure dans la base de données */
                     $manager->persist($measure);
                     /* Détecter les valeurs hors normes, si la mesure n'a pas déjà été liée à une alarme */
@@ -651,12 +659,16 @@ class SystemReadingController extends AbstractController
                     }
                 }
 
-                /* Définir les propriétés du relevé */
-                $stationReading
-                    ->setFieldDateTime($stationDateTime)
-                    ->setEncodingDateTime($encodingDateTime)
-                    ->setEncodingAuthor($encodingAuthor)
-                    ->setSystemReading($systemReading);
+                /* Associer la fiche au relevé */
+                $stationReading->setSystemReading($systemReading);
+                /* Définir la date d'encodage du relevé */
+                if (null === $stationReading->getEncodingDateTime()) {
+                    $stationReading->setEncodingDateTime($encodingDateTime);
+                }
+                /* Définir l'auteur de l'encodage du relevé */
+                if (null === $stationReading->getEncodingAuthor()) {
+                    $stationReading->setEncodingAuthor($encodingAuthor);
+                }
                 /* Mémoriser le relevé en base de données */
                 $manager->persist($stationReading);
             } else {
