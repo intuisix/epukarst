@@ -8,7 +8,7 @@ use App\Service\Breadcrumbs;
 use App\Repository\PostRepository;
 use App\Service\PaginationService;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,7 +39,7 @@ class PostController extends AbstractController
      * @Route("/post/create", name="post_create")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function create(ObjectManager $manager, Request $request, PostRepository $postRepository, Breadcrumbs $breadcrumbs)
+    public function create(EntityManagerInterface $manager, Request $request, PostRepository $postRepository, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Création d'un article");
 
@@ -80,7 +80,7 @@ class PostController extends AbstractController
      * @Route("/post/{id}/modify", name="post_modify")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function modify(Post $post, ObjectManager $manager, Request $request, PostRepository $postRepository, Breadcrumbs $breadcrumbs)
+    public function modify(Post $post, EntityManagerInterface $manager, Request $request, PostRepository $postRepository, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Modification d'un article");
 
@@ -120,7 +120,7 @@ class PostController extends AbstractController
      * @Route("/post/{id}/publish", name="post_publish")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function publish(Post $post, ObjectManager $manager, Breadcrumbs $breadcrumbs)
+    public function publish(Post $post, EntityManagerInterface $manager, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Publication d'un article");
 
@@ -138,7 +138,7 @@ class PostController extends AbstractController
      * @Route("/post/{id}/unpublish", name="post_unpublish")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function unpublish(Post $post, ObjectManager $manager, Breadcrumbs $breadcrumbs)
+    public function unpublish(Post $post, EntityManagerInterface $manager, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Dépublication d'un article");
 
@@ -156,7 +156,7 @@ class PostController extends AbstractController
      * @Route("/post/{id}/delete", name="post_delete")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function delete(Post $post, ObjectManager $manager, Breadcrumbs $breadcrumbs)
+    public function delete(Post $post, EntityManagerInterface $manager, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Suppression d'un article");
 

@@ -7,7 +7,7 @@ use App\Form\ParameterType;
 use App\Service\Breadcrumbs;
 use App\Repository\ParameterRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,7 +36,7 @@ class ParameterController extends AbstractController
      * @Route("/parameter/create", name="parameter_create")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function create(ObjectManager $manager, Request $request, ParameterRepository $parameterRepository, Breadcrumbs $breadcrumbs)
+    public function create(EntityManagerInterface $manager, Request $request, ParameterRepository $parameterRepository, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Création d'un paramètre");
 
@@ -81,7 +81,7 @@ class ParameterController extends AbstractController
      * @Route("/parameter/{id}/modify", name="parameter_modify")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function modify(Parameter $parameter, ObjectManager $manager, Request $request, ParameterRepository $parameterRepository, Breadcrumbs $breadcrumbs)
+    public function modify(Parameter $parameter, EntityManagerInterface $manager, Request $request, ParameterRepository $parameterRepository, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Modification d'un paramètre");
 
@@ -123,7 +123,7 @@ class ParameterController extends AbstractController
      * @Route("/parameter/{id}/delete", name="parameter_delete")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function delete(Parameter $parameter, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function delete(Parameter $parameter, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Suppression d'un paramètre");
 
@@ -201,7 +201,7 @@ class ParameterController extends AbstractController
         }
     }
 
-    private function updateChoices(Parameter $parameter, ObjectManager $manager)
+    private function updateChoices(Parameter $parameter, EntityManagerInterface $manager)
     {
         /* Persister les choix du paramètre */
         foreach ($parameter->getChoices() as $choice) {

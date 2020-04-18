@@ -7,7 +7,7 @@ use App\Service\Breadcrumbs;
 use App\Entity\SystemParameter;
 use App\Form\SystemParameterType;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,7 +33,7 @@ class SystemParameterController extends AbstractController
      * @Route("/system-parameter/create/{code}", name="system_parameter_create")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="system")
      */
-    public function create(System $system, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function create(System $system, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Ajouter un paramètre de système");
 
@@ -67,7 +67,7 @@ class SystemParameterController extends AbstractController
      * @Route("/system-parameter/modify/{id}", name="system_parameter_update")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="systemParameter")
      */
-    public function modify(SystemParameter $systemParameter, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function modify(SystemParameter $systemParameter, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Modification d'un paramètre de système");
 
@@ -99,7 +99,7 @@ class SystemParameterController extends AbstractController
      * @Route("/system-parameter/delete/{id}", name="system_parameter_delete")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="systemParameter")
      */
-    public function delete(SystemParameter $systemParameter, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function delete(SystemParameter $systemParameter, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Suppression d'un paramètre de système");
 

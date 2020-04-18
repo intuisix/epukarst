@@ -7,7 +7,7 @@ use App\Form\AlarmKindType;
 use App\Service\Breadcrumbs;
 use App\Repository\AlarmKindRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,7 +32,7 @@ class AlarmKindController extends AbstractController
      * @Route("/alarm-kind/create", name="alarm_kind_create")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function create(ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function create(EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Créer un type d'alarme");
 
@@ -63,7 +63,7 @@ class AlarmKindController extends AbstractController
      * @Route("/alarm-kind/{id}/modify", name="alarm_kind_modify")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function modify(AlarmKind $alarmKind, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function modify(AlarmKind $alarmKind, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Modifier un type d'alarme");
 
@@ -92,7 +92,7 @@ class AlarmKindController extends AbstractController
      * @Route("/alarm-kind/{id}/delete", name="alarm_kind_delete")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function delete(AlarmKind $alarmKind, ObjectManager $manager, Breadcrumbs $breadcrumbs)
+    public function delete(AlarmKind $alarmKind, EntityManagerInterface $manager, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Supprimer un type d'alarme");
 

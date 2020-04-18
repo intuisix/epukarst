@@ -24,7 +24,7 @@ use App\Repository\StationKindRepository;
 use App\Repository\MeasurabilityRepository;
 use App\Repository\SystemParameterRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -81,7 +81,7 @@ class SystemReadingController extends AbstractController
      * @Route("/system-reading/encode/{code}", name="system_reading_encode")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="system")
      */
-    public function encode(System $system, ObjectManager $manager, Request $request, StationRepository $stationRepository, MeasurabilityRepository $instrumentParameterRepository, BasinRepository $basinRepository, StationKindRepository $stationKindRepository, SystemParameterRepository $systemParameterRepository, Breadcrumbs $breadcrumbs)
+    public function encode(System $system, EntityManagerInterface $manager, Request $request, StationRepository $stationRepository, MeasurabilityRepository $instrumentParameterRepository, BasinRepository $basinRepository, StationKindRepository $stationKindRepository, SystemParameterRepository $systemParameterRepository, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Création d'une fiche");
 
@@ -160,7 +160,7 @@ class SystemReadingController extends AbstractController
      * @Route("/system-reading/{code}/modify", name="system_reading_edit")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="systemReading")
      */
-    public function modify(SystemReading $systemReading, Request $request, ObjectManager $manager, StationRepository $stationRepository, SystemParameterRepository $systemParameterRepository, Breadcrumbs $breadcrumbs)
+    public function modify(SystemReading $systemReading, Request $request, EntityManagerInterface $manager, StationRepository $stationRepository, SystemParameterRepository $systemParameterRepository, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Modification d'une fiche");
 
@@ -220,7 +220,7 @@ class SystemReadingController extends AbstractController
      * @Route("system-reading/{code}/delete", name="system_reading_delete")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="systemReading")
      */
-    public function delete(SystemReading $systemReading, Request $request, ObjectManager $manager, Breadcrumbs $breadcrumbs)
+    public function delete(SystemReading $systemReading, Request $request, EntityManagerInterface $manager, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Suppression d'une fiche");
 
@@ -510,9 +510,9 @@ class SystemReadingController extends AbstractController
      *
      * @param Measure $measure
      * @param SystemReading $systemReading
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      */
-    private function testNormativeLimits(Measure $measure, SystemReading $systemReading, ObjectManager $manager)
+    private function testNormativeLimits(Measure $measure, SystemReading $systemReading, EntityManagerInterface $manager)
     {
         if ($measure->getValid()) {
             /* Obtenir la valeur et le paramètre */
@@ -546,10 +546,10 @@ class SystemReadingController extends AbstractController
      * @param SystemReading $systemReading
      * @param Measure $measure
      * @param string $note
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      * @return void
      */
-    private function createNormativeAlarm(SystemReading $systemReading, Measure $measure, string $note, ObjectManager $manager)
+    private function createNormativeAlarm(SystemReading $systemReading, Measure $measure, string $note, EntityManagerInterface $manager)
     {
         $alarm = $systemReading->getAlarm();
         if (null === $alarm) {
@@ -583,10 +583,10 @@ class SystemReadingController extends AbstractController
      * @param SystemReading $systemReading
      * @param Form $form
      * @param User $user
-     * @param ObjectManager $anager
+     * @param EntityManagerInterface $anager
      * @return void
      */
-    private function addNewAttachments(SystemReading $systemReading, $form, $user, ObjectManager $manager)
+    private function addNewAttachments(SystemReading $systemReading, $form, $user, EntityManagerInterface $manager)
     {
         /* Ajouter les pièces jointes qui viennent d'être chargées */
         foreach ($form['newAttachments']->getData() as $uploadedFile) {
@@ -604,10 +604,10 @@ class SystemReadingController extends AbstractController
      * - les contrôles ne contenant pas de valeur.
      *
      * @param SystemReading $systemReading
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      * @return void
      */
-    private function storeSystemReading(SystemReading $systemReading, ObjectManager $manager)
+    private function storeSystemReading(SystemReading $systemReading, EntityManagerInterface $manager)
     {
         /* Obtenir la date de terrain de la fiche */
         $fieldDateTime = $systemReading->getFieldDateTime();

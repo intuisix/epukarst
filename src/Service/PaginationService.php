@@ -5,7 +5,7 @@ namespace App\Service;
 use Twig\Environment;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -50,12 +50,12 @@ class PaginationService
     /**
      * Construit un gestionnaire de pagination.
      * 
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      * @param Environment $twig
      * @param RequestStack $requestStack
      * @param string $templatePath
      */
-    public function __construct(ObjectManager $manager, Environment $twig, RequestStack $requestStack, string $templatePath)
+    public function __construct(EntityManagerInterface $manager, Environment $twig, RequestStack $requestStack, string $templatePath)
     {
         $this->templatePath = $templatePath;
         $this->manager = $manager;

@@ -7,7 +7,7 @@ use App\Form\InstrumentType;
 use App\Service\Breadcrumbs;
 use App\Repository\InstrumentRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,7 +36,7 @@ class InstrumentController extends AbstractController
      * @Route("/instrument/create", name="instrument_create")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function create(ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function create(EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Créer un instrument");
 
@@ -69,7 +69,7 @@ class InstrumentController extends AbstractController
      * @Route("/instrument/{id}/modify", name="instrument_modify")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function modify(Instrument $instrument, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function modify(Instrument $instrument, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Modifier un instrument");
 
@@ -100,7 +100,7 @@ class InstrumentController extends AbstractController
      * @Route("/instrument/{id}/duplicate", name="instrument_duplicate")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function duplicate(Instrument $original, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function duplicate(Instrument $original, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Dupliquer un instrument");
 
@@ -134,7 +134,7 @@ class InstrumentController extends AbstractController
      * @Route("/instrument/{id}/delete", name="instrument_delete")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function delete(Instrument $instrument, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function delete(Instrument $instrument, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Supprimer un instrument");
 
@@ -169,10 +169,10 @@ class InstrumentController extends AbstractController
      * Mémorise l'instrument dans la base de données.
      *
      * @param Instrument $instrument
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      * @return void
      */
-    private function storeInstrument(Instrument $instrument, ObjectManager $manager)
+    private function storeInstrument(Instrument $instrument, EntityManagerInterface $manager)
     {
         /* Persister les étalonnages */
         foreach ($instrument->getCalibrations() as $calibration) {

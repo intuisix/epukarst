@@ -15,7 +15,7 @@ use App\Service\PasswordGeneratorService;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Mailer\MailerInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -63,11 +63,11 @@ class UserController extends AbstractController
      * @Route("/user/add", name="user_add")
      * @IsGranted("ROLE_ADMIN")
      * 
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      * @param Request $request
      * @return Response
      */
-    public function add(ObjectManager $manager, Request $request, UserPasswordEncoderInterface $encoder, MailerInterface $mailer, PasswordGeneratorService $generator, Breadcrumbs $breadcrumbs)
+    public function add(EntityManagerInterface $manager, Request $request, UserPasswordEncoderInterface $encoder, MailerInterface $mailer, PasswordGeneratorService $generator, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Création d'un utilisateur");
 
@@ -133,11 +133,11 @@ class UserController extends AbstractController
      * @IsGranted("ROLE_ADMIN")
      * 
      * @param User $account
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      * @param Request $request
      * @return Response
      */
-    public function modify(User $account, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function modify(User $account, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Modification d'un utilisateur");
 
@@ -187,11 +187,11 @@ class UserController extends AbstractController
      * @Security("is_granted('ROLE_ADMIN') or user === account")
      *
      * @param User $account
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      * @param Request $request
      * @return void
      */
-    public function setPassword(User $account, ObjectManager $manager, Request $request, UserPasswordEncoderInterface $encoder, MailerInterface $mailer, Breadcrumbs $breadcrumbs)
+    public function setPassword(User $account, EntityManagerInterface $manager, Request $request, UserPasswordEncoderInterface $encoder, MailerInterface $mailer, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Mot de passe d'un utilisateur");
 
@@ -269,11 +269,11 @@ class UserController extends AbstractController
      * @IsGranted("ROLE_ADMIN")
      *
      * @param User $account
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      * @param Request $request
      * @return void
      */
-    public function delete(User $account, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function delete(User $account, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Suppression d'un utilisateur");
 

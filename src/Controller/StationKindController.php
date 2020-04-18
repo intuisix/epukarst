@@ -7,7 +7,7 @@ use App\Service\Breadcrumbs;
 use App\Form\StationKindType;
 use App\Repository\StationKindRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,7 +32,7 @@ class StationKindController extends AbstractController
      * @Route("/station-kind/create", name="station_kind_create")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function create(ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function create(EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Création d'un type de station");
 
@@ -63,7 +63,7 @@ class StationKindController extends AbstractController
      * @Route("/station-kind/{id}/modify", name="station_kind_modify")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function modify(StationKind $stationKind, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function modify(StationKind $stationKind, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Modification d'un type de station");
 
@@ -92,7 +92,7 @@ class StationKindController extends AbstractController
      * @Route("/station-kind/{id}/delete", name="station_kind_delete")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function delete(StationKind $stationKind, ObjectManager $manager, Breadcrumbs $breadcrumbs)
+    public function delete(StationKind $stationKind, EntityManagerInterface $manager, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Suppression d'un type de station");
 

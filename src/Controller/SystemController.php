@@ -13,7 +13,7 @@ use App\Repository\SystemRepository;
 use App\Repository\StationRepository;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -65,7 +65,7 @@ class SystemController extends AbstractController
      * @Route("/system/create", name="system_create")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function create(ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function create(EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Création d'un système");
 
@@ -108,7 +108,7 @@ class SystemController extends AbstractController
      * @Route("/system/{code}/modify", name="system_modify")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function modify(System $system, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function modify(System $system, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Modification d'un système");
 
@@ -148,7 +148,7 @@ class SystemController extends AbstractController
      * @Route("/system/{code}/delete", name="system_delete")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function delete(System $system, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function delete(System $system, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Suppression d'un système");
 
@@ -250,7 +250,7 @@ class SystemController extends AbstractController
      * @param System $system
      * @return bool True si des images ont été ajoutées.
      */
-    private function storeSystem(System $system, $form, ObjectManager $manager)
+    private function storeSystem(System $system, $form, EntityManagerInterface $manager)
     {
         /* Lier les bassins au système */
         foreach ($system->getBasins() as $basin) {

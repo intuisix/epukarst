@@ -21,7 +21,7 @@ use App\Service\ReadingExporterService;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -104,7 +104,7 @@ class ReadingController extends AbstractController
      * @Route("/reading/encode", name="reading_encode")
      * @IsGranted("SYSTEM_CONTRIBUTOR")
      */
-    public function encode(ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function encode(EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Encodage d'un relevé");
 
@@ -148,7 +148,7 @@ class ReadingController extends AbstractController
      * @Route("/reading/{code}/modify", name="reading_modify")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="reading")
      */
-    public function modify(Reading $reading, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function modify(Reading $reading, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Modification d'un relevé");
 
@@ -197,7 +197,7 @@ class ReadingController extends AbstractController
      * @Route("/reading/{code}/validate", name="reading_validate")
      * @IsGranted("SYSTEM_MANAGER", subject="reading")
      */
-    public function validate(Reading $reading, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function validate(Reading $reading, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Validation d'un relevé");
 
@@ -286,7 +286,7 @@ class ReadingController extends AbstractController
      * @Route("reading/{code}/delete", name="reading_delete")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="reading")
      */
-    public function delete(Reading $reading, Request $request, ObjectManager $manager, Breadcrumbs $breadcrumbs)
+    public function delete(Reading $reading, Request $request, EntityManagerInterface $manager, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Suppression d'un relevé");
 
@@ -427,7 +427,7 @@ class ReadingController extends AbstractController
      * @param DateTime $dateTime
      * @return void
      */
-    private function updateMeasures(Reading $reading, User $author, DateTime $encodingDateTime, ObjectManager $manager)
+    private function updateMeasures(Reading $reading, User $author, DateTime $encodingDateTime, EntityManagerInterface $manager)
     {
         /* Pour chaque mesure présente sur le formulaire */
         foreach ($reading->getMeasures() as $measure) {

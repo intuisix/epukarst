@@ -8,7 +8,7 @@ use App\Service\Breadcrumbs;
 use App\Form\SystemStationType;
 use App\Repository\StationRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -42,7 +42,7 @@ class SystemStationController extends AbstractController
      * @Route("/system-station/create/{code}", name="system_station_create")
      * @IsGranted("SYSTEM_MANAGER", subject="system")
      */
-    public function create(System $system, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function create(System $system, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Création d'une station");
 
@@ -79,7 +79,7 @@ class SystemStationController extends AbstractController
      * @Route("/system-station/modify/{code}", name="system_station_update")
      * @IsGranted("SYSTEM_MANAGER", subject="station")
      */
-    public function modify(Station $station, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function modify(Station $station, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Modification d'une station");
 
@@ -115,7 +115,7 @@ class SystemStationController extends AbstractController
      * @Route("/system-station/delete/{code}", name="system_station_delete")
      * @IsGranted("SYSTEM_MANAGER", subject="station")
      */
-    public function delete(Station $station, ObjectManager $manager, Request $request, Breadcrumbs $breadcrumbs)
+    public function delete(Station $station, EntityManagerInterface $manager, Request $request, Breadcrumbs $breadcrumbs)
     {
         $breadcrumbs->add("Suppression d'une station");
 

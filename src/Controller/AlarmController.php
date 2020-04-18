@@ -8,7 +8,7 @@ use App\Service\Breadcrumbs;
 use App\Service\PaginationService;
 use App\Repository\AlarmRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -116,7 +116,7 @@ class AlarmController extends AbstractController
      * @Route("/{id}/delete", name="alarm_delete")
      * @IsGranted("SYSTEM_CONTRIBUTOR", subject="alarm")
      */
-    public function delete(Alarm $alarm, Request $request, ObjectManager $manager, Breadcrumbs $breadcrumbs): Response
+    public function delete(Alarm $alarm, Request $request, EntityManagerInterface $manager, Breadcrumbs $breadcrumbs): Response
     {
         $breadcrumbs->add("Supprimer une alarme");
 
