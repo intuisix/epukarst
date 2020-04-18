@@ -41,8 +41,9 @@
 
     {# Carousel d'images #}
     {% if system.pictures|length > 0 %}
+        <h2 id="pictures">Photos du système</h2>
         <center>
-            <div id="systemPicturesCarousel" class="carousel slide mb-3" data-ride="carousel" style="width: 80%">
+            <div id="systemPicturesCarousel" class="carousel slide mb-3 bg-dark" data-ride="carousel" style="width: 100%; height: 540px">
                 <ol class="carousel-indicators">
                     {% for picture in system.pictures %}
                         <li data-target="#systemPicturesCarousel" data-slide-to="{{loop.index0}}" class="{% if loop.first %}active{% endif %}"></li>
@@ -51,7 +52,7 @@
                 <div class="carousel-inner">
                     {% for picture in system.pictures %}
                         <div class="carousel-item {% if loop.first %}active{% endif %}">
-                            <img src="/{{picture.fileName}}" class="d-block w-100" alt="{{picture.caption}}" style="object-fit: cover; width: 720px; height: 540px">
+                            <img src="/{{picture.fileName}}" class="center d-block w-100" alt="{{picture.caption}}" style="object-fit: contain; width: 720px; height: 540px">
                             <div class="carousel-caption d-none d-md-block">
                                 <h5>{{system.name}}</h5>
                                 <p>{{picture.caption}}</p>
