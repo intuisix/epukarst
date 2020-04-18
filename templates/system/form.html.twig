@@ -164,18 +164,17 @@ modification de systèmes #}
 {% block _system_pictures_entry_widget %}
     <div class="form-group alert bg-light" id="{{id}}">
         <div class="row">
-            <div class="col md-3">
+            <div class="col-4">
                 {% if form.children.fileName.vars.data is not null %}
-                    <img src="/{{form.children.fileName.vars.value}}" alt="{{form.children.fileName.vars.value}}" style="max-width: 100%; height: auto;">
+                    <div class="text-center">
+                        <img src="/{{form.children.fileName.vars.value}}" alt="{{form.children.fileName.vars.value}}" class="bg-dark" style="width: 300px; height: 200px; object-fit: contain">
+                    </div>
                 {% endif %}
             </div>
             <div class="col">
                 {{form_row(form.fileName)}}
                 {{form_row(form.caption)}}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
+
                 {# Bouton permettant de supprimer la photo #}
                 <button type="button" data-action="delete-picture" data-target="#{{id}}" class="btn btn-danger float-right">
                     <i class="fas fa-trash"></i>
