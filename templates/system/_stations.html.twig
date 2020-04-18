@@ -18,9 +18,11 @@
         </h2>
 
         {# Description #}
-        <div>
-            {{basin.description|raw}}
-        </div>
+        {% if system.description %}
+            <div>
+                {{basin.description|raw}}
+            </div>
+        {% endif %}
 
         {# Pour chaque station sitée dans le bassin #}
         {% for station in basin.stations|sort((a, b) => (a.code <=> b.code)) %}
@@ -63,9 +65,11 @@
                 {% endif %}
 
                 {# Description #}
-                <div>
-                    {{station.description|raw}}
-                </div>
+                {% if station.description %}
+                    <div>
+                        {{station.description|raw}}
+                    </div>
+                {% endif %}
             </div>
         {% endfor %}
     </div>
