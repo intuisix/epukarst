@@ -110,12 +110,10 @@
 {% block javascripts %}
     <script src="/js/collection.js"></script>
     <script>
-        var systemRolesCollectionResponder =
-            createCollectionResponders(
-                '#user_systemRoles',
-                'button[data-action="add-userRole"]',
-                'button[data-action="delete-userRole"]'
-            );
-        systemRolesCollectionResponder();
+        setupCollection(
+            '#user_systemRoles',
+            'button[data-action="add-userRole"]',
+            'button[data-action="delete-userRole"]'
+        );
     </script>
 {% endblock %}

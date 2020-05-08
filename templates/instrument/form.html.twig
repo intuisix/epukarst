@@ -316,31 +316,25 @@ modification de relevés #}
 {% block javascripts %}
     <script src="/js/collection.js"></script>
     <script>
-        var calibrationsCollectionResponders =
-            createCollectionResponders(
-                '#instrument_calibrations',
-                'button[data-action="add-calibration"]',
-                'button[data-action="delete-calibration"]',
-                'Etes-vous sûr de vouloir supprimer cet étalonnage ?'
-            );
-        calibrationsCollectionResponders();
+        setupCollection(
+            '#instrument_calibrations',
+            'button[data-action="add-calibration"]',
+            'button[data-action="delete-calibration"]',
+            'Etes-vous sûr de vouloir supprimer cet étalonnage ?'
+        );
 
-        var measurabilitiesCollectionResponders =
-            createCollectionResponders(
-                '#instrument_measurabilities',
-                'button[data-action="add-measurability"]',
-                'button[data-action="delete-measurability"]',
-                'Etes-vous certain de vouloir supprimer ce paramètre ?'
-            );
-        measurabilitiesCollectionResponders();
+        setupCollection(
+            '#instrument_measurabilities',
+            'button[data-action="add-measurability"]',
+            'button[data-action="delete-measurability"]',
+            'Etes-vous certain de vouloir supprimer ce paramètre ?'
+        );
 
-        var requiredInstrumentsCollectionResponders =
-            createCollectionResponders(
-                '#instrument_requiredInstruments',
-                'button[data-action="add-requiredInstrument"]',
-                'button[data-action="delete-requiredInstrument"]',
-                'Etes-vous certain de vouloir supprimer cette liaison ?'
-            );
-        requiredInstrumentsCollectionResponders();
+        setupCollection(
+            '#instrument_requiredInstruments',
+            'button[data-action="add-requiredInstrument"]',
+            'button[data-action="delete-requiredInstrument"]',
+            'Etes-vous certain de vouloir supprimer cette liaison ?'
+        );
     </script>
 {% endblock %}

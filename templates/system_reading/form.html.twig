@@ -401,14 +401,12 @@ car celle-ci n'est pas triée.
         $('button[type="submit"]').click(propagateFieldDateTime);
 
         {# Traiter les boutons de suppression de pièce jointe #}
-        var attachmentsCollectionResponders =
-            createCollectionResponders(
-                '#system_reading_attachments',
-                null,
-                'button[data-action="delete-attachment"]',
-                'Etes-vous sûr de vouloir supprimer cette pièce jointe ?'
-            );
-        attachmentsCollectionResponders();
+        setupCollection(
+            '#system_reading_attachments',
+            null,
+            'button[data-action="delete-attachment"]',
+            'Etes-vous sûr de vouloir supprimer cette pièce jointe ?'
+        );
 
         {# Activer les tooltips #}
         $(function () {

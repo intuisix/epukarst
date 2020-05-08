@@ -328,15 +328,11 @@
 
     <script src="/js/collection.js"></script>
     <script>
-        $(document).ready(function() {
-            var measuresCollectionResponders =
-                createCollectionResponders(
-                    '#filter_measures',
-                    'button[data-action="add-measure"]',
-                    'button[data-action="delete-measure"]'
-                );
-            measuresCollectionResponders();
-        });
+        setupCollection(
+            '#filter_measures',
+            'button[data-action="add-measure"]',
+            'button[data-action="delete-measure"]'
+        );
     </script>
 
     <script>

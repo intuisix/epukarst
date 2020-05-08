@@ -153,18 +153,15 @@ de modification d'un relevé #}
 {% block javascripts %}
     <script src="/js/collection.js"></script>
     <script>
-        var copyValues
-        var measuresCollectionResponders =
-            createCollectionResponders(
-                '#reading_measures',
-                'button[data-action="add-measure"]',
-                'button[data-action="delete-measure"]',
-                'Etes-vous sûr de vouloir supprimer cette mesure ?',
-                {   /* Pré-remplir pour chaque mesure ajoutée */
-                    'fieldDateTime_date': '#reading_fieldDateTime_date',
-                    'fieldDateTime_time': '#reading_fieldDateTime_time',
-                }
-            );
-        measuresCollectionResponders();
+        setupCollection(
+            '#reading_measures',
+            'button[data-action="add-measure"]',
+            'button[data-action="delete-measure"]',
+            'Etes-vous sûr de vouloir supprimer cette mesure ?',
+            {   /* Pré-remplir pour chaque mesure ajoutée */
+                'fieldDateTime_date': '#reading_fieldDateTime_date',
+                'fieldDateTime_time': '#reading_fieldDateTime_time',
+            }
+        );
     </script>
 {% endblock %}

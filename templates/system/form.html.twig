@@ -273,40 +273,32 @@ modification de systèmes #}
 {% block javascripts %}
     <script src="/js/collection.js"></script>
     <script>
-        var basinsCollectionResponder =
-            createCollectionResponders(
-                '#system_basins',
-                'button[data-action="add-basin"]',
-                'button[data-action="delete-basin"]',
-                'Etes-vous sûr de vouloir supprimer ce bassin ?'
-            );
-        basinsCollectionResponder();
+        setupCollection(
+            '#system_basins',
+            'button[data-action="add-basin"]',
+            'button[data-action="delete-basin"]',
+            'Etes-vous sûr de vouloir supprimer ce bassin ?'
+        );
 
-        var picturesCollectionResponder =
-            createCollectionResponders(
-                '#system_pictures',
-                'button[data-action="add-picture"]',
-                'button[data-action="delete-picture"]',
-                'Etes-vous sûr de vouloir supprimer cette photo ?'
-            );
-        picturesCollectionResponder();
+        setupCollection(
+            '#system_pictures',
+            'button[data-action="add-picture"]',
+            'button[data-action="delete-picture"]',
+            'Etes-vous sûr de vouloir supprimer cette photo ?'
+        );
 
-        var parametersCollectionResponder =
-            createCollectionResponders(
-                '#system_parameters',
-                'button[data-action="add-parameter"]',
-                'button[data-action="delete-parameter"]',
-                'Etes-vous sûr de vouloir supprimer ce paramètre ?'
-            );
-        parametersCollectionResponder();
+        setupCollection(
+            '#system_parameters',
+            'button[data-action="add-parameter"]',
+            'button[data-action="delete-parameter"]',
+            'Etes-vous sûr de vouloir supprimer ce paramètre ?'
+        );
 
-        var systemRolesCollectionResponder =
-            createCollectionResponders(
-                '#system_systemRoles',
-                'button[data-action="add-userRole"]',
-                'button[data-action="delete-userRole"]',
-                'Etes-vous sûr de vouloir supprimer ce rôle ?'
-            );
-        systemRolesCollectionResponder();
+        setupCollection(
+            '#system_systemRoles',
+            'button[data-action="add-userRole"]',
+            'button[data-action="delete-userRole"]',
+            'Etes-vous sûr de vouloir supprimer ce rôle ?'
+        );
     </script>
 {% endblock %}

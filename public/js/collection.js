@@ -1,4 +1,5 @@
-/* Gère les réponses aux utilisateurs sur les boutons d'ajout et de suppression
+/*
+Gère les réponses aux utilisateurs sur les boutons d'ajout et de suppression
 des éléments d'une CollectionType de Symfony.
 
 @param $blockSelector est l'identifiant de la division contenant les sous-
@@ -27,7 +28,7 @@ l'utilisateur lorsqu'il clique sur le bouton de suppression. Ce paramètre peut
 nouveaux sous-formulaires avec des valeurs par défaut provenant d'autres
 éléments (par exemple, issues du formulaire principal).
 */
-function createCollectionResponders($blockSelector, $additionSelector, $deletionSelector, $deletionMessage = null, $copyValues = null) {
+function setupCollection($blockSelector, $additionSelector, $deletionSelector, $deletionMessage = null, $copyValues = null) {
 
     /* Symfony a déjà numéroté de façon unique les éléments déjà présents;
     obtenir le nombre initial d'éléments dans la collection, afin de pouvoir
@@ -66,30 +67,33 @@ function createCollectionResponders($blockSelector, $additionSelector, $deletion
             /* Ajouter un sous-formulaire en cas de clic */
             $buttons.click(function() {
                 /* Attribuer un numéro unique à l'élément, en principe dans la
-                continuité des numéros existants; cependant, lorsque le formulaire
-                est affiché une deuxième ou une énième fois après que l'utilisateur
-                ait supprimé des éléments, il se peut que des discontinuités soient
-                présentes dans la numérotation, ou même des inversions; par
-                conséquent, la boucle permet de trouver un numéro qui n'est pas
-                encore attribué */
+                continuité des numéros existants;
+                - cependant, lorsque le formulaire est affiché une deuxième ou
+                une énième fois après que l'utilisateur ait supprimé des
+                éléments, il se peut que des discontinuités soient présentes
+                dans la numérotation, ou même des inversions;
+                - par conséquent, la boucle permet de trouver un numéro qui
+                n'est pas encore attribué */
                 var $itemSelector = getItemSelector($itemIndex);
                 while ($($itemSelector).length) {
                     $itemIndex++;
                     $itemSelector = getItemSelector($itemIndex);
                 }
-                /* Un prototype du sous-formulaire a été créé par Symfony: pour
-                ajouter le sous-formulaire correspondant au nouvel élément, il
-                suffit le dupliquer et d'y remplacer la chaîne __name__ par
-                l'indice du nouvel élément */
+                /* Un prototype du sous-formulaire a été créé par Symfony;
+                - pour ajouter le sous-formulaire correspondant au nouvel
+                élément, il suffit le dupliquer et d'y remplacer la chaîne
+                "__name__" par l'indice du nouvel élément */
                 const prototype = $($blockSelector).data('prototype');
                 $($blockSelector).append(prototype.replace(/__name__/g, $itemIndex));
-                /* Copier des valeurs de champs sur le nouveau sous-formulaire */
+                /* Copier des valeurs de champs sur le nouveau
+                sous-formulaire */
                 if (null != $copyValues) {
                     for (var $key in $copyValues) {
                         $($itemSelector + '_' + $key).val($($copyValues[$key]).val());
                     }
                 }
-                /* Configure les éventuels boutons ajoutés par le sous-formulaire */
+                /* Configure les éventuels boutons ajoutés par le
+                sous-formulaire */
                 if (null != $additionSelector) {
                     setupAddButtons($itemSelector + ' ' + $additionSelector);
                 }
@@ -100,21 +104,16 @@ function createCollectionResponders($blockSelector, $additionSelector, $deletion
         }
     }
 
-    /* Configure les boutons existants */
-    function setupButtons()
-    {
-        if (null != $additionSelector) {
-            setupAddButtons($additionSelector);
-        }
-        if (null != $deletionSelector) {
-            setupDeleteButtons($deletionSelector);
-        }
-    }
-
     /* Vérifier qu'exactement une occurrence du bloc est présente */
     if (1 != $($blockSelector).length) {
         console.error($blockSelector, 'not found or not unique')
     }
 
-    return setupButtons;
+    /* Configure les boutons d'ajout et de suppression */
+    if (null != $additionSelector) {
+        setupAddButtons($additionSelector);
+    }
+    if (null != $deletionSelector) {
+        setupDeleteButtons($deletionSelector);
+    }
 }

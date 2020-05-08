@@ -119,13 +119,11 @@ modification de paramètre #}
 {% block javascripts %}
     <script src="/js/collection.js"></script>
     <script>
-        var choicesCollectionResponders =
-            createCollectionResponders(
-                '#parameter_choices',
-                'button[data-action="add-choice"]',
-                'button[data-action="delete-choice"]',
-                'Etes-vous sûr de vouloir supprimer ce choix ?'
-            );
-        choicesCollectionResponders();
+        setupCollection(
+            '#parameter_choices',
+            'button[data-action="add-choice"]',
+            'button[data-action="delete-choice"]',
+            'Etes-vous sûr de vouloir supprimer ce choix ?'
+        );
     </script>
 {% endblock %}
