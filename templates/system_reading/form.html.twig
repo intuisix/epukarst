@@ -10,11 +10,6 @@ car celle-ci n'est pas triée.
 
 {% extends 'base.html.twig' %}
 
-{% block stylesheets %}
-    <link href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css" rel="stylesheet">
-    <link href="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/sticky-header/bootstrap-table-sticky-header.css" rel="stylesheet">
-{% endblock %}
-
 {% block title %}
     {{title}}
 {% endblock %}
@@ -420,7 +415,4 @@ car celle-ci n'est pas triée.
             $('[data-toggle="tooltip"]').tooltip()
         })
     </script>
-
-    <script src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
-    <script src="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/sticky-header/bootstrap-table-sticky-header.min.js"></script>
 {% endblock %}

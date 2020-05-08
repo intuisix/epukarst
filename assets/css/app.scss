@@ -1,0 +1,31 @@
+/* Import Bootstrap styles */
+@import '~bootstrap/scss/bootstrap';
+
+/* Import Bootstrap Table styles */
+@import '~bootstrap-table/src/bootstrap-table.scss';
+@import '~bootstrap-table/src/extensions/sticky-header/bootstrap-table-sticky-header.scss';
+
+/* Import Font Awesome styles */
+@import '~@fortawesome/fontawesome-free/scss/fontawesome';
+@import '~@fortawesome/fontawesome-free/scss/regular';
+@import '~@fortawesome/fontawesome-free/scss/solid';
+@import '~@fortawesome/fontawesome-free/scss/brands';
+
+@viewport {
+    width: device-width;
+    zoom: 1;
+}
+
+.metadata {
+    color: gray;
+    font-size: .75rem;
+    margin-bottom: .5rem;
+}
+
+div.container {
+    margin-top: 20px;
+}
+
+div.carousel-caption {
+    text-shadow: 3px 3px 3px rgba(0,0,0,0.5);
+}

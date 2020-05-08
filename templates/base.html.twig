@@ -11,14 +11,8 @@
         {# Viewport pour appareils mobiles #}
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        {# Styles Bootstrap de base #}
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
-        {# Icônes FontAwesome #}
-        <script src="https://kit.fontawesome.com/aa174c5a41.js" crossorigin="anonymous"></script>
-
-        {# Styles propres à l'application #}
-        <link rel="stylesheet" href="/css/app.css">
+        {# Feuilles de style globales #}
+        {{ encore_entry_link_tags('app') }}
 
         {# Pour les styles propres à la page affichée #}
         {% block stylesheets %}{% endblock %}
@@ -33,10 +27,8 @@
         {# Pour le corps de la page affichée #}
         {% block body %}{% endblock %}
 
-        {# Scripts jQuery, Popper et Bootstrap #}
-        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        {# Scripts globaux #}
+        {{ encore_entry_script_tags('app') }}
 
         {# Fil d'ariane: ne pas l'afficher #}
         {% if 0 and (breadcrumbs is defined) and (breadcrumbs is not null) %}
