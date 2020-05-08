@@ -18,8 +18,10 @@ modification d'article #}
         <div class="alert bg-light">
             <div class="row">
                 <div class="col">
-                    {{form_row(form.title)}}
-                    {{form_row(form.slug)}}
+                    <div class="row">
+                        <div class="col">{{form_row(form.title)}}</div>
+                        <div class="col-4">{{form_row(form.slug)}}</div>
+                    </div>
                     {{form_row(form.summary)}}
                     {{form_row(form.content)}}
                 </div>
@@ -37,10 +39,6 @@ modification d'article #}
                 </div>
             </div>
         </div>
-
-        <p>
-            Avez-vous précisé une date de début de publication, afin que l'article soit visible sur le site&nbsp;?
-        </p>
 
         <div class="mb-3">
             {# Bouton permettant d'enregistrer l'article #}

@@ -51,7 +51,9 @@ class InstrumentType extends AbstractType
                 'label' => "Description détaillée",
                 'attr' => [
                     'placeholder' => "Entrez une description détaillée de l'instrument, comme, par exemple, son utilité, ses instructions d'utilisation, ses précautions de sécurité, la façon de vérifier son bon fonctionnement, ...",
-                    'rows' => 10,
+                ],
+                'config' => [
+                    'height' => 250,
                 ],
             ])
             ->add('measurabilities', CollectionType::class, [

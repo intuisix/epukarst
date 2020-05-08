@@ -26,7 +26,9 @@ class StationKindType extends AbstractType
                 'label' => "Description",
                 'attr' => [
                     'placeholder' => "Entrez une définition du type de station",
-                    'rows' => 5,
+                ],
+                'config' => [
+                    'height' => 250,
                 ],
                 'required' => false,
             ])

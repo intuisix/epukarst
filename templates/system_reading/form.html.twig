@@ -66,7 +66,7 @@ car celle-ci n'est pas triée.
                     {# Corps de la table #}
                     <tbody>
                         <tr>
-                            <td>Unité</td>
+                            <td class="text-left">Unité</td>
                             {% for systemParameter in systemParameters %}
                                 <td class="text-center">
                                     {# Unité du paramètre #}
@@ -75,7 +75,7 @@ car celle-ci n'est pas triée.
                             {% endfor %}
                         </tr>
                         <tr>
-                            <td>Instrument</td>
+                            <td class="text-left">Instrument</td>
                             {% for systemParameter in systemParameters %}
                                 <td class="text-center">
                                     {# Nom de l'instrument #}
@@ -84,7 +84,7 @@ car celle-ci n'est pas triée.
                             {% endfor %}
                         </tr>
                         <tr>
-                            <td>Valeur</td>
+                            <td class="text-left">Valeur</td>
                             {{form_widget(form.controls)}}
                         </tr>
                     </tbody>

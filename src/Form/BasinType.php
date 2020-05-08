@@ -33,7 +33,9 @@ class BasinType extends AbstractType
                 'label' => "Description",
                 'attr' => [
                     'placeholder' => "Entrez une description du bassin",
-                    'rows' => 5
+                ],
+                'config' => [
+                    'height' => 250,
                 ],
                 'required' => true,
             ])

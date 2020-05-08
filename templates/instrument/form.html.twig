@@ -30,6 +30,9 @@ modification de relevés #}
             <li class="nav-item">
                 <a class="nav-link" id="requiredInstruments-tab" data-toggle="tab" href="#requiredInstruments" role="tab" aria-controls="requiredInstruments" aria-selected="false">{{form.requiredInstruments.vars.label}}</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" id="model-tab" data-toggle="tab" href="#model" role="tab" aria-controls="model" aria-selected="false">Modèle</a>
+            </li>
         </ul>
         <div class="tab-content" id="myTabContent">
             {# Afficher le panneau d'identification #}
@@ -49,23 +52,6 @@ modification de relevés #}
                         <div class="col">
                             {# Description de l'instrument #}
                             {{form_row(form.description)}}
-                            <div class="row">
-                                <div class="col">
-                                    {# Instrument modèle #}
-                                    {{form_row(form.modelInstrument)}}
-                                </div>
-                                {# Liste des instruments dérivés #}
-                                {% if instrument.derivedInstruments|length %}
-                                    <div class="col">
-                                        <p>Instruments basés sur <strong>{{instrument.name}}</strong>&nbsp;:</p>
-                                        <ul>
-                                            {% for derivedInstrument in instrument.derivedInstruments|sort((a,b) => (a.name <=> b.name)) %}
-                                                <li>{{derivedInstrument.name}}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                {% endif %}
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -100,6 +86,33 @@ modification de relevés #}
                                 </ul>
                             </div>
                         {% endif %}
+                    </div>
+                </div>
+            </div>
+            {# Afficher le panneau de modèle #}
+            <div class="tab-pane fade" id="model" role="tabpanel" aria-labelledby="model-tab">
+                <div class="alert">
+                    <p>
+                        Ce panneau permet de lier la description de cet instrument à celle d'un autre instrument qui utilisé comme modèle, afin de ne pas s'obliger à recopier cette description entre instruments similaires.
+                    </p>
+                    <div class="row">
+                        <div class="col">
+                            {# Instrument modèle #}
+                            {{form_row(form.modelInstrument)}}
+                        </div>
+                        <div class="col">
+                            {# Liste des instruments dérivés #}
+                            {% if instrument.derivedInstruments|length %}
+                                <p>Cet instrument est un modèle pour&nbsp;:</p>
+                                <ul>
+                                    {% for derivedInstrument in instrument.derivedInstruments|sort((a,b) => (a.name <=> b.name)) %}
+                                        <li>{{derivedInstrument.name}}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p>Cet instrument n'a pas été référencé comme modèle.</p>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>

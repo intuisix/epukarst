@@ -98,7 +98,9 @@ class PostType extends AbstractType
                 'label' => "Contenu",
                 'attr' => [
                     'placeholder' => "Contenu de l'article, tel qu'il devra être affiché.",
-                    'rows' => 15,
+                ],
+                'config' => [
+                    'height' => 500,
                 ],
             ])
         ;

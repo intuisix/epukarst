@@ -59,6 +59,9 @@ class SystemStationType extends AbstractType
                 'attr' => [
                     'placeholder' => "Entrez une description la plus détaillée possible afin de permettre la réalisation des mesures toujours au même emplacement, même lorsque d'autres personnes sont amenées à réaliser les mesures sur cette station",
                 ],
+                'config' => [
+                    'height' => 250,
+                ],
                 'required' => true,
             ])
         ;

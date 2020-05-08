@@ -70,8 +70,10 @@ class SystemType extends AbstractType
             ->add('description', CKEditorType::class, [
                 'label' => "Description détaillée",
                 'attr' => [
-                    'rows' => 8,
                     'placeholder' => "Entrez une description détaillée qui permettra aux visiteurs de découvrir les particularités du système et les raisons pour lesquelles il est étudié",
+                ],
+                'config' => [
+                    'height' => 500,
                 ],
             ])
             ->add('pictures', CollectionType::class, [

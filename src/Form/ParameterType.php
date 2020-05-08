@@ -82,7 +82,9 @@ class ParameterType extends AbstractType
                 'label' => "Description détaillée",
                 'attr' => [
                     'placeholder' => "Entrez une description détaillée qui permettra aux utilisateurs de savoir à quoi sert le paramètre et en quoi son suivi est utile pour la prévention des pollutions",
-                    'rows' => 6
+                ],
+                'config' => [
+                    'height' => 250,
                 ],
             ])
             ->add('favorite', CheckboxType::class, [
