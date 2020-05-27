@@ -1,6 +1,8 @@
 {
+    "name": "intuisix/epukarst",
+    "description": "Web site software that permits a community of contributors filling in and studying metrics related to the pollution of underground karstic waters.",
     "type": "project",
-    "license": "proprietary",
+    "license": "MIT",
     "require": {
         "php": "^7.1.3",
         "ext-ctype": "*",
