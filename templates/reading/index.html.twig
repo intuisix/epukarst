@@ -10,6 +10,14 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
     integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
     crossorigin=""/>
+    <style>
+        td.station-column {
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        };
+    </style>
 {% endblock %}
 
 {% block body %}
@@ -147,7 +155,7 @@
                     </thead>
                     <tbody>
                         {% for reading in pagination.data %}
-                            <tr>
+                            <tr style="line-height: 18pt">
                                 <td>
                                     <input type="checkbox" name="readings[{{reading.code}}]"/>
                                 </td>
@@ -158,7 +166,7 @@
                                         <span class="badge badge-secondary">{{reading.code}}</span>
                                     </a>
                                 </td>
-                                <td>
+                                <td style="" class="station-column">
                                     {{reading.station.basin.system.name}}
                                     <br>
                                     <em>{{reading.station.name}}</em>
