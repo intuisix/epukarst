@@ -7,20 +7,20 @@
 {% block body %}
     <div class="container">
         <h1>Alarmes</h1>
-        <p>Les alarmes correspondent aux pollutions potentielles. Elles sont créées automatiquement en cas de dépassement des normes lors des mesures, et peuvent aussi être créées manuellement.</p>
+
+        <p>Les alarmes signalent de possibles pollutions. Elles sont créées automatiquement en cas de dépassement des normes mais peuvent aussi être créées manuellement.</p>
 
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>Date de signalement</th>
+                    <th>Signalement</th>
                     <th>Système</th>
                     <th>Type</th>
-                    <th>Date de début</th>
-                    <th>Date de fin</th>
+                    <th>Début</th>
+                    <th>Fin</th>
                     <th>Etat</th>
-                    <th>Signalé par</th>
-                    <th>Relevés</th>
-                    <th>Mesures</th>
+                    <th>Auteur</th>
+                    <th class="text-center">Fiches /<br>Mesures</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -56,14 +56,13 @@
                         <td>
                             {{alarm.reportingAuthor.displayName}}
                         </td>
-                        <td>
+                        <td class="text-center">
                             {% if alarm.systemReadings|length %}
                                 <span class="badge badge-warning badge-pill">
                                     {{alarm.systemReadings|length}}
                                 </span>
                             {% endif %}
-                        </td>
-                        <td>
+                            /
                             {% if alarm.measures|length %}
                                 <span class="badge badge-warning badge-pill">
                                     {{alarm.measures|length}}

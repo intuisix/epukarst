@@ -20,7 +20,7 @@ car celle-ci n'est pas triée.
     <div class="mx-3 my-3">
         <h1>{{title}}</h1>
 
-        <p>Ce formulaire permet l'encodage rapide d'une fiche, contenant un relevé pour chacune des stations d'un système, et une valeur par paramètre par relevé.</p>
+        <p>Ce formulaire permet l'encodage rapide d'une fiche pour un système entier.</p>
 
         {{form_start(form)}}
 
@@ -179,7 +179,7 @@ car celle-ci n'est pas triée.
             {# Table des remarques #}
             <div class="mb-3">
                 <h2>Remarques aux stations</h2>
-                <p>Pour chaque station, introduisez la date et l'heure de la prise des mesures, ainsi qu'une éventuelle remarque..</p>
+                <p>Pour chaque station, introduisez la date et l'heure de la prise des mesures, et une éventuelle remarque spécifique à la station.</p>
                 <table class="table table-borderless table-responsive table-sm" cellpadding="3" data-toggle="table">
                     {# Assignation des couleurs par groupe de colonnes #}
                     <colgroup span="1"></colgroup>
@@ -272,7 +272,7 @@ car celle-ci n'est pas triée.
                 <div class="col-md text-secondary small">
                     <p><i class="fas fa-exclamation-triangle text-warning"></i>
                         Les nouvelles pièces jointes sont susceptibles de ne pas être sauvegardées s'il y a des erreurs dans le formulaire.</span>
-                        Pour éviter ce problème, sauvegardez la fiche une première fois sans joindre de fichier, en corrigeant les erreurs éventuelles, puis modifiez la fiche en joingant les fichiers.
+                        Pour éviter ce problème, sauvegardez la fiche une première fois sans joindre de fichier, en corrigeant les erreurs éventuelles, puis modifiez la fiche en joignant les fichiers.
                     </p>
                 </div>
             </div>
@@ -280,10 +280,10 @@ car celle-ci n'est pas triée.
             {{form_row(form.attachments)}}
         </div>
 
-        {# Bouton permettant d'enregistrer le relevé #}
+        {# Bouton permettant d'enregistrer la fiche #}
         <button type="submit" class="btn btn-success">
             <i class="fas fa-check"></i>
-            Enregistrer le relevé
+            Enregistrer la fiche
         </button>
         {# Bouton permettant de revenir à la page précédente #}
         {{breadcrumbs.displayBackButton}}

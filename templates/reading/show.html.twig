@@ -80,16 +80,14 @@
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>Paramètre</th>
+                    <th>Réalisée le</th>
+                    <th class="text-center">Paramètre</th>
+                    <th class="text-center">Instrument</th>
                     <th class="text-center">Valeur</th>
                     <th class="text-center">Stable</th>
                     <th class="text-center">Valide</th>
                     <th class="text-center">Alarme</th>
-                    <th class="text-center">Instrument</th>
-                    <th class="text-center">Réalisée le</th>
-                    <th class="text-center">Encodée le</th>
-                    <th class="text-center">Encodée par</th>
-                    <th>Remarque</th>
+                    <th>Remarques</th>
                 </tr>
             </thead>
             <tbody>
@@ -97,7 +95,17 @@
                     {% set parameter = measure.measurability.parameter %}
                     {% set instrument = measure.measurability.instrument %}
                     <tr>
+                        <td class="text-center">
+                            {{measure.fieldDateTime|localizeddate('short', 'none')}}
+                        </td>
                         <td>{{parameter.name}}</td>
+                        <td class="text-center">
+                            {% if instrument is not null %}
+                                {{instrument.name}}
+                            {% else %}
+                                --
+                            {% endif %}
+                        </td>
                         <td class="text-center">
                             {{parameter.formatValue(measure.value)}}
                             {% if measure.tolerance is not null %}
@@ -128,20 +136,6 @@
                                 </a>
                             {% endif %}
                         </td>
-                        <td class="text-center">
-                            {% if instrument is not null %}
-                                {{instrument.name}}
-                            {% else %}
-                                --
-                            {% endif %}
-                        </td>
-                        <td class="text-center">
-                            {{measure.fieldDateTime|localizeddate('short', 'none')}}
-                        </td>
-                        <td class="text-center">
-                            {{measure.encodingDateTime|localizeddate('short', 'none')}}
-                        </td>
-                        <td class="text-center">{{measure.encodingAuthor.displayName}}</td>
                         <td>{{measure.notes}}</td>
                     </tr>
                 {% else %}

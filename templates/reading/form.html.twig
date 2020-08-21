@@ -14,23 +14,19 @@ de modification d'un relevé #}
         <h1>{{title}}</h1>
 
         <p>Ce formulaire permet d'introduire les données prises sur le terrain à une station d'observation déterminée.</p>
-        <ul>
-            <li>Si le relevé concerne des mesures réalisées manuellement à un moment donné, indiquez le moment d'échantillonnage comme date de terrain globale, et celle-ci sera répliquée sur toutes les mesures que vous ajouterez&nbsp;;</li>
-            <li>Si le relevé correspond à une série de mesures (p.ex. grâce à un enregistreur de données ou un échantillonneur automatique), indiquez le moment de la prise de connaissance des mesures comme date de terrain globale, et veillez à renseigner la date plus précise de chaque mesure.</li>
-        </ul>
 
         {{form_start(form)}}
         
         {# Mettre en forme les informations générales #}
         <div class="alert bg-light">
             <div class="row">
-                <div class="col">
+                <div class="col-3">
                     {{form_row(form.fieldDateTime)}}
                 </div>
                 <div class="col">
                     {{form_row(form.station)}}
                 </div>
-                <div class="col">
+                <div class="col-3">
                     {{form_row(form.code)}}
                 </div>
             </div>
@@ -89,13 +85,7 @@ de modification d'un relevé #}
 {% endblock %}
 
 {% block _reading_measures_widget %}
-    <p>La liste ci-dessous reprend les valeurs mesurées des paramètres et des indications basiques quant à la fiabilité de ces valeurs, en désignant notamment les instruments ayant servi à réaliser les mesures.</p>
-    <ul>
-        <li>Les mesures <em>stables</em> ont été mesurées sans difficulté, tandis que les mesures <em>instables</em> ont dû faire l'objet d'une estimation&nbsp;;</li>
-        <li>Les mesures <em>valides</em> sont dans les limites autorisées, ont été prises avec un appareil en ordre d'étalonnage et seront exploitées, tandis que les mesures <em>invalides</em> feront l'objet d'une vérification ou seront écartées lors de l'exploitation.</li>
-    </ul>
-    <p>Plusieurs mesures peuvent être encodées pour un même paramètre&nbsp;: cela permet par exemple de conserver une première mesure invalide et une seconde, mesurée en laboratoire, valide, ou encore de mémoriser une série issue d'un échantillonnage automatique.</p>
-    <p>Chaque mesure peut éventuellement être reliée à une alarme existante (si nécessaire, vous devez créer cette alarme avant l'encodage) afin d'attirer l'attention sur des valeurs anormales.</p>
+    <p>Pour chaque paramètre ayant été mesuré, introduisez l'instrument utilisé, les valeurs mesurées des paramètres, les indications quant à la stabilité à la validité de ces valeurs, et les remarques éventuelles.</p>
 
     {# Widget du sous-formulaire #}
     {{form_widget(form)}}
