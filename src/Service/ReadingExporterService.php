@@ -121,7 +121,7 @@ class ReadingExporterService
             $this->setString($stationColumn, $row, $station->getName());
             $this->setString($atlasColumn, $row, $station->getAtlasCode());
             $this->setString($stateColumn, $row,
-                (null === $validated) ? "Soumis" :
+                (null === $validated) ? "Brouillon" :
                 ($validated ? "Validé" : "Invalidé"));
 
             /* Paramètres */

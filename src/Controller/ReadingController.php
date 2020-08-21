@@ -356,6 +356,11 @@ class ReadingController extends AbstractController
                     $filter->addSystem($system);
                 }
             }
+        } else {
+            /* Sélectionner tous les systèmes, par défaut */
+            foreach ($systemRepository->findAll() as $system) {
+                $filter->addSystem($system);
+            }
         }
 
         /* Désérialiser les bassins */
@@ -366,6 +371,11 @@ class ReadingController extends AbstractController
                 if (null != $basin) {
                     $filter->addBasin($basin);
                 }
+            }
+        } else {
+            /* Sélectionner tous les bassins, par défaut */
+            foreach ($basinRepository->findAll() as $basin) {
+                $filter->addBasin($basin);
             }
         }
 
@@ -378,26 +388,31 @@ class ReadingController extends AbstractController
                     $filter->addStation($station);
                 }
             }
+        } else {
+            /* Sélectionner toutes les stations, par défaut */
+            foreach ($stationRepository->findAll() as $station) {
+                $filter->addStation($station);
+            }
         }
 
         /* Désérialiser les dates */
-        if ($session->has('minimumDate')) {
-            $filter->setMinimumDate($session->get('minimumDate'));
-        }
-        if ($session->has('maximumDate')) {
-            $filter->setMaximumDate($session->get('maximumDate'));
-        }
+        $filter->setMinimumDate(
+            $session->has('minimumDate') ?
+            $session->get('minimumDate') : null);
+        $filter->setMaximumDate(
+            $session->has('maximumDate') ?
+            $session->get('maximumDate') : null);
 
         /* Désérialiser les états */
-        if ($session->has('validated')) {
-            $filter->setValidated($session->get('validated'));
-        }
-        if ($session->has('invalidated')) {
-            $filter->setInvalidated($session->get('invalidated'));
-        }
-        if ($session->has('submitted')) {
-            $filter->setSubmitted($session->get('submitted'));
-        }
+        $filter->setValidated(
+            $session->has('validated') ?
+            $session->get('validated') : true);
+        $filter->setInvalidated(
+            $session->has('invalidated') ?
+            $session->get('invalidated') : true);
+        $filter->setSubmitted(
+            $session->has('submitted') ?
+            $session->get('submitted') : true);
 
         /* Désérialiser les mesures */
         if ($session->has('measures')) {
