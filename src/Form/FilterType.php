@@ -56,7 +56,7 @@ class FilterType extends AbstractType
                 'required' => false,
             ])
             ->add('submitted', CheckboxType::class, [
-                'label' => "Soumis",
+                'label' => "Brouillon",
                 'data' => true,
                 'required' => false,
             ])

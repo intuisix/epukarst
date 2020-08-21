@@ -128,7 +128,7 @@ class SystemReadingController extends AbstractController
         ]);
         $form->handleRequest($request);
 
-        /* Vérifier le soumission et la validité du formulaire */
+        /* Vérifier la soumission et la validité du formulaire */
         if ($form->isSubmitted() && $form->isValid()) {
             /* Ajouter les nouvelles pièces jointes */
             $this->addNewAttachments($systemReading, $form, $this->getUser(), $manager);
