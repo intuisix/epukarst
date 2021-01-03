@@ -6,6 +6,7 @@ use App\Entity\Role;
 use App\Entity\User;
 use App\Entity\System;
 use App\Entity\SystemRole;
+use App\Security\SystemVoter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -33,9 +34,9 @@ class SystemRoleType extends AbstractType
             ])
             ->add('role', ChoiceType::class, [
                 'choices' => [
-                    "Observateur" => 'SYSTEM_OBSERVER',
-                    "Contributeur" => 'SYSTEM_CONTRIBUTOR',
-                    "Gestionnaire" => 'SYSTEM_MANAGER',
+                    "Observateur" => SystemVoter::OBSERVER,
+                    "Contributeur" => SystemVoter::CONTRIBUTOR,
+                    "Gestionnaire" => SystemVoter::MANAGER,
                 ],
                 'label' => "Rôle",
             ])
