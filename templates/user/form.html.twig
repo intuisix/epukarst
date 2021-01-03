@@ -79,12 +79,13 @@
     </button>
 {% endblock %}
 
-{% block _user_systemRoles_entry_label %}
-    {# Ne pas afficher d'étiquette #}
+{% block _user_systemRoles_entry_row %}
+    {# N'afficher que le widget, sans étiquette ou autre information #}
+    {{ form_widget(form) }}
 {% endblock %}
 
 {% block _user_systemRoles_entry_widget %}
-    <div class="alert bg-light" id="{{id}}">
+    <div class="form-group alert bg-light" id="{{id}}">
         <div class="row">
             <div class="col">
                 {# Sélection du système #}
@@ -94,13 +95,11 @@
                 {# Sélection du rôle #}
                 {{form_row(form.role)}}
             </div>
-        </div>
-        <div class="row">
-            <div class="col">
+            <div class="col-2 align-self-center">
                 {# Bouton permettant de supprimer le rôle #}
-                <button type="button" data-action="delete-userRole" data-target="#{{id}}" class="btn btn-danger float-right">
+                <button type="button" data-action="delete-userRole" data-target="#{{id}}" class="btn btn-danger btn-block">
                     <i class="fas fa-trash"></i>
-                    Supprimer ce rôle
+                    Supprimer
                 </button>
             </div>
         </div>
