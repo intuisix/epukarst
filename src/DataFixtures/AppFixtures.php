@@ -19,7 +19,7 @@ use App\Entity\Measurability;
 use App\Entity\SystemParameter;
 use Faker\Factory as FakerFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
