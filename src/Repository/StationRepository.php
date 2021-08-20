@@ -6,7 +6,7 @@ use App\Entity\User;
 use App\Entity\System;
 use App\Entity\Station;
 use App\Security\SystemVoter;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**

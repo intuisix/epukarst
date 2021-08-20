@@ -5,7 +5,7 @@ namespace App\Repository;
 use App\Entity\Filter;
 use App\Entity\Reading;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
